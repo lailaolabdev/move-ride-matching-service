@@ -1,0 +1,34 @@
+services:
+  move-ride-matching:
+    image: nodejs
+    container_name: move-ride-matching
+    restart: always
+    build: .
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - move-ride-matching-network
+
+  redis:
+    image: 'redis:latest'
+    container_name: redis-api
+    hostname: redis
+    command: ['redis-server', '--include', '/usr/local/etc/redis/redis.conf']
+    ports:
+        - "6379:6379"
+    volumes:
+      - './redis/data:/var/lib/redis'
+      - './redis/redis.conf:/usr/local/etc/redis/redis.conf'
+    networks:
+      - move-ride-matching-network
+
+networks:
+  move-ride-matching-network:
+    driver: bridge
+    name: move-ride-matching-network
+
+volumes:
+  node_modules:
