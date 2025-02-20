@@ -7,20 +7,20 @@ export interface IErrorResponse {
 }
 
 export const deleteKeysByPattern = async (pattern: string) => {
-    try {
-        // Fetch all keys matching the pattern
-        const keys = await redis.keys(pattern);
+    // try {
+    //     // Fetch all keys matching the pattern
+    //     const keys = await redis.keys(pattern);
 
-        if (keys.length > 0) {
-            // Delete all matching keys
-            const deleted = await redis.del(...keys);
-            console.log(`Deleted ${deleted} keys matching pattern: ${pattern}`);
-        } else {
-            console.log('No keys found matching the pattern:', pattern);
-        }
-    } catch (error) {
-        console.error('Error deleting keys from Redis:', error);
-    }
+    //     if (keys.length > 0) {
+    //         // Delete all matching keys
+    //         const deleted = await redis.del(...keys);
+    //         console.log(`Deleted ${deleted} keys matching pattern: ${pattern}`);
+    //     } else {
+    //         console.log('No keys found matching the pattern:', pattern);
+    //     }
+    // } catch (error) {
+    //     console.error('Error deleting keys from Redis:', error);
+    // }
 };
 
 
