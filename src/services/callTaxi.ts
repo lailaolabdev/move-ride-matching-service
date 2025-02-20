@@ -102,7 +102,7 @@ export const driverConfirmedService = async (req: Request) => {
         const driverId = "testDriverId";
         const status = STATUS.DRIVER_RECEIVED
 
-        const confirmed = await CallTaxi.findByIdAndUpdate(id, { driverId, status })
+        const confirmed = await CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true })
 
         return confirmed
     } catch (error) {

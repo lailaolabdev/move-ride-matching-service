@@ -15,7 +15,7 @@
  *     summary: Call taxi
  *     description: Call taxi with specified attributes.
  *     tags:
- *       - CallTaxi
+ *       - Call Taxi
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -145,6 +145,84 @@
  *                     __v:
  *                       type: number
  *                       example: 0
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/driver-confirm/{id}:
+ *   put:
+ *     summary: Update a Calling taxi
+ *     description: Update the name or icon of an existing calling taxi.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "63d2fcd0c90a5300188b4567"
+ *         description: The ID of the taxi type to be updated.
+ *     responses:
+ *       200:
+ *         description: Calling taxi updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "SUCCESSFUL"
+ *                 message:
+ *                   type: string
+ *                   example: "Taxi Type updated successfully"
+ *                 updatedTaxiType:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: Taxi Type ID.
+ *                       example: "63d2fcd0c90a5300188b4567"
+ *                     name:
+ *                       type: string
+ *                       description: Taxi Type name.
+ *                       example: "Luxury Sedan"
+ *                     icon:
+ *                       type: string
+ *                       description: Taxi Type icon.
+ *                       example: "luxury_sedan_icon.png"
+ *       404:
+ *         description: This ride request was taken.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "NOT_FOUND"
+ *                 message:
+ *                   type: string
+ *                   example: "This ride request was taken"
  *       500:
  *         description: Internal server error.
  *         content:

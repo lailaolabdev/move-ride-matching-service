@@ -8,7 +8,7 @@ import {
     getUserCallTaxisService,
     updateCallTaxiService
 } from "../../services/callTaxi";
-import { CallTaxi } from "../../models/callTaxi";
+import { CallTaxi, STATUS } from "../../models/callTaxi";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
@@ -95,21 +95,20 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     }
 };
 
-export const driverConfirmCallTaxi = async (req: Request, res: Response) => {
+export const driverConfirmed = async (req: Request, res: Response) => {
     try {
         // Create ride request
-
-
-        const { id } = req.body
+        const { id } = req.params
 
         const callTaxi = await CallTaxi.findById(id)
 
-        if (!callTaxi) {
+        if (!callTaxi || callTaxi.status === STATUS.DRIVER_RECEIVED) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,
-                message: `Call taxi ${messages.CREATE_SUCCESSFUL.message}`,
-                callTaxi
+                message: "This ride request was taken",
             });
+
+            return;
         }
 
         const confirmed = await driverConfirmedService(req)
@@ -117,6 +116,7 @@ export const driverConfirmCallTaxi = async (req: Request, res: Response) => {
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
+            confirmed
         });
     } catch (error) {
         console.error("Error fetching tax info:", error);
