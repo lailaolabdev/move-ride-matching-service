@@ -41,7 +41,7 @@
  *                 type: string
  *                 description: The destination coordinates.
  *                 example: "17.971523,102.6200467"
- *               type:
+ *               requestType:
  *                 type: string
  *                 description: The fare type.
  *                 example: "flat_fare"
