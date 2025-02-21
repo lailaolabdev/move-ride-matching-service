@@ -4,7 +4,7 @@ import { calculateUserDistanceAndDuration } from "../controllers/calculation"
 const router = express.Router();
 
 router.post(
-    "/distance",
+    "/",
     // checkAuthorizationMiddleware,
     calculateUserDistanceAndDuration,
 );
