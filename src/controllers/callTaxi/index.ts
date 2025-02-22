@@ -102,7 +102,7 @@ export const driverConfirmed = async (req: Request, res: Response) => {
 
         const callTaxi = await CallTaxi.findById(id)
 
-        if (!callTaxi || callTaxi.status === STATUS.DRIVER_RECEIVED) {
+        if (!callTaxi) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,
                 message: "This ride request was taken",

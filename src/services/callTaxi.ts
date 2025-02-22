@@ -112,6 +112,23 @@ export const driverConfirmedService = async (req: Request) => {
     }
 }
 
+export const updateStatusService = async (req: Request) => {
+    try {
+        // const passengerId = (req as any).user.id;
+        const { id } = req.params
+        const driverId = "testDriverId";
+        const status = STATUS.DRIVER_RECEIVED
+
+        const confirmed = await CallTaxi.findOneAndUpdate({ _id: id }, { status }, { new: true })
+
+        return confirmed
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+}
+
 export const calculateDriverDistanceAndDurationService = async (origin: string, destination: string) => {
     try {
         const apiKey = process.env.API_KEY || 'AIzaSyDdxCKVSzSf5K_ys6fM7mB9eOwKTcYr_Sk'; // ใส่ API Key ของคุณ
