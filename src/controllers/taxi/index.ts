@@ -51,7 +51,7 @@ export const getAllTaxies = async (req: Request, res: Response) => {
 
         const taxies = await getAllTaxiService(parseSkip, parsedLimit, filter);
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Vehicles fetched successfully',
             taxies
         });
@@ -79,7 +79,7 @@ export const getVehicleById = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Vehicle fetched successfully',
             taxi 
         });
@@ -122,7 +122,7 @@ export const updateTaxi = async (req: Request, res: Response) => {
         }
 
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Vehicle updated successfully',
             taxi: updatedTaxi
         });
@@ -151,7 +151,7 @@ export const deleteTaxi = async (req: Request, res: Response) => {
         }
 
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Vehicle deleted successfully',
             taxi: deletedTaxi
         });

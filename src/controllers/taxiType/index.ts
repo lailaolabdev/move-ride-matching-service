@@ -43,7 +43,7 @@ export const getAllTaxiTypes = async (req: Request, res: Response) => {
 
         const taxiTypes = await getAllTaxiTypesService(parseSkip, parsedLimit);
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Taxi Types fetched successfully',
             taxiTypes
         });
@@ -71,7 +71,7 @@ export const getTaxiTypeById = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Taxi Type fetched successfully',
             taxiType
         });
@@ -108,7 +108,7 @@ export const updateTaxiType = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Taxi Type updated successfully',
             updatedTaxiType
         });
@@ -136,7 +136,7 @@ export const deleteTaxiType = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Taxi Type deleted successfully',
             deletedTaxiType
         });
