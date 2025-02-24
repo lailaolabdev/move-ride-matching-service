@@ -66,7 +66,7 @@ const getAllVehicleDrivers = (req, res) => __awaiter(void 0, void 0, void 0, fun
         const filter = yield (0, helper_1.filterVehicleDriver)(req.query);
         const vehicleDrivers = yield (0, vehicleDriver_1.getAllVehicleDriversService)(filter, parseSkip, parsedLimit);
         res.status(200).json({
-            code: config_1.messages.SUCCESSFUL.code,
+            code: config_1.messages.SUCCESSFULLY.code,
             message: 'Vehicle Drivers fetched successfully',
             vehicleDrivers
         });
@@ -95,7 +95,7 @@ const getVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, functio
             return;
         }
         res.status(200).json({
-            code: config_1.messages.SUCCESSFUL.code,
+            code: config_1.messages.SUCCESSFULLY.code,
             message: 'Vehicle Driver fetched successfully',
             vehicleDriver
         });
@@ -143,7 +143,7 @@ const updateVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, func
             return;
         }
         res.status(200).json({
-            code: config_1.messages.SUCCESSFUL.code,
+            code: config_1.messages.SUCCESSFULLY.code,
             message: 'Vehicle Driver updated successfully',
             vehicleDriver
         });
@@ -172,7 +172,7 @@ const deleteVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, func
             return;
         }
         res.status(200).json({
-            code: config_1.messages.SUCCESSFUL.code,
+            code: config_1.messages.SUCCESSFULLY.code,
             message: 'Vehicle Driver deleted successfully',
             vehicleDriver: deletedVehicleDriver
         });

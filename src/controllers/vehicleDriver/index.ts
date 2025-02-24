@@ -61,7 +61,7 @@ export const getAllVehicleDrivers = async (req: Request, res: Response) => {
 
         const vehicleDrivers = await getAllVehicleDriversService(filter, parseSkip, parsedLimit);
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Vehicle Drivers fetched successfully',
             vehicleDrivers
         });
@@ -89,7 +89,7 @@ export const getVehicleDriver = async (req: Request, res: Response) => {
             return;
         }
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Vehicle Driver fetched successfully',
             vehicleDriver
         });
@@ -140,7 +140,7 @@ export const updateVehicleDriver = async (req: Request, res: Response) => {
         }
 
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Vehicle Driver updated successfully',
             vehicleDriver
         });
@@ -169,7 +169,7 @@ export const deleteVehicleDriver = async (req: Request, res: Response) => {
         }
 
         res.status(200).json({
-            code: messages.SUCCESSFUL.code,
+            code: messages.SUCCESSFULLY.code,
             message: 'Vehicle Driver deleted successfully',
             vehicleDriver: deletedVehicleDriver
         });

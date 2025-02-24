@@ -50,7 +50,7 @@ const getAllTaxiTypes = (req, res) => __awaiter(void 0, void 0, void 0, function
         const parsedLimit = parseInt(limit, 10);
         const taxiTypes = yield (0, taxiType_1.getAllTaxiTypesService)(parseSkip, parsedLimit);
         res.status(200).json({
-            code: index_1.messages.SUCCESSFUL.code,
+            code: index_1.messages.SUCCESSFULLY.code,
             message: 'Taxi Types fetched successfully',
             taxiTypes
         });
@@ -79,7 +79,7 @@ const getTaxiTypeById = (req, res) => __awaiter(void 0, void 0, void 0, function
             return;
         }
         res.status(200).json({
-            code: index_1.messages.SUCCESSFUL.code,
+            code: index_1.messages.SUCCESSFULLY.code,
             message: 'Taxi Type fetched successfully',
             taxiType
         });
@@ -115,7 +115,7 @@ const updateTaxiType = (req, res) => __awaiter(void 0, void 0, void 0, function*
             return;
         }
         res.status(200).json({
-            code: index_1.messages.SUCCESSFUL.code,
+            code: index_1.messages.SUCCESSFULLY.code,
             message: 'Taxi Type updated successfully',
             updatedTaxiType
         });
@@ -144,7 +144,7 @@ const deleteTaxiType = (req, res) => __awaiter(void 0, void 0, void 0, function*
             return;
         }
         res.status(200).json({
-            code: index_1.messages.SUCCESSFUL.code,
+            code: index_1.messages.SUCCESSFULLY.code,
             message: 'Taxi Type deleted successfully',
             deletedTaxiType
         });
