@@ -12,6 +12,7 @@ import taxiTypeRoute from "./routes/taxiType";
 import connectDB from './config/database';
 import swaggerJSDoc from 'swagger-jsdoc';
 import taxiRoute from './routes/taxi';
+import vehicleDriverRoute from './routes/vehicleDriver';
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use('/health', (req, res) => {
 });
 app.use('/api/v1/taxi-types', taxiTypeRoute);
 app.use('/api/v1/taxies', taxiRoute);
+app.use('/api/v1/vehicle-drivers',vehicleDriverRoute);
 app.use('/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
