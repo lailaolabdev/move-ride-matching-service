@@ -7,15 +7,27 @@ import {
   updatePolygonService,
 } from "../../services/polygon";
 import { messages } from "../../config";
+import polygonModel from "../../models/polygon";
 
 export const createPolygon = async (req: Request, res: Response) => {
   try {
-    const polygon = await createPolygonService(req);
+    const polygon = polygonModel.findOne({ name })
+
+    if (!polygon) {
+      res.status(400).json({
+        code: messages.ALREADY_EXIST.code,
+        messages: `Polygon ${messages.ALREADY_EXIST.message}`
+      })
+
+      return
+    }
+
+    const createdPolygon = await createPolygonService(req);
 
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
       message: "Polygon created successfully",
-      polygon,
+      createdPolygon,
     });
   } catch (error) {
     console.log("Error: ", error);

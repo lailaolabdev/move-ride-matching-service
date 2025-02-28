@@ -4,7 +4,7 @@ import { IPolygon } from '../models/polygon';
 
 export const createPolygonService = async (req: Request): Promise<IPolygon | null> => {
     try {
-        const user = (req as any).user._id;
+        const user = (req as any).user.id;
 
         const {
             name,
@@ -13,15 +13,13 @@ export const createPolygonService = async (req: Request): Promise<IPolygon | nul
             color
         } = req.body
 
-        const polygon = new polygonModel({
+        const savedPolygon = await polygonModel.create({
             name,
             coordinates,
             price,
             color,
             createdBy: user,
         });
-
-        const savedPolygon = await polygon.save();
 
         return savedPolygon;
     } catch (error) {
