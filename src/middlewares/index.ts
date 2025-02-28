@@ -28,7 +28,7 @@ export const checkAuthorizationMiddleware = (
 		}
 		next();
 	} catch (error) {
-		if(error instanceof jwt.TokenExpiredError){
+		if (error instanceof jwt.TokenExpiredError) {
 			res.status(401).json({
 				code: messages.UNAUTHORIZED.code,
 				message: messages.UNAUTHORIZED.message,
