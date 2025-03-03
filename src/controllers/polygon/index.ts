@@ -11,9 +11,11 @@ import polygonModel from "../../models/polygon";
 
 export const createPolygon = async (req: Request, res: Response) => {
   try {
-    const polygon = polygonModel.findOne({ name })
+    const { name } = req.body
 
-    if (!polygon) {
+    const polygon = await polygonModel.findOne({ name })
+
+    if (polygon) {
       res.status(400).json({
         code: messages.ALREADY_EXIST.code,
         messages: `Polygon ${messages.ALREADY_EXIST.message}`
