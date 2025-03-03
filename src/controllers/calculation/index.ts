@@ -37,6 +37,7 @@ export const calculateUserDistanceAndDuration = async (req: Request, res: Respon
                     id: taxiTypes[i]._id,
                     image: taxiTypes[i].icon,
                     cartType: taxiTypes[i].name,
+                    seats: taxiTypes[i].seats,
                     ...calculate,
                     totalPrice: Math.ceil((taxiTypes[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration)),
                 }
