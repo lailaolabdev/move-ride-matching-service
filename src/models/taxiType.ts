@@ -4,6 +4,7 @@ export interface ITaxiType extends Document {
     name: string;
     icon: string;
     price: number;
+    seats: number;
     createdAt: Date;
     createdBy: string;
     createdByFullName: string;
@@ -16,6 +17,7 @@ const TaxiTypeSchema: Schema = new Schema({
     name: { type: String, required: true },
     icon: { type: String, required: true },
     price: { type: Number, required: true },
+    seats: { type: Number, required: true },
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: String, required: true },
     createdByFullName: {

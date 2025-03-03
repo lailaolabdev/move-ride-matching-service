@@ -6,13 +6,14 @@ import { messages } from '../../config/index';  // Assuming you have a messages 
 export const createTaxiType = async (req: Request, res: Response) => {
     try {
         const user = (req as any).user;  // Assuming user data is added to the request object (e.g., via authentication middleware)
-        const { name, icon, price } = req.body;
+        const { name, icon, price, seats } = req.body;
 
         const taxiType = await createTaxiTypeService(
             {
                 name,
                 icon,
                 price,
+                seats,
                 createdBy: user.id,
                 createdByFullName: user.fullName
             });
