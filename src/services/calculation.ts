@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { booleanPointInPolygon, point, polygon as turfPolygon } from '@turf/turf'
+import polygonModel from '../models/polygon';
 
 const apiKey = process.env.API_KEY || 'AIzaSyDdxCKVSzSf5K_ys6fM7mB9eOwKTcYr_Sk'; // ใส่ API Key ของคุณ
 
@@ -20,30 +21,7 @@ export const calculateUserDistanceAndDurationService = async (origin: string, de
         const totalTrafficDelayMin: number = (durationInTraffic - duration) / 60;// ระยะเวลาการจราจรติดขัดทั้งหมด
 
         // ค้นหา Polygon ทั้งหมดจาก MongoDB (ข้อมูล Polygon แบบตัวอย่าง)
-        const polygons = [
-            {
-                name: "Polygon 1",
-                coordinates: [
-                    [
-                        { lat: 17.979062, lng: 102.615065 },
-                        { lat: 17.967815, lng: 102.626823 },
-                        { lat: 17.955224, lng: 102.611437 },
-                        { lat: 17.964044, lng: 102.599209 },
-                    ]
-                ]
-            },
-            {
-                name: "Polygon 2",
-                coordinates: [
-                    [
-                        { lat: 17.982027, lng: 102.628271 },
-                        { lat: 17.971261, lng: 102.630946 },
-                        { lat: 17.973120, lng: 102.644272 },
-                        { lat: 17.987655, lng: 102.634445 },
-                    ]
-                ]
-            }
-        ];
+        const polygons = await polygonModel.find()
 
         // คำนวณว่ามีการเดินทางผ่าน Polygon ใดบ้าง และเดินทางผ่านระยะทางเท่าไร
         let polygonResults: any[] = [];

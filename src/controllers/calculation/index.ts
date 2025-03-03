@@ -3,16 +3,6 @@ import { messages } from "../../config";
 import { calculateUserDistanceAndDurationService } from "../../services/calculation";
 import taxiTypeModel from "../../models/taxiType";
 
-interface Calculation {
-    distanceInPolygon: number;
-    durationInPolygon: number;
-    normalDuration: number;
-    delayDuration: number;
-    delayDistance: number;
-    totalDuration: number;
-    totalDistance: number;
-}
-
 export const calculateUserDistanceAndDuration = async (req: Request, res: Response): Promise<any> => {
     try {
         const { origin, destination } = req.body
@@ -27,7 +17,7 @@ export const calculateUserDistanceAndDuration = async (req: Request, res: Respon
         }
 
         // Calculate distance and duration
-        const calculate: Calculation = await calculateUserDistanceAndDurationService(origin, destination)
+        const calculate = await calculateUserDistanceAndDurationService(origin, destination)
 
         if (!calculate) {
             res.status(404).json({
@@ -48,7 +38,7 @@ export const calculateUserDistanceAndDuration = async (req: Request, res: Respon
                     image: taxiTypes[i].icon,
                     cartType: taxiTypes[i].name,
                     ...calculate,
-                    totalPrice: (taxiTypes[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration),
+                    totalPrice: Math.ceil((taxiTypes[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration)),
                 }
             )
         }
