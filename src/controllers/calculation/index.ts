@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { messages } from "../../config";
 import { calculateUserDistanceAndDurationService } from "../../services/calculation";
+import taxiTypeModel from "../../models/taxiType";
 
 interface Calculation {
     distanceInPolygon: number;
@@ -12,36 +13,16 @@ interface Calculation {
     totalDistance: number;
 }
 
-export const calculateUserDistanceAndDuration = async (req: Request, res: Response) => {
+export const calculateUserDistanceAndDuration = async (req: Request, res: Response): Promise<any> => {
     try {
         const { origin, destination } = req.body
 
-        // Demo car type
-        const carType = [
-            {
-                image: "",
-                id: "001",
-                carType: "suv",
-                price: 5 // Per kilometer
-            },
-            {
-                id: "002",
-                image: "",
-                carType: "car",
-                price: 6 // Per kilometer
-            },
-            {
-                id: "003",
-                image: "",
-                carType: "mini truck",
-                price: 7 // Per kilometer
-            },
-        ]
+        const taxiTypes = await taxiTypeModel.find();
 
-        if (!carType) {
-            res.status(404).json({
+        if (!taxiTypes.length) {
+            return res.status(404).json({
                 code: messages.NOT_FOUND.code,
-                message: `Car Type ${messages.NOT_FOUND.message}`,
+                message: `Taxi not available`,
             });
         }
 
@@ -55,19 +36,19 @@ export const calculateUserDistanceAndDuration = async (req: Request, res: Respon
             });
         }
 
-        const calculation = []
+        const calculation: any = []
 
         const delayPrice = 7
         const priceInPolygonPerKm = 7
 
-        for (let i = 0; i < carType.length; i++) {
+        for (let i = 0; i < taxiTypes.length; i++) {
             calculation.push(
                 {
-                    id: carType[i].id,
-                    image: carType[i].image,
-                    cartType: carType[i].carType,
+                    id: taxiTypes[i]._id,
+                    image: taxiTypes[i].icon,
+                    cartType: taxiTypes[i].name,
                     ...calculate,
-                    totalPrice: (carType[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration),
+                    totalPrice: (taxiTypes[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration),
                 }
             )
         }
