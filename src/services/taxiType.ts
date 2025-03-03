@@ -7,12 +7,14 @@ export const createTaxiTypeService = async (
     {
         name,
         icon,
+        price,
         createdBy,
         createdByFullName
     }:
         {
             name: string,
             icon: string,
+            price: number,
             createdBy: string,
             createdByFullName: string
         }): Promise<ITaxiType | null> => {
@@ -20,6 +22,7 @@ export const createTaxiTypeService = async (
         const taxiType = new taxiTypeModel({
             name,
             icon,
+            price,
             createdBy,
             createdByFullName,
         });
@@ -68,6 +71,7 @@ export const updateTaxiTypeService = async (
         id,
         name,
         icon,
+        price,
         updatedBy,
         updatedByFullName
     }:
@@ -75,6 +79,7 @@ export const updateTaxiTypeService = async (
             id: string,
             name?: string,
             icon?: string,
+            price: number,
             updatedBy: string,
             updatedByFullName: string
         }): Promise<ITaxiType | null> => {
@@ -85,6 +90,7 @@ export const updateTaxiTypeService = async (
                 $set: {
                     name,
                     icon,
+                    price,
                     updatedBy,
                     updatedAt: new Date(),
                     updatedByFullName

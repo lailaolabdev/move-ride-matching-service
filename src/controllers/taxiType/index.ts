@@ -6,13 +6,13 @@ import { messages } from '../../config/index';  // Assuming you have a messages 
 export const createTaxiType = async (req: Request, res: Response) => {
     try {
         const user = (req as any).user;  // Assuming user data is added to the request object (e.g., via authentication middleware)
-        const { name, icon } = req.body;
-        console.log("user: ", user)
+        const { name, icon, price } = req.body;
 
         const taxiType = await createTaxiTypeService(
             {
                 name,
                 icon,
+                price,
                 createdBy: user.id,
                 createdByFullName: user.fullName
             });
@@ -97,11 +97,12 @@ export const updateTaxiType = async (req: Request, res: Response) => {
                 id: req.params.id,
                 name: req.body.name,
                 icon: req.body.icon,
+                price: req.body.price,
                 updatedBy: user.id,
                 updatedByFullName: user.fullName
             });
         if (!updatedTaxiType) {
-             res.status(404).json({
+            res.status(404).json({
                 code: messages.NOT_FOUND.code,
                 message: 'Taxi Type not found'
             });
@@ -129,7 +130,7 @@ export const deleteTaxiType = async (req: Request, res: Response) => {
     try {
         const deletedTaxiType = await deleteTaxiTypeService(req.params.id);
         if (!deletedTaxiType) {
-             res.status(404).json({
+            res.status(404).json({
                 code: messages.NOT_FOUND.code,
                 message: 'Taxi Type not found'
             });
