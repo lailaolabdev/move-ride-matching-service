@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.driverConfirmed = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
+exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -92,11 +92,10 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.updateCallTaxis = updateCallTaxis;
-const driverConfirmed = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Create ride request
         const { id } = req.params;
-        const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
+        const callTaxi = yield callTaxi_2.CallTaxi.findOne({ _id: id, status: callTaxi_2.STATUS.REQUESTING });
         if (!callTaxi) {
             res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
@@ -104,7 +103,20 @@ const driverConfirmed = (req, res) => __awaiter(void 0, void 0, void 0, function
             });
             return;
         }
-        const confirmed = yield (0, callTaxi_1.driverConfirmedService)(req);
+        let status = "";
+        // driver confirm ride request  
+        if (callTaxi.status === callTaxi_2.STATUS.REQUESTING)
+            status = callTaxi_2.STATUS.DRIVER_RECEIVED;
+        // driver arrived to passenger 
+        else if (callTaxi.status === callTaxi_2.STATUS.DRIVER_RECEIVED)
+            status = callTaxi_2.STATUS.DRIVER_ARRIVED;
+        // departure 
+        else if (callTaxi.status === callTaxi_2.STATUS.DRIVER_ARRIVED)
+            status = callTaxi_2.STATUS.DEPARTURE;
+        // Success
+        else if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE)
+            status = callTaxi_2.STATUS.SEND_SUCCESS;
+        const confirmed = yield (0, callTaxi_1.driverUpdateStatusService)(req, status);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
@@ -120,4 +132,4 @@ const driverConfirmed = (req, res) => __awaiter(void 0, void 0, void 0, function
         });
     }
 });
-exports.driverConfirmed = driverConfirmed;
+exports.driverUpdateStatus = driverUpdateStatus;

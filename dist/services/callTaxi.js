@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateDriverDistanceAndDurationService = exports.updateStatusService = exports.driverConfirmedService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.createCallTaxiService = void 0;
+exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
@@ -81,12 +81,10 @@ const updateCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.updateCallTaxiService = updateCallTaxiService;
-const driverConfirmedService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+const driverUpdateStatusService = (req, status) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // const passengerId = (req as any).user.id;
         const { id } = req.params;
-        const driverId = "testDriverId";
-        const status = callTaxi_1.STATUS.DRIVER_RECEIVED;
+        const driverId = req.user.id;
         const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true });
         return confirmed;
     }
@@ -95,22 +93,7 @@ const driverConfirmedService = (req) => __awaiter(void 0, void 0, void 0, functi
         throw error;
     }
 });
-exports.driverConfirmedService = driverConfirmedService;
-const updateStatusService = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        // const passengerId = (req as any).user.id;
-        const { id } = req.params;
-        const driverId = "testDriverId";
-        const status = callTaxi_1.STATUS.DRIVER_RECEIVED;
-        const confirmed = yield callTaxi_1.CallTaxi.findOneAndUpdate({ _id: id }, { status }, { new: true });
-        return confirmed;
-    }
-    catch (error) {
-        console.log("Error creating Record: ", error);
-        throw error;
-    }
-});
-exports.updateStatusService = updateStatusService;
+exports.driverUpdateStatusService = driverUpdateStatusService;
 const calculateDriverDistanceAndDurationService = (origin, destination) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {

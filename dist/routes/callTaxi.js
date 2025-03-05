@@ -14,7 +14,5 @@ callTaxi_1.createCallTaxi);
 router.get("/user-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getUserCallTaxis);
 router.get("/driver-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverCallTaxis);
 router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateCallTaxis);
-router.put("/driver-confirm/:id", 
-// checkAuthorizationMiddleware,
-callTaxi_1.driverConfirmed);
+router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.driverUpdateStatus);
 exports.default = router;
