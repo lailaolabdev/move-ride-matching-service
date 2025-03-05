@@ -8,38 +8,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.calculateUserDistanceAndDuration = void 0;
 const config_1 = require("../../config");
 const calculation_1 = require("../../services/calculation");
+const taxiType_1 = __importDefault(require("../../models/taxiType"));
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { origin, destination } = req.body;
-        // Demo car type
-        const carType = [
-            {
-                image: "",
-                id: "001",
-                carType: "suv",
-                price: 5 // Per kilometer
-            },
-            {
-                id: "002",
-                image: "",
-                carType: "car",
-                price: 6 // Per kilometer
-            },
-            {
-                id: "003",
-                image: "",
-                carType: "mini truck",
-                price: 7 // Per kilometer
-            },
-        ];
-        if (!carType) {
-            res.status(404).json({
+        const taxiTypes = yield taxiType_1.default.find();
+        if (!taxiTypes.length) {
+            return res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
-                message: `Car Type ${config_1.messages.NOT_FOUND.message}`,
+                message: `Taxi not available`,
             });
         }
         // Calculate distance and duration
@@ -53,8 +37,8 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
         const calculation = [];
         const delayPrice = 7;
         const priceInPolygonPerKm = 7;
-        for (let i = 0; i < carType.length; i++) {
-            calculation.push(Object.assign(Object.assign({ id: carType[i].id, image: carType[i].image, cartType: carType[i].carType }, calculate), { totalPrice: (carType[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration) }));
+        for (let i = 0; i < taxiTypes.length; i++) {
+            calculation.push(Object.assign(Object.assign({ id: taxiTypes[i]._id, image: taxiTypes[i].icon, cartType: taxiTypes[i].name, seats: taxiTypes[i].seats }, calculate), { totalPrice: Math.ceil((taxiTypes[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration)) }));
         }
         res.status(200).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,

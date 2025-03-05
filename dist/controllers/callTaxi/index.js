@@ -97,7 +97,7 @@ const driverConfirmed = (req, res) => __awaiter(void 0, void 0, void 0, function
         // Create ride request
         const { id } = req.params;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
-        if (!callTaxi || callTaxi.status === callTaxi_2.STATUS.DRIVER_RECEIVED) {
+        if (!callTaxi) {
             res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
                 message: "This ride request was taken",

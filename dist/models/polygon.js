@@ -34,20 +34,32 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const TaxiTypeSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    icon: { type: String, required: true },
-    price: { type: Number, required: true },
-    seats: { type: Number, required: true },
-    createdAt: { type: Date, default: Date.now },
-    createdBy: { type: String, required: true },
-    createdByFullName: {
-        type: String,
-        required: true,
-    },
-    updatedAt: { type: Date, default: Date.now },
-    updatedBy: { type: String },
-    updatedByFullName: String
+const Polygon = new mongoose_1.Schema({
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true },
 });
-const taxiTypeModel = mongoose_1.default.model('TaxiType', TaxiTypeSchema);
-exports.default = taxiTypeModel;
+const PolygonSchema = new mongoose_1.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    coordinates: [[Polygon]], // Array of arrays of coordinates
+    price: {
+        type: Number,
+        required: true
+    },
+    color: {
+        type: String,
+        required: true
+    },
+    createdBy: {
+        type: String,
+        required: true
+    },
+    updatedBy: {
+        type: String,
+        default: null
+    },
+}, { timestamps: true });
+const polygonModel = mongoose_1.default.model('Polygon', PolygonSchema);
+exports.default = polygonModel;

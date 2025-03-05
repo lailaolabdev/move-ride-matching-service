@@ -8,7 +8,7 @@
  *       scheme: bearer
  *       bearerFormat: JWT
  *
- * /v1/api/calculate/distance:
+ * /v1/api/calculate:
  *   post:
  *     summary: Calculate duration, distance, and price
  *     description: Calculates duration, distance, and price based on specified attributes.

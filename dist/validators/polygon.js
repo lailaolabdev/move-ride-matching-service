@@ -1,37 +1,37 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateCreateTaxiType = void 0;
+exports.validateCreatePolygon = void 0;
 const config_1 = require("../config");
-const validateCreateTaxiType = (req, res, next) => {
-    const { name, icon, price, seats } = req.body;
+const validateCreatePolygon = (req, res, next) => {
+    const { name, coordinates, price, color } = req.body;
     if (!name) {
         res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
-            message: 'Missing requird field: name'
+            message: 'Missing required field: name'
         });
         return;
     }
-    if (!icon) {
+    if (!coordinates) {
         res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
-            message: 'Missing requird field: icon'
+            message: 'Missing required field: coordinates'
         });
         return;
     }
     if (!price) {
         res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
-            message: 'Missing requird field: price'
+            message: 'Missing required field: price'
         });
         return;
     }
-    if (!seats) {
+    if (!color) {
         res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
-            message: 'Missing requird field: seats'
+            message: 'Missing required field: color'
         });
         return;
     }
     next();
 };
-exports.validateCreateTaxiType = validateCreateTaxiType;
+exports.validateCreatePolygon = validateCreatePolygon;

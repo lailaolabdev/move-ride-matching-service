@@ -114,4 +114,8 @@ exports.messages = {
         code: 'EV-210105',
         message: "Insufficient points"
     },
+    ALREADY_EXIST: {
+        code: "EV-424",
+        message: "already exist"
+    },
 };
