@@ -95,31 +95,12 @@ export const updateCallTaxiService = async (req: Request): Promise<ICallTaxi | n
     }
 };
 
-export const driverConfirmedService = async (req: Request) => {
+export const driverUpdateStatusService = async (req: Request, status: String) => {
     try {
-        // const passengerId = (req as any).user.id;
         const { id } = req.params
-        const driverId = "testDriverId";
-        const status = STATUS.DRIVER_RECEIVED
+        const driverId = (req as any).user.id;
 
         const confirmed = await CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true })
-
-        return confirmed
-    } catch (error) {
-        console.log("Error creating Record: ", error);
-
-        throw error;
-    }
-}
-
-export const updateStatusService = async (req: Request) => {
-    try {
-        // const passengerId = (req as any).user.id;
-        const { id } = req.params
-        const driverId = "testDriverId";
-        const status = STATUS.DRIVER_RECEIVED
-
-        const confirmed = await CallTaxi.findOneAndUpdate({ _id: id }, { status }, { new: true })
 
         return confirmed
     } catch (error) {

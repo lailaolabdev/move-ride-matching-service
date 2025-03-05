@@ -3,10 +3,10 @@ import { messages } from "../../config";
 import {
     calculateDriverDistanceAndDurationService,
     createCallTaxiService,
-    driverConfirmedService,
     getDriverCallTaxisService,
     getUserCallTaxisService,
-    updateCallTaxiService
+    updateCallTaxiService,
+    driverUpdateStatusService
 } from "../../services/callTaxi";
 import { CallTaxi, STATUS } from "../../models/callTaxi";
 
@@ -95,12 +95,11 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     }
 };
 
-export const driverConfirmed = async (req: Request, res: Response) => {
+export const driverUpdateStatus = async (req: Request, res: Response) => {
     try {
-        // Create ride request
         const { id } = req.params
 
-        const callTaxi = await CallTaxi.findById(id)
+        const callTaxi = await CallTaxi.findOne({ _id: id, status: STATUS.REQUESTING })
 
         if (!callTaxi) {
             res.status(404).json({
@@ -111,7 +110,21 @@ export const driverConfirmed = async (req: Request, res: Response) => {
             return;
         }
 
-        const confirmed = await driverConfirmedService(req)
+        let status: String = "";
+
+        // driver confirm ride request  
+        if (callTaxi.status === STATUS.REQUESTING) status = STATUS.DRIVER_RECEIVED
+
+        // driver arrived to passenger 
+        else if (callTaxi.status === STATUS.DRIVER_RECEIVED) status = STATUS.DRIVER_ARRIVED
+
+        // departure 
+        else if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.DEPARTURE
+
+        // Success
+        else if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS
+
+        const confirmed = await driverUpdateStatusService(req, status)
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,

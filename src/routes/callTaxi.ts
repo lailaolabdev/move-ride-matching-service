@@ -1,6 +1,6 @@
 import express from "express";
 import {
-    driverConfirmed,
+    driverUpdateStatus,
     createCallTaxi,
     getDriverCallTaxis,
     getUserCallTaxis,
@@ -38,8 +38,8 @@ router.put(
 
 router.put(
     "/driver-confirm/:id",
-    // checkAuthorizationMiddleware,
-    driverConfirmed,
+    checkAuthorizationMiddleware,
+    driverUpdateStatus,
 );
 
 
