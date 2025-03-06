@@ -6,19 +6,19 @@ import {
     getDriverCallTaxisService,
     getUserCallTaxisService,
     updateCallTaxiService,
-    driverUpdateStatusService
+    driverUpdateStatusService,
 } from "../../services/callTaxi";
 import { CallTaxi, STATUS } from "../../models/callTaxi";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
         // Create ride request
-        const callTaxi = await createCallTaxiService(req)
+        const callTaxi = await createCallTaxiService(req);
 
         res.status(201).json({
             code: messages.CREATE_SUCCESSFUL.code,
             message: messages.CREATE_SUCCESSFUL.message,
-            callTaxi
+            callTaxi,
         });
     } catch (error) {
         console.log("error: ", error);
@@ -33,14 +33,14 @@ export const createCallTaxi = async (req: Request, res: Response) => {
 
 export const getUserCallTaxis = async (req: Request, res: Response) => {
     try {
-        const callTaxis = await getUserCallTaxisService(req)
+        const callTaxis = await getUserCallTaxisService(req);
 
         // must check passenger first
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            callTaxis
+            callTaxis,
         });
     } catch (error) {
         console.error("Error fetching tax info:", error);
@@ -55,14 +55,14 @@ export const getUserCallTaxis = async (req: Request, res: Response) => {
 
 export const getDriverCallTaxis = async (req: Request, res: Response) => {
     try {
-        const callTaxis = await getDriverCallTaxisService(req)
+        const callTaxis = await getDriverCallTaxisService(req);
 
         // must check rider first
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            callTaxis
+            callTaxis,
         });
     } catch (error) {
         console.error("Error fetching tax info:", error);
@@ -77,12 +77,12 @@ export const getDriverCallTaxis = async (req: Request, res: Response) => {
 
 export const updateCallTaxis = async (req: Request, res: Response) => {
     try {
-        const updated = await updateCallTaxiService(req)
+        const updated = await updateCallTaxiService(req);
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            data: updated
+            data: updated,
         });
     } catch (error) {
         console.error("Error fetching tax info:", error);
@@ -97,9 +97,11 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
 export const driverUpdateStatus = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params
+        const user = (req as any).user;
 
-        const callTaxi = await CallTaxi.findOne({ _id: id, status: STATUS.REQUESTING })
+        const { id } = req.params;
+
+        const callTaxi = await CallTaxi.findById(id);
 
         if (!callTaxi) {
             res.status(404).json({
@@ -112,24 +114,33 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 
         let status: String = "";
 
-        // driver confirm ride request  
-        if (callTaxi.status === STATUS.REQUESTING) status = STATUS.DRIVER_RECEIVED
+        if (!callTaxi.driverId) {
+            // driver confirm ride request
+            if (callTaxi.status === STATUS.REQUESTING) status = STATUS.DRIVER_RECEIVED;
+        }
 
-        // driver arrived to passenger 
-        else if (callTaxi.status === STATUS.DRIVER_RECEIVED) status = STATUS.DRIVER_ARRIVED
+        if (callTaxi && callTaxi.driverId === user.id) {
+            // driver arrived to passenger
+            if (callTaxi.status === STATUS.DRIVER_RECEIVED) status = STATUS.DRIVER_ARRIVED;
+            // departure
+            if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.DEPARTURE;
+            // Success
+            if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS;
+        }
 
-        // departure 
-        else if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.DEPARTURE
-
+        // driver arrived to passenger
+        else if (callTaxi.status === STATUS.DRIVER_RECEIVED) status = STATUS.DRIVER_ARRIVED;
+        // departure
+        else if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.DEPARTURE;
         // Success
-        else if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS
+        else if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS;
 
-        const confirmed = await driverUpdateStatusService(req, status)
+        const confirmed = await driverUpdateStatusService(req, status);
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            confirmed
+            confirmed,
         });
     } catch (error) {
         console.error("Error fetching tax info:", error);
@@ -140,4 +151,4 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
             detail: (error as Error).message,
         });
     }
-}
+};
