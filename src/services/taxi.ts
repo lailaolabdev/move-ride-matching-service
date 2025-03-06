@@ -4,7 +4,7 @@ import { ITaxi } from '../models/taxi';
 
 // CREATE
 export const createTaxiService = async (
-    { taxiType, vehicleModel, vehicleModelName,vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, createdBy, createdByFullName }:
+    { taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, createdBy, createdByFullName, country }:
         {
             taxiType: string;
             vehicleModel: string;
@@ -15,6 +15,7 @@ export const createTaxiService = async (
             passengerMax: number;
             meteredFare: number;
             flatFare: number;
+            country: string;
             createdBy: string;
             createdByFullName: string;
         }): Promise<ITaxi | null> => {
@@ -29,6 +30,7 @@ export const createTaxiService = async (
             passengerMax,
             meteredFare,
             flatFare,
+            country,
             createdBy,
             createdByFullName,
         });
@@ -71,8 +73,7 @@ export const getTaxiByIdService = async (id: string): Promise<ITaxi | null> => {
             .populate({
                 path: 'taxiType',
                 select: 'name icon',
-            })
-        ;
+            });
         return taxi;
     } catch (error) {
         console.log("Error retrieving vehicle by ID: ", error);

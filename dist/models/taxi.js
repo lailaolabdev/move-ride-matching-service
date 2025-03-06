@@ -50,6 +50,7 @@ const taxiSchema = new mongoose_1.Schema({
     passengerMax: { type: Number, required: true },
     meteredFare: { type: Number, required: true },
     flatFare: { type: Number, required: true },
+    country: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: String, required: true },
     createdByFullName: { type: String, required: true },

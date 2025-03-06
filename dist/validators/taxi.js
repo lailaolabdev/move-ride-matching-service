@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateCreateTaxi = void 0;
 const config_1 = require("../config");
 const validateCreateTaxi = (req, res, next) => {
-    const { taxiType, vehicleModel, vehicleBrand, passengerMin, passengerMax, meteredFare, flatFare } = req.body;
+    const { taxiType, vehicleModel, vehicleBrand, passengerMin, passengerMax, meteredFare, flatFare, country } = req.body;
     if (!taxiType) {
         res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
@@ -50,6 +50,13 @@ const validateCreateTaxi = (req, res, next) => {
         res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
             message: 'Missing required field: flatFare'
+        });
+        return;
+    }
+    if (country === undefined) {
+        res.status(400).json({
+            code: config_1.messages.BAD_REQUEST.code,
+            message: 'Missing required field: country'
         });
         return;
     }

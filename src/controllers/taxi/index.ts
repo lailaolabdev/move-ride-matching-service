@@ -7,7 +7,7 @@ import { filterTaxis } from './helper';
 export const createTaxi = async (req: Request, res: Response) => {
     try {
         const user = (req as any).user;
-        const { taxiType, vehicleModel,vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare } = req.body;
+        const { taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, country } = req.body;
 
         const taxi = await createTaxiService({
             taxiType,
@@ -19,6 +19,7 @@ export const createTaxi = async (req: Request, res: Response) => {
             passengerMax,
             meteredFare,
             flatFare,
+            country,
             createdBy: user.id,
             createdByFullName: user.fullName
         });
@@ -81,7 +82,7 @@ export const getVehicleById = async (req: Request, res: Response) => {
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             message: 'Vehicle fetched successfully',
-            taxi 
+            taxi
         });
         return;
     } catch (error) {

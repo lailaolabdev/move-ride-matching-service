@@ -16,7 +16,7 @@ exports.deleteTaxiService = exports.updateTaxiService = exports.getTaxiByIdServi
 const config_1 = require("../config");
 const taxi_1 = __importDefault(require("../models/taxi"));
 // CREATE
-const createTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, createdBy, createdByFullName }) {
+const createTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, createdBy, createdByFullName, country }) {
     try {
         const taxi = new taxi_1.default({
             taxiType,
@@ -28,6 +28,7 @@ const createTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ t
             passengerMax,
             meteredFare,
             flatFare,
+            country,
             createdBy,
             createdByFullName,
         });

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { messages } from '../config';
 
 export const validateCreateTaxi = (req: Request, res: Response, next: NextFunction) => {
-    const { taxiType, vehicleModel, vehicleBrand, passengerMin, passengerMax, meteredFare, flatFare } = req.body;
+    const { taxiType, vehicleModel, vehicleBrand, passengerMin, passengerMax, meteredFare, flatFare, country } = req.body;
 
     if (!taxiType) {
         res.status(400).json({
@@ -50,6 +50,13 @@ export const validateCreateTaxi = (req: Request, res: Response, next: NextFuncti
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
             message: 'Missing required field: flatFare'
+        });
+        return;
+    }
+    if (country === undefined) {
+        res.status(400).json({
+            code: messages.BAD_REQUEST.code,
+            message: 'Missing required field: country'
         });
         return;
     }

@@ -17,7 +17,7 @@ const helper_1 = require("./helper");
 const createTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user;
-        const { taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare } = req.body;
+        const { taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, country } = req.body;
         const taxi = yield (0, taxi_1.createTaxiService)({
             taxiType,
             vehicleModel,
@@ -28,6 +28,7 @@ const createTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             passengerMax,
             meteredFare,
             flatFare,
+            country,
             createdBy: user.id,
             createdByFullName: user.fullName
         });

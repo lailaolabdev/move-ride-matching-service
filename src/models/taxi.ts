@@ -11,6 +11,7 @@ export interface ITaxi extends Document {
     passengerMax: number;
     meteredFare: number;
     flatFare: number;
+    country: string;
     createdAt: Date;
     createdBy: string;
     createdByFullName: string;
@@ -35,6 +36,7 @@ const taxiSchema: Schema = new Schema({
     passengerMax: { type: Number, required: true },
     meteredFare: { type: Number, required: true },
     flatFare: { type: Number, required: true },
+    country: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: String, required: true },
     createdByFullName: { type: String, required: true },
