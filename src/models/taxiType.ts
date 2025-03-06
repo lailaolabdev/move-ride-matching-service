@@ -18,12 +18,10 @@ const TaxiTypeSchema: Schema = new Schema({
     icon: { type: String, required: true },
     price: { type: Number, required: true },
     seats: { type: Number, required: true },
+    country: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: String, required: true },
-    createdByFullName: {
-        type: String,
-        required: true,
-    },
+    createdByFullName: { type: String, required: true },
     updatedAt: { type: Date, default: Date.now },
     updatedBy: { type: String },
     updatedByFullName: String

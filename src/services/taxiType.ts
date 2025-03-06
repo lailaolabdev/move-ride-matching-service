@@ -10,6 +10,7 @@ export const createTaxiTypeService = async (
         price,
         seats,
         createdBy,
+        country,
         createdByFullName
     }:
         {
@@ -17,6 +18,7 @@ export const createTaxiTypeService = async (
             icon: string,
             price: number,
             seats: number,
+            country: string,
             createdBy: string,
             createdByFullName: string
         }): Promise<ITaxiType | null> => {
@@ -26,6 +28,7 @@ export const createTaxiTypeService = async (
             icon,
             price,
             seats,
+            country,
             createdBy,
             createdByFullName,
         });

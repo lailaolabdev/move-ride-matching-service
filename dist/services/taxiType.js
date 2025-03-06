@@ -16,13 +16,14 @@ exports.deleteTaxiTypeService = exports.updateTaxiTypeService = exports.getTaxiT
 const config_1 = require("../config");
 const taxiType_1 = __importDefault(require("../models/taxiType"));
 // CREATE
-const createTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, icon, price, seats, createdBy, createdByFullName }) {
+const createTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, icon, price, seats, createdBy, country, createdByFullName }) {
     try {
         const taxiType = new taxiType_1.default({
             name,
             icon,
             price,
             seats,
+            country,
             createdBy,
             createdByFullName,
         });

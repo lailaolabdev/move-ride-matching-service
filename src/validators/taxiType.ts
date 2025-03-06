@@ -2,18 +2,18 @@ import { Request, Response, NextFunction } from 'express';
 import { messages } from '../config';
 
 export const validateCreateTaxiType = (req: Request, res: Response, next: NextFunction) => {
-    const { name, icon, price, seats } = req.body;
+    const { name, icon, price, seats, country } = req.body;
     if (!name) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
-            message: 'Missing requird field: name'
+            message: 'Missing required field: name'
         });
         return;
     }
     if (!icon) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
-            message: 'Missing requird field: icon'
+            message: 'Missing required field: icon'
         });
         return;
     }
@@ -21,7 +21,7 @@ export const validateCreateTaxiType = (req: Request, res: Response, next: NextFu
     if (!price) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
-            message: 'Missing requird field: price'
+            message: 'Missing required field: price'
         });
         return;
     }
@@ -29,7 +29,15 @@ export const validateCreateTaxiType = (req: Request, res: Response, next: NextFu
     if (!seats) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
-            message: 'Missing requird field: seats'
+            message: 'Missing required field: seats'
+        });
+        return;
+    }
+
+    if (!country) {
+        res.status(400).json({
+            code: messages.BAD_REQUEST.code,
+            message: 'Missing required field: country'
         });
         return;
     }
