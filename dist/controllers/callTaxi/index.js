@@ -20,7 +20,7 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            callTaxi
+            callTaxi,
         });
     }
     catch (error) {
@@ -40,7 +40,7 @@ const getUserCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            callTaxis
+            callTaxis,
         });
     }
     catch (error) {
@@ -60,7 +60,7 @@ const getDriverCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            callTaxis
+            callTaxis,
         });
     }
     catch (error) {
@@ -79,7 +79,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            data: updated
+            data: updated,
         });
     }
     catch (error) {
@@ -94,8 +94,9 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.updateCallTaxis = updateCallTaxis;
 const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const user = req.user;
         const { id } = req.params;
-        const callTaxi = yield callTaxi_2.CallTaxi.findOne({ _id: id, status: callTaxi_2.STATUS.REQUESTING });
+        const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
             res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
@@ -104,13 +105,26 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             return;
         }
         let status = "";
-        // driver confirm ride request  
-        if (callTaxi.status === callTaxi_2.STATUS.REQUESTING)
-            status = callTaxi_2.STATUS.DRIVER_RECEIVED;
-        // driver arrived to passenger 
+        if (!callTaxi.driverId) {
+            // driver confirm ride request
+            if (callTaxi.status === callTaxi_2.STATUS.REQUESTING)
+                status = callTaxi_2.STATUS.DRIVER_RECEIVED;
+        }
+        if (callTaxi && callTaxi.driverId === user.id) {
+            // driver arrived to passenger
+            if (callTaxi.status === callTaxi_2.STATUS.DRIVER_RECEIVED)
+                status = callTaxi_2.STATUS.DRIVER_ARRIVED;
+            // departure
+            if (callTaxi.status === callTaxi_2.STATUS.DRIVER_ARRIVED)
+                status = callTaxi_2.STATUS.DEPARTURE;
+            // Success
+            if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE)
+                status = callTaxi_2.STATUS.SEND_SUCCESS;
+        }
+        // driver arrived to passenger
         else if (callTaxi.status === callTaxi_2.STATUS.DRIVER_RECEIVED)
             status = callTaxi_2.STATUS.DRIVER_ARRIVED;
-        // departure 
+        // departure
         else if (callTaxi.status === callTaxi_2.STATUS.DRIVER_ARRIVED)
             status = callTaxi_2.STATUS.DEPARTURE;
         // Success
@@ -120,7 +134,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            confirmed
+            confirmed,
         });
     }
     catch (error) {
