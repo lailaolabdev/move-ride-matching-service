@@ -126,14 +126,23 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
             if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.DEPARTURE;
             // Success
             if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS;
-        }
 
-        // driver arrived to passenger
-        else if (callTaxi.status === STATUS.DRIVER_RECEIVED) status = STATUS.DRIVER_ARRIVED;
-        // departure
-        else if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.DEPARTURE;
-        // Success
-        else if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS;
+            if (callTaxi.status === STATUS.SEND_SUCCESS) {
+                res.status(200).json({
+                    code: messages.SUCCESSFULLY.code,
+                    messages: messages.SUCCESSFULLY.message,
+                });
+
+                return
+            }
+        } else {
+            res.status(400).json({
+                code: messages.SUCCESSFULLY.code,
+                messages: messages.SUCCESSFULLY.message,
+            });
+
+            return
+        }
 
         const confirmed = await driverUpdateStatusService(req, status);
 
