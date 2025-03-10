@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateUserDistanceAndDuration = void 0;
+exports.calculateDriverDistanceAndDuration = exports.calculateUserDistanceAndDuration = void 0;
 const config_1 = require("../../config");
 const calculation_1 = require("../../services/calculation");
 const taxiType_1 = __importDefault(require("../../models/taxiType"));
@@ -56,3 +56,29 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
     }
 });
 exports.calculateUserDistanceAndDuration = calculateUserDistanceAndDuration;
+const calculateDriverDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { origin, destination } = req.body;
+        const calculation = yield (0, calculation_1.calculateDriverDistanceAndDurationService)(origin, destination);
+        if (!calculation) {
+            res.status(404).json({
+                code: config_1.messages.NOT_FOUND.code,
+                message: `Calculate not found ${config_1.messages.NOT_FOUND.message}`,
+            });
+        }
+        res.status(200).json({
+            code: config_1.messages.CREATE_SUCCESSFUL.code,
+            message: config_1.messages.CREATE_SUCCESSFUL.message,
+            calculation
+        });
+    }
+    catch (error) {
+        console.log("error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.calculateDriverDistanceAndDuration = calculateDriverDistanceAndDuration;

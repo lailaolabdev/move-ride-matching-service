@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { messages } from "../../config";
-import { calculateUserDistanceAndDurationService } from "../../services/calculation";
+import { calculateDriverDistanceAndDurationService, calculateUserDistanceAndDurationService } from "../../services/calculation";
 import taxiTypeModel from "../../models/taxiType";
 
 export const calculateUserDistanceAndDuration = async (req: Request, res: Response): Promise<any> => {
@@ -59,3 +59,32 @@ export const calculateUserDistanceAndDuration = async (req: Request, res: Respon
         });
     }
 };
+
+export const calculateDriverDistanceAndDuration = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { origin, destination } = req.body
+
+        const calculation = await calculateDriverDistanceAndDurationService(origin, destination)
+
+        if (!calculation) {
+            res.status(404).json({
+                code: messages.NOT_FOUND.code,
+                message: `Calculate not found ${messages.NOT_FOUND.message}`,
+            });
+        }
+
+        res.status(200).json({
+            code: messages.CREATE_SUCCESSFUL.code,
+            message: messages.CREATE_SUCCESSFUL.message,
+            calculation
+        });
+    } catch (error) {
+        console.log("error: ", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}

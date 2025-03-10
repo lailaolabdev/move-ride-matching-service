@@ -1,9 +1,11 @@
 import express from "express";
-import { calculateUserDistanceAndDuration } from "../controllers/calculation"
+import { calculateUserDistanceAndDuration, calculateDriverDistanceAndDuration } from "../controllers/calculation"
 import { checkAuthorizationMiddleware } from "../middlewares";
 
 const router = express.Router();
 
-router.post("/", checkAuthorizationMiddleware, calculateUserDistanceAndDuration);
+router.post("/passenger", checkAuthorizationMiddleware, calculateUserDistanceAndDuration);
+
+router.post("/driver", checkAuthorizationMiddleware, calculateDriverDistanceAndDuration);
 
 export default router

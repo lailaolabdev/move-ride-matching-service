@@ -111,7 +111,7 @@ export const calculateUserDistanceAndDurationService = async (origin: string, de
             distanceInPolygon,
             durationInPolygon,
             normalDuration: parseFloat(totalNormalDurationMin.toFixed(2)),
-            delayDuration: parseFloat(totalTrafficDelayMin.toFixed(2)),
+            delayDuration: parseFloat(totalTrafficDelayMin.toFixed(2)) > 0 ? parseFloat(totalTrafficDelayMin.toFixed(2)) : 0,
             delayDistance: parseFloat(trafficDistance.toFixed(2)),
             totalDuration: parseFloat(totalTrafficDurationMin.toFixed(2)),
             totalDistance: parseFloat(totalDistance.toFixed(2)),
@@ -143,7 +143,7 @@ export const calculateDriverDistanceAndDurationService = async (origin: string, 
         return {
             totalDistance: parseFloat(totalDistance.toFixed(2)),
             totalNormalDurationMin: parseFloat(totalNormalDurationMin.toFixed(2)),
-            totalTrafficDelayMin: parseFloat(totalTrafficDelayMin.toFixed(2)),
+            totalTrafficDelayMin: parseFloat(totalTrafficDelayMin.toFixed(2)) > 0 ? parseFloat(totalTrafficDelayMin.toFixed(2)) : 0,
             totalTrafficDurationMin: parseFloat(totalTrafficDurationMin.toFixed(2)),
         }
 
