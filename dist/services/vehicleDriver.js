@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteVehicleDriverService = exports.updateVehicleDriverService = exports.getVehicleDriverByIdService = exports.getAllVehicleDriversService = exports.createVehicleDriverService = void 0;
+exports.deleteVehicleDriverService = exports.updateVehicleDriverService = exports.getVehicleDriverByDriverIdService = exports.getVehicleDriverByIdService = exports.getAllVehicleDriversService = exports.createVehicleDriverService = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const vehicleDriver_1 = __importDefault(require("../models/vehicleDriver"));
 // CREATE
@@ -143,6 +143,19 @@ const getVehicleDriverByIdService = (id) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.getVehicleDriverByIdService = getVehicleDriverByIdService;
+// READ (Taxi Type by ID)
+const getVehicleDriverByDriverIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vehicleDriver = yield vehicleDriver_1.default.findOne({ driver: id })
+            .select("-_id frontVehicleImage backVehicleImage licensePlate");
+        return vehicleDriver;
+    }
+    catch (error) {
+        console.log("Error retrieving taxi type by ID: ", error);
+        throw error;
+    }
+});
+exports.getVehicleDriverByDriverIdService = getVehicleDriverByDriverIdService;
 // UPDATE
 const updateVehicleDriverService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxi, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate, updatedBy, updatedByFullName }) {
     try {

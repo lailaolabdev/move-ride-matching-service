@@ -10,6 +10,7 @@ const vehicleDriver_2 = require("../controllers/vehicleDriver");
 const router = express_1.default.Router();
 router.get('/', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.getAllVehicleDrivers);
 router.get('/:id', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.getVehicleDriver);
+router.get('/driver/:id', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.getVehicleDriverByDriverId);
 router.post('/', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_1.validateCreateVehicleDriver, vehicleDriver_2.createVehicleDriver);
 router.put('/:id', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.updateVehicleDriver);
 router.delete('/:id', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.deleteVehicleDriver);

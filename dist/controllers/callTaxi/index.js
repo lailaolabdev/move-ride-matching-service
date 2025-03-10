@@ -120,16 +120,21 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             // Success
             if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE)
                 status = callTaxi_2.STATUS.SEND_SUCCESS;
+            if (callTaxi.status === callTaxi_2.STATUS.SEND_SUCCESS) {
+                res.status(200).json({
+                    code: config_1.messages.SUCCESSFULLY.code,
+                    messages: config_1.messages.SUCCESSFULLY.message,
+                });
+                return;
+            }
         }
-        // driver arrived to passenger
-        else if (callTaxi.status === callTaxi_2.STATUS.DRIVER_RECEIVED)
-            status = callTaxi_2.STATUS.DRIVER_ARRIVED;
-        // departure
-        else if (callTaxi.status === callTaxi_2.STATUS.DRIVER_ARRIVED)
-            status = callTaxi_2.STATUS.DEPARTURE;
-        // Success
-        else if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE)
-            status = callTaxi_2.STATUS.SEND_SUCCESS;
+        else {
+            res.status(400).json({
+                code: config_1.messages.SUCCESSFULLY.code,
+                messages: config_1.messages.SUCCESSFULLY.message,
+            });
+            return;
+        }
         const confirmed = yield (0, callTaxi_1.driverUpdateStatusService)(req, status);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,

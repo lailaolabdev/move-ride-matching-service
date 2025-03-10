@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
 import { messages } from '../../config';
 import { filterVehicleDriver } from './helper';
-import { createVehicleDriverService, deleteVehicleDriverService, getAllVehicleDriversService, getVehicleDriverByIdService, updateVehicleDriverService } from '../../services/vehicleDriver';
+import {
+    createVehicleDriverService,
+    deleteVehicleDriverService,
+    getAllVehicleDriversService,
+    getVehicleDriverByIdService,
+    updateVehicleDriverService,
+    getVehicleDriverByDriverIdService
+} from '../../services/vehicleDriver';
 import { getAllTaxiService } from '../../services/taxi';
 
 // CREATE Taxi
@@ -81,6 +88,33 @@ export const getAllVehicleDrivers = async (req: Request, res: Response) => {
 export const getVehicleDriver = async (req: Request, res: Response) => {
     try {
         const vehicleDriver = await getVehicleDriverByIdService(req.params.id);
+        if (!vehicleDriver) {
+            res.status(404).json({
+                code: messages.NOT_FOUND.code,
+                message: 'Vehicle Driver not found'
+            });
+            return;
+        }
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: 'Vehicle Driver fetched successfully',
+            vehicleDriver
+        });
+        return;
+    } catch (error) {
+        console.log("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message
+        });
+        return;
+    }
+};
+
+export const getVehicleDriverByDriverId = async (req: Request, res: Response) => {
+    try {
+        const vehicleDriver = await getVehicleDriverByDriverIdService(req.params.id);
         if (!vehicleDriver) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,

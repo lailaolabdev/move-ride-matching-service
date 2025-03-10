@@ -158,6 +158,19 @@ export const getVehicleDriverByIdService = async (id: string): Promise<IVehicleD
     }
 };
 
+// READ (Taxi Type by ID)
+export const getVehicleDriverByDriverIdService = async (id: string): Promise<IVehicleDriver | null> => {
+    try {
+        const vehicleDriver = await vehicleDriverModel.findOne({ driver: id })
+            .select("-_id frontVehicleImage backVehicleImage licensePlate")
+
+        return vehicleDriver;
+    } catch (error) {
+        console.log("Error retrieving taxi type by ID: ", error);
+        throw error;
+    }
+};
+
 // UPDATE
 export const updateVehicleDriverService = async (
     {

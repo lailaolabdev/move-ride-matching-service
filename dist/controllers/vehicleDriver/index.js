@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteVehicleDriver = exports.updateVehicleDriver = exports.getVehicleDriver = exports.getAllVehicleDrivers = exports.createVehicleDriver = void 0;
+exports.deleteVehicleDriver = exports.updateVehicleDriver = exports.getVehicleDriverByDriverId = exports.getVehicleDriver = exports.getAllVehicleDrivers = exports.createVehicleDriver = void 0;
 const config_1 = require("../../config");
 const helper_1 = require("./helper");
 const vehicleDriver_1 = require("../../services/vehicleDriver");
@@ -112,6 +112,34 @@ const getVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getVehicleDriver = getVehicleDriver;
+const getVehicleDriverByDriverId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vehicleDriver = yield (0, vehicleDriver_1.getVehicleDriverByDriverIdService)(req.params.id);
+        if (!vehicleDriver) {
+            res.status(404).json({
+                code: config_1.messages.NOT_FOUND.code,
+                message: 'Vehicle Driver not found'
+            });
+            return;
+        }
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            message: 'Vehicle Driver fetched successfully',
+            vehicleDriver
+        });
+        return;
+    }
+    catch (error) {
+        console.log("Error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message
+        });
+        return;
+    }
+});
+exports.getVehicleDriverByDriverId = getVehicleDriverByDriverId;
 // UPDATE Vehicle
 const updateVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
