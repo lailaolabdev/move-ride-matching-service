@@ -128,13 +128,6 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 return;
             }
         }
-        else {
-            res.status(400).json({
-                code: config_1.messages.SUCCESSFULLY.code,
-                messages: config_1.messages.SUCCESSFULLY.message,
-            });
-            return;
-        }
         const confirmed = yield (0, callTaxi_1.driverUpdateStatusService)(req, status);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
