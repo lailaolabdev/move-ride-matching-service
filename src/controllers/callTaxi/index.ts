@@ -135,13 +135,6 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 
                 return
             }
-        } else {
-            res.status(400).json({
-                code: messages.SUCCESSFULLY.code,
-                messages: messages.SUCCESSFULLY.message,
-            });
-
-            return
         }
 
         const confirmed = await driverUpdateStatusService(req, status);
