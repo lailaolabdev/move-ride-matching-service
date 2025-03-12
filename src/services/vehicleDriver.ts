@@ -171,7 +171,7 @@ export const getVehicleDriverByIdService = async (id: string): Promise<IVehicleD
 export const getVehicleDriverByDriverIdService = async (id: string): Promise<IVehicleDriver | null> => {
     try {
         const vehicleDriver = await vehicleDriverModel.findOne({ driver: id })
-            .select("-_id frontVehicleImage backVehicleImage licensePlate")
+            .select("-_id -taxi -createdBy -createdByFullName -createdAt -updatedAt -__v")
 
         return vehicleDriver;
     } catch (error) {

@@ -150,7 +150,7 @@ exports.getVehicleDriverByIdService = getVehicleDriverByIdService;
 const getVehicleDriverByDriverIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vehicleDriver = yield vehicleDriver_1.default.findOne({ driver: id })
-            .select("-_id frontVehicleImage backVehicleImage licensePlate");
+            .select("-_id -taxi -createdBy -createdByFullName -createdAt -updatedAt -__v");
         return vehicleDriver;
     }
     catch (error) {
