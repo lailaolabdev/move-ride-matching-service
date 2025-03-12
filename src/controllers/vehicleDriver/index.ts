@@ -27,10 +27,11 @@ export const createVehicleDriver = async (req: Request, res: Response) => {
             return;
         }
 
-        console.log("taxis.taxies[0]._id: ", taxis.taxies[0]._id);
-
         const vehicleDriver = await createVehicleDriverService({
-            taxi: taxis.taxies[0]._id,
+            taxi: taxis.taxies._id,
+            taxiType: taxis.taxies.taxiType,
+            vehicleModel: taxis.taxies.vehicleModel,
+            vehicleBrand: taxis.taxies.vehicleBrand,
             driver,
             driverFullName,
             frontVehicleImage,

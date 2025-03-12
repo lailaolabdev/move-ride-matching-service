@@ -16,10 +16,13 @@ exports.deleteVehicleDriverService = exports.updateVehicleDriverService = export
 const mongoose_1 = __importDefault(require("mongoose"));
 const vehicleDriver_1 = __importDefault(require("../models/vehicleDriver"));
 // CREATE
-const createVehicleDriverService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxi, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate, createdBy, createdByFullName }) {
+const createVehicleDriverService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxi, taxiType, vehicleModel, vehicleBrand, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate, createdBy, createdByFullName }) {
     try {
         const newVehicleDriver = new vehicleDriver_1.default({
             taxi,
+            taxiType,
+            vehicleModel,
+            vehicleBrand,
             driver,
             driverFullName,
             frontVehicleImage,

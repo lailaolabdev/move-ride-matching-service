@@ -6,6 +6,9 @@ import vehicleDriverModel, { IVehicleDriver } from '../models/vehicleDriver';
 export const createVehicleDriverService = async (
     {
         taxi,
+        taxiType,
+        vehicleModel,
+        vehicleBrand,
         driver,
         driverFullName,
         frontVehicleImage,
@@ -16,6 +19,9 @@ export const createVehicleDriverService = async (
     }:
         {
             taxi: string,
+            taxiType: string,
+            vehicleModel: string,
+            vehicleBrand: string,
             driver: string,
             driverFullName: string,
             frontVehicleImage: string,
@@ -27,6 +33,9 @@ export const createVehicleDriverService = async (
     try {
         const newVehicleDriver = new vehicleDriverModel({
             taxi,
+            taxiType,
+            vehicleModel,
+            vehicleBrand,
             driver,
             driverFullName,
             frontVehicleImage,

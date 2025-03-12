@@ -28,9 +28,11 @@ const createVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, func
             });
             return;
         }
-        console.log("taxis.taxies[0]._id: ", taxis.taxies[0]._id);
         const vehicleDriver = yield (0, vehicleDriver_1.createVehicleDriverService)({
-            taxi: taxis.taxies[0]._id,
+            taxi: taxis.taxies._id,
+            taxiType: taxis.taxies.taxiType,
+            vehicleModel: taxis.taxies.vehicleModel,
+            vehicleBrand: taxis.taxies.vehicleBrand,
             driver,
             driverFullName,
             frontVehicleImage,

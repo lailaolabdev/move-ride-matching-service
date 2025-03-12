@@ -39,6 +39,18 @@ const vehicleDriverSchema = new mongoose_1.Schema({
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'Taxi'
     },
+    taxiType: {
+        type: String,
+        required: true
+    },
+    vehicleModel: {
+        type: String,
+        required: true
+    },
+    vehicleBrand: {
+        type: String,
+        required: true
+    },
     driver: {
         type: String,
         required: true

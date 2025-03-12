@@ -22,12 +22,24 @@ const vehicleDriverSchema: Schema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Taxi'
     },
+    taxiType: {
+        type: String,
+        required: true
+    },
+    vehicleModel: {
+        type: String,
+        required: true
+    },
+    vehicleBrand: {
+        type: String,
+        required: true
+    },
     driver: {
         type: String,
         required: true
     },
     driverFullName: {
-        type: String, 
+        type: String,
         required: true
     },
     frontVehicleImage: {
