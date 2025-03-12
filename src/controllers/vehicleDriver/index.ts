@@ -18,12 +18,14 @@ export const createVehicleDriver = async (req: Request, res: Response) => {
         const { taxiType, vehicleModel, vehicleBrand, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate } = req.body;
 
         const taxis = await getAllTaxiService(0, 1, { vehicleModel, vehicleBrand, taxiType });
-        if (taxis.taxies.length < 1) {
+
+        if (!taxis.taxies) {
             res.status(400).json({
                 code: messages.BAD_REQUEST.code,
                 message: messages.BAD_REQUEST.message,
                 detail: 'Vehicle Model or Vehicle Brand not found'
             });
+
             return;
         }
 
