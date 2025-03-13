@@ -7,8 +7,11 @@ import {
     getUserCallTaxisService,
     updateCallTaxiService,
     driverUpdateStatusService,
+    callTaxiTotalPriceReportService,
 } from "../../services/callTaxi";
 import { CallTaxi, STATUS } from "../../models/callTaxi";
+import { Pipeline } from "ioredis";
+import { pipeline } from "./helper";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
@@ -147,6 +150,34 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Error fetching tax info:", error);
 
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+
+
+export const callTaxiTotalPrice = async (req: Request, res: Response) => {
+    try {
+        const { startDate, endDate } = req.query;
+        // Create pipeline
+        const pipeneMongo = pipeline({ 
+            startDate: startDate ? new Date(startDate as string) : undefined,
+            endDate: endDate ? new Date(endDate as string) : undefined,
+        });
+        // Call the  service function
+        const totalPrice = await callTaxiTotalPriceReportService(pipeneMongo);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: messages.SUCCESSFULLY.message,
+            totalPrice: totalPrice,
+        });
+    } catch (error) {
+        console.error("Error fetching tax info:", error);
         res.status(500).json({
             code: messages.INTERNAL_SERVER_ERROR.code,
             message: messages.INTERNAL_SERVER_ERROR.message,

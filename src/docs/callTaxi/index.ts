@@ -240,3 +240,63 @@
  *                   type: string
  *                   example: "Error details here"
  */
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/total-price:
+ *   get:
+ *     summary: Get total price of all call taxi and filter by date range
+ *     description: Get total price of all call taxi and filter by date range
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         example: "2025-02-20T04:51:50.283Z"
+ *         
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         example: "2025-02-20T04:51:50.283Z"
+ *         
+ *     responses:
+ *       200:
+ *         description: Total price of all call taxi and filter by date range
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully"
+ *                 totalPrice:
+ *                   type: number
+ *                   example: 12622.400000000001
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "An unexpected error occurred"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error fetching tax info"
+ */

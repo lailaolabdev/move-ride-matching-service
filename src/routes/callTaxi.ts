@@ -4,7 +4,9 @@ import {
     createCallTaxi,
     getDriverCallTaxis,
     getUserCallTaxis,
-    updateCallTaxis
+    updateCallTaxis,
+    callTaxiTotalPrice,
+    // callTaxiStarDateAndEndDateTotalPriceReport
 } from "../controllers/callTaxi"
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -28,6 +30,18 @@ router.get(
     checkAuthorizationMiddleware,
     getDriverCallTaxis,
 );
+// get total price of call taxi
+router.get(
+    "/total-price",
+    checkAuthorizationMiddleware,
+    callTaxiTotalPrice,
+);
+// get total price of call taxi  by start date and end date
+// router.get(
+//     "/startDate-endDate",
+//     checkAuthorizationMiddleware,
+//     callTaxiStarDateAndEndDateTotalPriceReport,
+// );
 
 router.put(
     "/:id",

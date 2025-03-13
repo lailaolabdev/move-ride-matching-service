@@ -141,3 +141,20 @@ export const calculateDriverDistanceAndDurationService = async (origin: string, 
         throw error;
     }
 }
+
+export const callTaxiTotalPriceReportService = async (pipeline:any) => {
+    try {
+        // Execute the aggregation pipeline
+        const result = await CallTaxi.aggregate(pipeline);
+
+        // Return the total price or 0 if no results are found
+        if (result.length) {
+            return result[0].totalPrice;
+        } else {
+            return 0;
+        }
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
