@@ -150,12 +150,17 @@ const updateVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, func
         let taxi;
         if (taxiType && vehicleBrand && vehicleModel) {
             const taxis = yield (0, taxi_1.getAllTaxiService)(0, 1, { taxiType, vehicleModel, vehicleBrand });
-            if (taxis.taxies.length > 0) {
-                taxi = taxis.taxies[0]._id;
+            if (!taxis.taxies) {
+                res.status(400).json({
+                    code: config_1.messages.BAD_REQUEST.code,
+                    message: config_1.messages.BAD_REQUEST.message,
+                    detail: 'Vehicle Model or Vehicle Brand not found'
+                });
+                return;
             }
+            taxi = taxis._id;
         }
         const vehicleDriver = yield (0, vehicleDriver_1.updateVehicleDriverService)({
-            id: req.params.id,
             taxi,
             driver,
             driverFullName,

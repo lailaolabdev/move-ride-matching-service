@@ -151,13 +151,20 @@ export const updateVehicleDriver = async (req: Request, res: Response) => {
         let taxi;
         if (taxiType && vehicleBrand && vehicleModel) {
             const taxis = await getAllTaxiService(0, 1, { taxiType, vehicleModel, vehicleBrand });
-            if (taxis.taxies.length > 0) {
-                taxi = taxis.taxies[0]._id;
+            if (!taxis.taxies) {
+                res.status(400).json({
+                    code: messages.BAD_REQUEST.code,
+                    message: messages.BAD_REQUEST.message,
+                    detail: 'Vehicle Model or Vehicle Brand not found'
+                });
+
+                return;
             }
+
+            taxi = taxis._id;
         }
 
         const vehicleDriver = await updateVehicleDriverService({
-            id: req.params.id,
             taxi,
             driver,
             driverFullName,

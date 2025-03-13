@@ -183,7 +183,6 @@ export const getVehicleDriverByDriverIdService = async (id: string): Promise<IVe
 // UPDATE
 export const updateVehicleDriverService = async (
     {
-        id,
         taxi,
         driver,
         driverFullName,
@@ -194,7 +193,6 @@ export const updateVehicleDriverService = async (
         updatedByFullName
     }:
         {
-            id: string,
             taxi: string,
             driver: string,
             driverFullName: string,
@@ -205,8 +203,8 @@ export const updateVehicleDriverService = async (
             updatedByFullName: string
         }): Promise<IVehicleDriver | null> => {
     try {
-        const vehicleDriver = await vehicleDriverModel.findByIdAndUpdate(
-            id,
+        const vehicleDriver = await vehicleDriverModel.findOneAndUpdate(
+            { driver },
             {
                 $set: {
                     taxi,

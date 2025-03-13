@@ -12,6 +12,6 @@ router.get('/', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.getA
 router.get('/:id', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.getVehicleDriver);
 router.get('/driver/:id', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.getVehicleDriverByDriverId);
 router.post('/', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_1.validateCreateVehicleDriver, vehicleDriver_2.createVehicleDriver);
-router.put('/:id', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.updateVehicleDriver);
+router.put('/', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.updateVehicleDriver);
 router.delete('/:id', middlewares_1.checkAuthorizationMiddleware, vehicleDriver_2.deleteVehicleDriver);
 exports.default = router;
