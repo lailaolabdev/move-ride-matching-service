@@ -19,7 +19,7 @@ export const createVehicleDriver = async (req: Request, res: Response) => {
 
         const taxis = await getAllTaxiService(0, 1, { vehicleModel, vehicleBrand, taxiType });
 
-        if (!taxis.taxies) {
+        if (taxis.taxies.length < 1) {
             res.status(400).json({
                 code: messages.BAD_REQUEST.code,
                 message: messages.BAD_REQUEST.message,
@@ -30,7 +30,7 @@ export const createVehicleDriver = async (req: Request, res: Response) => {
         }
 
         const vehicleDriver = await createVehicleDriverService({
-            taxi: taxis.taxies._id,
+            taxi: taxis.taxies[0]._id,
             taxiType: taxis.taxies.taxiType,
             vehicleModel: taxis.taxies.vehicleModel,
             vehicleBrand: taxis.taxies.vehicleBrand,

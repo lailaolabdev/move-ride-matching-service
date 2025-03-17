@@ -20,7 +20,7 @@ const createVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, func
         const user = req.user;
         const { taxiType, vehicleModel, vehicleBrand, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate } = req.body;
         const taxis = yield (0, taxi_1.getAllTaxiService)(0, 1, { vehicleModel, vehicleBrand, taxiType });
-        if (!taxis.taxies) {
+        if (taxis.taxies.length < 1) {
             res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
                 message: config_1.messages.BAD_REQUEST.message,
@@ -29,7 +29,7 @@ const createVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, func
             return;
         }
         const vehicleDriver = yield (0, vehicleDriver_1.createVehicleDriverService)({
-            taxi: taxis.taxies._id,
+            taxi: taxis.taxies[0]._id,
             taxiType: taxis.taxies.taxiType,
             vehicleModel: taxis.taxies.vehicleModel,
             vehicleBrand: taxis.taxies.vehicleBrand,

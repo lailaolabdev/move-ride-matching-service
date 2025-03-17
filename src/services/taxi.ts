@@ -51,7 +51,14 @@ export const createTaxiService = async (
 export const getAllTaxiService = async (skip: number, limit: number, filter: object): Promise<any> => {
     try {
         const total = await taxiModel.countDocuments(filter);
-        const taxies = await taxiModel.findOne(filter)
+        const taxies = await taxiModel.find(filter)
+            .skip(skip)
+            .limit(limit)
+            .populate({
+                path: 'taxiType',
+                select: 'name icon',
+            })
+            .sort({ createdAt: -1 });
 
         return { total, taxies };
     } catch (error) {

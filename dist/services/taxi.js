@@ -48,7 +48,14 @@ exports.createTaxiService = createTaxiService;
 const getAllTaxiService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const total = yield taxi_1.default.countDocuments(filter);
-        const taxies = yield taxi_1.default.findOne(filter);
+        const taxies = yield taxi_1.default.find(filter)
+            .skip(skip)
+            .limit(limit)
+            .populate({
+            path: 'taxiType',
+            select: 'name icon',
+        })
+            .sort({ createdAt: -1 });
         return { total, taxies };
     }
     catch (error) {
