@@ -300,3 +300,109 @@
  *                   type: string
  *                   example: "Error fetching tax info"
  */
+
+
+
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/rating-comment/{id}:
+ *   put:
+ *     summary: Update star and comment of a calling taxi
+ *     description: Update star and comment of a calling taxi
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "67b758886ec0110acaac7d5c"
+ *         description: The ID of the calling taxi to be updated.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               rating:
+ *                 type: number
+ *                 description: The rating of the calling taxi.
+ *                 example: 5
+ *               comment:
+ *                 type: string
+ *                 description: The comment of the calling taxi.
+ *                 example: "Good service"
+ *               
+ *     responses:
+ *       '200':
+ *         description: Successfully updated the star and comment of the calling taxi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                   description: The response code.
+ *                 messages:
+ *                   type: string
+ *                   example: "Successfully"
+ *                   description: The response message.
+ *       
+ */
+
+
+
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/chat-call-taxi/{id}:
+ *   put:
+ *     summary: Update chat details for a specific call taxi by ID
+ *     description: This endpoint updates the chat details (an array of chat messages) for a specific call taxi identified by its ID.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "67b758886ec0110acaac7d5c"
+ *         description: The unique identifier of the call taxi record to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               
+ *               message:
+ *                 type: string
+ *                 description: The comment of the calling taxi.
+ *                 example: "test"
+ *             
+ *     responses:
+ *       200:
+ *         description: Chat details updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 messages:
+ *                   type: string
+ *                   example: "Successfully."
+ */

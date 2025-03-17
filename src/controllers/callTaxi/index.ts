@@ -8,6 +8,9 @@ import {
     updateCallTaxiService,
     driverUpdateStatusService,
     callTaxiTotalPriceReportService,
+
+    updateChatCallTaxiService,
+    updateStarAndCommentService,
 } from "../../services/callTaxi";
 import { CallTaxi, STATUS } from "../../models/callTaxi";
 import { Pipeline } from "ioredis";
@@ -159,12 +162,12 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 };
 
 
-
+// Call the service function to calculate the total price of the taxi
 export const callTaxiTotalPrice = async (req: Request, res: Response) => {
     try {
         const { startDate, endDate } = req.query;
         // Create pipeline
-        const pipeneMongo = pipeline({ 
+        const pipeneMongo = pipeline({
             startDate: startDate ? new Date(startDate as string) : undefined,
             endDate: endDate ? new Date(endDate as string) : undefined,
         });
@@ -185,3 +188,66 @@ export const callTaxiTotalPrice = async (req: Request, res: Response) => {
         });
     }
 };
+
+// 
+
+export const updateStartAndComment = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { id } = req.params;
+        const { rating, comment } = req.body;
+        if(rating > 5){
+            return res.status(400).json({
+                code: messages.BAD_REQUEST.code,
+                messages: messages.BAD_GATEWAY.message,
+                detail: "The rating must not exceed 5. Please provide a value between 1 and 5."
+            })
+        }
+          await updateStarAndCommentService(id, rating, comment);
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
+
+export const chatCallTaxi = async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+        let { message } = req.body;
+        
+        const chatId = (req as any).user.id
+        
+        const chatData =[ {
+            id: chatId, 
+            message: message,
+            createdAt:   new Date(), 
+            updatedAt: new Date() 
+        }];
+
+      const data=  await updateChatCallTaxiService(id, chatData);
+    // const data=  await updateChatCallTaxiService(id, chat);
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            data: data
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}

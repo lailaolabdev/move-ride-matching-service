@@ -158,3 +158,35 @@ export const callTaxiTotalPriceReportService = async (pipeline:any) => {
         throw error;
     }
 };
+
+export const updateStarAndCommentService = async (id:String, rating:Number, comment:String): Promise<any> => {
+    try {
+        const date = {
+            rating:rating,
+            comment:comment,
+        }
+        const starDate = await CallTaxi.findOneAndUpdate({_id:id},
+            date,
+            { new: true }
+        )
+      
+        return starDate
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        return null;
+        
+    }
+}
+export const updateChatCallTaxiService = async (id:String, chat: Object[]): Promise<any> => {
+    try {
+
+        const starDate = await CallTaxi.findOneAndUpdate({_id:id},
+           {$addToSet: { chat: chat }} ,
+            { new: true }
+        )
+        return starDate
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        return null;
+    }
+}

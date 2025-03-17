@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const REQUEST_TYPE = {
 	METERED_FARE: "meter",
@@ -29,11 +29,22 @@ export interface ICallTaxi extends Document {
 	normalDurationMin: Number;
 	trafficDelayMin: Number;
 	totalDurationMin: Number;
-	totalPrice: Number,
+	totalPrice: Number;
+	star: Number;
+	comment: String;
+	chart: Object[];
 	status: String;
 	createdAt: Date;
 	updatedAt: Date;
 }
+
+const chatSchema = new mongoose.Schema(
+    {
+        id: String,
+        message: String
+    },
+    { timestamps: true } // This will automatically add `createdAt` and `updatedAt`
+);
 
 const CallTaxiSchema: Schema = new Schema(
 	{
@@ -94,6 +105,9 @@ const CallTaxiSchema: Schema = new Schema(
 			type: Number,
 			required: true,
 		},
+		rating: Number,
+		comment: String,
+		chat: [chatSchema],
 		status: {
 			type: String,
 			enum: Object.values(STATUS),
