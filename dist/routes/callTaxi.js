@@ -8,9 +8,7 @@ const callTaxi_1 = require("../controllers/callTaxi");
 const validateParamId_1 = require("../utils/validateParamId");
 const middlewares_1 = require("../middlewares");
 const router = express_1.default.Router();
-router.post("/", 
-// checkAuthorizationMiddleware,
-callTaxi_1.createCallTaxi);
+router.post("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createCallTaxi);
 router.get("/user-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getUserCallTaxis);
 router.get("/driver-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverCallTaxis);
 router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateCallTaxis);

@@ -12,13 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.createCallTaxiService = void 0;
+exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getCallTaxisService = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // const passengerId = (req as any).user.id;
-        const passengerId = "testId";
+        const passengerId = req.user.id;
         const { carTypeId, driverId, origin, destination, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice } = req.body;
         const created = yield callTaxi_1.CallTaxi.create({
             passengerId,
@@ -44,6 +43,21 @@ const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.createCallTaxiService = createCallTaxiService;
+const getCallTaxisService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.user.id;
+        const callTaxi = yield callTaxi_1.CallTaxi.findOne({
+            passengerId,
+            status: { $in: ["Requesting", "Accepted", "Driver_Arrived", "departure", "Success"] }
+        });
+        return callTaxi ? callTaxi : null;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getCallTaxisService = getCallTaxisService;
 const getUserCallTaxisService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.user.id;

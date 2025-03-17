@@ -7,18 +7,49 @@ import {
     getUserCallTaxisService,
     updateCallTaxiService,
     driverUpdateStatusService,
+    getCallTaxisService,
 } from "../../services/callTaxi";
-import { CallTaxi, STATUS } from "../../models/callTaxi";
+import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
+import axios from "axios";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
-        // Create ride request
-        const callTaxi = await createCallTaxiService(req);
+        const passengerId = (req as any).user.id;
+
+        // const isCallTaxiExist = await getCallTaxisService(req)
+
+        // if (isCallTaxiExist) {
+        //     res.status(201).json({
+        //         code: messages.BAD_REQUEST.code,
+        //         message: messages.BAD_REQUEST.message,
+        //         detail: "This user is in processing calling taxi"
+        //     });
+
+        //     return
+        // }
+
+        // Fetch user data
+        const passengerData = await axios.get(
+            `${process.env.USER_SERVICE_URL}/v1/api/users/${passengerId}`,
+            {
+                headers: {
+                    Authorization: `${req.headers["authorization"]}`,
+                },
+            }
+        );
+
+        const passenger = passengerData?.data?.user
+
+        const callTaxi: any = await createCallTaxiService(req);
 
         res.status(201).json({
             code: messages.CREATE_SUCCESSFUL.code,
             message: messages.CREATE_SUCCESSFUL.message,
-            callTaxi,
+            callTaxi: {
+                fullName: passenger.fullName,
+                profileImage: passenger.profileImage,
+                ...callTaxi.toObject()
+            }
         });
     } catch (error) {
         console.log("error: ", error);

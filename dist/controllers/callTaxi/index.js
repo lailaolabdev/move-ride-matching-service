@@ -8,19 +8,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
+const axios_1 = __importDefault(require("axios"));
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        // Create ride request
+        const passengerId = req.user.id;
+        // const isCallTaxiExist = await getCallTaxisService(req)
+        // if (isCallTaxiExist) {
+        //     res.status(201).json({
+        //         code: messages.BAD_REQUEST.code,
+        //         message: messages.BAD_REQUEST.message,
+        //         detail: "This user is in processing calling taxi"
+        //     });
+        //     return
+        // }
+        // Fetch user data
+        const passengerData = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${passengerId}`, {
+            headers: {
+                Authorization: `${req.headers["authorization"]}`,
+            },
+        });
+        const passenger = (_a = passengerData === null || passengerData === void 0 ? void 0 : passengerData.data) === null || _a === void 0 ? void 0 : _a.user;
         const callTaxi = yield (0, callTaxi_1.createCallTaxiService)(req);
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            callTaxi,
+            callTaxi: Object.assign({ fullName: passenger.fullName, profileImage: passenger.profileImage }, callTaxi.toObject())
         });
     }
     catch (error) {

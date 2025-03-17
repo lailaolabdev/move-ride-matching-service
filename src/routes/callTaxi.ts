@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post(
     "/",
-    // checkAuthorizationMiddleware,
+    checkAuthorizationMiddleware,
     createCallTaxi,
 );
 

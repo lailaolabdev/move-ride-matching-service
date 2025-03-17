@@ -4,8 +4,7 @@ import axios from 'axios'
 
 export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
     try {
-        // const passengerId = (req as any).user.id;
-        const passengerId = "testId";
+        const passengerId = (req as any).user.id;
 
         const {
             carTypeId,
@@ -41,6 +40,23 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
         })
 
         return created
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+};
+
+export const getCallTaxisService = async (req: Request): Promise<ICallTaxi | null> => {
+    try {
+        const passengerId = (req as any).user.id;
+
+        const callTaxi = await CallTaxi.findOne({
+            passengerId,
+            status: { $in: ["Requesting", "Accepted", "Driver_Arrived", "departure", "Success"] }
+        })
+
+        return callTaxi ? callTaxi : null
     } catch (error) {
         console.log("Error creating Record: ", error);
 
