@@ -16,7 +16,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://47.128.230.68:${PORT}`, // Production server
+                url: `http://${process.env.IP}:${PORT}`, // Production server
                 description: 'Dev Development server',
             },
             {
