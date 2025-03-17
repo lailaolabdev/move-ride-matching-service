@@ -31,9 +31,9 @@ export const createVehicleDriver = async (req: Request, res: Response) => {
 
         const vehicleDriver = await createVehicleDriverService({
             taxi: taxis.taxies[0]._id,
-            taxiType: taxis.taxies.taxiType,
-            vehicleModel: taxis.taxies.vehicleModel,
-            vehicleBrand: taxis.taxies.vehicleBrand,
+            taxiType: taxis.taxies[0].taxiType,
+            vehicleModel: taxis.taxies[0].vehicleModel,
+            vehicleBrand: taxis.taxies[0].vehicleBrand,
             driver,
             driverFullName,
             frontVehicleImage,
