@@ -14,6 +14,7 @@ export const STATUS = {
 	SEND_SUCCESS: "Success", // ສົ່ງລູກຄ້າສຳເລັດ
 	PAID: "Paid", // ຈ່າຍເງິນສຳເລັດ(ສຳເລັດການເອີ້ນລົດ)
 	MISSED: "Missed", // ບໍ່ມີ Driver ກົດຮັບ
+	CANCELED: "Canceled", // ລູກຄ້າຍົກເລີກ
 };
 
 export interface ICallTaxi extends Document {
