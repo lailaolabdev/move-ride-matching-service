@@ -117,6 +117,20 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const user = req.user;
         const { id } = req.params;
+        const driver = yield axios_1.default.get(`
+            ${process.env.USER_SERVICE_URL}/v1/api/users/${user.id}`, {
+            headers: {
+                Authorization: `${req.headers["authorization"]}`
+            }
+        });
+        if (!(driver === null || driver === void 0 ? void 0 : driver.data)) {
+            res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${user.id} not found` }));
+            return;
+        }
+        if (driver.data.user.role !== "DRIVER") {
+            res.status(400).json(Object.assign(Object.assign({}, config_1.messages.BAD_REQUEST), { detail: "You are not a driver" }));
+            return;
+        }
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
             res.status(404).json({

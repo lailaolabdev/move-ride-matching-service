@@ -132,6 +132,33 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 
         const { id } = req.params;
 
+        const driver = await axios.get(`
+            ${process.env.USER_SERVICE_URL}/v1/api/users/${user.id}`,
+            {
+                headers: {
+                    Authorization: `${req.headers["authorization"]}`
+                }
+            }
+        );
+
+        if (!driver?.data) {
+            res.status(404).json({
+                ...messages.NOT_FOUND,
+                detail: `Driver id: ${user.id} not found`
+            });
+
+            return
+        }
+
+        if (driver.data.user.role !== "DRIVER") {
+            res.status(400).json({
+                ...messages.BAD_REQUEST,
+                detail: "You are not a driver"
+            });
+
+            return
+        }
+
         const callTaxi = await CallTaxi.findById(id);
 
         if (!callTaxi) {
