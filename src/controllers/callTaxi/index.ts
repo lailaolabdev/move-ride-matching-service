@@ -16,17 +16,17 @@ export const createCallTaxi = async (req: Request, res: Response) => {
     try {
         const passengerId = (req as any).user.id;
 
-        // const isCallTaxiExist = await getCallTaxisService(req)
+        const isCallTaxiExist = await getCallTaxisService(req)
 
-        // if (isCallTaxiExist) {
-        //     res.status(201).json({
-        //         code: messages.BAD_REQUEST.code,
-        //         message: messages.BAD_REQUEST.message,
-        //         detail: "This user is in processing calling taxi"
-        //     });
+        if (isCallTaxiExist) {
+            res.status(400).json({
+                code: messages.BAD_REQUEST.code,
+                message: messages.BAD_REQUEST.message,
+                detail: "A taxi request is already in progress"
+            });
 
-        //     return
-        // }
+            return
+        }
 
         // Fetch user data
         const passengerData = await axios.get(
@@ -39,6 +39,15 @@ export const createCallTaxi = async (req: Request, res: Response) => {
         );
 
         const passenger = passengerData?.data?.user
+
+        if (!passenger) {
+            res.status(404).json({
+                ...messages.NOT_FOUND,
+                detail: `Id: ${passengerId} not found`
+            });
+
+            return
+        }
 
         const callTaxi: any = await createCallTaxiService(req);
 

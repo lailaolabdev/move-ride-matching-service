@@ -21,15 +21,15 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
     var _a;
     try {
         const passengerId = req.user.id;
-        // const isCallTaxiExist = await getCallTaxisService(req)
-        // if (isCallTaxiExist) {
-        //     res.status(201).json({
-        //         code: messages.BAD_REQUEST.code,
-        //         message: messages.BAD_REQUEST.message,
-        //         detail: "This user is in processing calling taxi"
-        //     });
-        //     return
-        // }
+        const isCallTaxiExist = yield (0, callTaxi_1.getCallTaxisService)(req);
+        if (isCallTaxiExist) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: config_1.messages.BAD_REQUEST.message,
+                detail: "A taxi request is already in progress"
+            });
+            return;
+        }
         // Fetch user data
         const passengerData = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${passengerId}`, {
             headers: {
@@ -37,6 +37,10 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
             },
         });
         const passenger = (_a = passengerData === null || passengerData === void 0 ? void 0 : passengerData.data) === null || _a === void 0 ? void 0 : _a.user;
+        if (!passenger) {
+            res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Id: ${passengerId} not found` }));
+            return;
+        }
         const callTaxi = yield (0, callTaxi_1.createCallTaxiService)(req);
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
