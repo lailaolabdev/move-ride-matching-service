@@ -43,7 +43,7 @@ const PolygonSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    coordinates: [[Polygon]], // Array of arrays of coordinates
+    coordinates: [Polygon],
     price: {
         type: Number,
         required: true

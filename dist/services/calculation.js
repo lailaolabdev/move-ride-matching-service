@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.calculateDriverDistanceAndDurationService = exports.calculateUserDistanceAndDurationService = void 0;
 const axios_1 = __importDefault(require("axios"));
-const turf_1 = require("@turf/turf");
 const polygon_1 = __importDefault(require("../models/polygon"));
 const apiKey = process.env.API_KEY || 'AIzaSyDdxCKVSzSf5K_ys6fM7mB9eOwKTcYr_Sk'; // ใส่ API Key ของคุณ
 const calculateUserDistanceAndDurationService = (origin, destination) => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,66 +33,70 @@ const calculateUserDistanceAndDurationService = (origin, destination) => __await
         let durationInPolygon = 0;
         let trafficDistance = 0;
         const polygons = yield polygon_1.default.find();
-        if (polygons.length) {
-            // คำนวณว่ามีการเดินทางผ่าน Polygon ใดบ้าง และเดินทางผ่านระยะทางเท่าไร
-            let polygonResults = [];
-            polygons.forEach((polygon) => {
-                const polyCoords = polygon.coordinates[0].map((coord) => [
-                    coord.lng,
-                    coord.lat,
-                ]);
-                // ตรวจสอบว่าจุดแรกและจุดสุดท้ายตรงกันหรือไม่
-                if (polyCoords[0][0] !== polyCoords[polyCoords.length - 1][0] ||
-                    polyCoords[0][1] !== polyCoords[polyCoords.length - 1][1]) {
-                    polyCoords.push(polyCoords[0]);
-                }
-                const resPolygon = (0, turf_1.polygon)([polyCoords]);
-                // ใช้ booleanPointInPolygon เพื่อดูว่ามีจุดใดบ้างที่อยู่ใน Polygon
-                leg.steps.forEach((step) => {
-                    const startPoint = (0, turf_1.point)([
-                        step.start_location.lng,
-                        step.start_location.lat,
-                    ]);
-                    const endPoint = (0, turf_1.point)([
-                        step.end_location.lng,
-                        step.end_location.lat,
-                    ]);
-                    // ถ้าจุดเริ่มต้นหรือจุดสิ้นสุดอยู่ใน Polygon ให้คำนวณระยะทางผ่าน Polygon
-                    if ((0, turf_1.booleanPointInPolygon)(startPoint, resPolygon) ||
-                        (0, turf_1.booleanPointInPolygon)(endPoint, resPolygon)) {
-                        const distanceKm = step.distance.value / 1000; // แปลงระยะทางจากเมตรเป็นกิโลเมตร
-                        polygonResults.push({
-                            polygonName: polygon.name,
-                            distanceThroughPolygon: distanceKm,
-                            durationThroughPolygon: step.duration.value, // เวลาเดินทางของ step นั้น
-                        });
-                    }
-                });
-            });
-            // รวมผลลัพธ์ที่ชื่อ Polygon เดียวกัน
-            const aggregatedResults = polygonResults.reduce((acc, curr) => {
-                if (!acc[curr.polygonName]) {
-                    acc[curr.polygonName] = {
-                        distanceThroughPolygon: 0,
-                        durationThroughPolygon: 0,
-                    };
-                }
-                acc[curr.polygonName].distanceThroughPolygon +=
-                    curr.distanceThroughPolygon;
-                acc[curr.polygonName].durationThroughPolygon +=
-                    curr.durationThroughPolygon;
-                return acc;
-            }, {});
-            // แสดงผลรวม
-            // console.log("\nสรุปข้อมูลการเดินทางผ่าน polygons:");
-            Object.keys(aggregatedResults).forEach((polygonName) => {
-                const result = aggregatedResults[polygonName];
-                const durationInMinutes = result.durationThroughPolygon / 60;
-                distanceInPolygon = parseFloat(result.distanceThroughPolygon.toFixed(2));
-                durationInPolygon = parseFloat(durationInMinutes.toFixed(2));
-            });
-            trafficDistance = totalDistance * (totalTrafficDelayMin / totalNormalDurationMin);
-        }
+        // if (polygons.length) {
+        //     // คำนวณว่ามีการเดินทางผ่าน Polygon ใดบ้าง และเดินทางผ่านระยะทางเท่าไร
+        //     let polygonResults: any[] = [];
+        //     polygons.forEach((polygon) => {
+        //         const polyCoords = polygon.coordinates[0].map((coord) => [
+        //             coord.lng,
+        //             coord.lat,
+        //         ]);
+        //         // ตรวจสอบว่าจุดแรกและจุดสุดท้ายตรงกันหรือไม่
+        //         if (
+        //             polyCoords[0][0] !== polyCoords[polyCoords.length - 1][0] ||
+        //             polyCoords[0][1] !== polyCoords[polyCoords.length - 1][1]
+        //         ) {
+        //             polyCoords.push(polyCoords[0]);
+        //         }
+        //         const resPolygon = turfPolygon([polyCoords]);
+        //         // ใช้ booleanPointInPolygon เพื่อดูว่ามีจุดใดบ้างที่อยู่ใน Polygon
+        //         leg.steps.forEach((step: any) => {
+        //             const startPoint = point([
+        //                 step.start_location.lng,
+        //                 step.start_location.lat,
+        //             ]);
+        //             const endPoint = point([
+        //                 step.end_location.lng,
+        //                 step.end_location.lat,
+        //             ]);
+        //             // ถ้าจุดเริ่มต้นหรือจุดสิ้นสุดอยู่ใน Polygon ให้คำนวณระยะทางผ่าน Polygon
+        //             if (
+        //                 booleanPointInPolygon(startPoint, resPolygon) ||
+        //                 booleanPointInPolygon(endPoint, resPolygon)
+        //             ) {
+        //                 const distanceKm = step.distance.value / 1000; // แปลงระยะทางจากเมตรเป็นกิโลเมตร
+        //                 polygonResults.push({
+        //                     polygonName: polygon.name,
+        //                     distanceThroughPolygon: distanceKm,
+        //                     durationThroughPolygon: step.duration.value, // เวลาเดินทางของ step นั้น
+        //                 });
+        //             }
+        //         });
+        //     })
+        //     // รวมผลลัพธ์ที่ชื่อ Polygon เดียวกัน
+        //     const aggregatedResults = polygonResults.reduce((acc, curr) => {
+        //         if (!acc[curr.polygonName]) {
+        //             acc[curr.polygonName] = {
+        //                 distanceThroughPolygon: 0,
+        //                 durationThroughPolygon: 0,
+        //             };
+        //         }
+        //         acc[curr.polygonName].distanceThroughPolygon +=
+        //             curr.distanceThroughPolygon;
+        //         acc[curr.polygonName].durationThroughPolygon +=
+        //             curr.durationThroughPolygon;
+        //         return acc;
+        //     }, {});
+        //     // แสดงผลรวม
+        //     // console.log("\nสรุปข้อมูลการเดินทางผ่าน polygons:");
+        //     Object.keys(aggregatedResults).forEach((polygonName) => {
+        //         const result = aggregatedResults[polygonName];
+        //         const durationInMinutes = result.durationThroughPolygon / 60;
+        //         distanceInPolygon = parseFloat(result.distanceThroughPolygon.toFixed(2))
+        //         durationInPolygon = parseFloat(durationInMinutes.toFixed(2))
+        //     });
+        //     trafficDistance = totalDistance * (totalTrafficDelayMin / totalNormalDurationMin);
+        // }
         return {
             distanceInPolygon,
             durationInPolygon,

@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IPolygon extends Document {
     name: string;
-    coordinates: { lat: number; lng: number }[][];
+    coordinates: { lat: number; lng: number }[];
     price: string;
     color: string;
     createdAt: string;
@@ -22,7 +22,7 @@ const PolygonSchema: Schema = new Schema(
             type: String,
             required: true
         },
-        coordinates: [[Polygon]], // Array of arrays of coordinates
+        coordinates: [Polygon],
         price: {
             type: Number,
             required: true
