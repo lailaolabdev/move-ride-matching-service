@@ -15,18 +15,18 @@ import axios from "axios";
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
         const passengerId = (req as any).user.id;
+        // // If production deployed uncomment this 
+        // const isCallTaxiExist = await getCallTaxisService(req)
 
-        const isCallTaxiExist = await getCallTaxisService(req)
+        // if (isCallTaxiExist) {
+        //     res.status(400).json({
+        //         code: messages.BAD_REQUEST.code,
+        //         message: messages.BAD_REQUEST.message,
+        //         detail: "A taxi request is already in progress"
+        //     });
 
-        if (isCallTaxiExist) {
-            res.status(400).json({
-                code: messages.BAD_REQUEST.code,
-                message: messages.BAD_REQUEST.message,
-                detail: "A taxi request is already in progress"
-            });
-
-            return
-        }
+        //     return
+        // }
 
         // Fetch user data
         const passengerData = await axios.get(

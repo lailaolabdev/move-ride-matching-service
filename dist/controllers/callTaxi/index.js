@@ -21,15 +21,16 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
     var _a;
     try {
         const passengerId = req.user.id;
-        const isCallTaxiExist = yield (0, callTaxi_1.getCallTaxisService)(req);
-        if (isCallTaxiExist) {
-            res.status(400).json({
-                code: config_1.messages.BAD_REQUEST.code,
-                message: config_1.messages.BAD_REQUEST.message,
-                detail: "A taxi request is already in progress"
-            });
-            return;
-        }
+        // // If production deployed uncomment this 
+        // const isCallTaxiExist = await getCallTaxisService(req)
+        // if (isCallTaxiExist) {
+        //     res.status(400).json({
+        //         code: messages.BAD_REQUEST.code,
+        //         message: messages.BAD_REQUEST.message,
+        //         detail: "A taxi request is already in progress"
+        //     });
+        //     return
+        // }
         // Fetch user data
         const passengerData = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${passengerId}`, {
             headers: {
