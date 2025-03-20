@@ -229,7 +229,7 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
             .limit(1)
             .exec();
 
-            return latestPaidRide ? { createdAt: latestPaidRide.createdAt.toLocaleDateString("en-GB") } : { latestPaidRide: 0 };
+            return latestPaidRide ? { createdAt: latestPaidRide.createdAt.toLocaleDateString("en-GB") } : {createdAt: null};
 
     } catch (error) {
         console.log("Error creating Record: ", error);
@@ -256,7 +256,7 @@ export const getHistoryRideService = async (req: Request): Promise<any> => {
                 }
             }
         ])
-        return rideHistory.length ? rideHistory : { rideHistory: 0 }
+        return rideHistory.length ? rideHistory : []
     } catch (error) {
         console.log("Error creating Record: ", error);
 

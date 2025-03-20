@@ -258,7 +258,7 @@ export const getTotalDistance = async (req: Request, res: Response) => {
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            totalDistance,
+            ...totalDistance,
         });
 
     } catch (error) {
@@ -311,7 +311,7 @@ export const getRideHistory = async (req: Request, res: Response) => {
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            ...rideHistory
+            rideHistory
         });
     } catch (error) {
         console.error("Error fetching total ride:", error);
