@@ -161,12 +161,11 @@ export const calculateDriverDistanceAndDurationService = async (origin: string, 
 // get total ride serivce
 export const getTotalRideService = async (req: Request): Promise<any[] | null> => {
     try {
-        // const passengerId = (req as any).user.id;
-        const passengerId = "67d9305b5da6b7f2b97ff39a";  // Replace with actual passengerId
+        const passengerId = (req as any).user.id;
 
 
         const totalRide = await CallTaxi.aggregate([
-            { $match: { passengerId: passengerId, status: "Requesting" } },
+            { $match: { passengerId: passengerId, status: "Paid" } },
             {
                 $group: {
                     _id: "$passengerId",
@@ -190,7 +189,7 @@ export const getTotalDistanceService = async (req: Request): Promise<any[] | nul
         const passengerId = (req as any).user.id;
 
         const totalRide = await CallTaxi.aggregate([
-            { $match: { passengerId: passengerId, status: "Requesting" } },
+            { $match: { passengerId: passengerId, status: "Paid" } },
             {
                 $group: {
                     _id: "$passengerId",
@@ -212,12 +211,16 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
     try {
         const passengerId = (req as any).user.id;
 
-        const latestRide = await CallTaxi.findOne({ passengerId })
+
+        const latestPaidRide = await CallTaxi.findOne({ 
+            passengerId, 
+            status: "Paid"  // Add condition to filter for "PAID" status
+        })
             .sort({ createdAt: -1 }) // Sort by createdAt in descending order (latest first)
             .limit(1)
             .exec();
-
-        return latestRide ? latestRide : null
+        
+        return latestPaidRide ? latestPaidRide : null;
 
     } catch (error) {
         console.log("Error creating Record: ", error);
@@ -231,10 +234,11 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
 export const getHistoryRideService = async (req: Request): Promise<any | null> => {
     try {
 
-        const passengerId = (req as any).user.id;
+        // const passengerId = (req as any).user.id;
+        const passengerId = "67da4a42396c4f9db4ccb0ce"
         
         let total = await CallTaxi.countDocuments({ passengerId: passengerId })
-        const travelHistory = await CallTaxi.find({ passengerId })
+        const travelHistory = await CallTaxi.find({ passengerId,status: "Paid"  })
             .sort({ createdAt: -1 }); // Sort by latest rides first
 
         if (travelHistory.length > 0) {
