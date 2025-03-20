@@ -159,7 +159,7 @@ export const calculateDriverDistanceAndDurationService = async (origin: string, 
 }
 
 // get total ride serivce
-export const getTotalRideService = async (req: Request): Promise<any[] | null> => {
+export const getTotalRideService = async (req: Request): Promise<any> => {
     try {
         const passengerId = req.params.id
 
@@ -171,9 +171,16 @@ export const getTotalRideService = async (req: Request): Promise<any[] | null> =
                     totalRides: { $sum: 1 },
 
                 }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
             }
         ]);
-        return totalRide ? totalRide : null
+        console.log(totalRide)
+        return totalRide.length ? totalRide[0] : { totalRide: 0 }
+
     } catch (error) {
         console.log("Error creating Record: ", error);
         throw error;
@@ -182,11 +189,11 @@ export const getTotalRideService = async (req: Request): Promise<any[] | null> =
 
 
 // get Total Distance Service
-export const getTotalDistanceService = async (req: Request): Promise<any[] | null> => {
+export const getTotalDistanceService = async (req: Request): Promise<any> => {
     try {
         const passengerId = req.params.id
 
-        const totalRide = await CallTaxi.aggregate([
+        const totalDistance = await CallTaxi.aggregate([
             { $match: { passengerId: passengerId, status: "Paid" } },
             {
                 $group: {
@@ -194,9 +201,15 @@ export const getTotalDistanceService = async (req: Request): Promise<any[] | nul
 
                     totalDistance: { $sum: "$totalDistance" }
                 }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
             }
         ]);
-        return totalRide ? totalRide : null
+
+        return totalDistance.length ? totalDistance[0] : { totalDistance: 0 }
     } catch (error) {
         console.log("Error creating Record: ", error);
         throw error;
@@ -216,7 +229,7 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
             .limit(1)
             .exec();
 
-        return latestPaidRide ? latestPaidRide : null;
+            return latestPaidRide ? { createdAt: latestPaidRide.createdAt.toLocaleDateString("en-GB") } : { latestPaidRide: 0 };
 
     } catch (error) {
         console.log("Error creating Record: ", error);
@@ -227,34 +240,23 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
 
 
 
-export const getHistoryRideService = async (req: Request): Promise<any | null> => {
+export const getHistoryRideService = async (req: Request): Promise<any> => {
     try {
-
         const passengerId = req.params.id
-console.log(passengerId)
-        let total = await CallTaxi.countDocuments({ passengerId: passengerId })
-        const travelHistory = await CallTaxi.find({ passengerId, status: "Paid" })
-            .sort({ createdAt: -1 }); // Sort by latest rides first
-
-        if (travelHistory.length > 0) {
-            const History = travelHistory.map(ride => {
-                const createdAt = new Date(ride.createdAt); // Extract createdAt for each ride
-                return {
-                    origin: ride.origin,
-                    destination: ride.destination,
-                    totalDistance: ride.totalDistance,
-                    totalPrice: ride.totalPrice,
-                    date: `${createdAt.getDate().toString().padStart(2, '0')}/${(createdAt.getMonth() + 1).toString().padStart(2, '0')
-                        }/${createdAt.getFullYear()} ${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')
-                        }`
-                };
-            });
-
-
-            return { total, History }
-        } else {
-            console.log("No history found for this user.");
-        }
+        console.log(passengerId)
+        let rideHistory = await CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Paid" } },
+            {
+                $project: {
+                    origin: 1,
+                    destination: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1
+                }
+            }
+        ])
+        return rideHistory.length ? rideHistory : { rideHistory: 0 }
     } catch (error) {
         console.log("Error creating Record: ", error);
 
