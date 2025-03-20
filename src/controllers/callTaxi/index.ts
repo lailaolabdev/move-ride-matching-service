@@ -276,12 +276,12 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 // report total the last ride
     export const getThelastRide = async (req: Request, res: Response) => {
         try {
-            const totalDistance = await getTheLastRideService(req);
+            const lastRide = await getTheLastRideService(req);
 
             res.status(200).json({
                 code: messages.SUCCESSFULLY.code,
                 messages: messages.SUCCESSFULLY.message,
-               totalDistance,
+                lastRide,
             });
         } catch (error) {
             console.error("Error fetching total ride:", error);
@@ -298,12 +298,12 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 // report  ride history
     export const getRideHistory = async (req: Request, res: Response) => {
         try {
-            const totalDistance = await getHistoryRideService(req);
+            const rideHistory = await getHistoryRideService(req);
 
             res.status(200).json({
                 code: messages.SUCCESSFULLY.code,
                 messages: messages.SUCCESSFULLY.message,
-               totalDistance,
+               rideHistory,
             });
         } catch (error) {
             console.error("Error fetching total ride:", error);

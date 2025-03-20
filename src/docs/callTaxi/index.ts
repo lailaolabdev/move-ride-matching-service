@@ -288,7 +288,8 @@
  *                     date:
  *                       type: string
  *                       description: Taxi Type icon.
- *     
+ *                       example: "19/03/2025 13:29"
+ *                     
  *       500:
  *         description: Internal server error.
  *         content:

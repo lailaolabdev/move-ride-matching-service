@@ -161,8 +161,7 @@ export const calculateDriverDistanceAndDurationService = async (origin: string, 
 // get total ride serivce
 export const getTotalRideService = async (req: Request): Promise<any[] | null> => {
     try {
-        const passengerId = (req as any).user.id;
-
+        const passengerId = req.params.id
 
         const totalRide = await CallTaxi.aggregate([
             { $match: { passengerId: passengerId, status: "Paid" } },
@@ -177,7 +176,6 @@ export const getTotalRideService = async (req: Request): Promise<any[] | null> =
         return totalRide ? totalRide : null
     } catch (error) {
         console.log("Error creating Record: ", error);
-
         throw error;
     }
 };
@@ -186,7 +184,7 @@ export const getTotalRideService = async (req: Request): Promise<any[] | null> =
 // get Total Distance Service
 export const getTotalDistanceService = async (req: Request): Promise<any[] | null> => {
     try {
-        const passengerId = (req as any).user.id;
+        const passengerId = req.params.id
 
         const totalRide = await CallTaxi.aggregate([
             { $match: { passengerId: passengerId, status: "Paid" } },
@@ -201,7 +199,6 @@ export const getTotalDistanceService = async (req: Request): Promise<any[] | nul
         return totalRide ? totalRide : null
     } catch (error) {
         console.log("Error creating Record: ", error);
-
         throw error;
     }
 };
@@ -209,17 +206,16 @@ export const getTotalDistanceService = async (req: Request): Promise<any[] | nul
 // thes last ride
 export const getTheLastRideService = async (req: Request): Promise<any | null> => {
     try {
-        const passengerId = (req as any).user.id;
+        const passengerId = req.params.id
 
-
-        const latestPaidRide = await CallTaxi.findOne({ 
-            passengerId, 
+        const latestPaidRide = await CallTaxi.findOne({
+            passengerId,
             status: "Paid"  // Add condition to filter for "PAID" status
         })
             .sort({ createdAt: -1 }) // Sort by createdAt in descending order (latest first)
             .limit(1)
             .exec();
-        
+
         return latestPaidRide ? latestPaidRide : null;
 
     } catch (error) {
@@ -234,11 +230,10 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
 export const getHistoryRideService = async (req: Request): Promise<any | null> => {
     try {
 
-        // const passengerId = (req as any).user.id;
-        const passengerId = "67da4a42396c4f9db4ccb0ce"
-        
+        const passengerId = req.params.id
+console.log(passengerId)
         let total = await CallTaxi.countDocuments({ passengerId: passengerId })
-        const travelHistory = await CallTaxi.find({ passengerId,status: "Paid"  })
+        const travelHistory = await CallTaxi.find({ passengerId, status: "Paid" })
             .sort({ createdAt: -1 }); // Sort by latest rides first
 
         if (travelHistory.length > 0) {
@@ -258,7 +253,7 @@ export const getHistoryRideService = async (req: Request): Promise<any | null> =
 
             return { total, History }
         } else {
-            console.log("No travel history found for this user.");
+            console.log("No history found for this user.");
         }
     } catch (error) {
         console.log("Error creating Record: ", error);
