@@ -157,3 +157,108 @@ export const calculateDriverDistanceAndDurationService = async (origin: string, 
         throw error;
     }
 }
+
+// get total ride serivce
+export const getTotalRideService = async (req: Request): Promise<any[] | null> => {
+    try {
+        // const passengerId = (req as any).user.id;
+        const passengerId = "67d9305b5da6b7f2b97ff39a";  // Replace with actual passengerId
+
+
+        const totalRide = await CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Requesting" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalRides: { $sum: 1 },
+
+                }
+            }
+        ]);
+        return totalRide ? totalRide : null
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+};
+
+
+// get Total Distance Service
+export const getTotalDistanceService = async (req: Request): Promise<any[] | null> => {
+    try {
+        const passengerId = (req as any).user.id;
+
+        const totalRide = await CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Requesting" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+
+                    totalDistance: { $sum: "$totalDistance" }
+                }
+            }
+        ]);
+        return totalRide ? totalRide : null
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+};
+
+// thes last ride
+export const getTheLastRideService = async (req: Request): Promise<any | null> => {
+    try {
+        const passengerId = (req as any).user.id;
+
+        const latestRide = await CallTaxi.findOne({ passengerId })
+            .sort({ createdAt: -1 }) // Sort by createdAt in descending order (latest first)
+            .limit(1)
+            .exec();
+
+        return latestRide ? latestRide : null
+
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+};
+
+
+
+export const getHistoryRideService = async (req: Request): Promise<any | null> => {
+    try {
+
+        const passengerId = (req as any).user.id;
+        
+        let total = await CallTaxi.countDocuments({ passengerId: passengerId })
+        const travelHistory = await CallTaxi.find({ passengerId })
+            .sort({ createdAt: -1 }); // Sort by latest rides first
+
+        if (travelHistory.length > 0) {
+            const History = travelHistory.map(ride => {
+                const createdAt = new Date(ride.createdAt); // Extract createdAt for each ride
+                return {
+                    origin: ride.origin,
+                    destination: ride.destination,
+                    totalDistance: ride.totalDistance,
+                    totalPrice: ride.totalPrice,
+                    date: `${createdAt.getDate().toString().padStart(2, '0')}/${(createdAt.getMonth() + 1).toString().padStart(2, '0')
+                        }/${createdAt.getFullYear()} ${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')
+                        }`
+                };
+            });
+
+
+            return { total, History }
+        } else {
+            console.log("No travel history found for this user.");
+        }
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+};

@@ -8,6 +8,10 @@ import {
     updateCallTaxiService,
     driverUpdateStatusService,
     getCallTaxisService,
+    getTotalRideService,
+    getTotalDistanceService,
+    getTheLastRideService,
+    getHistoryRideService,
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -221,3 +225,93 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
         });
     }
 };
+
+
+// report total ride 
+
+    export const gettotalRide = async (req: Request, res: Response) => {
+        try {
+            const totalRide = await getTotalRideService(req);
+
+            res.status(200).json({
+                code: messages.SUCCESSFULLY.code,
+                messages: messages.SUCCESSFULLY.message,
+                totalRide,
+            });
+        } catch (error) {
+            console.error("Error fetching total ride:", error);
+
+            res.status(500).json({
+                code: messages.INTERNAL_SERVER_ERROR.code,
+                message: messages.INTERNAL_SERVER_ERROR.message,
+                detail: (error as Error).message,
+            });
+        }
+    };
+
+
+// report total totalDistance 
+
+    export const getTotalDistance = async (req: Request, res: Response) => {
+        try {
+            const totalDistance = await getTotalDistanceService(req);
+
+            res.status(200).json({
+                code: messages.SUCCESSFULLY.code,
+                messages: messages.SUCCESSFULLY.message,
+               totalDistance,
+            });
+        } catch (error) {
+            console.error("Error fetching total ride:", error);
+
+            res.status(500).json({
+                code: messages.INTERNAL_SERVER_ERROR.code,
+                message: messages.INTERNAL_SERVER_ERROR.message,
+                detail: (error as Error).message,
+            });
+        }
+    };
+
+
+// report total the last ride
+    export const getThelastRide = async (req: Request, res: Response) => {
+        try {
+            const totalDistance = await getTheLastRideService(req);
+
+            res.status(200).json({
+                code: messages.SUCCESSFULLY.code,
+                messages: messages.SUCCESSFULLY.message,
+               totalDistance,
+            });
+        } catch (error) {
+            console.error("Error fetching total ride:", error);
+
+            res.status(500).json({
+                code: messages.INTERNAL_SERVER_ERROR.code,
+                message: messages.INTERNAL_SERVER_ERROR.message,
+                detail: (error as Error).message,
+            });
+        }
+    };
+
+
+// report  ride history
+    export const getRideHistory = async (req: Request, res: Response) => {
+        try {
+            const totalDistance = await getHistoryRideService(req);
+
+            res.status(200).json({
+                code: messages.SUCCESSFULLY.code,
+                messages: messages.SUCCESSFULLY.message,
+               totalDistance,
+            });
+        } catch (error) {
+            console.error("Error fetching total ride:", error);
+
+            res.status(500).json({
+                code: messages.INTERNAL_SERVER_ERROR.code,
+                message: messages.INTERNAL_SERVER_ERROR.message,
+                detail: (error as Error).message,
+            });
+        }
+    };
