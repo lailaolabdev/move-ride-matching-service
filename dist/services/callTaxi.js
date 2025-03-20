@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getCallTaxisService = exports.createCallTaxiService = void 0;
+exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getCallTaxisService = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
@@ -134,3 +134,99 @@ const calculateDriverDistanceAndDurationService = (origin, destination) => __awa
     }
 });
 exports.calculateDriverDistanceAndDurationService = calculateDriverDistanceAndDurationService;
+// get total ride serivce
+const getTotalRideService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        const totalRide = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Paid" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalRides: { $sum: 1 },
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
+        console.log(totalRide);
+        return totalRide.length ? totalRide[0] : { totalRide: 0 };
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTotalRideService = getTotalRideService;
+// get Total Distance Service
+const getTotalDistanceService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        const totalDistance = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Paid" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalDistance: { $sum: "$totalDistance" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
+        return totalDistance.length ? totalDistance[0] : { totalDistance: 0 };
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTotalDistanceService = getTotalDistanceService;
+// thes last ride
+const getTheLastRideService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        const latestPaidRide = yield callTaxi_1.CallTaxi.findOne({
+            passengerId,
+            status: "Paid" // Add condition to filter for "PAID" status
+        })
+            .sort({ createdAt: -1 }) // Sort by createdAt in descending order (latest first)
+            .limit(1)
+            .exec();
+        return latestPaidRide ? { createdAt: latestPaidRide.createdAt.toLocaleDateString("en-GB") } : { createdAt: null };
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTheLastRideService = getTheLastRideService;
+const getHistoryRideService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        console.log(passengerId);
+        let rideHistory = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Paid" } },
+            {
+                $project: {
+                    origin: 1,
+                    destination: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1
+                }
+            }
+        ]);
+        return rideHistory.length ? rideHistory : [];
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getHistoryRideService = getHistoryRideService;

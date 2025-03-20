@@ -238,4 +238,227 @@
  *                 detail:
  *                   type: string
  *                   example: "Error details here"
+ * /v1/api/call-taxi/ride-history:
+ *   get:
+ *     summary: Retrieve ride history
+ *     description: Fetches the ride history for a user, including details such as total distance traveled.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Ride history retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully"
+ *                 History:
+ *                   type: object
+ *                   properties:
+ *                     origin:
+ *                       type: string
+ *                       description: Taxi Type ID.
+ *                       example: "17.967290, 102.608902"
+ *                     destination:
+ *                       type: string
+ *                       description: Taxi Type name.
+ *                       example: "17.971523,102.6200467"
+ *                     totalDistance:
+ *                       type: number
+ *                       description: Taxi Type icon.
+ *                       example: 7.13
+ *                     totalPrice:
+ *                       type: number
+ *                       description: Taxi Type icon.
+ *                       example: 78.4
+ *                     date:
+ *                       type: string
+ *                       description: Taxi Type icon.
+ *                       example: "19/03/2025 13:29"
+ *
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+/**
+ * @swagger
+ * /v1/api/call-taxi/last-ride:
+ *   get:
+ *     summary: Retrieve the last ride for a passenger
+ *     description: Fetches the most recent ride record for a passenger based on their ID.
+ *     tags:
+ *       -  Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Last ride retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "SUCCESSFUL"
+ *                 message:
+ *                   type: string
+ *                   example: "Last ride retrieved successfully"
+ *                 lastRide:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: Ride ID.
+ *                       example: "67d9305b5da6b7f2b97ff39a"
+ *                     passengerId:
+ *                       type: string
+ *                       description: Passenger ID.
+ *                       example: "67d9305b5da6b7f2b97ff39a"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Timestamp when the ride was created.
+ *                       example: "2023-10-01T12:34:56Z"
+ *                     status:
+ *                       type: string
+ *                       description: Status of the ride (e.g., completed, canceled).
+ *                       example: "PAID"
+ *
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /v1/api/call-taxi/total-distance:
+ *   get:
+ *     summary: Retrieve total distance traveled by a passenger
+ *     description: Fetches the total distance traveled by a passenger for rides with a status of "Requesting".
+ *     tags:
+ *       -  Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Total distance retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully"
+ *                 totalDistance:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: Passenger ID.
+ *                       example: "67d9305b5da6b7f2b97ff39a"
+ *                     totalDistance:
+ *                       type: number
+ *                       description: Total distance traveled (in kilometers or miles).
+ *                       example: 125.75
+ *
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *
+ */
+/**
+ * @swagger
+ * /v1/api/call-taxi/total-ride:
+ *   get:
+ *     summary: Retrieve total ride of a passenger
+ *     description: Fetches the total total by a passenger.
+ *     tags:
+ *       -  Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Total distance retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully"
+ *                 totalDistance:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: Passenger ID.
+ *                       example: "67d9305b5da6b7f2b97ff39a"
+ *                     totalRides:
+ *                       type: number
+ *                       description: Total distance traveled (in kilometers or miles).
+ *                       example: 10
+ *
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *
  */ 

@@ -239,11 +239,6 @@
  *                 detail:
  *                   type: string
  *                   example: "Error details here"
- */
-// history 
-
-/**
- * @swagger
  * /v1/api/call-taxi/ride-history:
  *   get:
  *     summary: Retrieve ride history

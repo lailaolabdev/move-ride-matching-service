@@ -10,6 +10,14 @@ const middlewares_1 = require("../middlewares");
 const router = express_1.default.Router();
 router.post("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createCallTaxi);
 router.get("/user-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getUserCallTaxis);
+// get total  ride
+router.get("/total-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.gettotalRide);
+// get total distance ride
+router.get("/total-distance/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getTotalDistance);
+// get total distance ride
+router.get("/ride-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getRideHistory);
+// get total the last ride
+router.get("/last-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getThelastRide);
 router.get("/driver-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverCallTaxis);
 router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateCallTaxis);
 router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.driverUpdateStatus);
