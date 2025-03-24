@@ -9,6 +9,11 @@ import {
     getTotalDistance,
     getThelastRide,
     getRideHistory,
+    travelHistoryHistory,
+    cancelTravelHistoryHistory,
+    gettotalTravelTime,
+    getTotalMeterTime,
+    getTotalFlatFareTime,
     
 } from "../controllers/callTaxi"
 import { validateParamID } from "../utils/validateParamId";
@@ -23,14 +28,31 @@ router.get("/user-history", checkAuthorizationMiddleware, getUserCallTaxis);
 // get total  ride
 router.get("/total-ride/:id", checkAuthorizationMiddleware, gettotalRide);
 
+// get total travle time
+router.get("/total-travel/:id", checkAuthorizationMiddleware, gettotalTravelTime);
+
 // get total distance ride
 router.get("/total-distance/:id", checkAuthorizationMiddleware, getTotalDistance);
 
-// get total distance ride
+// get total history ride
 router.get("/ride-history/:id", checkAuthorizationMiddleware, getRideHistory);
+
+// get total travel history ride
+router.get("/travel-history/:id", checkAuthorizationMiddleware, travelHistoryHistory);
+
+// get total cancel travel history ride
+router.get("/cancel-history/:id", checkAuthorizationMiddleware, cancelTravelHistoryHistory);
+
+// get total  travel request type meter
+router.get("/total-meter/:id", checkAuthorizationMiddleware, getTotalMeterTime);
+
+// get total  travel request type flat fare
+router.get("/flat-fare/:id", checkAuthorizationMiddleware, getTotalFlatFareTime);
 
 // get total the last ride
 router.get("/last-ride/:id", checkAuthorizationMiddleware, getThelastRide);
+
+
 
 router.get("/driver-history", checkAuthorizationMiddleware, getDriverCallTaxis);
 

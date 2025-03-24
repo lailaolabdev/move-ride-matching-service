@@ -188,6 +188,7 @@ export const getTotalRideService = async (req: Request): Promise<any> => {
 };
 
 
+
 // get Total Distance Service
 export const getTotalDistanceService = async (req: Request): Promise<any> => {
     try {
@@ -229,7 +230,7 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
             .limit(1)
             .exec();
 
-            return latestPaidRide ? { createdAt: latestPaidRide.createdAt.toLocaleDateString("en-GB") } : {createdAt: null};
+        return latestPaidRide ? { createdAt: latestPaidRide.createdAt.toLocaleDateString("en-GB") } : { createdAt: null };
 
     } catch (error) {
         console.log("Error creating Record: ", error);
@@ -239,11 +240,10 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
 };
 
 
-
+// get history ride service
 export const getHistoryRideService = async (req: Request): Promise<any> => {
     try {
         const passengerId = req.params.id
-        console.log(passengerId)
         let rideHistory = await CallTaxi.aggregate([
             { $match: { passengerId: passengerId, status: "Paid" } },
             {
@@ -260,6 +260,148 @@ export const getHistoryRideService = async (req: Request): Promise<any> => {
     } catch (error) {
         console.log("Error creating Record: ", error);
 
+        throw error;
+    }
+};
+
+
+
+// get history travel service
+export const travelHistoryService = async (req: Request): Promise<any> => {
+    try {
+        const passengerId = req.params.id
+
+
+        let rideHistory = await CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Paid" } },
+            {
+                $project: {
+                    origin: 1,
+                    destination: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1
+                }
+            }
+        ])
+        return rideHistory.length ? rideHistory : []
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+};
+
+// get history cancel service
+export const cancelTravelHistoryService = async (req: Request): Promise<any> => {
+    try {
+        const passengerId = req.params.id
+
+
+        let cancelHistory = await CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Canceled" } },
+            {
+                $project: {
+                    origin: 1,
+                    destination: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1
+                }
+            }
+        ])
+        console.log(cancelHistory,"++++++++++++++++++++++++++++++")
+        return cancelHistory.length ? cancelHistory : []
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+};
+
+// get total travel time
+
+export const getTotaltravelTimeService = async (req: Request): Promise<any> => {
+    try {
+        const passengerId = req.params.id
+
+        const totalTravel = await CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Paid" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalTravel: { $sum: 1 },
+
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
+        return totalTravel.length ? totalTravel[0] : { totalTravel: 0 }
+
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+
+// get total meter
+export const getTotalmeterService = async (req: Request): Promise<any> => {
+    try {
+        const passengerId = req.params.id
+
+        const totalMeter = await CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, requestType: "meter", status: "Paid" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalMeter: { $sum: 1 },
+
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
+        return totalMeter.length ? totalMeter[0] : { totalMeter: 0 }
+
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+
+// get total meter
+export const getTotalFlatFareService = async (req: Request): Promise<any> => {
+    try {
+        const passengerId = req.params.id
+
+        const totalFlatFare = await CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, requestType: "flat_fare", status: "Paid" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalFlatFare: { $sum: 1 },
+
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
+        return totalFlatFare.length ? totalFlatFare[0] : { totalFlatFare: 0 }
+
+    } catch (error) {
+        console.log("Error creating Record: ", error);
         throw error;
     }
 };

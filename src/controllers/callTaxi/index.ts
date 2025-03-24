@@ -12,6 +12,11 @@ import {
     getTotalDistanceService,
     getTheLastRideService,
     getHistoryRideService,
+    travelHistoryService,
+    cancelTravelHistoryService,
+    getTotaltravelTimeService,
+    getTotalmeterService,
+    getTotalFlatFareService,
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -248,7 +253,6 @@ export const gettotalRide = async (req: Request, res: Response) => {
     }
 };
 
-
 // report total totalDistance 
 
 export const getTotalDistance = async (req: Request, res: Response) => {
@@ -298,20 +302,13 @@ export const getThelastRide = async (req: Request, res: Response) => {
 // report  ride history
 export const getRideHistory = async (req: Request, res: Response) => {
     try {
-        const rideHistory = await getHistoryRideService(req);
-        // if(!rideHistory.length) {
-        //     res.status(200).json({
-        //         code: messages.SUCCESSFULLY.code,
-        //         messages: messages.SUCCESSFULLY.message,
-        //         rideHistory: rideHistory
-        //     });
-        // }
-        // console.log(rideHistory)
-         
+        const travelHistory = await getHistoryRideService(req);
+
+
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            rideHistory
+            travelHistory
         });
     } catch (error) {
         console.error("Error fetching total ride:", error);
@@ -323,3 +320,108 @@ export const getRideHistory = async (req: Request, res: Response) => {
         });
     }
 };
+// report  ride history
+export const travelHistoryHistory = async (req: Request, res: Response) => {
+    try {
+        const travelHistory = await travelHistoryService(req);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            travelHistory
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// report  cancel history
+export const cancelTravelHistoryHistory = async (req: Request, res: Response) => {
+    try {
+        const travelHistory = await cancelTravelHistoryService(req)
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            travelHistory
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+
+
+// total travel time 
+export const gettotalTravelTime = async (req: Request, res: Response) => {
+    try {
+        const totalTravelTime = await getTotaltravelTimeService(req);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            ...totalTravelTime,
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// get total travel request type meter
+export const getTotalMeterTime = async (req: Request, res: Response) => {
+    try {
+        const totalMeterTime = await getTotalmeterService(req);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            ...totalMeterTime,
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+
+// get total travel request type meter
+export const getTotalFlatFareTime = async (req: Request, res: Response) => {
+    try {
+        const totalFlatFare = await getTotalFlatFareService(req);
+        console.log(totalFlatFare)
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            ...totalFlatFare,
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
