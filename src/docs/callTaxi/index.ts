@@ -406,3 +406,75 @@
  *                   type: string
  *                   example: "Successfully."
  */
+
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/comment-rating/{id}:
+ *   get:
+ *     summary: Get comments and ratings for a specific driver
+ *     description: Retrieve all comments and ratings for a specific driver by their ID.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the driver to retrieve comments and ratings for.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved comments and ratings for the driver.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "SUCCESSFULLY"
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-03-19T08:26:41.760Z"
+ *                       comment:
+ *                         type: string
+ *                         example: "well"
+ *                       rating:
+ *                         type: number
+ *                         example: 1
+ *                       fullName:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       profileImage:
+ *                         type: string
+ *                         nullable: true
+ *                         example: null
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "An unexpected error occurred"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error fetching comments and ratings"
+ */

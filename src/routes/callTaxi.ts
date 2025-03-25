@@ -8,6 +8,7 @@ import {
     callTaxiTotalPrice,
     updateStartAndComment,
     chatCallTaxi,
+    getComentAndRating,
     // callTaxiStarDateAndEndDateTotalPriceReport
 } from "../controllers/callTaxi"
 import { validateParamID } from "../utils/validateParamId";
@@ -37,6 +38,12 @@ router.get(
     "/total-price",
     checkAuthorizationMiddleware,
     callTaxiTotalPrice,
+);
+
+router.get(
+    "/comment-rating/:id",
+    checkAuthorizationMiddleware,
+    getComentAndRating,
 );
 
 

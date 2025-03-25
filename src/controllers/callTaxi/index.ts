@@ -11,6 +11,7 @@ import {
 
     updateChatCallTaxiService,
     updateStarAndCommentService,
+    getCommentAndRatingService,
 } from "../../services/callTaxi";
 import { CallTaxi, STATUS } from "../../models/callTaxi";
 import { Pipeline } from "ioredis";
@@ -235,6 +236,28 @@ export const chatCallTaxi = async (req: Request, res: Response) => {
         }];
 
       const data=  await updateChatCallTaxiService(id, chatData);
+    // const data=  await updateChatCallTaxiService(id, chat);
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            data: data
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
+
+export const getComentAndRating = async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+      const data =  await getCommentAndRatingService(id);
     // const data=  await updateChatCallTaxiService(id, chat);
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
