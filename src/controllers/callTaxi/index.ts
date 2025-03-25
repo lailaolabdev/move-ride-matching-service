@@ -17,6 +17,7 @@ import {
     getTotaltravelTimeService,
     getTotalmeterService,
     getTotalFlatFareService,
+    totalDriverIncomeService,
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -414,6 +415,27 @@ export const getTotalFlatFareTime = async (req: Request, res: Response) => {
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
             ...totalFlatFare,
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+
+// get total travel request type meter
+export const getDriverTotalIncome = async (req: Request, res: Response) => {
+    try {
+        const totalIncome = await totalDriverIncomeService(req);
+        console.log(totalIncome)
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            ...totalIncome,
         });
     } catch (error) {
         console.error("Error fetching total ride:", error);

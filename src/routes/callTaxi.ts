@@ -14,6 +14,7 @@ import {
     gettotalTravelTime,
     getTotalMeterTime,
     getTotalFlatFareTime,
+    getDriverTotalIncome,
     
 } from "../controllers/callTaxi"
 import { validateParamID } from "../utils/validateParamId";
@@ -51,6 +52,9 @@ router.get("/flat-fare/:id", checkAuthorizationMiddleware, getTotalFlatFareTime)
 
 // get total the last ride
 router.get("/last-ride/:id", checkAuthorizationMiddleware, getThelastRide);
+
+// get total driver income
+router.get("/driver-income/:id", checkAuthorizationMiddleware, getDriverTotalIncome);
 
 
 

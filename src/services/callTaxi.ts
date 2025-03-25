@@ -310,7 +310,7 @@ export const cancelTravelHistoryService = async (req: Request): Promise<any> => 
                 }
             }
         ])
-        console.log(cancelHistory,"++++++++++++++++++++++++++++++")
+        console.log(cancelHistory, "++++++++++++++++++++++++++++++")
         return cancelHistory.length ? cancelHistory : []
     } catch (error) {
         console.log("Error creating Record: ", error);
@@ -400,6 +400,36 @@ export const getTotalFlatFareService = async (req: Request): Promise<any> => {
         ]);
         return totalFlatFare.length ? totalFlatFare[0] : { totalFlatFare: 0 }
 
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+export const totalDriverIncomeService = async (req: Request) => {
+    const driverId = req.params.id
+    try {
+        // Execute the aggregation pipeline
+        const totalIncome = await CallTaxi.aggregate([
+            {
+                $match: { driverId,status: 'Paid'}
+            },
+            {
+                $group:{
+                    _id: "$driverId",
+                    totalIncome: { $sum: "$totalPrice" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                  
+                }
+            }
+        ]);
+        return totalIncome.length ? totalIncome[0] : { totalIncome: 0 }
+
+       
     } catch (error) {
         console.log("Error creating Record: ", error);
         throw error;
