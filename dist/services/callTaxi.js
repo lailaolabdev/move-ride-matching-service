@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getCallTaxisService = exports.createCallTaxiService = void 0;
+exports.getTotalFlatFareService = exports.getTotalmeterService = exports.getTotaltravelTimeService = exports.cancelTravelHistoryService = exports.travelHistoryService = exports.getCommentAndRatingService = exports.updateChatCallTaxiService = exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getCallTaxisService = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
@@ -230,3 +230,217 @@ const getHistoryRideService = (req) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getHistoryRideService = getHistoryRideService;
+const callTaxiTotalPriceReportService = (pipeline) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Execute the aggregation pipeline
+        const result = yield callTaxi_1.CallTaxi.aggregate(pipeline);
+        // Return the total price or 0 if no results are found
+        if (result.length) {
+            return result[0].totalPrice;
+        }
+        else {
+            return 0;
+        }
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.callTaxiTotalPriceReportService = callTaxiTotalPriceReportService;
+const updateStarAndCommentService = (id, rating, comment) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const date = {
+            rating: rating,
+            comment: comment,
+        };
+        const starDate = yield callTaxi_1.CallTaxi.findOneAndUpdate({ _id: id }, date, { new: true });
+        return starDate;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        return null;
+    }
+});
+exports.updateStarAndCommentService = updateStarAndCommentService;
+const updateChatCallTaxiService = (id, chat) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const starDate = yield callTaxi_1.CallTaxi.findOneAndUpdate({ _id: id }, { $addToSet: { chat: chat } }, { new: true });
+        return starDate;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        return null;
+    }
+});
+exports.updateChatCallTaxiService = updateChatCallTaxiService;
+const getCommentAndRatingService = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const starDate = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: {
+                    driverId: id
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$passengerId"] } } }
+                    ],
+                    as: "passengerDetails"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$passengerDetails",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    createdAt: 1,
+                    rating: 1,
+                    comment: 1,
+                    fullName: "$passengerDetails.fullName",
+                    profileImage: "$passengerDetails.profileImage"
+                }
+            }
+        ]);
+        return starDate;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        return null;
+    }
+});
+exports.getCommentAndRatingService = getCommentAndRatingService;
+// get history travel service
+const travelHistoryService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        let rideHistory = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Paid" } },
+            {
+                $project: {
+                    origin: 1,
+                    destination: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1
+                }
+            }
+        ]);
+        return rideHistory.length ? rideHistory : [];
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.travelHistoryService = travelHistoryService;
+// get history cancel service
+const cancelTravelHistoryService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        let cancelHistory = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Canceled" } },
+            {
+                $project: {
+                    origin: 1,
+                    destination: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1
+                }
+            }
+        ]);
+        console.log(cancelHistory, "++++++++++++++++++++++++++++++");
+        return cancelHistory.length ? cancelHistory : [];
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.cancelTravelHistoryService = cancelTravelHistoryService;
+// get total travel time
+const getTotaltravelTimeService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        const totalTravel = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, status: "Paid" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalTravel: { $sum: 1 },
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
+        return totalTravel.length ? totalTravel[0] : { totalTravel: 0 };
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTotaltravelTimeService = getTotaltravelTimeService;
+// get total meter
+const getTotalmeterService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        const totalMeter = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, requestType: "meter", status: "Paid" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalMeter: { $sum: 1 },
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
+        return totalMeter.length ? totalMeter[0] : { totalMeter: 0 };
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTotalmeterService = getTotalmeterService;
+// get total meter
+const getTotalFlatFareService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        const totalFlatFare = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: { passengerId: passengerId, requestType: "flat_fare", status: "Paid" } },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalFlatFare: { $sum: 1 },
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
+        return totalFlatFare.length ? totalFlatFare[0] : { totalFlatFare: 0 };
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTotalFlatFareService = getTotalFlatFareService;

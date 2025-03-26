@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
+exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
+const helper_1 = require("./helper");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -236,19 +237,11 @@ exports.getThelastRide = getThelastRide;
 // report  ride history
 const getRideHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const rideHistory = yield (0, callTaxi_1.getHistoryRideService)(req);
-        // if(!rideHistory.length) {
-        //     res.status(200).json({
-        //         code: messages.SUCCESSFULLY.code,
-        //         messages: messages.SUCCESSFULLY.message,
-        //         rideHistory: rideHistory
-        //     });
-        // }
-        // console.log(rideHistory)
+        const travelHistory = yield (0, callTaxi_1.getHistoryRideService)(req);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            rideHistory
+            travelHistory
         });
     }
     catch (error) {
@@ -261,3 +254,195 @@ const getRideHistory = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getRideHistory = getRideHistory;
+// Call the service function to calculate the total price of the taxi
+const callTaxiTotalPrice = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { startDate, endDate } = req.query;
+        // Create pipeline
+        const pipeneMongo = (0, helper_1.pipeline)({
+            startDate: startDate ? new Date(startDate) : undefined,
+            endDate: endDate ? new Date(endDate) : undefined,
+        });
+        // Call the  service function
+        const totalPrice = yield (0, callTaxi_1.callTaxiTotalPriceReportService)(pipeneMongo);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            message: config_1.messages.SUCCESSFULLY.message,
+            totalPrice: totalPrice,
+        });
+    }
+    catch (error) {
+        console.error("Error fetching tax info:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.callTaxiTotalPrice = callTaxiTotalPrice;
+const updateStartAndComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const { rating, comment } = req.body;
+        if (rating > 5) {
+            return res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                messages: config_1.messages.BAD_GATEWAY.message,
+                detail: "The rating must not exceed 5. Please provide a value between 1 and 5."
+            });
+        }
+        yield (0, callTaxi_1.updateStarAndCommentService)(id, rating, comment);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            messages: config_1.messages.SUCCESSFULLY.message,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.updateStartAndComment = updateStartAndComment;
+const chatCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        let { message } = req.body;
+        const chatId = req.user.id;
+        const chatData = [{
+                id: chatId,
+                message: message,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }];
+        const data = yield (0, callTaxi_1.updateChatCallTaxiService)(id, chatData);
+        // const data=  await updateChatCallTaxiService(id, chat);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            messages: config_1.messages.SUCCESSFULLY.message,
+            data: data
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.chatCallTaxi = chatCallTaxi;
+const getComentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const data = yield (0, callTaxi_1.getCommentAndRatingService)(id);
+        // const data=  await updateChatCallTaxiService(id, chat);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            messages: config_1.messages.SUCCESSFULLY.message,
+            data: data
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getComentAndRating = getComentAndRating;
+// report  ride history
+const travelHistoryHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const travelHistory = yield (0, callTaxi_1.travelHistoryService)(req);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            messages: config_1.messages.SUCCESSFULLY.message,
+            travelHistory
+        });
+    }
+    catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.travelHistoryHistory = travelHistoryHistory;
+const cancelTravelHistoryHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const travelHistory = yield (0, callTaxi_1.cancelTravelHistoryService)(req);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            messages: config_1.messages.SUCCESSFULLY.message,
+            travelHistory
+        });
+    }
+    catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.cancelTravelHistoryHistory = cancelTravelHistoryHistory;
+// total travel time 
+const gettotalTravelTime = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const totalTravelTime = yield (0, callTaxi_1.getTotaltravelTimeService)(req);
+        res.status(200).json(Object.assign({ code: config_1.messages.SUCCESSFULLY.code, messages: config_1.messages.SUCCESSFULLY.message }, totalTravelTime));
+    }
+    catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.gettotalTravelTime = gettotalTravelTime;
+// get total travel request type meter
+const getTotalMeterTime = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const totalMeterTime = yield (0, callTaxi_1.getTotalmeterService)(req);
+        res.status(200).json(Object.assign({ code: config_1.messages.SUCCESSFULLY.code, messages: config_1.messages.SUCCESSFULLY.message }, totalMeterTime));
+    }
+    catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getTotalMeterTime = getTotalMeterTime;
+// get total travel request type meter
+const getTotalFlatFareTime = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const totalFlatFare = yield (0, callTaxi_1.getTotalFlatFareService)(req);
+        console.log(totalFlatFare);
+        res.status(200).json(Object.assign({ code: config_1.messages.SUCCESSFULLY.code, messages: config_1.messages.SUCCESSFULLY.message }, totalFlatFare));
+    }
+    catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getTotalFlatFareTime = getTotalFlatFareTime;

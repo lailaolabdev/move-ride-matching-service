@@ -7,14 +7,23 @@ import {
     getUserCallTaxisService,
     updateCallTaxiService,
     driverUpdateStatusService,
-    getCallTaxisService,
     getTotalRideService,
     getTotalDistanceService,
     getTheLastRideService,
     getHistoryRideService,
+    getCommentAndRatingService,
+    updateChatCallTaxiService,
+    updateStarAndCommentService,
+    callTaxiTotalPriceReportService,
+    travelHistoryService,
+    cancelTravelHistoryService,
+    getTotaltravelTimeService,
+    getTotalmeterService,
+    getTotalFlatFareService,
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
+import { pipeline } from "./helper";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
@@ -248,7 +257,6 @@ export const gettotalRide = async (req: Request, res: Response) => {
     }
 };
 
-
 // report total totalDistance 
 
 export const getTotalDistance = async (req: Request, res: Response) => {
@@ -272,7 +280,6 @@ export const getTotalDistance = async (req: Request, res: Response) => {
     }
 };
 
-
 // report total the last ride
 export const getThelastRide = async (req: Request, res: Response) => {
     try {
@@ -294,28 +301,231 @@ export const getThelastRide = async (req: Request, res: Response) => {
     }
 };
 
-
 // report  ride history
 export const getRideHistory = async (req: Request, res: Response) => {
     try {
-        const rideHistory = await getHistoryRideService(req);
-        // if(!rideHistory.length) {
-        //     res.status(200).json({
-        //         code: messages.SUCCESSFULLY.code,
-        //         messages: messages.SUCCESSFULLY.message,
-        //         rideHistory: rideHistory
-        //     });
-        // }
-        // console.log(rideHistory)
-         
+        const travelHistory = await getHistoryRideService(req);
+
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            rideHistory
+            travelHistory
         });
     } catch (error) {
         console.error("Error fetching total ride:", error);
 
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// Call the service function to calculate the total price of the taxi
+export const callTaxiTotalPrice = async (req: Request, res: Response) => {
+    try {
+        const { startDate, endDate } = req.query;
+        // Create pipeline
+        const pipeneMongo = pipeline({
+            startDate: startDate ? new Date(startDate as string) : undefined,
+            endDate: endDate ? new Date(endDate as string) : undefined,
+        });
+        // Call the  service function
+        const totalPrice = await callTaxiTotalPriceReportService(pipeneMongo);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: messages.SUCCESSFULLY.message,
+            totalPrice: totalPrice,
+        });
+    } catch (error) {
+        console.error("Error fetching tax info:", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+
+export const updateStartAndComment = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { id } = req.params;
+        const { rating, comment } = req.body;
+        if (rating > 5) {
+            return res.status(400).json({
+                code: messages.BAD_REQUEST.code,
+                messages: messages.BAD_GATEWAY.message,
+                detail: "The rating must not exceed 5. Please provide a value between 1 and 5."
+            })
+        }
+        await updateStarAndCommentService(id, rating, comment);
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
+
+export const chatCallTaxi = async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+        let { message } = req.body;
+
+        const chatId = (req as any).user.id
+
+        const chatData = [{
+            id: chatId,
+            message: message,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }];
+
+        const data = await updateChatCallTaxiService(id, chatData);
+        // const data=  await updateChatCallTaxiService(id, chat);
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            data: data
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
+
+export const getComentAndRating = async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+        const data = await getCommentAndRatingService(id);
+        // const data=  await updateChatCallTaxiService(id, chat);
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            data: data
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
+
+// report  ride history
+export const travelHistoryHistory = async (req: Request, res: Response) => {
+    try {
+        const travelHistory = await travelHistoryService(req);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            travelHistory
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+export const cancelTravelHistoryHistory = async (req: Request, res: Response) => {
+    try {
+        const travelHistory = await cancelTravelHistoryService(req)
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            travelHistory
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// total travel time 
+export const gettotalTravelTime = async (req: Request, res: Response) => {
+    try {
+        const totalTravelTime = await getTotaltravelTimeService(req);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            ...totalTravelTime,
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// get total travel request type meter
+export const getTotalMeterTime = async (req: Request, res: Response) => {
+    try {
+        const totalMeterTime = await getTotalmeterService(req);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            ...totalMeterTime,
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// get total travel request type meter
+export const getTotalFlatFareTime = async (req: Request, res: Response) => {
+    try {
+        const totalFlatFare = await getTotalFlatFareService(req);
+        console.log(totalFlatFare)
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            ...totalFlatFare,
+        });
+    } catch (error) {
+        console.error("Error fetching total ride:", error);
         res.status(500).json({
             code: messages.INTERNAL_SERVER_ERROR.code,
             message: messages.INTERNAL_SERVER_ERROR.message,

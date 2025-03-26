@@ -21,4 +21,16 @@ router.get("/last-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTax
 router.get("/driver-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverCallTaxis);
 router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateCallTaxis);
 router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.driverUpdateStatus);
+router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.callTaxiTotalPrice);
+router.get("/comment-rating/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getComentAndRating);
+router.put("/rating-comment/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateStartAndComment);
+router.put("/chat-call-taxi/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.chatCallTaxi);
+// get total travel history ride
+router.get("/travel-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.travelHistoryHistory);
+// get total cancel travel history ride
+router.get("/cancel-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.cancelTravelHistoryHistory);
+// get total  travel request type meter
+router.get("/total-meter/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getTotalMeterTime);
+// get total  travel request type flat fare
+router.get("/flat-fare/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getTotalFlatFareTime);
 exports.default = router;
