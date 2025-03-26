@@ -240,3 +240,243 @@
  *                   type: string
  *                   example: "Error details here"
  */
+
+
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/total-price:
+ *   get:
+ *     summary: Get total price of all call taxi and filter by date range
+ *     description: Get total price of all call taxi and filter by date range
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         example: "2025-02-20T04:51:50.283Z"
+ *         
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         example: "2025-02-20T04:51:50.283Z"
+ *         
+ *     responses:
+ *       200:
+ *         description: Total price of all call taxi and filter by date range
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully"
+ *                 totalPrice:
+ *                   type: number
+ *                   example: 12622.400000000001
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "An unexpected error occurred"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error fetching tax info"
+ */
+
+
+
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/rating-comment/{id}:
+ *   put:
+ *     summary: Update star and comment of a calling taxi
+ *     description: Update star and comment of a calling taxi
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "67b758886ec0110acaac7d5c"
+ *         description: The ID of the calling taxi to be updated.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               rating:
+ *                 type: number
+ *                 description: The rating of the calling taxi.
+ *                 example: 5
+ *               comment:
+ *                 type: string
+ *                 description: The comment of the calling taxi.
+ *                 example: "Good service"
+ *               
+ *     responses:
+ *       '200':
+ *         description: Successfully updated the star and comment of the calling taxi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                   description: The response code.
+ *                 messages:
+ *                   type: string
+ *                   example: "Successfully"
+ *                   description: The response message.
+ *       
+ */
+
+
+
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/chat-call-taxi/{id}:
+ *   put:
+ *     summary: Update chat details for a specific call taxi by ID
+ *     description: This endpoint updates the chat details (an array of chat messages) for a specific call taxi identified by its ID.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "67b758886ec0110acaac7d5c"
+ *         description: The unique identifier of the call taxi record to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               
+ *               message:
+ *                 type: string
+ *                 description: The comment of the calling taxi.
+ *                 example: "test"
+ *             
+ *     responses:
+ *       200:
+ *         description: Chat details updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 messages:
+ *                   type: string
+ *                   example: "Successfully."
+ */
+
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/comment-rating/{id}:
+ *   get:
+ *     summary: Get comments and ratings for a specific driver
+ *     description: Retrieve all comments and ratings for a specific driver by their ID.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the driver to retrieve comments and ratings for.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved comments and ratings for the driver.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "SUCCESSFULLY"
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-03-19T08:26:41.760Z"
+ *                       comment:
+ *                         type: string
+ *                         example: "well"
+ *                       rating:
+ *                         type: number
+ *                         example: 1
+ *                       fullName:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       profileImage:
+ *                         type: string
+ *                         nullable: true
+ *                         example: null
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "An unexpected error occurred"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error fetching comments and ratings"
+ */
