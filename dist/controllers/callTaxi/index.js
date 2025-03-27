@@ -237,11 +237,11 @@ exports.getThelastRide = getThelastRide;
 // report  ride history
 const getRideHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const travelHistory = yield (0, callTaxi_1.getHistoryRideService)(req);
+        const rideHistory = yield (0, callTaxi_1.getHistoryRideService)(req);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            travelHistory
+            rideHistory
         });
     }
     catch (error) {
