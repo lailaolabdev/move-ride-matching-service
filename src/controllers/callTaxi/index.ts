@@ -304,12 +304,12 @@ export const getThelastRide = async (req: Request, res: Response) => {
 // report  ride history
 export const getRideHistory = async (req: Request, res: Response) => {
     try {
-        const rideHistory = await getHistoryRideService(req);
+        const travelHistory = await getHistoryRideService(req);
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            rideHistory
+            travelHistory
         });
     } catch (error) {
         console.error("Error fetching total ride:", error);
