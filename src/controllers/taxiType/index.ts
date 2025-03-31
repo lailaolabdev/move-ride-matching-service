@@ -65,6 +65,7 @@ export const getAllTaxiTypes = async (req: Request, res: Response) => {
 export const getTaxiTypeById = async (req: Request, res: Response) => {
     try {
         const taxiType = await getTaxiTypeByIdService(req.params.id);
+
         if (!taxiType) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,
@@ -72,6 +73,7 @@ export const getTaxiTypeById = async (req: Request, res: Response) => {
             });
             return;
         }
+
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             message: 'Taxi Type fetched successfully',

@@ -9,7 +9,7 @@ router.post('/', checkAuthorizationMiddleware, validateCreateTaxiType, createTax
 
 router.get('/', checkAuthorizationMiddleware, getAllTaxiTypes);
 
-router.get('/:id', checkAuthorizationMiddleware, getTaxiTypeById);
+router.get('/:id', getTaxiTypeById);
 
 router.put('/:id', checkAuthorizationMiddleware, updateTaxiType);
 
