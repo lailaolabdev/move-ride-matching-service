@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get('/', checkAuthorizationMiddleware, getAllVehicleDrivers);
 router.get('/:id', checkAuthorizationMiddleware, getVehicleDriver);
-router.get('/driver/:id', checkAuthorizationMiddleware, getVehicleDriverByDriverId);
+router.get('/driver/:id', getVehicleDriverByDriverId);
 router.post('/', checkAuthorizationMiddleware, validateCreateVehicleDriver, createVehicleDriver);
 router.put('/', checkAuthorizationMiddleware, updateVehicleDriver);
 router.delete('/:id', checkAuthorizationMiddleware, deleteVehicleDriver);
