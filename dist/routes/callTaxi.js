@@ -10,6 +10,7 @@ const middlewares_1 = require("../middlewares");
 const router = express_1.default.Router();
 router.post("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createCallTaxi);
 router.get("/user-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getUserCallTaxis);
+router.put("/driver-complain/:id", middlewares_1.checkAuthorizationMiddleware);
 // get total  ride
 router.get("/total-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.gettotalRide);
 // get total distance ride
@@ -18,12 +19,16 @@ router.get("/total-distance/:id", middlewares_1.checkAuthorizationMiddleware, ca
 router.get("/ride-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getRideHistory);
 // get total the last ride
 router.get("/last-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getThelastRide);
-router.get("/driver-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverCallTaxis);
+// Get all calling taxi
+router.get("/calling-taxi-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverCallTaxis);
+// Update type and status by calling taxi id
 router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateCallTaxis);
+// Driver update order processing status
 router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.driverUpdateStatus);
 router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.callTaxiTotalPrice);
 router.get("/comment-rating/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getComentAndRating);
 router.put("/rating-comment/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateStartAndComment);
+// update chat while processing order 
 router.put("/chat-call-taxi/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.chatCallTaxi);
 // get total travel history ride
 router.get("/travel-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.travelHistoryHistory);

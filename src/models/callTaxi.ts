@@ -46,10 +46,6 @@ const CallTaxiSchema: Schema = new Schema(
 			type: String,
 			required: true,
 		},
-		driverId: {
-			type: String,
-			default: null,
-		},
 		origin: {
 			type: String,
 			required: true,
@@ -100,6 +96,15 @@ const CallTaxiSchema: Schema = new Schema(
 			enum: Object.values(STATUS),
 			default: STATUS.REQUESTING,
 		},
+		// Driver info
+		driverId: String,
+		driverComplain: {
+			rating: Number,
+			customerBehavior: String,
+			satisfaction: String,
+			remark: String,
+			image: [String]
+		}
 	},
 	{
 		timestamps: true,

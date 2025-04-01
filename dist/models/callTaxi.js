@@ -26,10 +26,6 @@ const CallTaxiSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
-    driverId: {
-        type: String,
-        default: null,
-    },
     origin: {
         type: String,
         required: true,
@@ -80,6 +76,15 @@ const CallTaxiSchema = new mongoose_1.Schema({
         enum: Object.values(exports.STATUS),
         default: exports.STATUS.REQUESTING,
     },
+    // Driver info
+    driverId: String,
+    driverComplain: {
+        rating: Number,
+        customerBehavior: String,
+        satisfaction: String,
+        remark: String,
+        image: [String]
+    }
 }, {
     timestamps: true,
 });

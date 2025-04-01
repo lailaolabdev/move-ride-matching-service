@@ -20,6 +20,7 @@ import {
     getTotaltravelTimeService,
     getTotalmeterService,
     getTotalFlatFareService,
+    createDriverComplainPassengerService,
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -105,6 +106,26 @@ export const getUserCallTaxis = async (req: Request, res: Response) => {
         });
     }
 };
+
+export const createDriverComplain = async (req: Request, res: Response) => {
+    try {
+        const created = await createDriverComplainPassengerService(req);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            data: created,
+        });
+    } catch (error) {
+        console.error("Error fetching tax info:", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
 
 export const getDriverCallTaxis = async (req: Request, res: Response) => {
     try {
@@ -235,9 +256,7 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     }
 };
 
-
 // report total ride 
-
 export const gettotalRide = async (req: Request, res: Response) => {
     try {
         const totalRide = await getTotalRideService(req);
@@ -258,7 +277,6 @@ export const gettotalRide = async (req: Request, res: Response) => {
 };
 
 // report total totalDistance 
-
 export const getTotalDistance = async (req: Request, res: Response) => {
     try {
         const totalDistance = await getTotalDistanceService(req);
@@ -349,7 +367,6 @@ export const callTaxiTotalPrice = async (req: Request, res: Response) => {
     }
 };
 
-
 export const updateStartAndComment = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
@@ -433,7 +450,7 @@ export const getComentAndRating = async (req: Request, res: Response) => {
     }
 }
 
-// report  ride history
+// report ride history
 export const travelHistoryHistory = async (req: Request, res: Response) => {
     try {
         const travelHistory = await travelHistoryService(req);

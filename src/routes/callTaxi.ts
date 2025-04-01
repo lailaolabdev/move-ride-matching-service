@@ -27,6 +27,8 @@ router.post("/", checkAuthorizationMiddleware, createCallTaxi);
 
 router.get("/user-history", checkAuthorizationMiddleware, getUserCallTaxis);
 
+router.put("/driver-complain/:id", checkAuthorizationMiddleware,)
+
 // get total  ride
 router.get("/total-ride/:id", checkAuthorizationMiddleware, gettotalRide);
 
@@ -39,10 +41,13 @@ router.get("/ride-history/:id", checkAuthorizationMiddleware, getRideHistory);
 // get total the last ride
 router.get("/last-ride/:id", checkAuthorizationMiddleware, getThelastRide);
 
-router.get("/driver-history", checkAuthorizationMiddleware, getDriverCallTaxis);
+// Get all calling taxi
+router.get("/calling-taxi-history", checkAuthorizationMiddleware, getDriverCallTaxis);
 
+// Update type and status by calling taxi id
 router.put("/:id", validateParamID, checkAuthorizationMiddleware, updateCallTaxis,);
 
+// Driver update order processing status
 router.put("/driver-confirm/:id", checkAuthorizationMiddleware, driverUpdateStatus,);
 
 router.get("/total-price", checkAuthorizationMiddleware, callTaxiTotalPrice,);
@@ -51,6 +56,7 @@ router.get("/comment-rating/:id", checkAuthorizationMiddleware, getComentAndRati
 
 router.put("/rating-comment/:id", checkAuthorizationMiddleware, updateStartAndComment,)
 
+// update chat while processing order 
 router.put("/chat-call-taxi/:id", checkAuthorizationMiddleware, chatCallTaxi,);
 
 // get total travel history ride

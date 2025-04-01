@@ -64,6 +64,33 @@ export const getCallTaxisService = async (req: Request): Promise<ICallTaxi | nul
     }
 };
 
+export const createDriverComplainPassengerService = async (req: Request) => {
+    try {
+        const { id } = req.params
+
+        const { rating, customerBehavior, satisfaction, remark, image } = req.body
+
+        const driverComplain: any = {}
+
+        if (rating) driverComplain.rating = rating
+        if (customerBehavior) driverComplain.customerBehavior = customerBehavior
+        if (satisfaction) driverComplain.satisfaction = satisfaction
+        if (remark) driverComplain.remark = remark
+        if (image.length) driverComplain.image = image
+
+        const updated = await CallTaxi.findOneAndUpdate(
+            { id },
+            { driverComplain }
+        )
+
+        return updated
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+}
+
 export const getUserCallTaxisService = async (req: Request): Promise<ICallTaxi[] | null> => {
     try {
         const passengerId = (req as any).user.id;
