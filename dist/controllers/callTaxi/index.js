@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.createDriverComplain = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
+exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -99,6 +99,25 @@ const createDriverComplain = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.createDriverComplain = createDriverComplain;
+const createPassengerComplain = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const created = yield (0, callTaxi_1.createPassengerComplainDriverService)(req);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            messages: config_1.messages.SUCCESSFULLY.message,
+            data: created,
+        });
+    }
+    catch (error) {
+        console.error("Error fetching tax info:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.createPassengerComplain = createPassengerComplain;
 const getDriverCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const callTaxis = yield (0, callTaxi_1.getDriverCallTaxisService)(req);

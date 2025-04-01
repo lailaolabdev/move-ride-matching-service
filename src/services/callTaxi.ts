@@ -80,9 +80,37 @@ export const createDriverComplainPassengerService = async (req: Request) => {
 
         const updated = await CallTaxi.findOneAndUpdate(
             { id },
-            { driverComplain }
+            { driverComplain: driverComplain },
+            { new: true }
         )
 
+        return updated
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+}
+
+export const createPassengerComplainDriverService = async (req: Request) => {
+    try {
+        const { id } = req.params
+
+        const { rating, driverBehavior, satisfaction, remark, image } = req.body
+
+        const passengerComplain: any = {}
+
+        if (rating) passengerComplain.rating = rating
+        if (driverBehavior) passengerComplain.driverBehavior = driverBehavior
+        if (satisfaction) passengerComplain.satisfaction = satisfaction
+        if (remark) passengerComplain.remark = remark
+        if (image && image.length) passengerComplain.image = image
+
+        const updated = await CallTaxi.findOneAndUpdate(
+            { _id: id },
+            { passengerComplain: passengerComplain },
+            { new: true }
+        )
         return updated
     } catch (error) {
         console.log("Error creating Record: ", error);
@@ -214,7 +242,6 @@ export const getTotalRideService = async (req: Request): Promise<any> => {
     }
 };
 
-
 // get Total Distance Service
 export const getTotalDistanceService = async (req: Request): Promise<any> => {
     try {
@@ -265,8 +292,6 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
     }
 };
 
-
-
 export const getHistoryRideService = async (req: Request): Promise<any> => {
     try {
         const passengerId = req.params.id
@@ -308,7 +333,6 @@ export const callTaxiTotalPriceReportService = async (pipeline: any) => {
     }
 };
 
-
 export const updateStarAndCommentService = async (id: String, rating: Number, comment: String): Promise<any> => {
     try {
         const date = {
@@ -341,8 +365,6 @@ export const updateChatCallTaxiService = async (id: String, chat: Object[]): Pro
         return null;
     }
 }
-
-
 
 export const getCommentAndRatingService = async (id: String): Promise<any> => {
     try {
@@ -471,7 +493,6 @@ export const getTotaltravelTimeService = async (req: Request): Promise<any> => {
     }
 };
 
-
 // get total meter
 export const getTotalmeterService = async (req: Request): Promise<any> => {
     try {
@@ -499,7 +520,6 @@ export const getTotalmeterService = async (req: Request): Promise<any> => {
         throw error;
     }
 };
-
 
 // get total meter
 export const getTotalFlatFareService = async (req: Request): Promise<any> => {

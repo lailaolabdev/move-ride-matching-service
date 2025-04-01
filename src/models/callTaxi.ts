@@ -38,9 +38,17 @@ export interface ICallTaxi extends Document {
 
 const CallTaxiSchema: Schema = new Schema(
 	{
+		// passenger info
 		passengerId: {
 			type: String,
 			required: true,
+		},
+		passengerComplain: {
+			rating: Number,
+			driverBehavior: String,
+			satisfaction: String,
+			remark: String,
+			image: [String]
 		},
 		carTypeId: {
 			type: String,

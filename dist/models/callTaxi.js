@@ -18,9 +18,17 @@ exports.STATUS = {
     CANCELED: "Canceled", // ລູກຄ້າຍົກເລີກ
 };
 const CallTaxiSchema = new mongoose_1.Schema({
+    // passenger info
     passengerId: {
         type: String,
         required: true,
+    },
+    passengerComplain: {
+        rating: Number,
+        driverBehavior: String,
+        satisfaction: String,
+        remark: String,
+        image: [String]
     },
     carTypeId: {
         type: String,
