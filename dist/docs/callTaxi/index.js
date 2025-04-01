@@ -164,6 +164,32 @@
  */
 /**
  * @swagger
+ * /v1/api/call-taxi/passenger-complain/{id}:
+ *   get:
+ *     summary: Get passenger complain
+ *     description: Get passenger complain by passenger id
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "63d2fcd0c90a5300188b4567"
+ *         description: The ID of passenger to be get passenger complains.
+ *     responses:
+ *       200:
+ *         description: Calling taxi updated successfully.
+ *       404:
+ *         description: This ride request was taken.
+ *       500:
+ *         description: Internal server error.
+ */
+/**
+ * @swagger
  * /v1/api/call-taxi/driver-confirm/{id}:
  *   put:
  *     summary: Update a Calling taxi

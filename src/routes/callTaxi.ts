@@ -19,6 +19,7 @@ import {
     getTotalFlatFareTime,
     createDriverComplain,
     createPassengerComplain,
+    getPassengerComplainById,
 } from "../controllers/callTaxi"
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -34,6 +35,9 @@ router.put("/driver-complain/:id", checkAuthorizationMiddleware, createDriverCom
 
 // passenger complain driver by call taxi id
 router.put("/passenger-complain/:id", checkAuthorizationMiddleware, createPassengerComplain)
+
+// get passenger complain by passenger id
+router.get("/passenger-complain/:id", checkAuthorizationMiddleware, getPassengerComplainById)
 
 // get total  ride
 router.get("/total-ride/:id", checkAuthorizationMiddleware, gettotalRide);

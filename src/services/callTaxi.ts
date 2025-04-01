@@ -119,6 +119,34 @@ export const createPassengerComplainDriverService = async (req: Request) => {
     }
 }
 
+// get passenger complain driver by passenger id
+export const getPassengerComplainDriverByIdService = async (req: Request) => {
+    try {
+        const { id } = req.params
+
+        const complain = await CallTaxi.aggregate([
+            {
+                $match: {
+                    passengerId: id
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    passengerComplain: 1,
+                    createdAt: 1
+                }
+            }
+        ])
+
+        return complain
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+}
+
 export const getUserCallTaxisService = async (req: Request): Promise<ICallTaxi[] | null> => {
     try {
         const passengerId = (req as any).user.id;
@@ -224,7 +252,6 @@ export const getTotalRideService = async (req: Request): Promise<any> => {
                 $group: {
                     _id: "$passengerId",
                     totalRides: { $sum: 1 },
-
                 }
             },
             {

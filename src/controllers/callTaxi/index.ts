@@ -22,6 +22,7 @@ import {
     getTotalFlatFareService,
     createDriverComplainPassengerService,
     createPassengerComplainDriverService,
+    getPassengerComplainDriverByIdService,
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -136,6 +137,26 @@ export const createPassengerComplain = async (req: Request, res: Response) => {
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
             data: created,
+        });
+    } catch (error) {
+        console.error("Error fetching tax info:", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
+
+export const getPassengerComplainById = async (req: Request, res: Response) => {
+    try {
+        const complain = await getPassengerComplainDriverByIdService(req);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            messages: messages.SUCCESSFULLY.message,
+            data: complain,
         });
     } catch (error) {
         console.error("Error fetching tax info:", error);
