@@ -19,6 +19,7 @@ const calculation_1 = __importDefault(require("./routes/calculation"));
 const callTaxi_1 = __importDefault(require("./routes/callTaxi"));
 const polygon_1 = __importDefault(require("./routes/polygon"));
 const drivingLicenseType_1 = __importDefault(require("./routes/drivingLicenseType"));
+const loyalty_1 = __importDefault(require("./routes/loyalty"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8001;
@@ -41,6 +42,7 @@ app.use("/v1/api/calculate", calculation_1.default);
 app.use("/v1/api/call-taxi", callTaxi_1.default);
 app.use("/v1/api/polygon", polygon_1.default);
 app.use("/v1/api/driving-license-type", drivingLicenseType_1.default);
+app.use("/api/v1/loyalty", loyalty_1.default);
 app.use("/v1/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
 // Error handling middleware
 app.use((err, req, res, next) => {

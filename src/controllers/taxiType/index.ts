@@ -82,6 +82,7 @@ export const getTaxiTypeById = async (req: Request, res: Response) => {
         return;
     } catch (error) {
         console.log("Error: ", error);
+
         res.status(500).json({
             code: messages.INTERNAL_SERVER_ERROR.code,
             message: messages.INTERNAL_SERVER_ERROR.message,

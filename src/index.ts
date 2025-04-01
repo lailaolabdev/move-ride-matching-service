@@ -15,6 +15,7 @@ import calculationRoute from "./routes/calculation";
 import callTaxiRoute from "./routes/callTaxi";
 import polygonRoute from "./routes/polygon";
 import DrivingLicenseTypeRoute from "./routes/drivingLicenseType";
+import loyaltyRoute from "./routes/loyalty";
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use("/v1/api/calculate", calculationRoute);
 app.use("/v1/api/call-taxi", callTaxiRoute);
 app.use("/v1/api/polygon", polygonRoute);
 app.use("/v1/api/driving-license-type", DrivingLicenseTypeRoute);
+app.use("/api/v1/loyalty", loyaltyRoute);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Error handling middleware
