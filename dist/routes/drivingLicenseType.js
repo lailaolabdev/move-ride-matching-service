@@ -5,7 +5,7 @@ const middlewares_1 = require("../middlewares");
 const drivingLicenseType_1 = require("../controllers/drivingLicenseType");
 const drivingLicense_1 = require("../validators/drivingLicense");
 const router = (0, express_1.Router)();
-router.get("/", middlewares_1.checkAuthorizationMiddleware, drivingLicenseType_1.getDrivingLicenseTypes);
+router.get("/", drivingLicenseType_1.getDrivingLicenseTypes);
 router.get("/:id", middlewares_1.checkAuthorizationMiddleware, drivingLicenseType_1.getDrivingLicenseType);
 router.post("/", middlewares_1.checkAuthorizationMiddleware, drivingLicense_1.validateCreateDrivingLicense, drivingLicenseType_1.createDrivingLicenseType);
 router.put("/:id", middlewares_1.checkAuthorizationMiddleware, drivingLicenseType_1.updateDrivingLicenseType);

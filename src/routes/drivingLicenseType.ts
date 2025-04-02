@@ -11,7 +11,7 @@ import { validateCreateDrivingLicense } from "../validators/drivingLicense";
 
 const router = Router();
 
-router.get("/", checkAuthorizationMiddleware, getDrivingLicenseTypes);
+router.get("/", getDrivingLicenseTypes);
 
 router.get("/:id", checkAuthorizationMiddleware, getDrivingLicenseType);
 
