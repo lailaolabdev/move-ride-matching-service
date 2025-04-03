@@ -128,13 +128,37 @@ export const getPassengerComplainDriverByIdService = async (req: Request) => {
             {
                 $match: {
                     passengerId: id
-                },
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$passengerId"] } } }
+                    ],
+                    as: "passengerDetails"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$passengerDetails",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            // Filter out documents without passengerComplain
+            {
+                $match: {
+                    passengerComplain: { $exists: true, $ne: null }
+                }
             },
             {
                 $project: {
                     _id: 1,
                     passengerComplain: 1,
-                    createdAt: 1
+                    createdAt: 1,
+                    fullName: "$passengerDetails.fullName",
+                    profileImage: "$passengerDetails.profileImage"
                 }
             }
         ])
