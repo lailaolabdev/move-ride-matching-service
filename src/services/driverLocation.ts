@@ -3,7 +3,7 @@ import { IDriverLocation, driverLocationModel } from '../models/driverLocation';
 
 export const createDriverLocationService = async (req: Request) => {
     try {
-        const user = (req as any).user._id;
+        const user = (req as any).user.id;
 
         const { latitude, longitude, area } = req.body
 
