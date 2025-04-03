@@ -13,7 +13,7 @@ exports.deleteLoyaltyService = exports.updateLoyaltyService = exports.getLoyalty
 const loyalty_1 = require("../models/loyalty");
 const createLoyaltyService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = req.user._id;
+        const user = req.user.id;
         const { image, name, quantity, price } = req.body;
         const loyalty = yield loyalty_1.loyaltyModel.create({
             image,
@@ -59,7 +59,7 @@ exports.getLoyaltyByIdService = getLoyaltyByIdService;
 const updateLoyaltyService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const user = req.user._id;
+        const user = req.user.id;
         const { image, name, quantity, price } = req.body;
         const updatedLoyalty = yield loyalty_1.loyaltyModel.findByIdAndUpdate(id, {
             image,

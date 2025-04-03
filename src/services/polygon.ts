@@ -56,7 +56,7 @@ export const getPolygonByIdService = async (id: string): Promise<IPolygon | null
 
 export const updatePolygonService = async (req: Request): Promise<IPolygon | null> => {
     try {
-        const user = (req as any).user._id;
+        const user = (req as any).user.id;
 
         const id = req.params.id
 

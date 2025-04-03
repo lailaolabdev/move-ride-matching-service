@@ -3,7 +3,7 @@ import { ILoyalty, loyaltyModel } from '../models/loyalty';
 
 export const createLoyaltyService = async (req: Request) => {
     try {
-        const user = (req as any).user._id;
+        const user = (req as any).user.id;
 
         const {
             image,
@@ -57,7 +57,7 @@ export const updateLoyaltyService = async (req: Request): Promise<ILoyalty | nul
     try {
         const id = req.params.id
 
-        const user = (req as any).user._id;
+        const user = (req as any).user.id;
 
         const {
             image,

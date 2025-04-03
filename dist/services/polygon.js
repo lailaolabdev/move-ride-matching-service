@@ -61,7 +61,7 @@ const getPolygonByIdService = (id) => __awaiter(void 0, void 0, void 0, function
 exports.getPolygonByIdService = getPolygonByIdService;
 const updatePolygonService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = req.user._id;
+        const user = req.user.id;
         const id = req.params.id;
         const { name, coordinates, price, color, } = req.body;
         const updatedPolygon = yield polygon_1.default.findByIdAndUpdate(id, {
