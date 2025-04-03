@@ -47,7 +47,7 @@ export const getDriverLocationByIdService = async (id: string): Promise<IDriverL
 
 export const updateDriverLocationService = async (req: Request): Promise<IDriverLocation | null> => {
     try {
-        const driverId = (req as any).user._id;
+        const driverId = (req as any).user.id;
 
         const { latitude, longitude, area } = req.body
 

@@ -11,6 +11,6 @@ const router = express_1.default.Router();
 router.post('/', middlewares_1.checkAuthorizationMiddleware, driverLocation_1.validateCreateDriverLocation, driverLocation_2.createDriverLocation);
 router.get('/', middlewares_1.checkAuthorizationMiddleware, driverLocation_2.getAllDriverLocation);
 router.get('/:id', middlewares_1.checkAuthorizationMiddleware, driverLocation_2.getDriverLocationById);
-router.put('/:id', middlewares_1.checkAuthorizationMiddleware, driverLocation_2.updateDriverLocation);
+router.put('/', middlewares_1.checkAuthorizationMiddleware, driverLocation_2.updateDriverLocation);
 router.delete('/:id', middlewares_1.checkAuthorizationMiddleware, driverLocation_2.deleteDriverLocation);
 exports.default = router;

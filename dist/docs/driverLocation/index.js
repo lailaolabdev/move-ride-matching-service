@@ -98,7 +98,7 @@
  */
 /**
  * @swagger
- * /api/v1/driver-location/{id}:
+ * /api/v1/driver-location:
  *   put:
  *     summary: Update a driver location
  *     description: Update the details (such as model, brand, fares) of an existing driver location.
@@ -106,14 +106,6 @@
  *       - Driver location
  *     security:
  *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           example: "63d2fcd0c90a5300188b4567"
- *         description: The ID of the driver location to update.
  *     requestBody:
  *       required: true
  *       content:
@@ -124,11 +116,11 @@
  *               latitude:
  *                 type: string
  *                 description: latitude
- *                 example:
+ *                 example: "17.974855"
  *               longitude:
  *                 type: string
  *                 description: longitude
- *                 example:
+ *                 example: "102.630867"
  *               area:
  *                 type: number
  *                 description: area

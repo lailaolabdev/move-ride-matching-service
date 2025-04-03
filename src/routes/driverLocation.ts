@@ -17,7 +17,7 @@ router.get('/', checkAuthorizationMiddleware, getAllDriverLocation);
 
 router.get('/:id', checkAuthorizationMiddleware, getDriverLocationById);
 
-router.put('/:id', checkAuthorizationMiddleware, updateDriverLocation);
+router.put('/', checkAuthorizationMiddleware, updateDriverLocation);
 
 router.delete('/:id', checkAuthorizationMiddleware, deleteDriverLocation);
 
