@@ -52,5 +52,9 @@ const DriverLocationSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    isOnline: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 exports.driverLocationModel = mongoose_1.default.model("DriverLocation", DriverLocationSchema);

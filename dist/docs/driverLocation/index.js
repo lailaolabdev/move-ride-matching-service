@@ -125,6 +125,10 @@
  *                 type: number
  *                 description: area
  *                 example: area
+ *               isOnline:
+ *                 type: boolean
+ *                 description: is driver online or not
+ *                 example: true
  *     responses:
  *       200:
  *         description: Vehicle updated successfully.
