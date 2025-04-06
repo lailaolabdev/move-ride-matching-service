@@ -1,0 +1,26 @@
+import { Request, Response } from "express";
+import { messages } from "../../config";
+import { getNearbyDriversService } from "../../services/nearByDriver";
+
+export const getNearbyDrivers = async (req: Request, res: Response) => {
+    try {
+        const { longitude, latitude } = req.body
+
+        const nearbyDrivers = getNearbyDriversService({ longitude, latitude })
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: "Drivers fetched successfully",
+            drivers: nearbyDrivers,
+        });
+    } catch (error) {
+        console.log("Error: ", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+
+};
