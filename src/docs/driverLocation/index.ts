@@ -25,21 +25,24 @@
  *           schema:
  *             type: object
  *             properties:
- *               latitude:
- *                 type: string
- *                 description: latitude
- *                 example: 
- *               longitude:
- *                 type: string
- *                 description: longitude
- *                 example: 
- *               area:
- *                 type: number
- *                 description: area
- *                 example: area
+ *               location:
+ *                 type: object
+ *                 description: GeoJSON location object
+ *                 properties:
+ *                   type:
+ *                     type: string
+ *                     enum: [Point]
+ *                     example: Point
+ *                   coordinates:
+ *                     type: array
+ *                     items:
+ *                       type: number
+ *                     minItems: 2
+ *                     maxItems: 2
+ *                     example: [102.5712961, 17.9935451]
  *     responses:
  *       201:
- *         description: Vehicle created successfully.
+ *         description: Driver location created successfully.
  *       500:
  *         description: Internal server error.
  */

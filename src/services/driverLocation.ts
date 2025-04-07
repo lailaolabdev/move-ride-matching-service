@@ -5,13 +5,11 @@ export const createDriverLocationService = async (req: Request) => {
     try {
         const user = (req as any).user.id;
 
-        const { latitude, longitude, area } = req.body
+        const { location } = req.body
 
         const driverLocation = await driverLocationModel.create({
             driverId: user,
-            latitude,
-            longitude,
-            area
+            location
         })
 
         return driverLocation

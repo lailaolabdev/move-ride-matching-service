@@ -52,8 +52,6 @@ export const getDriverLocationByTokenId = async (req: Request, res: Response) =>
   try {
     const id = (req as any).user.id
 
-    console.log(id);
-
     const taxi = await getDriverLocationByIdService(id);
 
     if (!taxi) {

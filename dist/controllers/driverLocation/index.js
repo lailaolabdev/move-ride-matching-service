@@ -53,7 +53,6 @@ exports.getAllDriverLocation = getAllDriverLocation;
 const getDriverLocationByTokenId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.user.id;
-        console.log(id);
         const taxi = yield (0, driverLocation_1.getDriverLocationByIdService)(id);
         if (!taxi) {
             res.status(404).json({

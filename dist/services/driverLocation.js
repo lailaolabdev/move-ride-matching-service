@@ -14,12 +14,10 @@ const driverLocation_1 = require("../models/driverLocation");
 const createDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user.id;
-        const { latitude, longitude, area } = req.body;
+        const { location } = req.body;
         const driverLocation = yield driverLocation_1.driverLocationModel.create({
             driverId: user,
-            latitude,
-            longitude,
-            area
+            location
         });
         return driverLocation;
     }
