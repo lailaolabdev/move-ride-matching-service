@@ -53,8 +53,9 @@ exports.getDriverLocationByIdService = getDriverLocationByIdService;
 const updateDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const driverId = req.user.id;
-        const { latitude, longitude, area, isOnline } = req.body;
-        const updatedDriverLocation = yield driverLocation_1.driverLocationModel.findOneAndUpdate({ driverId }, { latitude, longitude, area, isOnline }, { new: true, runValidators: true });
+        const { location } = req.body;
+        console.log(location);
+        const updatedDriverLocation = yield driverLocation_1.driverLocationModel.findOneAndUpdate({ driverId }, { location }, { new: true, runValidators: true });
         return updatedDriverLocation;
     }
     catch (error) {

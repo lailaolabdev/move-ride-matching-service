@@ -111,22 +111,21 @@
  *           schema:
  *             type: object
  *             properties:
- *               latitude:
- *                 type: string
- *                 description: latitude
- *                 example: "17.974855"
- *               longitude:
- *                 type: string
- *                 description: longitude
- *                 example: "102.630867"
- *               area:
- *                 type: number
- *                 description: area
- *                 example: area
- *               isOnline:
- *                 type: boolean
- *                 description: is driver online or not
- *                 example: true
+ *               location:
+ *                 type: object
+ *                 description: GeoJSON location object
+ *                 properties:
+ *                   type:
+ *                     type: string
+ *                     enum: [Point]
+ *                     example: Point
+ *                   coordinates:
+ *                     type: array
+ *                     items:
+ *                       type: number
+ *                     minItems: 2
+ *                     maxItems: 2
+ *                     example: [102.5712961, 17.9935451]
  *     responses:
  *       200:
  *         description: Vehicle updated successfully.

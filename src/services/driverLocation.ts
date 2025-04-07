@@ -47,11 +47,14 @@ export const updateDriverLocationService = async (req: Request): Promise<IDriver
     try {
         const driverId = (req as any).user.id;
 
-        const { latitude, longitude, area, isOnline } = req.body
+        const { location } = req.body
+
+        console.log(location);
+
 
         const updatedDriverLocation = await driverLocationModel.findOneAndUpdate(
             { driverId },
-            { latitude, longitude, area, isOnline },
+            { location },
             { new: true, runValidators: true }
         );
 
