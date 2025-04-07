@@ -36,7 +36,7 @@ export const getAllDriverLocationService = async (): Promise<any> => {
 
 export const getDriverLocationByIdService = async (id: string): Promise<IDriverLocation | null> => {
     try {
-        const driverLocation = await driverLocationModel.findById(id)
+        const driverLocation = await driverLocationModel.findOne({ driverId: id })
 
         return driverLocation;
     } catch (error) {

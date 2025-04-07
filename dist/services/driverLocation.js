@@ -43,7 +43,7 @@ const getAllDriverLocationService = () => __awaiter(void 0, void 0, void 0, func
 exports.getAllDriverLocationService = getAllDriverLocationService;
 const getDriverLocationByIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const driverLocation = yield driverLocation_1.driverLocationModel.findById(id);
+        const driverLocation = yield driverLocation_1.driverLocationModel.findOne({ driverId: id });
         return driverLocation;
     }
     catch (error) {

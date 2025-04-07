@@ -40,21 +40,14 @@ const DriverLocationSchema = new mongoose_1.Schema({
         type: mongoose_1.default.Schema.Types.ObjectId,
         required: true
     },
-    latitude: {
-        type: String,
-        required: true
-    },
-    longitude: {
-        type: String,
-        required: true
-    },
-    area: {
-        type: String,
-        required: true
+    location: {
+        type: { type: String, enum: ['Point'], required: true },
+        coordinates: { type: [Number], required: true }, // [longitude, latitude]
     },
     isOnline: {
         type: Boolean,
         default: false
     }
 }, { timestamps: true });
+DriverLocationSchema.index({ location: '2dsphere' }); // Add a 2dsphere index for geospatial queries
 exports.driverLocationModel = mongoose_1.default.model("DriverLocation", DriverLocationSchema);

@@ -48,9 +48,13 @@ export const getAllDriverLocation = async (req: Request, res: Response) => {
   }
 };
 
-export const getDriverLocationById = async (req: Request, res: Response) => {
+export const getDriverLocationByTokenId = async (req: Request, res: Response) => {
   try {
-    const taxi = await getDriverLocationByIdService(req.params.id);
+    const id = (req as any).user.id
+
+    console.log(id);
+
+    const taxi = await getDriverLocationByIdService(id);
 
     if (!taxi) {
       res.status(404).json({
@@ -60,6 +64,7 @@ export const getDriverLocationById = async (req: Request, res: Response) => {
 
       return;
     }
+
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       message: "Driver location fetched successfully",
@@ -75,6 +80,7 @@ export const getDriverLocationById = async (req: Request, res: Response) => {
     });
   }
 };
+
 
 export const updateDriverLocation = async (req: Request, res: Response) => {
   try {

@@ -76,22 +76,14 @@
 
 /**
  * @swagger
- * /api/v1/driver-location/{id}:
+ * /api/v1/driver-location/by-token:
  *   get:
- *     summary: Get driver location by ID
+ *     summary: Get driver location by token
  *     description: Retrieve a specific driver location by its ID.
  *     tags:
  *       - Driver location
  *     security:
  *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           example: "63d2fcd0c90a5300188b4567"
- *         description: The ID of the vehicle to fetch.
  *     responses:
  *       200:
  *         description: Successfully fetched vehicle.
