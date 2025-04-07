@@ -15,17 +15,46 @@ const getNearbyDriversService = (_a) => __awaiter(void 0, [_a], void 0, function
     try {
         const radiusInKm = 5;
         const radiusInMeters = radiusInKm * 1000; // Convert kilometers to meters
-        const nearbyTaxis = yield driverLocation_1.driverLocationModel.find({
-            location: {
-                $nearSphere: {
-                    $geometry: {
+        const nearbyTaxis = yield driverLocation_1.driverLocationModel.aggregate([
+            {
+                $geoNear: {
+                    near: {
                         type: 'Point',
-                        coordinates: [longitude, latitude], // User's current location [longitude, latitude]
+                        coordinates: [longitude, latitude],
                     },
-                    $maxDistance: radiusInMeters, // Maximum distance in meters (5 km)
+                    distanceField: 'distance',
+                    spherical: true,
+                    maxDistance: radiusInMeters,
+                    query: {
+                        isOnline: true, // filter within geoNear
+                    },
                 },
             },
-        });
+            {
+                $lookup: {
+                    from: 'users', // the collection to join
+                    localField: 'driverId', // field in the current collection
+                    foreignField: '_id', // field in the drivers collection
+                    as: 'driver', // name of the new field to hold the populated data
+                },
+            },
+            {
+                $unwind: '$driver', // unwind the driver array if there's only one driver
+            },
+            {
+                $project: {
+                    driver: {
+                        _id: 1,
+                        registrationSource: 1, // include only the registrationSource field
+                    },
+                    _id: 1,
+                    isOnline: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    distance: 1,
+                },
+            },
+        ]);
         return nearbyTaxis;
     }
     catch (error) {

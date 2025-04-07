@@ -14,8 +14,13 @@ const config_1 = require("../../config");
 const nearByDriver_1 = require("../../services/nearByDriver");
 const getNearbyDrivers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { longitude, latitude } = req.body;
-        const nearbyDrivers = (0, nearByDriver_1.getNearbyDriversService)({ longitude, latitude });
+        const { longitude, latitude } = req.query;
+        const longitudeToNumber = parseFloat(longitude);
+        const latitudeToNumber = parseFloat(latitude);
+        const nearbyDrivers = yield (0, nearByDriver_1.getNearbyDriversService)({
+            longitude: longitudeToNumber,
+            latitude: latitudeToNumber
+        });
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             message: "Drivers fetched successfully",

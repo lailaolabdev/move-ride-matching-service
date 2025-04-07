@@ -4,9 +4,15 @@ import { getNearbyDriversService } from "../../services/nearByDriver";
 
 export const getNearbyDrivers = async (req: Request, res: Response) => {
     try {
-        const { longitude, latitude } = req.body
+        const { longitude, latitude } = req.query
 
-        const nearbyDrivers = getNearbyDriversService({ longitude, latitude })
+        const longitudeToNumber = parseFloat(longitude as string)
+        const latitudeToNumber = parseFloat(latitude as string)
+
+        const nearbyDrivers = await getNearbyDriversService({
+            longitude: longitudeToNumber,
+            latitude: latitudeToNumber
+        })
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
@@ -22,5 +28,4 @@ export const getNearbyDrivers = async (req: Request, res: Response) => {
             detail: (error as Error).message,
         });
     }
-
 };

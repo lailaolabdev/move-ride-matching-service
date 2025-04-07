@@ -17,6 +17,7 @@ import polygonRoute from "./routes/polygon";
 import DrivingLicenseTypeRoute from "./routes/drivingLicenseType";
 import loyaltyRoute from "./routes/loyalty";
 import driverLocationRoute from "./routes/driverLocation";
+import nearByDriverRoute from "./routes/nearByDriver";
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use("/v1/api/polygon", polygonRoute);
 app.use("/v1/api/driving-license-type", DrivingLicenseTypeRoute);
 app.use("/api/v1/loyalty", loyaltyRoute);
 app.use("/api/v1/driver-location", driverLocationRoute);
+app.use("/api/v1/nearby-driver", nearByDriverRoute);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Error handling middleware
