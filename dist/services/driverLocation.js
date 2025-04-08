@@ -54,7 +54,7 @@ const updateDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, f
     try {
         const driverId = req.user.id;
         const { location, isOnline } = req.body;
-        const updatedDriverLocation = yield driverLocation_1.driverLocationModel.findOneAndUpdate({ driverId, isOnline }, { location }, { new: true, runValidators: true });
+        const updatedDriverLocation = yield driverLocation_1.driverLocationModel.findOneAndUpdate({ driverId }, { location, isOnline }, { new: true, runValidators: true });
         return updatedDriverLocation;
     }
     catch (error) {
