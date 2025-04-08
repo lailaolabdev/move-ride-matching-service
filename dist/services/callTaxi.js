@@ -159,7 +159,12 @@ exports.getPassengerComplainDriverByIdService = getPassengerComplainDriverByIdSe
 const getUserCallTaxisService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.user.id;
-        const callTaxis = yield callTaxi_1.CallTaxi.find({ passengerId });
+        const { limit = 10 } = req.query;
+        const limitToNumber = parseInt(limit);
+        const callTaxis = yield callTaxi_1.CallTaxi
+            .find({ passengerId })
+            .sort({ created: -1 })
+            .limit(limitToNumber);
         return callTaxis;
     }
     catch (error) {

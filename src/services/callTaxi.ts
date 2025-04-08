@@ -175,7 +175,15 @@ export const getUserCallTaxisService = async (req: Request): Promise<ICallTaxi[]
     try {
         const passengerId = (req as any).user.id;
 
-        const callTaxis = await CallTaxi.find({ passengerId })
+        const { limit = 10 } = req.query
+
+        const limitToNumber = parseInt(limit as string)
+
+        const callTaxis =
+            await CallTaxi
+                .find({ passengerId })
+                .sort({ created: -1 })
+                .limit(limitToNumber);
 
         return callTaxis
     } catch (error) {
