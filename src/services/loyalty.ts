@@ -27,10 +27,14 @@ export const createLoyaltyService = async (req: Request) => {
     }
 }
 
-export const getAllLoyaltyService = async (skip: number, limit: number): Promise<any> => {
+export const getAllLoyaltyService = async (
+    skip: number,
+    limit: number,
+    filter: any
+): Promise<any> => {
     try {
-        const total = await loyaltyModel.countDocuments();
-        const Loyalties = await loyaltyModel.find()
+        const total = await loyaltyModel.countDocuments(filter);
+        const Loyalties = await loyaltyModel.find(filter)
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });

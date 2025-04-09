@@ -43,13 +43,18 @@ const createLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.createLoyalty = createLoyalty;
 const getAllLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit } = req.query;
+        const { skip, limit, country, countryCode } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
-        const loyalties = yield (0, loyalty_1.getAllLoyaltyService)(parseSkip, parsedLimit);
+        const filter = {};
+        if (country)
+            filter.countryId = country;
+        if (countryCode)
+            filter.countryCode = countryCode;
+        const loyalties = yield (0, loyalty_1.getAllLoyaltyService)(parseSkip, parsedLimit, filter);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
-            message: "Vehicles fetched successfully",
+            message: "Loyalty fetched successfully",
             loyalties,
         });
     }
