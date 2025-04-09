@@ -43,7 +43,7 @@ const STATUS = {
     PENDING: "pending",
     ACCEPTED: "accepted",
     CANCELED: "canceled",
-    SHIPPED: "shipped",
+    DELIVERED: "delivered",
 };
 const LoyaltyClaimSchema = new mongoose_1.Schema({
     userId: {

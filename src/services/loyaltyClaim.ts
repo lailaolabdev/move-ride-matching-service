@@ -23,10 +23,14 @@ export const createLoyaltyClaimService = async (req: Request) => {
     }
 }
 
-export const getAllLoyaltyClaimService = async (skip: number, limit: number): Promise<any> => {
+export const getAllLoyaltyClaimService = async (
+    skip: number,
+    limit: number,
+    filter: any
+): Promise<any> => {
     try {
-        const total = await loyaltyClaimModel.countDocuments();
-        const Loyalties = await loyaltyClaimModel.find()
+        const total = await loyaltyClaimModel.countDocuments(filter);
+        const Loyalties = await loyaltyClaimModel.find(filter)
             .skip(skip)
             .limit(limit);
 

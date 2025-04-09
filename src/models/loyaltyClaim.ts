@@ -9,7 +9,7 @@ const STATUS = {
     PENDING: "pending",
     ACCEPTED: "accepted",
     CANCELED: "canceled",
-    SHIPPED: "shipped",
+    DELIVERED: "delivered",
 }
 
 export interface ILoyaltyClaim extends Document {

@@ -82,10 +82,17 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.createLoyaltyClaim = createLoyaltyClaim;
 const getAllLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit } = req.query;
+        const { skip = 0, limit = 10, status, country, countryCode } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
-        const loyaltyClaim = yield (0, loyaltyClaim_1.getAllLoyaltyClaimService)(parseSkip, parsedLimit);
+        const filter = {};
+        if (status)
+            filter.status = status;
+        if (country)
+            filter.countryId = country;
+        if (countryCode)
+            filter.countryCode = countryCode;
+        const loyaltyClaim = yield (0, loyaltyClaim_1.getAllLoyaltyClaimService)(parseSkip, parsedLimit, filter);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             message: "Loyalty claim fetched successfully",

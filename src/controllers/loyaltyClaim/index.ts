@@ -91,11 +91,24 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
 
 export const getAllLoyaltyClaim = async (req: Request, res: Response) => {
   try {
-    const { skip, limit } = req.query;
+    const {
+      skip = 0,
+      limit = 10,
+      status,
+      country,
+      countryCode
+    } = req.query;
+
     const parseSkip = parseInt(skip as string, 10);
     const parsedLimit = parseInt(limit as string, 10);
 
-    const loyaltyClaim = await getAllLoyaltyClaimService(parseSkip, parsedLimit);
+    const filter: any = {}
+
+    if (status) filter.status = status
+    if (country) filter.countryId = country
+    if (countryCode) filter.countryCode = countryCode
+
+    const loyaltyClaim = await getAllLoyaltyClaimService(parseSkip, parsedLimit, filter);
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,

@@ -31,10 +31,10 @@ const createLoyaltyClaimService = (req) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.createLoyaltyClaimService = createLoyaltyClaimService;
-const getAllLoyaltyClaimService = (skip, limit) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllLoyaltyClaimService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const total = yield loyaltyClaim_1.loyaltyClaimModel.countDocuments();
-        const Loyalties = yield loyaltyClaim_1.loyaltyClaimModel.find()
+        const total = yield loyaltyClaim_1.loyaltyClaimModel.countDocuments(filter);
+        const Loyalties = yield loyaltyClaim_1.loyaltyClaimModel.find(filter)
             .skip(skip)
             .limit(limit);
         return { total, Loyalties };
