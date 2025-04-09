@@ -29,6 +29,8 @@ const LoyaltySchema = new Schema({
         type: Boolean,
         default: false
     },
+    countryId: String,
+    countryCode: String,
     createdBy: String,
     updatedBy: String,
 },
