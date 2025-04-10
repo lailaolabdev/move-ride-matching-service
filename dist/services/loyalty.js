@@ -14,12 +14,14 @@ const loyalty_1 = require("../models/loyalty");
 const createLoyaltyService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user.id;
-        const { image, name, quantity, price } = req.body;
+        const { image, name, quantity, price, countryId, countryCode } = req.body;
         const loyalty = yield loyalty_1.loyaltyModel.create({
             image,
             name,
             quantity,
             price,
+            countryId,
+            countryCode,
             createdBy: user
         });
         return loyalty;

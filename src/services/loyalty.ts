@@ -9,7 +9,9 @@ export const createLoyaltyService = async (req: Request) => {
             image,
             name,
             quantity,
-            price
+            price,
+            countryId,
+            countryCode
         } = req.body
 
         const loyalty = await loyaltyModel.create({
@@ -17,6 +19,8 @@ export const createLoyaltyService = async (req: Request) => {
             name,
             quantity,
             price,
+            countryId,
+            countryCode,
             createdBy: user
         })
 
