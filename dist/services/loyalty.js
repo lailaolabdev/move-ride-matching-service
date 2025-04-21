@@ -62,13 +62,14 @@ const updateLoyaltyService = (req) => __awaiter(void 0, void 0, void 0, function
     try {
         const id = req.params.id;
         const user = req.user.id;
-        const { image, name, quantity, price } = req.body;
+        const { image, name, quantity, price, status } = req.body;
         const updatedLoyalty = yield loyalty_1.loyaltyModel.findByIdAndUpdate(id, {
             image,
             name,
             quantity,
             price,
-            updatedBy: user
+            updatedBy: user,
+            status
         }, { new: true });
         return updatedLoyalty;
     }

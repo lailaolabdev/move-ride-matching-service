@@ -71,7 +71,8 @@ export const updateLoyaltyService = async (req: Request): Promise<ILoyalty | nul
             image,
             name,
             quantity,
-            price
+            price,
+            status
         } = req.body
 
         const updatedLoyalty = await loyaltyModel.findByIdAndUpdate(
@@ -81,7 +82,8 @@ export const updateLoyaltyService = async (req: Request): Promise<ILoyalty | nul
                 name,
                 quantity,
                 price,
-                updatedBy: user
+                updatedBy: user,
+                status
             },
             { new: true }
         );
