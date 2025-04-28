@@ -1,5 +1,9 @@
-type FilterInput = {
+import { Request, Response } from "express";
+import axios from "axios";
+import { messages } from "../../config";
+import taxiModel from "../../models/taxi";
 
+type FilterInput = {
     startDate: Date | undefined,
     endDate: Date | undefined,
 }
@@ -31,4 +35,57 @@ export const pipeline = ({ startDate, endDate }: FilterInput) => {
         },
     });
     return pipeline
+}
+
+export const getDriver = async (req: Request, res: Response) => {
+    const user = (req as any).user;
+
+    try {
+        const driver = await axios.get(`
+                   ${process.env.USER_SERVICE_URL}/v1/api/users/${user.id}`,
+            {
+                headers: {
+                    Authorization: `${req.headers["authorization"]}`
+                }
+            }
+        );
+
+
+        if (!driver?.data) {
+            res.status(404).json({
+                ...messages.NOT_FOUND,
+                detail: `Driver id: ${user.id} not found`
+            });
+
+            return
+        }
+
+        // Check is driver
+        if (driver.data.user.role !== "DRIVER") {
+            res.status(400).json({
+                ...messages.BAD_REQUEST,
+                detail: "You are not a driver"
+            });
+
+            return
+        }
+
+        const taxi = await taxiModel.findById(driver?.data?.user?.taxi)
+
+        const driverData = {
+            fullName: driver?.data?.user?.fullName,
+            licensePlate: driver?.data?.user?.licensePlate,
+        }
+
+        return driver?.data?.user
+    } catch (error) {
+        console.log(error);
+
+        res.status(404).json({
+            ...messages.NOT_FOUND,
+            detail: `Driver id: ${user.id} not found`
+        });
+
+        return
+    }
 }

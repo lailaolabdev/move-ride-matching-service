@@ -231,7 +231,11 @@ export const driverUpdateStatusService = async (req: Request, status: String) =>
         const { id } = req.params
         const driverId = (req as any).user.id;
 
-        const confirmed = await CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true })
+        const confirmed = await CallTaxi.findByIdAndUpdate(
+            id,
+            { driverId, status },
+            { new: true }
+        ).select("-driverId")
 
         return confirmed
     } catch (error) {

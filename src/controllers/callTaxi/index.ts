@@ -26,7 +26,7 @@ import {
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
-import { pipeline } from "./helper";
+import { getDriver, pipeline } from "./helper";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
@@ -217,33 +217,10 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 
         const { id } = req.params;
 
-        const driver = await axios.get(`
-            ${process.env.USER_SERVICE_URL}/v1/api/users/${user.id}`,
-            {
-                headers: {
-                    Authorization: `${req.headers["authorization"]}`
-                }
-            }
-        );
+        // Check is driver exist or not
+        const driver = await getDriver(req, res)
 
-        if (!driver?.data) {
-            res.status(404).json({
-                ...messages.NOT_FOUND,
-                detail: `Driver id: ${user.id} not found`
-            });
-
-            return
-        }
-
-        if (driver.data.user.role !== "DRIVER") {
-            res.status(400).json({
-                ...messages.BAD_REQUEST,
-                detail: "You are not a driver"
-            });
-
-            return
-        }
-
+        // Checking calling taxi
         const callTaxi = await CallTaxi.findById(id);
 
         if (!callTaxi) {
@@ -255,6 +232,7 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
             return;
         }
 
+        // Update status
         let status: String = "";
 
         if (!callTaxi.driverId) {
@@ -265,15 +243,22 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
         if (callTaxi && callTaxi.driverId === user.id) {
             // driver arrived to passenger
             if (callTaxi.status === STATUS.DRIVER_RECEIVED) status = STATUS.DRIVER_ARRIVED;
-            // departure
-            if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.DEPARTURE;
-            // Success
-            if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS;
 
-            if (callTaxi.status === STATUS.SEND_SUCCESS) {
+            else if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.DEPARTURE;
+
+            else if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS;
+
+            else if (callTaxi.status === STATUS.SEND_SUCCESS) {
                 res.status(200).json({
                     code: messages.SUCCESSFULLY.code,
                     messages: messages.SUCCESSFULLY.message,
+                });
+
+                return
+            } else {
+                res.status(400).json({
+                    code: messages.BAD_REQUEST.code,
+                    messages: "Status not found",
                 });
 
                 return
@@ -282,10 +267,22 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 
         const confirmed = await driverUpdateStatusService(req, status);
 
+        if (!confirmed) {
+            res.status(404).json({
+                code: messages.NOT_FOUND.code,
+                message: messages.NOT_FOUND.message,
+            });
+
+            return;
+        }
+
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
-            confirmed,
+            confirmed: {
+                ...confirmed.toObject(),
+                driver: { ...driver }
+            },
         });
     } catch (error) {
         console.error("Error fetching tax info:", error);

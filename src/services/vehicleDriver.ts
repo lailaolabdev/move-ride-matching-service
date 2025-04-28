@@ -154,7 +154,7 @@ export const getVehicleDriverByIdService = async (id: string): Promise<IVehicleD
         const vehicleDriver = await vehicleDriverModel.findById(id)
             .populate({
                 path: 'taxi',
-                select: 'vehicleModel vehicleBrand passengerMin passengerMax meteredFare flatFare taxiType', // Select relevant fields
+                select: 'vehicleModel vehicleBrand passengerMin passengerMax meteredFare flatFare taxiType taxi', // Select relevant fields
                 populate: {
                     path: 'taxiType',
                     select: 'name icon' // Select relevant fields from taxiType
