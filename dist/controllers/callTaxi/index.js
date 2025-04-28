@@ -180,20 +180,9 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const user = req.user;
         const { id } = req.params;
-        const driver = yield axios_1.default.get(`
-            ${process.env.USER_SERVICE_URL}/v1/api/users/${user.id}`, {
-            headers: {
-                Authorization: `${req.headers["authorization"]}`
-            }
-        });
-        if (!(driver === null || driver === void 0 ? void 0 : driver.data)) {
-            res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${user.id} not found` }));
-            return;
-        }
-        if (driver.data.user.role !== "DRIVER") {
-            res.status(400).json(Object.assign(Object.assign({}, config_1.messages.BAD_REQUEST), { detail: "You are not a driver" }));
-            return;
-        }
+        // Check is driver exist or not
+        const driver = yield (0, helper_1.getDriver)(req, res);
+        // Checking calling taxi
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
             res.status(404).json({
@@ -202,6 +191,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
             return;
         }
+        // Update status
         let status = "";
         if (!callTaxi.driverId) {
             // driver confirm ride request
@@ -212,25 +202,37 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             // driver arrived to passenger
             if (callTaxi.status === callTaxi_2.STATUS.DRIVER_RECEIVED)
                 status = callTaxi_2.STATUS.DRIVER_ARRIVED;
-            // departure
-            if (callTaxi.status === callTaxi_2.STATUS.DRIVER_ARRIVED)
+            else if (callTaxi.status === callTaxi_2.STATUS.DRIVER_ARRIVED)
                 status = callTaxi_2.STATUS.DEPARTURE;
-            // Success
-            if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE)
+            else if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE)
                 status = callTaxi_2.STATUS.SEND_SUCCESS;
-            if (callTaxi.status === callTaxi_2.STATUS.SEND_SUCCESS) {
+            else if (callTaxi.status === callTaxi_2.STATUS.SEND_SUCCESS) {
                 res.status(200).json({
                     code: config_1.messages.SUCCESSFULLY.code,
                     messages: config_1.messages.SUCCESSFULLY.message,
                 });
                 return;
             }
+            else {
+                res.status(400).json({
+                    code: config_1.messages.BAD_REQUEST.code,
+                    messages: "Status not found",
+                });
+                return;
+            }
         }
         const confirmed = yield (0, callTaxi_1.driverUpdateStatusService)(req, status);
+        if (!confirmed) {
+            res.status(404).json({
+                code: config_1.messages.NOT_FOUND.code,
+                message: config_1.messages.NOT_FOUND.message,
+            });
+            return;
+        }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            confirmed,
+            confirmed: Object.assign(Object.assign({}, confirmed.toObject()), { driver: Object.assign({}, driver) }),
         });
     }
     catch (error) {

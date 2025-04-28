@@ -132,7 +132,7 @@ const getVehicleDriverByIdService = (id) => __awaiter(void 0, void 0, void 0, fu
         const vehicleDriver = yield vehicleDriver_1.default.findById(id)
             .populate({
             path: 'taxi',
-            select: 'vehicleModel vehicleBrand passengerMin passengerMax meteredFare flatFare taxiType', // Select relevant fields
+            select: 'vehicleModel vehicleBrand passengerMin passengerMax meteredFare flatFare taxiType taxi', // Select relevant fields
             populate: {
                 path: 'taxiType',
                 select: 'name icon' // Select relevant fields from taxiType
@@ -150,7 +150,7 @@ exports.getVehicleDriverByIdService = getVehicleDriverByIdService;
 const getVehicleDriverByDriverIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vehicleDriver = yield vehicleDriver_1.default.findOne({ driver: id })
-            .select("-_id -taxi -createdBy -createdByFullName -createdAt -updatedAt -__v");
+            .select("-_id -createdBy -createdByFullName -createdAt -updatedAt -__v");
         return vehicleDriver;
     }
     catch (error) {
