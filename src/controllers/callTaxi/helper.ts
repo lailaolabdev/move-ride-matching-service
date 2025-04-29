@@ -50,7 +50,6 @@ export const getDriver = async (req: Request, res: Response) => {
             }
         );
 
-
         if (!driver?.data) {
             res.status(404).json({
                 ...messages.NOT_FOUND,
@@ -75,9 +74,11 @@ export const getDriver = async (req: Request, res: Response) => {
         const driverData = {
             fullName: driver?.data?.user?.fullName,
             licensePlate: driver?.data?.user?.licensePlate,
+            vehicleBrandName: taxi?.vehicleBrandName,
+            vehicleModelName: taxi?.vehicleModelName
         }
 
-        return driver?.data?.user
+        return driverData
     } catch (error) {
         console.log(error);
 

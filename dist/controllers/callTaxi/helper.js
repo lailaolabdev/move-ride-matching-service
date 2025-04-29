@@ -43,7 +43,7 @@ const pipeline = ({ startDate, endDate }) => {
 };
 exports.pipeline = pipeline;
 const getDriver = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f;
     const user = req.user;
     try {
         const driver = yield axios_1.default.get(`
@@ -65,8 +65,10 @@ const getDriver = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const driverData = {
             fullName: (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.fullName,
             licensePlate: (_f = (_e = driver === null || driver === void 0 ? void 0 : driver.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.licensePlate,
+            vehicleBrandName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleBrandName,
+            vehicleModelName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleModelName
         };
-        return (_g = driver === null || driver === void 0 ? void 0 : driver.data) === null || _g === void 0 ? void 0 : _g.user;
+        return driverData;
     }
     catch (error) {
         console.log(error);
