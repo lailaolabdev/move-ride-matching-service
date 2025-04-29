@@ -62,6 +62,14 @@ const CallTaxiSchema: Schema = new Schema(
 			type: String,
 			required: true,
 		},
+		originName: {
+			type: String,
+			required: true,
+		},
+		destinationName: {
+			type: String,
+			required: true,
+		},
 		requestType: {
 			type: String,
 			enum: Object.values(REQUEST_TYPE),

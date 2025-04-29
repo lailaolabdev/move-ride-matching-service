@@ -42,6 +42,14 @@ const CallTaxiSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    originName: {
+        type: String,
+        required: true,
+    },
+    destinationName: {
+        type: String,
+        required: true,
+    },
     requestType: {
         type: String,
         enum: Object.values(REQUEST_TYPE),

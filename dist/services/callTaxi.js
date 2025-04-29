@@ -18,13 +18,15 @@ const axios_1 = __importDefault(require("axios"));
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.user.id;
-        const { carTypeId, driverId, origin, destination, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice } = req.body;
+        const { carTypeId, driverId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, } = req.body;
         const created = yield callTaxi_1.CallTaxi.create({
             passengerId,
             carTypeId,
             driverId,
             origin,
             destination,
+            originName,
+            destinationName,
             requestType,
             distanceInPolygon,
             durationInPolygon,
@@ -33,7 +35,7 @@ const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
             delayDistance,
             totalDuration,
             totalDistance,
-            totalPrice
+            totalPrice,
         });
         return created;
     }

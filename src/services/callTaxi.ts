@@ -11,6 +11,8 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             driverId,
             origin,
             destination,
+            originName,
+            destinationName,
             requestType,
             distanceInPolygon,
             durationInPolygon,
@@ -19,7 +21,7 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             delayDistance,
             totalDuration,
             totalDistance,
-            totalPrice
+            totalPrice,
         } = req.body
 
         const created = await CallTaxi.create({
@@ -28,6 +30,8 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             driverId,
             origin,
             destination,
+            originName,
+            destinationName,
             requestType,
             distanceInPolygon,
             durationInPolygon,
@@ -36,7 +40,7 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             delayDistance,
             totalDuration,
             totalDistance,
-            totalPrice
+            totalPrice,
         })
 
         return created
