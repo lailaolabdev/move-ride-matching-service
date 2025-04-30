@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDriverLocation = exports.updateDriverLocation = exports.getDriverLocationByTokenId = exports.getAllDriverLocation = exports.createDriverLocation = void 0;
+exports.deleteDriverLocation = exports.updateDriverLocation = exports.getDriverLocationById = exports.getAllDriverLocation = exports.createDriverLocation = void 0;
 const driverLocation_1 = require("../../services/driverLocation");
 const config_1 = require("../../config");
 const createDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -50,10 +50,9 @@ const getAllDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getAllDriverLocation = getAllDriverLocation;
-const getDriverLocationByTokenId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getDriverLocationById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const id = req.user.id;
-        const taxi = yield (0, driverLocation_1.getDriverLocationByIdService)(id);
+        const taxi = yield (0, driverLocation_1.getDriverLocationByIdService)(req.params.id);
         if (!taxi) {
             res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
@@ -76,7 +75,7 @@ const getDriverLocationByTokenId = (req, res) => __awaiter(void 0, void 0, void 
         });
     }
 });
-exports.getDriverLocationByTokenId = getDriverLocationByTokenId;
+exports.getDriverLocationById = getDriverLocationById;
 const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const updatedDriverLocation = yield (0, driverLocation_1.updateDriverLocationService)(req);

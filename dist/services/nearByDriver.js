@@ -49,8 +49,6 @@ const getNearbyDriversService = (_a) => __awaiter(void 0, [_a], void 0, function
                     },
                     _id: 1,
                     isOnline: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
                     distance: 1,
                 },
             },

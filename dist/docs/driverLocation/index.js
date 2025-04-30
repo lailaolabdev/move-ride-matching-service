@@ -71,13 +71,13 @@
  *         description: The maximum number of records to return for pagination.
  *     responses:
  *       200:
- *         description: Successfully fetched all vehicles.
+ *         description: Successfully fetched all driver locations.
  *       500:
  *         description: Internal server error.
  */
 /**
  * @swagger
- * /api/v1/driver-location/by-token:
+ * /api/v1/driver-location/{id}:
  *   get:
  *     summary: Get driver location by token
  *     description: Retrieve a specific driver location by its ID.
@@ -85,9 +85,17 @@
  *       - Driver location
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "6811c9fa4075cef8167dba86"
+ *         description: The ID of the driver location to get.
  *     responses:
  *       200:
- *         description: Successfully fetched vehicle.
+ *         description: Successfully fetched driver location.
  *       500:
  *         description: Internal server error.
  */
@@ -125,7 +133,7 @@
  *                     example: [102.5712961, 17.9935451]
  *     responses:
  *       200:
- *         description: Vehicle updated successfully.
+ *         description: Driver location updated successfully.
  *       500:
  *         description: Internal server error.
  */
@@ -146,10 +154,10 @@
  *         schema:
  *           type: string
  *           example: "63d2fcd0c90a5300188b4567"
- *         description: The ID of the vehicle to delete.
+ *         description: The ID of the driver location to delete.
  *     responses:
  *       200:
- *         description: Vehicle deleted successfully.
+ *         description: driver location deleted successfully.
  *       500:
  *         description: Internal server error.
  */

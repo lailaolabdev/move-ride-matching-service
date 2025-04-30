@@ -48,11 +48,9 @@ export const getAllDriverLocation = async (req: Request, res: Response) => {
   }
 };
 
-export const getDriverLocationByTokenId = async (req: Request, res: Response) => {
+export const getDriverLocationById = async (req: Request, res: Response) => {
   try {
-    const id = (req as any).user.id
-
-    const taxi = await getDriverLocationByIdService(id);
+    const taxi = await getDriverLocationByIdService(req.params.id);
 
     if (!taxi) {
       res.status(404).json({

@@ -44,8 +44,6 @@ export const getNearbyDriversService = async ({ longitude, latitude }: IGetNearb
                     },
                     _id: 1,
                     isOnline: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
                     distance: 1,
                 },
             },

@@ -4,7 +4,7 @@ import {
     createDriverLocation,
     deleteDriverLocation,
     getAllDriverLocation,
-    getDriverLocationByTokenId,
+    getDriverLocationById,
     updateDriverLocation,
 } from '../controllers/driverLocation';
 import { checkAuthorizationMiddleware } from '../middlewares';
@@ -15,7 +15,7 @@ router.post('/', checkAuthorizationMiddleware, validateCreateDriverLocation, cre
 
 router.get('/', checkAuthorizationMiddleware, getAllDriverLocation);
 
-router.get('/by-token', checkAuthorizationMiddleware, getDriverLocationByTokenId);
+router.get('/:id', checkAuthorizationMiddleware, getDriverLocationById);
 
 router.put('/', checkAuthorizationMiddleware, updateDriverLocation);
 
