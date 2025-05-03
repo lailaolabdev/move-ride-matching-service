@@ -72,6 +72,7 @@ export const getDriver = async (req: Request, res: Response) => {
         const taxi = await taxiModel.findById(driver?.data?.user?.taxi)
 
         const driverData = {
+            image: driver?.data?.user?.profileImage,
             fullName: driver?.data?.user?.fullName,
             licensePlate: driver?.data?.user?.licensePlate,
             vehicleBrandName: taxi?.vehicleBrandName,
