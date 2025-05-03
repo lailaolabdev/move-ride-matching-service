@@ -280,8 +280,11 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
             code: messages.SUCCESSFULLY.code,
             messages: messages.SUCCESSFULLY.message,
             confirmed: {
-                ...confirmed.toObject(),
-                driver: { ...driver }
+                _id: confirmed?._id,
+                passengerId: confirmed?.passengerId,
+                requestType: confirmed?.requestType,
+                status: confirmed?.status,
+                driver
             },
         });
     } catch (error) {

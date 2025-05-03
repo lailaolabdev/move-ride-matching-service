@@ -232,7 +232,13 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            confirmed: Object.assign(Object.assign({}, confirmed.toObject()), { driver: Object.assign({}, driver) }),
+            confirmed: {
+                _id: confirmed === null || confirmed === void 0 ? void 0 : confirmed._id,
+                passengerId: confirmed === null || confirmed === void 0 ? void 0 : confirmed.passengerId,
+                requestType: confirmed === null || confirmed === void 0 ? void 0 : confirmed.requestType,
+                status: confirmed === null || confirmed === void 0 ? void 0 : confirmed.status,
+                driver
+            },
         });
     }
     catch (error) {
