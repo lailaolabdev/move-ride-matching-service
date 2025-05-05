@@ -27,10 +27,10 @@ import {
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
 import { getDriver, getPassenger, pipeline } from "./helper";
+import taxiModel from "../../models/taxi";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
-        const passengerId = (req as any).user.id;
         // // If production deployed uncomment this 
         // const isCallTaxiExist = await getCallTaxisService(req)
 
@@ -200,7 +200,36 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
         const { id } = req.params;
 
         // Check is driver exist or not
-        const driver = await getDriver(req, res)
+        const driverData = await getDriver(req, res)
+
+        if (!driverData?.data) {
+            res.status(404).json({
+                ...messages.NOT_FOUND,
+                detail: `Driver id: ${user.id} not found`
+            });
+
+            return
+        }
+
+        // Check is driver
+        if (driverData?.data?.user?.role !== "DRIVER") {
+            res.status(400).json({
+                ...messages.BAD_REQUEST,
+                detail: "You are not a driver"
+            });
+
+            return
+        }
+
+        const taxi = await taxiModel.findById(driverData?.data?.user?.taxi)
+
+        const driver = {
+            image: driverData?.data?.user?.profileImage,
+            fullName: driverData?.data?.user?.fullName,
+            licensePlate: driverData?.data?.user?.licensePlate,
+            vehicleBrandName: taxi?.vehicleBrandName,
+            vehicleModelName: taxi?.vehicleModelName
+        }
 
         // Checking calling taxi
         const callTaxi = await CallTaxi.findById(id);

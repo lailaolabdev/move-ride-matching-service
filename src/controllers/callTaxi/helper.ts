@@ -50,36 +50,7 @@ export const getDriver = async (req: Request, res: Response) => {
             }
         );
 
-        if (!driver?.data) {
-            res.status(404).json({
-                ...messages.NOT_FOUND,
-                detail: `Driver id: ${user.id} not found`
-            });
-
-            return
-        }
-
-        // Check is driver
-        if (driver.data.user.role !== "DRIVER") {
-            res.status(400).json({
-                ...messages.BAD_REQUEST,
-                detail: "You are not a driver"
-            });
-
-            return
-        }
-
-        const taxi = await taxiModel.findById(driver?.data?.user?.taxi)
-
-        const driverData = {
-            image: driver?.data?.user?.profileImage,
-            fullName: driver?.data?.user?.fullName,
-            licensePlate: driver?.data?.user?.licensePlate,
-            vehicleBrandName: taxi?.vehicleBrandName,
-            vehicleModelName: taxi?.vehicleModelName
-        }
-
-        return driverData
+        return driver
     } catch (error) {
         console.log(error);
 

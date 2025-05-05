@@ -8,16 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
 const helper_1 = require("./helper");
+const taxi_1 = __importDefault(require("../../models/taxi"));
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
-        const passengerId = req.user.id;
         // // If production deployed uncomment this 
         // const isCallTaxiExist = await getCallTaxisService(req)
         // if (isCallTaxiExist) {
@@ -164,11 +167,29 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.updateCallTaxis = updateCallTaxis;
 const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     try {
         const user = req.user;
         const { id } = req.params;
         // Check is driver exist or not
-        const driver = yield (0, helper_1.getDriver)(req, res);
+        const driverData = yield (0, helper_1.getDriver)(req, res);
+        if (!(driverData === null || driverData === void 0 ? void 0 : driverData.data)) {
+            res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${user.id} not found` }));
+            return;
+        }
+        // Check is driver
+        if (((_b = (_a = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b.role) !== "DRIVER") {
+            res.status(400).json(Object.assign(Object.assign({}, config_1.messages.BAD_REQUEST), { detail: "You are not a driver" }));
+            return;
+        }
+        const taxi = yield taxi_1.default.findById((_d = (_c = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.taxi);
+        const driver = {
+            image: (_f = (_e = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.profileImage,
+            fullName: (_h = (_g = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _g === void 0 ? void 0 : _g.user) === null || _h === void 0 ? void 0 : _h.fullName,
+            licensePlate: (_k = (_j = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _j === void 0 ? void 0 : _j.user) === null || _k === void 0 ? void 0 : _k.licensePlate,
+            vehicleBrandName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleBrandName,
+            vehicleModelName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleModelName
+        };
         // Checking calling taxi
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
