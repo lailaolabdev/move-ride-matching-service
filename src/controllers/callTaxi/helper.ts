@@ -91,3 +91,40 @@ export const getDriver = async (req: Request, res: Response) => {
         return
     }
 }
+
+export const getPassenger = async (req: Request, res: Response) => {
+    const passengerId = (req as any).user.id;
+
+    try {
+        const passengerData = await axios.get(
+            `${process.env.USER_SERVICE_URL}/v1/api/users/${passengerId}`,
+            {
+                headers: {
+                    Authorization: `${req.headers["authorization"]}`,
+                },
+            }
+        );
+
+        const passenger = passengerData?.data?.user
+
+        if (!passenger) {
+            res.status(404).json({
+                ...messages.NOT_FOUND,
+                detail: `Id: ${passengerId} not found`
+            });
+
+            return
+        }
+
+        return passenger
+    } catch (error) {
+        console.log(error);
+
+        res.status(404).json({
+            ...messages.NOT_FOUND,
+            detail: `Driver id: ${passengerId} not found`
+        });
+
+        return
+    }
+}

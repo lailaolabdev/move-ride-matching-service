@@ -8,18 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
-const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("./helper");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const passengerId = req.user.id;
         // // If production deployed uncomment this 
@@ -33,21 +29,12 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         //     return
         // }
         // Fetch user data
-        const passengerData = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${passengerId}`, {
-            headers: {
-                Authorization: `${req.headers["authorization"]}`,
-            },
-        });
-        const passenger = (_a = passengerData === null || passengerData === void 0 ? void 0 : passengerData.data) === null || _a === void 0 ? void 0 : _a.user;
-        if (!passenger) {
-            res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Id: ${passengerId} not found` }));
-            return;
-        }
+        const passenger = yield (0, helper_1.getPassenger)(req, res);
         const callTaxi = yield (0, callTaxi_1.createCallTaxiService)(req);
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            callTaxi: Object.assign({ fullName: passenger.fullName, profileImage: passenger.profileImage }, callTaxi.toObject())
+            callTaxi: Object.assign({ fullName: (_a = passenger.fullName) !== null && _a !== void 0 ? _a : "", profileImage: (_b = passenger.profileImage) !== null && _b !== void 0 ? _b : "" }, callTaxi.toObject())
         });
     }
     catch (error) {

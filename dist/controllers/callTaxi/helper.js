@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDriver = exports.pipeline = void 0;
+exports.getPassenger = exports.getDriver = exports.pipeline = void 0;
 const axios_1 = __importDefault(require("axios"));
 const config_1 = require("../../config");
 const taxi_1 = __importDefault(require("../../models/taxi"));
@@ -78,3 +78,26 @@ const getDriver = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getDriver = getDriver;
+const getPassenger = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const passengerId = req.user.id;
+    try {
+        const passengerData = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${passengerId}`, {
+            headers: {
+                Authorization: `${req.headers["authorization"]}`,
+            },
+        });
+        const passenger = (_a = passengerData === null || passengerData === void 0 ? void 0 : passengerData.data) === null || _a === void 0 ? void 0 : _a.user;
+        if (!passenger) {
+            res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Id: ${passengerId} not found` }));
+            return;
+        }
+        return passenger;
+    }
+    catch (error) {
+        console.log(error);
+        res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${passengerId} not found` }));
+        return;
+    }
+});
+exports.getPassenger = getPassenger;

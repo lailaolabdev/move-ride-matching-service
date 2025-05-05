@@ -26,7 +26,7 @@ import {
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
-import { getDriver, pipeline } from "./helper";
+import { getDriver, getPassenger, pipeline } from "./helper";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
@@ -45,25 +45,7 @@ export const createCallTaxi = async (req: Request, res: Response) => {
         // }
 
         // Fetch user data
-        const passengerData = await axios.get(
-            `${process.env.USER_SERVICE_URL}/v1/api/users/${passengerId}`,
-            {
-                headers: {
-                    Authorization: `${req.headers["authorization"]}`,
-                },
-            }
-        );
-
-        const passenger = passengerData?.data?.user
-
-        if (!passenger) {
-            res.status(404).json({
-                ...messages.NOT_FOUND,
-                detail: `Id: ${passengerId} not found`
-            });
-
-            return
-        }
+        const passenger = await getPassenger(req, res)
 
         const callTaxi: any = await createCallTaxiService(req);
 
@@ -71,8 +53,8 @@ export const createCallTaxi = async (req: Request, res: Response) => {
             code: messages.CREATE_SUCCESSFUL.code,
             message: messages.CREATE_SUCCESSFUL.message,
             callTaxi: {
-                fullName: passenger.fullName,
-                profileImage: passenger.profileImage,
+                fullName: passenger.fullName ?? "",
+                profileImage: passenger.profileImage ?? "",
                 ...callTaxi.toObject()
             }
         });
