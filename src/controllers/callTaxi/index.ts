@@ -31,6 +31,8 @@ import taxiModel from "../../models/taxi";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
     try {
+        const passengerId = (req as any).user.id;
+
         // // If production deployed uncomment this 
         // const isCallTaxiExist = await getCallTaxisService(req)
 
@@ -46,6 +48,15 @@ export const createCallTaxi = async (req: Request, res: Response) => {
 
         // Fetch user data
         const passenger = await getPassenger(req, res)
+
+        if (!passenger) {
+            res.status(404).json({
+                ...messages.NOT_FOUND,
+                detail: `Driver id: ${passengerId} not found`
+            });
+
+            return
+        }
 
         const callTaxi: any = await createCallTaxiService(req);
 
@@ -202,7 +213,7 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
         // Check is driver exist or not
         const driverData = await getDriver(req, res)
 
-        if (!driverData?.data) {
+        if (!driverData || !driverData?.data) {
             res.status(404).json({
                 ...messages.NOT_FOUND,
                 detail: `Driver id: ${user.id} not found`

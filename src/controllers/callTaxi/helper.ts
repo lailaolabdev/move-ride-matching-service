@@ -54,12 +54,7 @@ export const getDriver = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
 
-        res.status(404).json({
-            ...messages.NOT_FOUND,
-            detail: `Driver id: ${user.id} not found`
-        });
-
-        return
+        return false
     }
 }
 
@@ -91,11 +86,6 @@ export const getPassenger = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
 
-        res.status(404).json({
-            ...messages.NOT_FOUND,
-            detail: `Driver id: ${passengerId} not found`
-        });
-
-        return
+        return false
     }
 }

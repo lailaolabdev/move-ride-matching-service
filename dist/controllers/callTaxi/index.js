@@ -21,6 +21,7 @@ const taxi_1 = __importDefault(require("../../models/taxi"));
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
+        const passengerId = req.user.id;
         // // If production deployed uncomment this 
         // const isCallTaxiExist = await getCallTaxisService(req)
         // if (isCallTaxiExist) {
@@ -33,6 +34,10 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // }
         // Fetch user data
         const passenger = yield (0, helper_1.getPassenger)(req, res);
+        if (!passenger) {
+            res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${passengerId} not found` }));
+            return;
+        }
         const callTaxi = yield (0, callTaxi_1.createCallTaxiService)(req);
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
@@ -173,7 +178,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const { id } = req.params;
         // Check is driver exist or not
         const driverData = yield (0, helper_1.getDriver)(req, res);
-        if (!(driverData === null || driverData === void 0 ? void 0 : driverData.data)) {
+        if (!driverData || !(driverData === null || driverData === void 0 ? void 0 : driverData.data)) {
             res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${user.id} not found` }));
             return;
         }

@@ -54,8 +54,7 @@ const getDriver = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.log(error);
-        res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${user.id} not found` }));
-        return;
+        return false;
     }
 });
 exports.getDriver = getDriver;
@@ -77,8 +76,7 @@ const getPassenger = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (error) {
         console.log(error);
-        res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${passengerId} not found` }));
-        return;
+        return false;
     }
 });
 exports.getPassenger = getPassenger;
