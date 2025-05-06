@@ -93,11 +93,7 @@ const getAllLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (countryCode)
             filter.countryCode = countryCode;
         const loyaltyClaim = yield (0, loyaltyClaim_1.getAllLoyaltyClaimService)(parseSkip, parsedLimit, filter);
-        res.status(200).json({
-            code: config_1.messages.SUCCESSFULLY.code,
-            message: "Loyalty claim fetched successfully",
-            loyaltyClaim,
-        });
+        res.status(200).json(Object.assign({ code: config_1.messages.SUCCESSFULLY.code, message: "Loyalty claim fetched successfully" }, loyaltyClaim));
     }
     catch (error) {
         console.log("Error: ", error);

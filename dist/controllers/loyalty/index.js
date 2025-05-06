@@ -52,11 +52,7 @@ const getAllLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (countryCode)
             filter.countryCode = countryCode;
         const loyalties = yield (0, loyalty_1.getAllLoyaltyService)(parseSkip, parsedLimit, filter);
-        res.status(200).json({
-            code: config_1.messages.SUCCESSFULLY.code,
-            message: "Loyalty fetched successfully",
-            loyalties,
-        });
+        res.status(200).json(Object.assign({ code: config_1.messages.SUCCESSFULLY.code, message: "Loyalty fetched successfully" }, loyalties));
     }
     catch (error) {
         console.log("Error: ", error);

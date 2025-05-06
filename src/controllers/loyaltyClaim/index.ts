@@ -113,7 +113,7 @@ export const getAllLoyaltyClaim = async (req: Request, res: Response) => {
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       message: "Loyalty claim fetched successfully",
-      loyaltyClaim,
+      ...loyaltyClaim,
     });
   } catch (error) {
     console.log("Error: ", error);

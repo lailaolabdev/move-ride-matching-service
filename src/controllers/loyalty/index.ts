@@ -59,7 +59,7 @@ export const getAllLoyalty = async (req: Request, res: Response) => {
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       message: "Loyalty fetched successfully",
-      loyalties,
+      ...loyalties,
     });
   } catch (error) {
     console.log("Error: ", error);
