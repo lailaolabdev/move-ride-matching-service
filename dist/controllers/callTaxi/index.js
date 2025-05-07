@@ -39,6 +39,16 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
             return;
         }
         const callTaxi = yield (0, callTaxi_1.createCallTaxiService)(req);
+        if (!callTaxi) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: config_1.messages.BAD_REQUEST.message
+            });
+            return;
+        }
+        // Emit socket
+        const token = req.headers['authorization'];
+        yield (0, callTaxi_1.sentDataToDriverSocket)(token, Object.assign({}, callTaxi.toObject()));
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,

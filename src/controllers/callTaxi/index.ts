@@ -23,6 +23,7 @@ import {
     createDriverComplainPassengerService,
     createPassengerComplainDriverService,
     getPassengerComplainDriverByIdService,
+    sentDataToDriverSocket,
 } from "../../services/callTaxi";
 import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -59,6 +60,20 @@ export const createCallTaxi = async (req: Request, res: Response) => {
         }
 
         const callTaxi: any = await createCallTaxiService(req);
+
+        if (!callTaxi) {
+            res.status(400).json({
+                code: messages.BAD_REQUEST.code,
+                message: messages.BAD_REQUEST.message
+            });
+
+            return
+        }
+
+        // Emit socket
+        const token = req.headers['authorization']
+
+        await sentDataToDriverSocket(token!, { ...callTaxi.toObject() })
 
         res.status(201).json({
             code: messages.CREATE_SUCCESSFUL.code,

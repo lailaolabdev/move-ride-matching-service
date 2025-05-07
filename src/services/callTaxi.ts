@@ -51,6 +51,32 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
     }
 };
 
+export const sentDataToDriverSocket = async (userToken: string, data: any) => {
+
+    try {
+        if (data) {
+            delete data.createdAt
+            delete data.updatedAt
+            delete data.__v
+        }
+
+        const accessToken: string = userToken.replace("Bearer ", "");
+
+        await axios.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/create`,
+            { ...data },
+            {
+                headers: {
+                    Authorization: accessToken
+                }
+            }
+        )
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+
+        throw error;
+    }
+}
+
 export const getCallTaxisService = async (req: Request): Promise<ICallTaxi | null> => {
     try {
         const passengerId = (req as any).user.id;

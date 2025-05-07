@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalFlatFareService = exports.getTotalmeterService = exports.getTotaltravelTimeService = exports.cancelTravelHistoryService = exports.travelHistoryService = exports.getCommentAndRatingService = exports.updateChatCallTaxiService = exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.createCallTaxiService = void 0;
+exports.getTotalFlatFareService = exports.getTotalmeterService = exports.getTotaltravelTimeService = exports.cancelTravelHistoryService = exports.travelHistoryService = exports.getCommentAndRatingService = exports.updateChatCallTaxiService = exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
@@ -45,6 +45,26 @@ const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.createCallTaxiService = createCallTaxiService;
+const sentDataToDriverSocket = (userToken, data) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (data) {
+            delete data.createdAt;
+            delete data.updatedAt;
+            delete data.__v;
+        }
+        const accessToken = userToken.replace("Bearer ", "");
+        yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/create`, Object.assign({}, data), {
+            headers: {
+                Authorization: accessToken
+            }
+        });
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.sentDataToDriverSocket = sentDataToDriverSocket;
 const getCallTaxisService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.user.id;
