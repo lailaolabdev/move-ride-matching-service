@@ -13,7 +13,8 @@ exports.getNearbyDriversService = void 0;
 const driverLocation_1 = require("../models/driverLocation");
 const getNearbyDriversService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ longitude, latitude }) {
     try {
-        const radiusInKm = 5;
+        // Can change 5 km
+        const radiusInKm = 1000000;
         const radiusInMeters = radiusInKm * 1000; // Convert kilometers to meters
         const nearbyTaxis = yield driverLocation_1.driverLocationModel.aggregate([
             {

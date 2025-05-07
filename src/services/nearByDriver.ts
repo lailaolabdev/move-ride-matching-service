@@ -7,7 +7,8 @@ interface IGetNearbyDrivers {
 
 export const getNearbyDriversService = async ({ longitude, latitude }: IGetNearbyDrivers): Promise<any> => {
     try {
-        const radiusInKm = 5
+        // Can change 5 km
+        const radiusInKm = 1000000
         const radiusInMeters = radiusInKm * 1000; // Convert kilometers to meters
 
         const nearbyTaxis = await driverLocationModel.aggregate([
