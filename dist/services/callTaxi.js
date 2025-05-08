@@ -37,7 +37,13 @@ const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
             totalDistance,
             totalPrice,
         });
-        return created;
+        const createdObj = created.toObject();
+        createdObj === null || createdObj === void 0 ? true : delete createdObj.passengerComplain;
+        createdObj === null || createdObj === void 0 ? true : delete createdObj.driverComplain;
+        createdObj === null || createdObj === void 0 ? true : delete createdObj.createdAt;
+        createdObj === null || createdObj === void 0 ? true : delete createdObj.updatedAt;
+        createdObj === null || createdObj === void 0 ? true : delete createdObj.__v;
+        return createdObj;
     }
     catch (error) {
         console.log("Error creating Record: ", error);
@@ -47,11 +53,6 @@ const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
 exports.createCallTaxiService = createCallTaxiService;
 const sentDataToDriverSocket = (userToken, data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (data) {
-            delete data.createdAt;
-            delete data.updatedAt;
-            delete data.__v;
-        }
         const accessToken = userToken.replace("Bearer ", "");
         yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/create`, Object.assign({}, data), {
             headers: {

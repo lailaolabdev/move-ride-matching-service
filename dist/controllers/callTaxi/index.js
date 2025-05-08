@@ -48,11 +48,12 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         }
         // Emit socket
         const token = req.headers['authorization'];
-        yield (0, callTaxi_1.sentDataToDriverSocket)(token, Object.assign({}, callTaxi.toObject()));
+        const data = Object.assign({ fullName: (_a = passenger === null || passenger === void 0 ? void 0 : passenger.fullName) !== null && _a !== void 0 ? _a : "", profileImage: (_b = passenger === null || passenger === void 0 ? void 0 : passenger.profileImage) !== null && _b !== void 0 ? _b : "" }, callTaxi);
+        yield (0, callTaxi_1.sentDataToDriverSocket)(token, data);
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            callTaxi: Object.assign({ fullName: (_a = passenger.fullName) !== null && _a !== void 0 ? _a : "", profileImage: (_b = passenger.profileImage) !== null && _b !== void 0 ? _b : "" }, callTaxi.toObject())
+            callTaxi: Object.assign({}, data)
         });
     }
     catch (error) {

@@ -63,8 +63,7 @@ export const sentDataToDriverSocket = async (userToken: string, data: any) => {
     try {
         const accessToken: string = userToken.replace("Bearer ", "");
 
-        // await axios.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/create`,
-        await axios.post(`http://localhost:3000/v1/api/ride-request-socket/create`,
+        await axios.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/create`,
             { ...data },
             {
                 headers: {
