@@ -1,74 +1,25 @@
 import { Request } from 'express'
-import { IDriverLocation, driverLocationModel } from '../models/driverLocation';
+import { redis } from '../config/redis/redis';
 
-export const createDriverLocationService = async (req: Request) => {
-    try {
-        const user = (req as any).user.id;
-
-        const { location } = req.body
-
-        const driverLocation = await driverLocationModel.create({
-            driverId: user,
-            location
-        })
-
-        return driverLocation
-    } catch (error) {
-        console.log("Error creating driver location: ", error);
-        throw error;
-    }
-}
-
-export const getAllDriverLocationService = async (): Promise<any> => {
-    try {
-        const total = await driverLocationModel.countDocuments();
-
-        const driverLocation = await driverLocationModel.find()
-
-        return { total, driverLocation };
-    } catch (error) {
-        console.log("Error retrieving driverLocation: ", error);
-        throw error;
-    }
-};
-
-export const getDriverLocationByIdService = async (id: string): Promise<IDriverLocation | null> => {
-    try {
-        const driverLocation = await driverLocationModel.findOne({ driverId: id })
-
-        return driverLocation;
-    } catch (error) {
-        console.log("Error retrieving driverLocation by ID: ", error);
-        throw error;
-    }
-};
-
-export const updateDriverLocationService = async (req: Request): Promise<IDriverLocation | null> => {
+export const updateDriverLocationService = async (req: Request) => {
     try {
         const driverId = (req as any).user.id;
 
-        const { location, isOnline } = req.body
+        const { longitude, latitude, isOnline } = req.body
 
-        const updatedDriverLocation = await driverLocationModel.findOneAndUpdate(
-            { driverId },
-            { location, isOnline },
-            { new: true, runValidators: true }
-        );
+        if (!isOnline) {
+            await redis.del(`driver:${driverId}:status`);
+            await redis.zrem('drivers:locations', driverId);
 
-        return updatedDriverLocation;
+            return true
+        }
+
+        await redis.set(`driver:${driverId}:status`, isOnline);
+        await redis.geoadd('drivers:locations', longitude, latitude, driverId);
+
+        return true;
     } catch (error) {
         console.log("Error updating driver location: ", error);
-        throw error;
-    }
-};
-
-export const deleteDriverLocationService = async (id: string): Promise<IDriverLocation | null> => {
-    try {
-        const deletedDriverLocation = await driverLocationModel.findByIdAndDelete(id);
-
-        return deletedDriverLocation;
-    } catch (error) {
-        console.log("Error deleting driver location: ", error);
         throw error;
     }
 };
