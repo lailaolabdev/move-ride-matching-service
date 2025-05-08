@@ -73,16 +73,18 @@ export const createCallTaxi = async (req: Request, res: Response) => {
         // Emit socket
         const token = req.headers['authorization']
 
-        await sentDataToDriverSocket(token!, { ...callTaxi.toObject() })
+        const data = {
+            fullName: passenger?.fullName ?? "",
+            profileImage: passenger?.profileImage ?? "",
+            ...callTaxi
+        }
+
+        await sentDataToDriverSocket(token!, data)
 
         res.status(201).json({
             code: messages.CREATE_SUCCESSFUL.code,
             message: messages.CREATE_SUCCESSFUL.message,
-            callTaxi: {
-                fullName: passenger.fullName ?? "",
-                profileImage: passenger.profileImage ?? "",
-                ...callTaxi.toObject()
-            }
+            callTaxi: { ...data }
         });
     } catch (error) {
         console.log("error: ", error);

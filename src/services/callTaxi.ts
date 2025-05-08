@@ -43,7 +43,15 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             totalPrice,
         })
 
-        return created
+        const createdObj: any = created.toObject();
+
+        delete createdObj?.passengerComplain;
+        delete createdObj?.driverComplain;
+        delete createdObj?.createdAt;
+        delete createdObj?.updatedAt;
+        delete createdObj?.__v;
+
+        return createdObj
     } catch (error) {
         console.log("Error creating Record: ", error);
 
@@ -52,17 +60,11 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
 };
 
 export const sentDataToDriverSocket = async (userToken: string, data: any) => {
-
     try {
-        if (data) {
-            delete data.createdAt
-            delete data.updatedAt
-            delete data.__v
-        }
-
         const accessToken: string = userToken.replace("Bearer ", "");
 
-        await axios.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/create`,
+        // await axios.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/create`,
+        await axios.post(`http://localhost:3000/v1/api/ride-request-socket/create`,
             { ...data },
             {
                 headers: {
