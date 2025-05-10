@@ -302,6 +302,7 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
             }
         }
 
+        // Confirmed order
         const confirmed = await driverUpdateStatusService(req, status);
 
         if (!confirmed) {
@@ -312,6 +313,15 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 
             return;
         }
+
+        // Delete ride matching from other when once accepted
+        await axios.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed?._id}`,
+            {
+                headers: {
+                    Authorization: req.headers.authorization
+                }
+            }
+        )
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,

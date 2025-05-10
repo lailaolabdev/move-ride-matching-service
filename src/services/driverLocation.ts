@@ -7,15 +7,17 @@ export const updateDriverLocationService = async (req: Request) => {
 
         const { longitude, latitude, isOnline } = req.body
 
-        if (!isOnline) {
+        if (isOnline === "offline") {
             await redis.del(`driver:${driverId}:status`);
             await redis.zrem('drivers:locations', driverId);
 
             return true
-        }
+        } else if (isOnline === "online") {
+            await redis.set(`driver:${driverId}:status`, isOnline);
+            await redis.geoadd('drivers:locations', longitude, latitude, driverId);
 
-        await redis.set(`driver:${driverId}:status`, isOnline);
-        await redis.geoadd('drivers:locations', longitude, latitude, driverId);
+            return true
+        }
 
         return true;
     } catch (error) {
