@@ -9,53 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDriverLocationService = exports.updateDriverLocationService = exports.getDriverLocationByIdService = exports.getAllDriverLocationService = exports.createDriverLocationService = void 0;
-const driverLocation_1 = require("../models/driverLocation");
-const createDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = req.user.id;
-        const { location } = req.body;
-        const driverLocation = yield driverLocation_1.driverLocationModel.create({
-            driverId: user,
-            location
-        });
-        return driverLocation;
-    }
-    catch (error) {
-        console.log("Error creating driver location: ", error);
-        throw error;
-    }
-});
-exports.createDriverLocationService = createDriverLocationService;
-const getAllDriverLocationService = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const total = yield driverLocation_1.driverLocationModel.countDocuments();
-        const driverLocation = yield driverLocation_1.driverLocationModel.find();
-        return { total, driverLocation };
-    }
-    catch (error) {
-        console.log("Error retrieving driverLocation: ", error);
-        throw error;
-    }
-});
-exports.getAllDriverLocationService = getAllDriverLocationService;
-const getDriverLocationByIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const driverLocation = yield driverLocation_1.driverLocationModel.findOne({ driverId: id });
-        return driverLocation;
-    }
-    catch (error) {
-        console.log("Error retrieving driverLocation by ID: ", error);
-        throw error;
-    }
-});
-exports.getDriverLocationByIdService = getDriverLocationByIdService;
+exports.updateDriverLocationService = void 0;
+const redis_1 = require("../config/redis/redis");
 const updateDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const driverId = req.user.id;
-        const { location, isOnline } = req.body;
-        const updatedDriverLocation = yield driverLocation_1.driverLocationModel.findOneAndUpdate({ driverId }, { location, isOnline }, { new: true, runValidators: true });
-        return updatedDriverLocation;
+        const { longitude, latitude, isOnline } = req.body;
+        if (isOnline === "offline") {
+            yield redis_1.redis.del(`driver:${driverId}:status`);
+            yield redis_1.redis.zrem('drivers:locations', driverId);
+            return true;
+        }
+        else if (isOnline === "online") {
+            yield redis_1.redis.set(`driver:${driverId}:status`, isOnline);
+            yield redis_1.redis.geoadd('drivers:locations', longitude, latitude, driverId);
+            return true;
+        }
+        return true;
     }
     catch (error) {
         console.log("Error updating driver location: ", error);
@@ -63,14 +33,3 @@ const updateDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.updateDriverLocationService = updateDriverLocationService;
-const deleteDriverLocationService = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const deletedDriverLocation = yield driverLocation_1.driverLocationModel.findByIdAndDelete(id);
-        return deletedDriverLocation;
-    }
-    catch (error) {
-        console.log("Error deleting driver location: ", error);
-        throw error;
-    }
-});
-exports.deleteDriverLocationService = deleteDriverLocationService;

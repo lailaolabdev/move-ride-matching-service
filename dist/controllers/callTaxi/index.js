@@ -16,6 +16,7 @@ exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTrave
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
+const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("./helper");
 const taxi_1 = __importDefault(require("../../models/taxi"));
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -245,6 +246,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 return;
             }
         }
+        // Confirmed order
         const confirmed = yield (0, callTaxi_1.driverUpdateStatusService)(req, status);
         if (!confirmed) {
             res.status(404).json({
@@ -253,6 +255,12 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
             return;
         }
+        // Delete ride matching from other when once accepted
+        yield axios_1.default.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed === null || confirmed === void 0 ? void 0 : confirmed._id}`, {
+            headers: {
+                Authorization: req.headers.authorization
+            }
+        });
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
