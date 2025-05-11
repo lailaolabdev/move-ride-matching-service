@@ -255,12 +255,14 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
             return;
         }
-        // Delete ride matching from other when once accepted
-        yield axios_1.default.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed === null || confirmed === void 0 ? void 0 : confirmed._id}`, {
-            headers: {
-                Authorization: req.headers.authorization
-            }
-        });
+        if (status === callTaxi_2.STATUS.DRIVER_RECEIVED) {
+            // Delete ride matching from other when once accepted
+            yield axios_1.default.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed === null || confirmed === void 0 ? void 0 : confirmed._id}`, {
+                headers: {
+                    Authorization: req.headers.authorization
+                }
+            });
+        }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
