@@ -8,22 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateDriverLocationService = void 0;
-const redis_1 = require("../config/redis/redis");
+const axios_1 = __importDefault(require("axios"));
 const updateDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const driverId = req.user.id;
         const { longitude, latitude, isOnline } = req.body;
-        if (isOnline === "offline") {
-            yield redis_1.redis.del(`driver:${driverId}:status`);
-            yield redis_1.redis.zrem('drivers:locations', driverId);
-            return true;
-        }
-        else if (isOnline === "online") {
-            yield redis_1.redis.set(`driver:${driverId}:status`, isOnline);
-            yield redis_1.redis.geoadd('drivers:locations', longitude, latitude, driverId);
-            return true;
+        if (isOnline === "online" && isOnline === "offline") {
+            yield axios_1.default.put(`${process.env.SOCKET_SERVICE_URL}/v1/api/driver-location-socket/${driverId}`, { longitude, latitude, isOnline });
         }
         return true;
     }

@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { redis } from '../config/redis/redis';
+import axios from 'axios';
 
 export const updateDriverLocationService = async (req: Request) => {
     try {
@@ -7,16 +7,11 @@ export const updateDriverLocationService = async (req: Request) => {
 
         const { longitude, latitude, isOnline } = req.body
 
-        if (isOnline === "offline") {
-            await redis.del(`driver:${driverId}:status`);
-            await redis.zrem('drivers:locations', driverId);
-
-            return true
-        } else if (isOnline === "online") {
-            await redis.set(`driver:${driverId}:status`, isOnline);
-            await redis.geoadd('drivers:locations', longitude, latitude, driverId);
-
-            return true
+        if (isOnline === "online" && isOnline === "offline") {
+            await axios.put(
+                `${process.env.SOCKET_SERVICE_URL}/v1/api/driver-location-socket/${driverId}`,
+                { longitude, latitude, isOnline }
+            )
         }
 
         return true;
