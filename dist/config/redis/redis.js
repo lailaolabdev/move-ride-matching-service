@@ -8,11 +8,14 @@ const ioredis_1 = __importDefault(require("ioredis"));
 // Define the options with proper typing
 const options = {
     port: 6379,
-    host: "redis",
+    host: "localhost",
     family: 4, // IPv4
     db: 0,
 };
 // const options = {};
 // Initialize Redis client with options
-const redis = new ioredis_1.default(options);
+const redis = new ioredis_1.default({
+    port: 6379,
+    host: "redis",
+});
 exports.redis = redis;
