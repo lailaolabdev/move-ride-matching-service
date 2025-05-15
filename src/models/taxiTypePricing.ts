@@ -14,7 +14,6 @@ const TaxiTypePricingSchema: Schema = new Schema({
   taxiTypeId: {
     type: String,
     required: true,
-    unique: true
   },
   minDistance: {
     type: Number,

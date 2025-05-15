@@ -39,7 +39,6 @@ const TaxiTypePricingSchema = new mongoose_1.Schema({
     taxiTypeId: {
         type: String,
         required: true,
-        unique: true
     },
     minDistance: {
         type: Number,
