@@ -1,5 +1,10 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+const MOTOR_TYPE = {
+    diesel: "DIESEL",
+    ev: "EV"
+}
+
 export interface ITaxiType extends Document {
     name: string;
     icon: string;
@@ -19,6 +24,8 @@ const TaxiTypeSchema: Schema = new Schema({
     price: { type: Number, required: true },
     seats: { type: Number, required: true },
     country: { type: String, required: true },
+    motorType: { type: String, enum: Object.values(MOTOR_TYPE), required: true },
+    status: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: String, required: true },
     createdByFullName: { type: String, required: true },

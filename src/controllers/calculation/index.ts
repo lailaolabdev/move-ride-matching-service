@@ -10,25 +10,31 @@ export const calculateUserDistanceAndDuration = async (req: Request, res: Respon
         const taxiTypes = await taxiTypeModel.find();
 
         if (!taxiTypes.length) {
-            return res.status(404).json({
+            res.status(404).json({
                 code: messages.NOT_FOUND.code,
                 message: `Taxi not available`,
             });
+
+            return
         }
 
         // Calculate distance and duration
-        const calculate = await calculateUserDistanceAndDurationService(origin, destination)
+        const calculate =
+            await calculateUserDistanceAndDurationService(origin, destination)
 
         if (!calculate) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,
-                message: `Calculate not found ${messages.NOT_FOUND.message}`,
+                message: `Taxi not available`,
             });
+
+            return
         }
 
         const calculation: any = []
 
         const delayPrice = 7
+
         const priceInPolygonPerKm = 7
 
         for (let i = 0; i < taxiTypes.length; i++) {
@@ -39,7 +45,11 @@ export const calculateUserDistanceAndDuration = async (req: Request, res: Respon
                     cartType: taxiTypes[i].name,
                     seats: taxiTypes[i].seats,
                     ...calculate,
-                    totalPrice: Math.ceil((taxiTypes[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration)),
+                    totalPrice: Math.ceil(
+                        (taxiTypes[i].price * calculate.totalDistance) +
+                        (priceInPolygonPerKm * calculate.distanceInPolygon) +
+                        (delayPrice * calculate.delayDuration)
+                    ),
                 }
             )
         }
