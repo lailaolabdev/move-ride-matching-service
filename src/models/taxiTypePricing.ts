@@ -12,7 +12,8 @@ export interface ITaxiTypePricing extends Document {
 
 const TaxiTypePricingSchema: Schema = new Schema({
   taxiTypeId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'TaxiType',
     required: true,
   },
   minDistance: {

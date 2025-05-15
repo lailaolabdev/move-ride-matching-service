@@ -23,6 +23,7 @@ export const calculateUserDistanceAndDurationService = async (origin: string, de
         // ค้นหา Polygon ทั้งหมดจาก MongoDB (ข้อมูล Polygon แบบตัวอย่าง)
         let distanceInPolygon: number = 0
         let durationInPolygon: number = 0
+        let priceInPolygon: number = 0
         let trafficDistance: number = 0
 
         const polygons = await polygonModel.find()
@@ -70,6 +71,7 @@ export const calculateUserDistanceAndDurationService = async (origin: string, de
                             polygonName: polygon.name,
                             distanceThroughPolygon: distanceKm,
                             durationThroughPolygon: step.duration.value, // เวลาเดินทางของ step นั้น
+                            price: polygon.price
                         });
                     }
                 });
@@ -81,6 +83,7 @@ export const calculateUserDistanceAndDurationService = async (origin: string, de
                     acc[curr.polygonName] = {
                         distanceThroughPolygon: 0,
                         durationThroughPolygon: 0,
+                        price: curr.price,
                     };
                 }
 
@@ -92,8 +95,6 @@ export const calculateUserDistanceAndDurationService = async (origin: string, de
                 return acc;
             }, {});
 
-
-
             // แสดงผลรวม
             // console.log("\nสรุปข้อมูลการเดินทางผ่าน polygons:");
             Object.keys(aggregatedResults).forEach((polygonName) => {
@@ -102,6 +103,9 @@ export const calculateUserDistanceAndDurationService = async (origin: string, de
 
                 distanceInPolygon = parseFloat(result.distanceThroughPolygon.toFixed(2))
                 durationInPolygon = parseFloat(durationInMinutes.toFixed(2))
+                priceInPolygon +=
+                    parseFloat(result.distanceThroughPolygon.toFixed(2)) *
+                    parseFloat(result.price)
             });
 
             trafficDistance = totalDistance * (totalTrafficDelayMin / totalNormalDurationMin);
@@ -110,6 +114,7 @@ export const calculateUserDistanceAndDurationService = async (origin: string, de
         return {
             distanceInPolygon,
             durationInPolygon,
+            priceInPolygon,
             normalDuration: parseFloat(totalNormalDurationMin.toFixed(2)),
             delayDuration: parseFloat(totalTrafficDelayMin.toFixed(2)) > 0 ? parseFloat(totalTrafficDelayMin.toFixed(2)) : 0,
             delayDistance: parseFloat(trafficDistance.toFixed(2)) > 0 ? parseFloat(trafficDistance.toFixed(2)) : 0,
