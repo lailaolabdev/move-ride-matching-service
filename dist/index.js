@@ -11,6 +11,7 @@ const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 //Import Routes
 const swagger_1 = __importDefault(require("./docs/swagger"));
 const taxiType_1 = __importDefault(require("./routes/taxiType"));
+const taxiTypePricing_1 = __importDefault(require("./routes/taxiTypePricing"));
 const database_1 = __importDefault(require("./config/database"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const taxi_1 = __importDefault(require("./routes/taxi"));
@@ -39,6 +40,7 @@ app.use("/health", (req, res) => {
     res.send("Server is running");
 });
 app.use("/api/v1/taxi-types", taxiType_1.default);
+app.use("/api/v1/taxi-type-pricing", taxiTypePricing_1.default);
 app.use("/api/v1/taxies", taxi_1.default);
 app.use("/api/v1/vehicle-drivers", vehicleDriver_1.default);
 app.use("/v1/api/calculate", calculation_1.default);

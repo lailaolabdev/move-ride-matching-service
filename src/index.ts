@@ -7,6 +7,7 @@ import swaggerUi from "swagger-ui-express";
 //Import Routes
 import swaggerOptions from "./docs/swagger";
 import taxiTypeRoute from "./routes/taxiType";
+import taxiTypePricingRoute from "./routes/taxiTypePricing";
 import connectDB from "./config/database";
 import swaggerJSDoc from "swagger-jsdoc";
 import taxiRoute from "./routes/taxi";
@@ -41,6 +42,7 @@ app.use("/health", (req, res) => {
     res.send("Server is running");
 });
 app.use("/api/v1/taxi-types", taxiTypeRoute);
+app.use("/api/v1/taxi-type-pricing", taxiTypePricingRoute);
 app.use("/api/v1/taxies", taxiRoute);
 app.use("/api/v1/vehicle-drivers", vehicleDriverRoute);
 app.use("/v1/api/calculate", calculationRoute);
