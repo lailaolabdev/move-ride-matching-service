@@ -84,19 +84,19 @@ exports.getCallTaxisService = getCallTaxisService;
 const createDriverComplainPassengerService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { rating, customerBehavior, satisfaction, remark, image } = req.body;
+        const { rating, driverBehavior, satisfaction, remark, image } = req.body;
         const driverComplain = {};
         if (rating)
             driverComplain.rating = rating;
-        if (customerBehavior)
-            driverComplain.customerBehavior = customerBehavior;
+        if (driverBehavior)
+            driverComplain.driverBehavior = driverBehavior;
         if (satisfaction)
             driverComplain.satisfaction = satisfaction;
         if (remark)
             driverComplain.remark = remark;
-        if (image.length)
+        if (image && image.length)
             driverComplain.image = image;
-        const updated = yield callTaxi_1.CallTaxi.findOneAndUpdate({ id }, { driverComplain: driverComplain }, { new: true });
+        const updated = yield callTaxi_1.CallTaxi.findOneAndUpdate({ _id: id }, { driverComplain }, { new: true });
         return updated;
     }
     catch (error) {
