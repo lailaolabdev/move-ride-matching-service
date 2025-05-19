@@ -34,24 +34,37 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const MOTOR_TYPE = {
-    diesel: "DIESEL",
-    ev: "EV"
-};
-const TaxiTypeSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    icon: { type: String, required: true },
-    price: { type: Number, required: true },
-    seats: { type: Number, required: true },
-    country: { type: String, required: true },
-    motorType: { type: String, enum: Object.values(MOTOR_TYPE), required: true },
-    status: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
-    createdBy: { type: String, required: true },
-    createdByFullName: { type: String, required: true },
-    updatedAt: { type: Date, default: Date.now },
-    updatedBy: { type: String },
-    updatedByFullName: String
+const callTaxi_1 = require("./callTaxi");
+const TaxiTypePricingSchema = new mongoose_1.Schema({
+    taxiTypeId: {
+        type: String,
+        required: true,
+    },
+    minDistance: {
+        type: Number,
+        required: true
+    },
+    maxDistance: {
+        type: Number,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    rideMatchingType: {
+        type: String,
+        enum: Object.values(callTaxi_1.REQUEST_TYPE),
+        require: true
+    },
+    status: {
+        type: Boolean,
+        default: true
+    },
+    country: {
+        type: String,
+        default: true
+    },
 });
-const taxiTypeModel = mongoose_1.default.model('TaxiType', TaxiTypeSchema);
-exports.default = taxiTypeModel;
+const taxiTypePricingModel = mongoose_1.default.model('TaxiTypePricing', TaxiTypePricingSchema);
+exports.default = taxiTypePricingModel;

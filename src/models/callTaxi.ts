@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const REQUEST_TYPE = {
+export const REQUEST_TYPE = {
 	METERED_FARE: "meter",
 	FLAT_FARE: "flat_fare",
 };

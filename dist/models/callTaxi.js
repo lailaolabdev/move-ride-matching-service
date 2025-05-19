@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CallTaxi = exports.STATUS = void 0;
+exports.CallTaxi = exports.STATUS = exports.REQUEST_TYPE = void 0;
 const mongoose_1 = require("mongoose");
-const REQUEST_TYPE = {
+exports.REQUEST_TYPE = {
     METERED_FARE: "meter",
     FLAT_FARE: "flat_fare",
 };
@@ -52,7 +52,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
     },
     requestType: {
         type: String,
-        enum: Object.values(REQUEST_TYPE),
+        enum: Object.values(exports.REQUEST_TYPE),
         required: true,
     },
     distanceInPolygon: {

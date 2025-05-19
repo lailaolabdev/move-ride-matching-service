@@ -10,20 +10,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.messages = exports.deleteKeysByPattern = void 0;
+const redis_1 = require("./redis/redis");
 const deleteKeysByPattern = (pattern) => __awaiter(void 0, void 0, void 0, function* () {
-    // try {
-    //     // Fetch all keys matching the pattern
-    //     const keys = await redis.keys(pattern);
-    //     if (keys.length > 0) {
-    //         // Delete all matching keys
-    //         const deleted = await redis.del(...keys);
-    //         console.log(`Deleted ${deleted} keys matching pattern: ${pattern}`);
-    //     } else {
-    //         console.log('No keys found matching the pattern:', pattern);
-    //     }
-    // } catch (error) {
-    //     console.error('Error deleting keys from Redis:', error);
-    // }
+    try {
+        // Fetch all keys matching the pattern
+        const keys = yield redis_1.redis.keys(pattern);
+        if (keys.length > 0) {
+            // Delete all matching keys
+            const deleted = yield redis_1.redis.del(...keys);
+            console.log(`Deleted ${deleted} keys matching pattern: ${pattern}`);
+        }
+        else {
+            console.log('No keys found matching the pattern:', pattern);
+        }
+    }
+    catch (error) {
+        console.error('Error deleting keys from Redis:', error);
+    }
 });
 exports.deleteKeysByPattern = deleteKeysByPattern;
 exports.messages = {

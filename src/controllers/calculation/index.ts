@@ -1,53 +1,79 @@
-import { Request, Response } from "express"
+import { Request, Response } from "express";
 import { messages } from "../../config";
-import { calculateDriverDistanceAndDurationService, calculateUserDistanceAndDurationService } from "../../services/calculation";
-import taxiTypeModel from "../../models/taxiType";
+import {
+    calculateDriverDistanceAndDurationService,
+    calculateUserDistanceAndDurationService,
+} from "../../services/calculation";
+import taxiTypePricingModel from "../../models/taxiTypePricing";
 
-export const calculateUserDistanceAndDuration = async (req: Request, res: Response): Promise<any> => {
+export const calculateUserDistanceAndDuration = async (
+    req: Request,
+    res: Response
+): Promise<any> => {
     try {
-        const { origin, destination } = req.body
-
-        const taxiTypes = await taxiTypeModel.find();
-
-        if (!taxiTypes.length) {
-            return res.status(404).json({
-                code: messages.NOT_FOUND.code,
-                message: `Taxi not available`,
-            });
-        }
+        const { origin, destination } = req.body;
 
         // Calculate distance and duration
-        const calculate = await calculateUserDistanceAndDurationService(origin, destination)
+        const calculate = await calculateUserDistanceAndDurationService(
+            origin,
+            destination
+        );
 
         if (!calculate) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,
-                message: `Calculate not found ${messages.NOT_FOUND.message}`,
+                message: `Taxi not available`,
             });
+
+            return;
         }
 
-        const calculation: any = []
+        // find taxi type pricing base on distance
+        const distance = calculate.totalDistance;
 
-        const delayPrice = 7
-        const priceInPolygonPerKm = 7
+        const taxiTypePricing = await taxiTypePricingModel.aggregate([
+            {
+                $match: {
+                    minDistance: { $lte: distance },
+                    maxDistance: { $gt: distance },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'taxitypes', // name of the referenced collection
+                    localField: 'taxiTypeId',
+                    foreignField: '_id',
+                    as: 'taxiType',
+                },
+            },
+            {
+                $unwind: '$taxiType', // optional: flatten the array
+            },
+        ]);
 
-        for (let i = 0; i < taxiTypes.length; i++) {
-            calculation.push(
-                {
-                    id: taxiTypes[i]._id,
-                    image: taxiTypes[i].icon,
-                    cartType: taxiTypes[i].name,
-                    seats: taxiTypes[i].seats,
-                    ...calculate,
-                    totalPrice: Math.ceil((taxiTypes[i].price * calculate.totalDistance) + (priceInPolygonPerKm * calculate.distanceInPolygon) + (delayPrice * calculate.delayDuration)),
-                }
-            )
+        const calculation: any = [];
+
+        const delayPrice = 7;
+
+        for (let i = 0; i < taxiTypePricing.length; i++) {
+            calculation.push({
+                id: taxiTypePricing[i].taxiType._id,
+                image: taxiTypePricing[i].taxiType.icon,
+                cartType: taxiTypePricing[i].taxiType.name,
+                seats: taxiTypePricing[i].taxiType.seats,
+                ...calculate,
+                totalPrice: Math.ceil(
+                    taxiTypePricing[i].price * distance +
+                    calculate.priceInPolygon +
+                    delayPrice * calculate.delayDuration
+                ),
+            });
         }
 
         res.status(200).json({
             code: messages.CREATE_SUCCESSFUL.code,
             message: messages.CREATE_SUCCESSFUL.message,
-            calculation
+            calculation,
         });
     } catch (error) {
         console.log("error: ", error);
@@ -60,11 +86,17 @@ export const calculateUserDistanceAndDuration = async (req: Request, res: Respon
     }
 };
 
-export const calculateDriverDistanceAndDuration = async (req: Request, res: Response): Promise<any> => {
+export const calculateDriverDistanceAndDuration = async (
+    req: Request,
+    res: Response
+): Promise<any> => {
     try {
-        const { origin, destination } = req.body
+        const { origin, destination } = req.body;
 
-        const calculation = await calculateDriverDistanceAndDurationService(origin, destination)
+        const calculation = await calculateDriverDistanceAndDurationService(
+            origin,
+            destination
+        );
 
         if (!calculation) {
             res.status(404).json({
@@ -76,7 +108,7 @@ export const calculateDriverDistanceAndDuration = async (req: Request, res: Resp
         res.status(200).json({
             code: messages.CREATE_SUCCESSFUL.code,
             message: messages.CREATE_SUCCESSFUL.message,
-            calculation
+            calculation,
         });
     } catch (error) {
         console.log("error: ", error);
@@ -87,4 +119,4 @@ export const calculateDriverDistanceAndDuration = async (req: Request, res: Resp
             detail: (error as Error).message,
         });
     }
-}
+};
