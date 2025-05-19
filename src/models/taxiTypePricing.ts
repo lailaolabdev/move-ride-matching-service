@@ -39,14 +39,13 @@ const TaxiTypePricingSchema: Schema = new Schema({
   },
   country: {
     type: String,
-    default: true
+    required: true
   },
 });
 
-const taxiTypePricingModel =
-  mongoose.model<ITaxiTypePricing>(
-    'TaxiTypePricing',
-    TaxiTypePricingSchema
-  );
+const taxiTypePricingModel = mongoose.model<ITaxiTypePricing>(
+  'TaxiTypePricing',
+  TaxiTypePricingSchema
+);
 
 export default taxiTypePricingModel;

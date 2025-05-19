@@ -32,6 +32,7 @@ const calculateUserDistanceAndDurationService = (origin, destination) => __await
         // ค้นหา Polygon ทั้งหมดจาก MongoDB (ข้อมูล Polygon แบบตัวอย่าง)
         let distanceInPolygon = 0;
         let durationInPolygon = 0;
+        let priceInPolygon = 0;
         let trafficDistance = 0;
         const polygons = yield polygon_1.default.find();
         if (polygons.length) {
@@ -66,6 +67,7 @@ const calculateUserDistanceAndDurationService = (origin, destination) => __await
                             polygonName: polygon.name,
                             distanceThroughPolygon: distanceKm,
                             durationThroughPolygon: step.duration.value, // เวลาเดินทางของ step นั้น
+                            price: polygon.price
                         });
                     }
                 });
@@ -76,6 +78,7 @@ const calculateUserDistanceAndDurationService = (origin, destination) => __await
                     acc[curr.polygonName] = {
                         distanceThroughPolygon: 0,
                         durationThroughPolygon: 0,
+                        price: curr.price,
                     };
                 }
                 acc[curr.polygonName].distanceThroughPolygon +=
@@ -91,12 +94,16 @@ const calculateUserDistanceAndDurationService = (origin, destination) => __await
                 const durationInMinutes = result.durationThroughPolygon / 60;
                 distanceInPolygon = parseFloat(result.distanceThroughPolygon.toFixed(2));
                 durationInPolygon = parseFloat(durationInMinutes.toFixed(2));
+                priceInPolygon +=
+                    parseFloat(result.distanceThroughPolygon.toFixed(2)) *
+                        parseFloat(result.price);
             });
             trafficDistance = totalDistance * (totalTrafficDelayMin / totalNormalDurationMin);
         }
         return {
             distanceInPolygon,
             durationInPolygon,
+            priceInPolygon,
             normalDuration: parseFloat(totalNormalDurationMin.toFixed(2)),
             delayDuration: parseFloat(totalTrafficDelayMin.toFixed(2)) > 0 ? parseFloat(totalTrafficDelayMin.toFixed(2)) : 0,
             delayDistance: parseFloat(trafficDistance.toFixed(2)) > 0 ? parseFloat(trafficDistance.toFixed(2)) : 0,

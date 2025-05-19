@@ -15,18 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.calculateDriverDistanceAndDuration = exports.calculateUserDistanceAndDuration = void 0;
 const config_1 = require("../../config");
 const calculation_1 = require("../../services/calculation");
-const taxiType_1 = __importDefault(require("../../models/taxiType"));
+const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { origin, destination } = req.body;
-        const taxiTypes = yield taxiType_1.default.find();
-        if (!taxiTypes.length) {
-            res.status(404).json({
-                code: config_1.messages.NOT_FOUND.code,
-                message: `Taxi not available`,
-            });
-            return;
-        }
         // Calculate distance and duration
         const calculate = yield (0, calculation_1.calculateUserDistanceAndDurationService)(origin, destination);
         if (!calculate) {
@@ -36,18 +28,38 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
             });
             return;
         }
+        // find taxi type pricing base on distance
+        const distance = calculate.totalDistance;
+        const taxiTypePricing = yield taxiTypePricing_1.default.aggregate([
+            {
+                $match: {
+                    minDistance: { $lte: distance },
+                    maxDistance: { $gt: distance },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'taxitypes', // name of the referenced collection
+                    localField: 'taxiTypeId',
+                    foreignField: '_id',
+                    as: 'taxiType',
+                },
+            },
+            {
+                $unwind: '$taxiType', // optional: flatten the array
+            },
+        ]);
         const calculation = [];
         const delayPrice = 7;
-        const priceInPolygonPerKm = 7;
-        for (let i = 0; i < taxiTypes.length; i++) {
-            calculation.push(Object.assign(Object.assign({ id: taxiTypes[i]._id, image: taxiTypes[i].icon, cartType: taxiTypes[i].name, seats: taxiTypes[i].seats }, calculate), { totalPrice: Math.ceil((taxiTypes[i].price * calculate.totalDistance) +
-                    (priceInPolygonPerKm * calculate.distanceInPolygon) +
-                    (delayPrice * calculate.delayDuration)) }));
+        for (let i = 0; i < taxiTypePricing.length; i++) {
+            calculation.push(Object.assign(Object.assign({ id: taxiTypePricing[i].taxiType._id, image: taxiTypePricing[i].taxiType.icon, cartType: taxiTypePricing[i].taxiType.name, seats: taxiTypePricing[i].taxiType.seats }, calculate), { totalPrice: Math.ceil(taxiTypePricing[i].price * distance +
+                    calculate.priceInPolygon +
+                    delayPrice * calculate.delayDuration) }));
         }
         res.status(200).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            calculation
+            calculation,
         });
     }
     catch (error) {
@@ -73,7 +85,7 @@ const calculateDriverDistanceAndDuration = (req, res) => __awaiter(void 0, void 
         res.status(200).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            calculation
+            calculation,
         });
     }
     catch (error) {

@@ -33,30 +33,28 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.usingTypeEnum = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const callTaxi_1 = require("./callTaxi");
-const TaxiTypePricingSchema = new mongoose_1.Schema({
-    taxiTypeId: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: 'TaxiType',
-        required: true,
-    },
-    minDistance: {
-        type: Number,
-        required: true
-    },
-    maxDistance: {
-        type: Number,
-        required: true
-    },
-    price: {
-        type: Number,
-        required: true
-    },
-    rideMatchingType: {
+exports.usingTypeEnum = {
+    onceTimeType: "ONCE_TIME_TYPE",
+    periodType: "PERIOD_TYPE",
+};
+const PromotionSchema = new mongoose_1.Schema({
+    name: {
         type: String,
-        enum: Object.values(callTaxi_1.REQUEST_TYPE),
         require: true
+    },
+    discount: {
+        type: Number,
+        require: true
+    },
+    usingType: {
+        type: String,
+        enum: Object.values(exports.usingTypeEnum),
+    },
+    period: {
+        startDate: String,
+        endDate: String
     },
     status: {
         type: Boolean,
@@ -64,8 +62,8 @@ const TaxiTypePricingSchema = new mongoose_1.Schema({
     },
     country: {
         type: String,
-        required: true
+        require: true
     },
 });
-const taxiTypePricingModel = mongoose_1.default.model('TaxiTypePricing', TaxiTypePricingSchema);
-exports.default = taxiTypePricingModel;
+const promotionModel = mongoose_1.default.model('Promotion', PromotionSchema);
+exports.default = promotionModel;
