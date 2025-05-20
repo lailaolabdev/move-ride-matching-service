@@ -16,7 +16,9 @@ exports.calculateDriverDistanceAndDuration = exports.calculateUserDistanceAndDur
 const config_1 = require("../../config");
 const calculation_1 = require("../../services/calculation");
 const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
+const onPeakTime_1 = require("../../services/onPeakTime");
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { origin, destination } = req.body;
         // Calculate distance and duration
@@ -50,9 +52,14 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
             },
         ]);
         const calculation = [];
-        const delayPrice = 7;
+        let delayPrice = 0;
+        // Calculate peak time
+        const onPeakTime = yield (0, onPeakTime_1.getOnPeakTimeService)(req.headers.authorization);
+        const onPeakTimePrice = (_a = onPeakTime.credit) !== null && _a !== void 0 ? _a : 0;
+        const calculatePeakTimePrice = onPeakTimePrice + distance;
         for (let i = 0; i < taxiTypePricing.length; i++) {
             calculation.push(Object.assign(Object.assign({ id: taxiTypePricing[i].taxiType._id, image: taxiTypePricing[i].taxiType.icon, cartType: taxiTypePricing[i].taxiType.name, seats: taxiTypePricing[i].taxiType.seats }, calculate), { totalPrice: Math.ceil(taxiTypePricing[i].price * distance +
+                    calculatePeakTimePrice +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration) }));
         }

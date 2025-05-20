@@ -5,6 +5,7 @@ import {
     calculateUserDistanceAndDurationService,
 } from "../../services/calculation";
 import taxiTypePricingModel from "../../models/taxiTypePricing";
+import { getOnPeakTimeService } from "../../services/onPeakTime";
 
 export const calculateUserDistanceAndDuration = async (
     req: Request,
@@ -53,7 +54,12 @@ export const calculateUserDistanceAndDuration = async (
 
         const calculation: any = [];
 
-        const delayPrice = 7;
+        let delayPrice = 0;
+
+        // Calculate peak time
+        const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string)
+        const onPeakTimePrice = onPeakTime.credit ?? 0
+        const calculatePeakTimePrice = onPeakTimePrice + distance
 
         for (let i = 0; i < taxiTypePricing.length; i++) {
             calculation.push({
@@ -64,6 +70,7 @@ export const calculateUserDistanceAndDuration = async (
                 ...calculate,
                 totalPrice: Math.ceil(
                     taxiTypePricing[i].price * distance +
+                    calculatePeakTimePrice +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration
                 ),
