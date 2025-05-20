@@ -4,7 +4,7 @@ import { formatTime, getDayString, getLocalTime } from "../utils/timezone";
 export const getOnPeakTimeService = async (token: string, countryCode?: string) => {
   try {
     const onPeakTime = await axios.get(
-      `${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&country=${countryCode}`,
+      `${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&countryCode=${countryCode}`,
       {
         headers: {
           Authorization: token,
