@@ -12,7 +12,7 @@ export const calculateUserDistanceAndDuration = async (
     res: Response
 ): Promise<any> => {
     try {
-        const { origin, destination } = req.body;
+        const { origin, destination, country } = req.body;
 
         // Calculate distance and duration
         const calculate = await calculateUserDistanceAndDurationService(
