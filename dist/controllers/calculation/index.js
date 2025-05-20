@@ -20,7 +20,7 @@ const onPeakTime_1 = require("../../services/onPeakTime");
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const { origin, destination } = req.body;
+        const { origin, destination, country } = req.body;
         // Calculate distance and duration
         const calculate = yield (0, calculation_1.calculateUserDistanceAndDurationService)(origin, destination);
         if (!calculate) {
