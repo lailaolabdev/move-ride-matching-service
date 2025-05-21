@@ -243,9 +243,15 @@ export const updateCallTaxiService = async (req: Request): Promise<ICallTaxi | n
 
         const { type, status } = req.body
 
+        const updateData: any = {}
+
+        if (type) updateData.type = type
+        if (status) updateData.status = status
+
         const updated = await CallTaxi.findOneAndUpdate(
-            { id },
-            { type, status }
+            { _id: id },
+            updateData,
+            { new: true }
         )
 
         return updated

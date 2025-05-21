@@ -212,7 +212,12 @@ const updateCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
     try {
         const { id } = req.params;
         const { type, status } = req.body;
-        const updated = yield callTaxi_1.CallTaxi.findOneAndUpdate({ id }, { type, status });
+        const updateData = {};
+        if (type)
+            updateData.type = type;
+        if (status)
+            updateData.status = status;
+        const updated = yield callTaxi_1.CallTaxi.findOneAndUpdate({ _id: id }, updateData, { new: true });
         return updated;
     }
     catch (error) {

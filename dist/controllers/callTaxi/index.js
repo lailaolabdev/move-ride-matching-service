@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.createCallTaxi = void 0;
+exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -67,6 +67,22 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.createCallTaxi = createCallTaxi;
+const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi }));
+    }
+    catch (error) {
+        console.log("error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getCallTaxiById = getCallTaxiById;
 const getUserCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const callTaxis = yield (0, callTaxi_1.getUserCallTaxisService)(req);

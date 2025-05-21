@@ -97,6 +97,27 @@ export const createCallTaxi = async (req: Request, res: Response) => {
     }
 };
 
+export const getCallTaxiById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params
+
+        const callTaxi = await CallTaxi.findById(id)
+
+        res.status(200).json({
+            ...messages.SUCCESSFULLY,
+            callTaxi
+        })
+    } catch (error) {
+        console.log("error: ", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
+
 export const getUserCallTaxis = async (req: Request, res: Response) => {
     try {
         const callTaxis = await getUserCallTaxisService(req);

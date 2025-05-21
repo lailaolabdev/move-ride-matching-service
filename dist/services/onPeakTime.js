@@ -18,7 +18,7 @@ const timezone_1 = require("../utils/timezone");
 const getOnPeakTimeService = (token, countryCode) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
-        const onPeakTime = yield axios_1.default.get(`${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&country=${countryCode}`, {
+        const onPeakTime = yield axios_1.default.get(`${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&countryCode=${countryCode}`, {
             headers: {
                 Authorization: token,
             },
