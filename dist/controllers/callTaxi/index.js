@@ -182,6 +182,48 @@ const getDriverCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
+        if (!callTaxi) {
+            res.status(200).json({
+                code: config_1.messages.NOT_FOUND,
+                messages: config_1.messages.SUCCESSFULLY.message,
+                detail: "Ride matching not found"
+            });
+            return;
+        }
+        // if status from order not equal to "Requesting" and "Accepted"
+        // cannot cancel the order
+        if (status === callTaxi_2.STATUS.CANCELED) {
+            if (callTaxi.status !== callTaxi_2.STATUS.REQUESTING ||
+                callTaxi.status !== callTaxi_2.STATUS.DRIVER_RECEIVED) {
+                res.status(400).json({
+                    code: config_1.messages.BAD_REQUEST.code,
+                    messages: config_1.messages.BAD_REQUEST.message,
+                    detail: "Cannot cancel this order"
+                });
+                return;
+            }
+            else {
+                // if status is match update order status to canceled
+                const updated = yield (0, callTaxi_1.updateCallTaxiService)(req);
+                if (updated) {
+                    // if there is driver id send notification to driver using socket
+                    if (updated.driverId) {
+                        yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, {
+                            driverId: updated.driverId
+                        });
+                    }
+                    res.status(200).json({
+                        code: config_1.messages.SUCCESSFULLY.code,
+                        messages: config_1.messages.SUCCESSFULLY.message,
+                        data: updated,
+                    });
+                    return;
+                }
+            }
+        }
         const updated = yield (0, callTaxi_1.updateCallTaxiService)(req);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,

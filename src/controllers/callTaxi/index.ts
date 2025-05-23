@@ -224,6 +224,59 @@ export const getDriverCallTaxis = async (req: Request, res: Response) => {
 
 export const updateCallTaxis = async (req: Request, res: Response) => {
     try {
+        const { id } = req.params
+
+        const { status } = req.body
+
+        const callTaxi = await CallTaxi.findById(id);
+
+        if (!callTaxi) {
+            res.status(200).json({
+                code: messages.NOT_FOUND,
+                messages: messages.SUCCESSFULLY.message,
+                detail: "Ride matching not found"
+            });
+
+            return
+        }
+
+        // if status from order not equal to "Requesting" and "Accepted"
+        // cannot cancel the order
+        if (status === STATUS.CANCELED) {
+            if (
+                callTaxi.status !== STATUS.REQUESTING ||
+                callTaxi.status !== STATUS.DRIVER_RECEIVED
+            ) {
+                res.status(400).json({
+                    code: messages.BAD_REQUEST.code,
+                    messages: messages.BAD_REQUEST.message,
+                    detail: "Cannot cancel this order"
+                });
+
+                return
+            } else {
+                // if status is match update order status to canceled
+                const updated = await updateCallTaxiService(req);
+
+                if (updated) {
+                    // if there is driver id send notification to driver using socket
+                    if (updated.driverId) {
+                        await axios.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, {
+                            driverId: updated.driverId
+                        })
+                    }
+
+                    res.status(200).json({
+                        code: messages.SUCCESSFULLY.code,
+                        messages: messages.SUCCESSFULLY.message,
+                        data: updated,
+                    });
+
+                    return
+                }
+            }
+        }
+
         const updated = await updateCallTaxiService(req);
 
         res.status(200).json({
