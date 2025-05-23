@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateCreatePromotion = void 0;
 const config_1 = require("../config");
-const promotion_1 = require("../models/promotion");
+const festivalPromotion_1 = require("../models/festivalPromotion");
 const validateCreatePromotion = (req, res, next) => {
     const { name, discount, usingType, period, status, country } = req.body;
     if (!name || typeof name !== "string") {
@@ -22,10 +22,10 @@ const validateCreatePromotion = (req, res, next) => {
     }
     if (usingType) {
         if (typeof usingType !== "string" ||
-            !Object.values(promotion_1.usingTypeEnum).includes(usingType)) {
+            !Object.values(festivalPromotion_1.usingTypeEnum).includes(usingType)) {
             return res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
-                message: `Invalid or missing field: usingType (must be one of ${Object.values(promotion_1.usingTypeEnum).join(", ")})`,
+                message: `Invalid or missing field: usingType (must be one of ${Object.values(festivalPromotion_1.usingTypeEnum).join(", ")})`,
             });
         }
     }

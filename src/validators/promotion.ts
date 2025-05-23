@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { messages } from "../config";
-import { usingTypeEnum } from "../models/promotion";
+import { usingTypeEnum } from "../models/festivalPromotion";
 
 export const validateCreatePromotion = (
   req: Request,

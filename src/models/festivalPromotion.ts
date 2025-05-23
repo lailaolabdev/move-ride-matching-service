@@ -3,21 +3,21 @@ import mongoose, { Document, Schema } from 'mongoose';
 export const usingTypeEnum = {
   onceTimeType: "ONCE_TIME_TYPE",
   periodType: "PERIOD_TYPE",
+};
+
+export interface IFestivalPromotion extends Document {
+  status: boolean;
+  country: string;
 }
 
-export interface IPromotion extends Document {
-  status: boolean
-  country: string
-}
-
-const PromotionSchema: Schema = new Schema({
+const FestivalPromotionSchema: Schema = new Schema({
   name: {
     type: String,
-    require: true
+    required: true
   },
   discount: {
     type: Number,
-    require: true
+    required: true
   },
   usingType: {
     type: String,
@@ -33,13 +33,13 @@ const PromotionSchema: Schema = new Schema({
   },
   country: {
     type: String,
-    require: true
+    required: true
   },
 });
 
-const promotionModel = mongoose.model<IPromotion>(
-  'Promotion',
-  PromotionSchema
+const festivalPromotionModel = mongoose.model<IFestivalPromotion>(
+  'FestivalPromotion',
+  FestivalPromotionSchema
 );
 
-export default promotionModel;
+export default festivalPromotionModel;

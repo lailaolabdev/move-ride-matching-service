@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     Promotion:
+ *     FestivalPromotion:
  *       type: object
  *       properties:
  *         id:
@@ -42,14 +42,13 @@
  *       bearerFormat: JWT
  */
 
-
 /**
  * @swagger
- * /api/v1/promotions:
+ * /api/v1/festival-promotions:
  *   post:
- *     summary: Create a new promotion
+ *     summary: Create a new festival promotion
  *     tags:
- *       - Promotion
+ *       - Festival Promotion
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -57,10 +56,10 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Promotion'
+ *             $ref: '#/components/schemas/FestivalPromotion'
  *     responses:
  *       201:
- *         description: Promotion created successfully
+ *         description: Festival promotion created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -71,18 +70,18 @@
  *                   example: "CREATE_SUCCESSFUL"
  *                 message:
  *                   type: string
- *                   example: "Promotion created successfully"
+ *                   example: "Festival promotion created successfully"
  *                 data:
- *                   $ref: '#/components/schemas/Promotion'
+ *                   $ref: '#/components/schemas/FestivalPromotion'
  */
 
 /**
  * @swagger
- * /api/v1/promotions:
+ * /api/v1/festival-promotions:
  *   get:
- *     summary: Get all promotions
+ *     summary: Get all festival promotions
  *     tags:
- *       - Promotion
+ *       - Festival Promotion
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -98,7 +97,7 @@
  *         example: 10
  *     responses:
  *       200:
- *         description: List of promotions
+ *         description: List of festival promotions
  *         content:
  *           application/json:
  *             schema:
@@ -110,16 +109,16 @@
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Promotion'
+ *                     $ref: '#/components/schemas/FestivalPromotion'
  */
 
 /**
  * @swagger
- * /api/v1/promotions/{id}:
+ * /api/v1/festival-promotions/{id}:
  *   get:
- *     summary: Get promotion by ID
+ *     summary: Get festival promotion by ID
  *     tags:
- *       - Promotion
+ *       - Festival Promotion
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -130,7 +129,7 @@
  *         required: true
  *     responses:
  *       200:
- *         description: Promotion record found
+ *         description: Festival promotion record found
  *         content:
  *           application/json:
  *             schema:
@@ -140,16 +139,16 @@
  *                   type: string
  *                   example: "SUCCESSFUL"
  *                 data:
- *                   $ref: '#/components/schemas/Promotion'
+ *                   $ref: '#/components/schemas/FestivalPromotion'
  */
 
 /**
  * @swagger
- * /api/v1/promotions/{id}:
+ * /api/v1/festival-promotions/{id}:
  *   put:
- *     summary: Update a promotion
+ *     summary: Update a festival promotion
  *     tags:
- *       - Promotion
+ *       - Festival Promotion
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -163,10 +162,10 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Promotion'
+ *             $ref: '#/components/schemas/FestivalPromotion'
  *     responses:
  *       200:
- *         description: Promotion updated successfully
+ *         description: Festival promotion updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -176,16 +175,16 @@
  *                   type: string
  *                   example: "SUCCESSFUL"
  *                 data:
- *                   $ref: '#/components/schemas/Promotion'
+ *                   $ref: '#/components/schemas/FestivalPromotion'
  */
 
 /**
  * @swagger
- * /api/v1/promotions/{id}:
+ * /api/v1/festival-promotions/{id}:
  *   delete:
- *     summary: Delete a promotion
+ *     summary: Delete a festival promotion
  *     tags:
- *       - Promotion
+ *       - Festival Promotion
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -196,7 +195,7 @@
  *         required: true
  *     responses:
  *       200:
- *         description: Deleted successfully
+ *         description: Festival promotion deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -207,6 +206,5 @@
  *                   example: "SUCCESSFUL"
  *                 message:
  *                   type: string
- *                   example: "Promotion deleted successfully"
+ *                   example: "Festival promotion deleted successfully"
  */
-

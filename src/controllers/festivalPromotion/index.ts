@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
 import {
-    createPromotionService,
-    getAllPromotionsService,
-    getPromotionByIdService,
-    updatePromotionService,
-    deletePromotionService,
-} from "../../services/promotion";
+    createFestivalPromotionService,
+    getAllFestivalPromotionsService,
+    getFestivalPromotionByIdService,
+    updateFestivalPromotionService,
+    deleteFestivalPromotionService,
+} from "../../services/festivalPromotion";
 import { messages } from "../../config/index";
-import { filterPromotion } from "./helper";
+import { filterPromotion } from "./helper"; // You may rename this to filterFestivalPromotion if applicable
 
 // CREATE
-export const createPromotion = async (req: Request, res: Response) => {
+export const createFestivalPromotion = async (req: Request, res: Response) => {
     try {
         const { name, discount, usingType, period, country } = req.body;
 
-        const promotion = await createPromotionService({
+        const festivalPromotion = await createFestivalPromotionService({
             name,
             discount,
             usingType,
@@ -24,8 +24,8 @@ export const createPromotion = async (req: Request, res: Response) => {
 
         res.status(201).json({
             code: messages.CREATE_SUCCESSFUL.code,
-            message: "Promotion created successfully",
-            promotion,
+            message: "Festival promotion created successfully",
+            festivalPromotion,
         });
     } catch (error) {
         res.status(500).json({
@@ -37,7 +37,7 @@ export const createPromotion = async (req: Request, res: Response) => {
 };
 
 // READ ALL
-export const getAllPromotions = async (req: Request, res: Response) => {
+export const getAllFestivalPromotions = async (req: Request, res: Response) => {
     try {
         const { skip, limit, name, usingType, startDate, endDate } = req.query;
 
@@ -46,7 +46,7 @@ export const getAllPromotions = async (req: Request, res: Response) => {
 
         const filter = filterPromotion(name, usingType, startDate, endDate);
 
-        const promotions = await getAllPromotionsService(
+        const festivalPromotions = await getAllFestivalPromotionsService(
             parsedSkip,
             parsedLimit,
             filter
@@ -54,8 +54,8 @@ export const getAllPromotions = async (req: Request, res: Response) => {
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
-            message: "Promotions fetched successfully",
-            promotions,
+            message: "Festival promotions fetched successfully",
+            festivalPromotions,
         });
     } catch (error) {
         res.status(500).json({
@@ -67,22 +67,22 @@ export const getAllPromotions = async (req: Request, res: Response) => {
 };
 
 // READ BY ID
-export const getPromotionById = async (req: Request, res: Response) => {
+export const getFestivalPromotionById = async (req: Request, res: Response) => {
     try {
-        const promotion = await getPromotionByIdService(req.params.id);
+        const festivalPromotion = await getFestivalPromotionByIdService(req.params.id);
 
-        if (!promotion) {
+        if (!festivalPromotion) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,
-                message: "Promotion not found",
+                message: "Festival promotion not found",
             });
             return;
         }
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
-            message: "Promotion fetched successfully",
-            promotion,
+            message: "Festival promotion fetched successfully",
+            festivalPromotion,
         });
     } catch (error) {
         res.status(500).json({
@@ -94,12 +94,12 @@ export const getPromotionById = async (req: Request, res: Response) => {
 };
 
 // UPDATE
-export const updatePromotion = async (req: Request, res: Response) => {
+export const updateFestivalPromotion = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const { name, discount, usingType, period, status, country } = req.body;
 
-        const updatedPromotion = await updatePromotionService({
+        const updatedFestivalPromotion = await updateFestivalPromotionService({
             id,
             name,
             discount,
@@ -109,18 +109,18 @@ export const updatePromotion = async (req: Request, res: Response) => {
             country,
         });
 
-        if (!updatedPromotion) {
+        if (!updatedFestivalPromotion) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,
-                message: "Promotion not found",
+                message: "Festival promotion not found",
             });
             return;
         }
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
-            message: "Promotion updated successfully",
-            updatedPromotion,
+            message: "Festival promotion updated successfully",
+            updatedFestivalPromotion,
         });
     } catch (error) {
         res.status(500).json({
@@ -132,22 +132,22 @@ export const updatePromotion = async (req: Request, res: Response) => {
 };
 
 // DELETE
-export const deletePromotion = async (req: Request, res: Response) => {
+export const deleteFestivalPromotion = async (req: Request, res: Response) => {
     try {
-        const deletedPromotion = await deletePromotionService(req.params.id);
+        const deletedFestivalPromotion = await deleteFestivalPromotionService(req.params.id);
 
-        if (!deletedPromotion) {
+        if (!deletedFestivalPromotion) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,
-                message: "Promotion not found",
+                message: "Festival promotion not found",
             });
             return;
         }
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
-            message: "Promotion deleted successfully",
-            deletedPromotion,
+            message: "Festival promotion deleted successfully",
+            deletedFestivalPromotion,
         });
     } catch (error) {
         res.status(500).json({
