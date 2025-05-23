@@ -51,6 +51,8 @@ const NewComerPromotionSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+}, {
+    timestamps: true
 });
 const newComerPromotionModel = mongoose_1.default.model('NewComerPromotion', NewComerPromotionSchema);
 exports.default = newComerPromotionModel;

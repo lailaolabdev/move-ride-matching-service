@@ -64,6 +64,8 @@ const FestivalPromotionSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+}, {
+    timestamps: true
 });
 const festivalPromotionModel = mongoose_1.default.model('FestivalPromotion', FestivalPromotionSchema);
 exports.default = festivalPromotionModel;

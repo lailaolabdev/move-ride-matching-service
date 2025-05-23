@@ -35,6 +35,8 @@ const FestivalPromotionSchema: Schema = new Schema({
     type: String,
     required: true
   },
+}, {
+  timestamps: true
 });
 
 const festivalPromotionModel = mongoose.model<IFestivalPromotion>(

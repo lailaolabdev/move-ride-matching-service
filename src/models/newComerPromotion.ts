@@ -24,6 +24,8 @@ const NewComerPromotionSchema: Schema = new Schema({
     type: String,
     required: true
   },
+}, {
+  timestamps: true
 });
 
 const newComerPromotionModel = mongoose.model<INewComerPromotion>(
