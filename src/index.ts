@@ -21,6 +21,7 @@ import driverLocationRoute from "./routes/driverLocation";
 import nearByDriverRoute from "./routes/nearByDriver";
 import loyaltyClaimRoute from "./routes/loyaltyClaim";
 import festivalPromotionRoute from "./routes/festivalPromotion";
+import newComerPromotionRoute from "./routes/newComerPromotion";
 
 dotenv.config();
 
@@ -55,6 +56,7 @@ app.use("/api/v1/driver-location", driverLocationRoute);
 app.use("/api/v1/nearby-driver", nearByDriverRoute);
 app.use("/api/v1/loyalty-claim", loyaltyClaimRoute);
 app.use("/api/v1/festival-promotions", festivalPromotionRoute);
+app.use("/api/v1/new-comer-promotions", newComerPromotionRoute);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Error handling middleware

@@ -25,6 +25,7 @@ const driverLocation_1 = __importDefault(require("./routes/driverLocation"));
 const nearByDriver_1 = __importDefault(require("./routes/nearByDriver"));
 const loyaltyClaim_1 = __importDefault(require("./routes/loyaltyClaim"));
 const festivalPromotion_1 = __importDefault(require("./routes/festivalPromotion"));
+const newComerPromotion_1 = __importDefault(require("./routes/newComerPromotion"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8001;
@@ -53,6 +54,7 @@ app.use("/api/v1/driver-location", driverLocation_1.default);
 app.use("/api/v1/nearby-driver", nearByDriver_1.default);
 app.use("/api/v1/loyalty-claim", loyaltyClaim_1.default);
 app.use("/api/v1/festival-promotions", festivalPromotion_1.default);
+app.use("/api/v1/new-comer-promotions", newComerPromotion_1.default);
 app.use("/v1/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
 // Error handling middleware
 app.use((err, req, res, next) => {
