@@ -34,10 +34,56 @@ exports.createLoyaltyClaimService = createLoyaltyClaimService;
 const getAllLoyaltyClaimService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const total = yield loyaltyClaim_1.loyaltyClaimModel.countDocuments(filter);
-        const Loyalties = yield loyaltyClaim_1.loyaltyClaimModel.find(filter)
-            .skip(skip)
-            .limit(limit);
-        return { total, Loyalties };
+        const loyalties = yield loyaltyClaim_1.loyaltyClaimModel.aggregate([
+            { $match: filter },
+            { $skip: skip },
+            { $limit: limit },
+            {
+                $addFields: {
+                    userId: { $toObjectId: '$userId' },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $lookup: {
+                    from: 'loyalties',
+                    localField: 'loyaltyId',
+                    foreignField: '_id',
+                    as: 'loyalty',
+                },
+            },
+            {
+                $unwind: '$loyalty'
+            },
+            {
+                $project: {
+                    _id: 1,
+                    loyaltyId: 1,
+                    acceptedType: 1,
+                    address: 1,
+                    status: 1,
+                    countryCode: 1,
+                    'user.firstName': 1,
+                    'user.lastName': 1,
+                    'user.email': 1,
+                    'user.phone': 1,
+                    'loyalty.name': 1,
+                    'loyalty.price': 1,
+                    createdAt: 1,
+                }
+            }
+        ]);
+        return { total, loyalties };
     }
     catch (error) {
         console.log("Error retrieving loyalty claim: ", error);

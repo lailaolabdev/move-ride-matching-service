@@ -23,6 +23,7 @@ export interface ILoyaltyClaim extends Document {
 const LoyaltyClaimSchema = new Schema({
     userId: {
         type: Types.ObjectId,
+        ref: 'User',
         required: true
     },
     loyaltyId: {

@@ -48,6 +48,7 @@ const STATUS = {
 const LoyaltyClaimSchema = new mongoose_1.Schema({
     userId: {
         type: mongoose_1.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     loyaltyId: {

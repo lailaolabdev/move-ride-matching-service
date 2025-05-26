@@ -54,9 +54,6 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
       return
     }
 
-    // Create loyalty
-    await createLoyaltyClaimService(req);
-
     // Reduce loyalty quantity
     await loyaltyModel.findByIdAndUpdate(loyaltyId, {
       quantity: loyalty.quantity - 1
@@ -70,9 +67,12 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
       {
         headers: {
           Authorization: `${req.headers["authorization"]}`,
-
         }
-      });
+      }
+    );
+
+    // Create loyalty
+    await createLoyaltyClaimService(req);
 
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,

@@ -51,8 +51,6 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
             return;
         }
-        // Create loyalty
-        yield (0, loyaltyClaim_1.createLoyaltyClaimService)(req);
         // Reduce loyalty quantity
         yield loyalty_1.loyaltyModel.findByIdAndUpdate(loyaltyId, {
             quantity: loyalty.quantity - 1
@@ -65,6 +63,8 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 Authorization: `${req.headers["authorization"]}`,
             }
         });
+        // Create loyalty
+        yield (0, loyaltyClaim_1.createLoyaltyClaimService)(req);
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: "Loyalty claim created successfully"
