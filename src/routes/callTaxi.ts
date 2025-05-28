@@ -21,6 +21,7 @@ import {
     createPassengerComplain,
     getPassengerComplainById,
     getCallTaxiById,
+    checkCallTaxiStatus,
 } from "../controllers/callTaxi"
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -30,6 +31,8 @@ const router = express.Router();
 router.post("/", checkAuthorizationMiddleware, createCallTaxi);
 
 router.get("/:id", checkAuthorizationMiddleware, getCallTaxiById);
+
+router.get("/check/status", checkAuthorizationMiddleware, checkCallTaxiStatus);
 
 router.get("/user-history", checkAuthorizationMiddleware, getUserCallTaxis);
 

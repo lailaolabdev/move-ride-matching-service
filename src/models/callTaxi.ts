@@ -44,11 +44,14 @@ const CallTaxiSchema: Schema = new Schema(
 			required: true,
 		},
 		passengerComplain: {
-			rating: Number,
-			driverBehavior: String,
-			satisfaction: String,
-			remark: String,
-			image: [String]
+			type: {
+				rating: Number,
+				driverBehavior: String,
+				satisfaction: String,
+				remark: String,
+				image: [String]
+			},
+			default: undefined
 		},
 		carTypeId: {
 			type: String,
@@ -115,11 +118,14 @@ const CallTaxiSchema: Schema = new Schema(
 		// Driver info
 		driverId: String,
 		driverComplain: {
-			rating: Number,
-			customerBehavior: String,
-			satisfaction: String,
-			remark: String,
-			image: [String]
+			type: {
+				rating: Number,
+				customerBehavior: String,
+				satisfaction: String,
+				remark: String,
+				image: [String]
+			},
+			default: undefined
 		}
 	},
 	{
