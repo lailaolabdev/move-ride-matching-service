@@ -30,7 +30,7 @@ const router = express.Router();
 
 router.post("/", checkAuthorizationMiddleware, createCallTaxi);
 
-router.get("/:id", checkAuthorizationMiddleware, getCallTaxiById);
+router.get("/:id", getCallTaxiById);
 
 router.get("/", checkAuthorizationMiddleware, getCallTaxis);
 
