@@ -11,11 +11,11 @@ exports.STATUS = {
     NO_RECEIVED: "No_Received", // Driver ບໍ່ກົດຮັບ
     DRIVER_RECEIVED: "Accepted", // Driver ກົດຮັບແລ້ວ
     DRIVER_ARRIVED: "Driver_Arrived", // Driver ມາຮອດແລ້ວ
-    DEPARTURE: "departure", // ຢູ່ລະຫວ່າງການເດີນທາງ
+    DEPARTURE: "Departure", // ຢູ່ລະຫວ່າງການເດີນທາງ
     SEND_SUCCESS: "Success", // ສົ່ງລູກຄ້າສຳເລັດ
     PAID: "Paid", // ຈ່າຍເງິນສຳເລັດ(ສຳເລັດການເອີ້ນລົດ)
-    MISSED: "Missed", // ບໍ່ມີ Driver ກົດຮັບ
-    CANCELED: "Canceled", // ລູກຄ້າຍົກເລີກ
+    CANCELED: "Canceled", //
+    TIMEOUT: "Timeout", // ໝົດເວລາຮອດ Driver ບໍ່ຮັບ
 };
 const CallTaxiSchema = new mongoose_1.Schema({
     // passenger info
@@ -24,11 +24,14 @@ const CallTaxiSchema = new mongoose_1.Schema({
         required: true,
     },
     passengerComplain: {
-        rating: Number,
-        driverBehavior: String,
-        satisfaction: String,
-        remark: String,
-        image: [String]
+        type: {
+            rating: Number,
+            driverBehavior: String,
+            satisfaction: String,
+            remark: String,
+            image: [String],
+        },
+        default: undefined,
     },
     carTypeId: {
         type: String,
@@ -95,12 +98,15 @@ const CallTaxiSchema = new mongoose_1.Schema({
     // Driver info
     driverId: String,
     driverComplain: {
-        rating: Number,
-        customerBehavior: String,
-        satisfaction: String,
-        remark: String,
-        image: [String]
-    }
+        type: {
+            rating: Number,
+            customerBehavior: String,
+            satisfaction: String,
+            remark: String,
+            image: [String],
+        },
+        default: undefined,
+    },
 }, {
     timestamps: true,
 });
