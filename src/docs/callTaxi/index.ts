@@ -11,6 +11,98 @@
 /**
  * @swagger
  * /v1/api/call-taxi:
+ *   get:
+ *     summary: Get all taxi calls with optional filters
+ *     tags: [CallTaxi]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Start date for filtering createdAt
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: End date for filtering createdAt
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum total price
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum total price
+ *       - in: query
+ *         name: minTotalDistance
+ *         schema:
+ *           type: number
+ *         description: Minimum trip duration
+ *       - in: query
+ *         name: maxTotalDistance
+ *         schema:
+ *           type: number
+ *         description: Maximum trip duration
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search for passenger or driver by full name
+ *     responses:
+ *       200:
+ *         description: List of taxi call records
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: number
+ *                 message:
+ *                   type: string
+ *                 callTaxi:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       billNumber:
+ *                         type: string
+ *                       passengerId:
+ *                         type: string
+ *                       passengerFullname:
+ *                         type: string
+ *                       driverId:
+ *                         type: string
+ *                       driverFullname:
+ *                         type: string
+ *                       originName:
+ *                         type: string
+ *                       destinationName:
+ *                         type: string
+ *                       totalDistance:
+ *                         type: number
+ *                       totalDuration:
+ *                         type: number
+ *                       totalPrice:
+ *                         type: number
+ *                       status:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /v1/api/call-taxi:
  *   post:
  *     summary: Call taxi
  *     description: Call taxi with specified attributes.
@@ -69,7 +161,7 @@
  *               totalPrice:
  *                 type: number
  *                 example: 78.4
-*     responses:
+ *     responses:
  *       200:
  *         description: Ride request created successfully.
  *         content:
@@ -165,7 +257,7 @@
 
 /**
  * @swagger
- * /v1/api/call-taxi/passenger-complain/{id}: 
+ * /v1/api/call-taxi/passenger-complain/{id}:
  *   get:
  *     summary: Get passenger complain
  *     description: Get passenger complain by passenger id
@@ -311,7 +403,7 @@
  *                       type: string
  *                       description: Taxi Type icon.
  *                       example: "19/03/2025 13:29"
- *                     
+ *
  *       500:
  *         description: Internal server error.
  *         content:
@@ -374,7 +466,7 @@
  *                       type: string
  *                       description: Status of the ride (e.g., completed, canceled).
  *                       example: "PAID"
- *     
+ *
  *       500:
  *         description: Internal server error.
  *         content:
@@ -389,7 +481,6 @@
  *                   type: string
  *                   example: "Internal server error"
  */
-
 
 /**
  * @swagger
@@ -426,7 +517,7 @@
  *                       type: number
  *                       description: Total distance traveled (in kilometers or miles).
  *                       example: 125.75
- *     
+ *
  *       500:
  *         description: Internal server error.
  *         content:
@@ -440,7 +531,7 @@
  *                 message:
  *                   type: string
  *                   example: "Internal server error"
- *                
+ *
  */
 
 /**
@@ -478,7 +569,7 @@
  *                       type: number
  *                       description: Total distance traveled (in kilometers or miles).
  *                       example: 10
- *     
+ *
  *       500:
  *         description: Internal server error.
  *         content:
@@ -492,7 +583,7 @@
  *                 message:
  *                   type: string
  *                   example: "Internal server error"
- *                
+ *
  */
 
 /**
@@ -512,14 +603,14 @@
  *           type: string
  *           format: date-time
  *         example: "2025-02-20T04:51:50.283Z"
- *         
+ *
  *       - in: query
  *         name: endDate
  *         schema:
  *           type: string
  *           format: date-time
  *         example: "2025-02-20T04:51:50.283Z"
- *         
+ *
  *     responses:
  *       200:
  *         description: Total price of all call taxi and filter by date range
@@ -555,9 +646,6 @@
  *                   example: "Error fetching tax info"
  */
 
-
-
-
 /**
  * @swagger
  * /v1/api/call-taxi/rating-comment/{id}:
@@ -591,7 +679,7 @@
  *                 type: string
  *                 description: The comment of the calling taxi.
  *                 example: "Good service"
- *               
+ *
  *     responses:
  *       '200':
  *         description: Successfully updated the star and comment of the calling taxi
@@ -608,11 +696,8 @@
  *                   type: string
  *                   example: "Successfully"
  *                   description: The response message.
- *       
+ *
  */
-
-
-
 
 /**
  * @swagger
@@ -639,12 +724,12 @@
  *           schema:
  *             type: object
  *             properties:
- *               
+ *
  *               message:
  *                 type: string
  *                 description: The comment of the calling taxi.
  *                 example: "test"
- *             
+ *
  *     responses:
  *       200:
  *         description: Chat details updated successfully.
@@ -660,7 +745,6 @@
  *                   type: string
  *                   example: "Successfully."
  */
-
 
 /**
  * @swagger

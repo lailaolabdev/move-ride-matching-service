@@ -11,6 +11,97 @@
 /**
  * @swagger
  * /v1/api/call-taxi:
+ *   get:
+ *     summary: Get all taxi calls with optional filters
+ *     tags: [CallTaxi]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Start date for filtering createdAt
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: End date for filtering createdAt
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum total price
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum total price
+ *       - in: query
+ *         name: minTotalDistance
+ *         schema:
+ *           type: number
+ *         description: Minimum trip duration
+ *       - in: query
+ *         name: maxTotalDistance
+ *         schema:
+ *           type: number
+ *         description: Maximum trip duration
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search for passenger or driver by full name
+ *     responses:
+ *       200:
+ *         description: List of taxi call records
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: number
+ *                 message:
+ *                   type: string
+ *                 callTaxi:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       billNumber:
+ *                         type: string
+ *                       passengerId:
+ *                         type: string
+ *                       passengerFullname:
+ *                         type: string
+ *                       driverId:
+ *                         type: string
+ *                       driverFullname:
+ *                         type: string
+ *                       originName:
+ *                         type: string
+ *                       destinationName:
+ *                         type: string
+ *                       totalDistance:
+ *                         type: number
+ *                       totalDuration:
+ *                         type: number
+ *                       totalPrice:
+ *                         type: number
+ *                       status:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Internal server error
+ */
+/**
+ * @swagger
+ * /v1/api/call-taxi:
  *   post:
  *     summary: Call taxi
  *     description: Call taxi with specified attributes.
@@ -69,7 +160,7 @@
  *               totalPrice:
  *                 type: number
  *                 example: 78.4
-*     responses:
+ *     responses:
  *       200:
  *         description: Ride request created successfully.
  *         content:

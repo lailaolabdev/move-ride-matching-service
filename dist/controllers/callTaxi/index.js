@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
+exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -23,7 +23,7 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
     var _a, _b;
     try {
         const passengerId = req.user.id;
-        // // If production deployed uncomment this 
+        // // If production deployed uncomment this
         // const isCallTaxiExist = await getCallTaxisService(req)
         // if (isCallTaxiExist) {
         //     res.status(400).json({
@@ -43,18 +43,18 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (!callTaxi) {
             res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
-                message: config_1.messages.BAD_REQUEST.message
+                message: config_1.messages.BAD_REQUEST.message,
             });
             return;
         }
         // Emit socket
-        const token = req.headers['authorization'];
+        const token = req.headers["authorization"];
         const data = Object.assign({ fullName: (_a = passenger === null || passenger === void 0 ? void 0 : passenger.fullName) !== null && _a !== void 0 ? _a : "", profileImage: (_b = passenger === null || passenger === void 0 ? void 0 : passenger.profileImage) !== null && _b !== void 0 ? _b : "" }, callTaxi);
         yield (0, callTaxi_1.sentDataToDriverSocket)(token, data);
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            callTaxi: Object.assign({}, data)
+            callTaxi: Object.assign({}, data),
         });
     }
     catch (error) {
@@ -83,6 +83,118 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getCallTaxiById = getCallTaxiById;
+// Get all calling taxi
+const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, } = req.query;
+        const match = {};
+        // find start and date
+        if (startDate && endDate) {
+            match.createdAt = {
+                $gte: new Date(startDate.toString()),
+                $lte: new Date(endDate.toString()),
+            };
+        }
+        // find min and max Price
+        if (minPrice && maxPrice) {
+            match.totalPrice = {
+                $gte: Number(minPrice),
+                $lte: Number(maxPrice),
+            };
+        }
+        // find min and max distance
+        if (minTotalDistance && maxTotalDistance) {
+            match.totalDuration = {
+                $gte: Number(minTotalDistance),
+                $lte: Number(maxTotalDistance),
+            };
+        }
+        const page = 1; // change to your desired page
+        const limit = 10; // change to your desired limit
+        const skip = (page - 1) * limit;
+        const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
+            { $match: match },
+            // Lookup passenger
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$passengerId"] } } }],
+                    as: "passengerDetails",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passengerDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            // Lookup driver
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$driverId"] } } }],
+                    as: "driverDetails",
+                },
+            },
+            { $unwind: { path: "$driverDetails", preserveNullAndEmptyArrays: true } },
+            // Search filter
+            ...(search
+                ? [
+                    {
+                        $match: {
+                            $or: [
+                                {
+                                    "passengerDetails.fullName": {
+                                        $regex: search.toString(),
+                                        $options: "i",
+                                    },
+                                },
+                                {
+                                    "driverDetails.fullName": {
+                                        $regex: search.toString(),
+                                        $options: "i",
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ]
+                : []),
+            { $skip: skip },
+            { $limit: limit },
+            // Final projection
+            {
+                $project: {
+                    _id: 1,
+                    billNumber: 1,
+                    passengerId: "$passengerDetails._id",
+                    passengerFullname: "$passengerDetails.fullName",
+                    driverId: "$driverDetails._id",
+                    driverFullname: "$driverDetails.fullName",
+                    originName: 1,
+                    destinationName: 1,
+                    totalDistance: 1,
+                    totalDuration: 1,
+                    totalPrice: 1,
+                    status: 1,
+                    createdAt: 1,
+                },
+            },
+        ]);
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi }));
+    }
+    catch (error) {
+        console.log("error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getCallTaxis = getCallTaxis;
 const getUserCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const callTaxis = yield (0, callTaxi_1.getUserCallTaxisService)(req);
@@ -189,7 +301,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             res.status(200).json({
                 code: config_1.messages.NOT_FOUND,
                 messages: config_1.messages.SUCCESSFULLY.message,
-                detail: "Ride matching not found"
+                detail: "Ride matching not found",
             });
             return;
         }
@@ -201,7 +313,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                 res.status(400).json({
                     code: config_1.messages.BAD_REQUEST.code,
                     messages: config_1.messages.BAD_REQUEST.message,
-                    detail: "Cannot cancel this order"
+                    detail: "Cannot cancel this order",
                 });
                 return;
             }
@@ -212,7 +324,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                     // if there is driver id send notification to driver using socket
                     if (updated.driverId) {
                         yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, {
-                            driverId: updated.driverId
+                            driverId: updated.driverId,
                         });
                     }
                     res.status(200).json({
@@ -263,7 +375,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             fullName: (_h = (_g = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _g === void 0 ? void 0 : _g.user) === null || _h === void 0 ? void 0 : _h.fullName,
             licensePlate: (_k = (_j = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _j === void 0 ? void 0 : _j.user) === null || _k === void 0 ? void 0 : _k.licensePlate,
             vehicleBrandName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleBrandName,
-            vehicleModelName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleModelName
+            vehicleModelName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleModelName,
         };
         // Checking calling taxi
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
@@ -317,8 +429,8 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             // Delete ride matching from other when once accepted
             yield axios_1.default.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed === null || confirmed === void 0 ? void 0 : confirmed._id}`, {
                 headers: {
-                    Authorization: req.headers.authorization
-                }
+                    Authorization: req.headers.authorization,
+                },
             });
         }
         res.status(200).json({
@@ -329,7 +441,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 passengerId: confirmed === null || confirmed === void 0 ? void 0 : confirmed.passengerId,
                 requestType: confirmed === null || confirmed === void 0 ? void 0 : confirmed.requestType,
                 status: confirmed === null || confirmed === void 0 ? void 0 : confirmed.status,
-                driver
+                driver,
             },
         });
     }
@@ -343,7 +455,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.driverUpdateStatus = driverUpdateStatus;
-// report total ride 
+// report total ride
 const gettotalRide = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const totalRide = yield (0, callTaxi_1.getTotalRideService)(req);
@@ -359,7 +471,7 @@ const gettotalRide = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.gettotalRide = gettotalRide;
-// report total totalDistance 
+// report total totalDistance
 const getTotalDistance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const totalDistance = yield (0, callTaxi_1.getTotalDistanceService)(req);
@@ -391,14 +503,14 @@ const getThelastRide = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getThelastRide = getThelastRide;
-// report  ride history
+// report ride history
 const getRideHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const travelHistory = yield (0, callTaxi_1.getHistoryRideService)(req);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            travelHistory
+            travelHistory,
         });
     }
     catch (error) {
@@ -446,7 +558,7 @@ const updateStartAndComment = (req, res) => __awaiter(void 0, void 0, void 0, fu
             return res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
                 messages: config_1.messages.BAD_GATEWAY.message,
-                detail: "The rating must not exceed 5. Please provide a value between 1 and 5."
+                detail: "The rating must not exceed 5. Please provide a value between 1 and 5.",
             });
         }
         yield (0, callTaxi_1.updateStarAndCommentService)(id, rating, comment);
@@ -470,18 +582,20 @@ const chatCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const { id } = req.params;
         let { message } = req.body;
         const chatId = req.user.id;
-        const chatData = [{
+        const chatData = [
+            {
                 id: chatId,
                 message: message,
                 createdAt: new Date(),
-                updatedAt: new Date()
-            }];
+                updatedAt: new Date(),
+            },
+        ];
         const data = yield (0, callTaxi_1.updateChatCallTaxiService)(id, chatData);
         // const data=  await updateChatCallTaxiService(id, chat);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            data: data
+            data: data,
         });
     }
     catch (error) {
@@ -502,7 +616,7 @@ const getComentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            data: data
+            data: data,
         });
     }
     catch (error) {
@@ -522,7 +636,7 @@ const travelHistoryHistory = (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            travelHistory
+            travelHistory,
         });
     }
     catch (error) {
@@ -541,7 +655,7 @@ const cancelTravelHistoryHistory = (req, res) => __awaiter(void 0, void 0, void 
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            travelHistory
+            travelHistory,
         });
     }
     catch (error) {
@@ -554,7 +668,7 @@ const cancelTravelHistoryHistory = (req, res) => __awaiter(void 0, void 0, void 
     }
 });
 exports.cancelTravelHistoryHistory = cancelTravelHistoryHistory;
-// total travel time 
+// total travel time
 const gettotalTravelTime = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const totalTravelTime = yield (0, callTaxi_1.getTotaltravelTimeService)(req);

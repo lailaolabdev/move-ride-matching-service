@@ -394,6 +394,7 @@ export const getTheLastRideService = async (req: Request): Promise<any | null> =
 export const getHistoryRideService = async (req: Request): Promise<any> => {
     try {
         const passengerId = req.params.id
+
         let rideHistory = await CallTaxi.aggregate([
             { $match: { passengerId: passengerId, status: "Paid" } },
             {

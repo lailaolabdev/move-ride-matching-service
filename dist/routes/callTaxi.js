@@ -10,6 +10,7 @@ const middlewares_1 = require("../middlewares");
 const router = express_1.default.Router();
 router.post("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createCallTaxi);
 router.get("/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getCallTaxiById);
+router.get("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getCallTaxis);
 router.get("/user-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getUserCallTaxis);
 // driver complain passenger by call taxi id
 router.put("/driver-complain/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createDriverComplain);
@@ -34,7 +35,7 @@ router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, ca
 router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.callTaxiTotalPrice);
 router.get("/comment-rating/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getComentAndRating);
 router.put("/rating-comment/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateStartAndComment);
-// update chat while processing order 
+// update chat while processing order
 router.put("/chat-call-taxi/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.chatCallTaxi);
 // get total travel history ride
 router.get("/travel-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.travelHistoryHistory);
