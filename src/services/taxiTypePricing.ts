@@ -6,15 +6,15 @@ export const createTaxiTypePricingService = async ({
     taxiTypeId,
     minDistance,
     maxDistance,
-    price,
-    rideMatchingType,
+    meterPrice,
+    flatFarePrice,
     country
 }: {
     taxiTypeId: string;
     minDistance: number;
     maxDistance: number;
-    price: number;
-    rideMatchingType: string;
+    meterPrice: number;
+    flatFarePrice: number;
     country: string;
 }): Promise<ITaxiTypePricing | null> => {
     try {
@@ -22,8 +22,8 @@ export const createTaxiTypePricingService = async ({
             taxiTypeId,
             minDistance,
             maxDistance,
-            price,
-            rideMatchingType,
+            meterPrice,
+            flatFarePrice,
             country
         });
 
@@ -74,18 +74,16 @@ export const updateTaxiTypePricingService = async ({
     taxiTypeId,
     minDistance,
     maxDistance,
-    price,
-    rideMatchingType,
-    status,
+    meterPrice,
+    flatFarePrice,
     country
 }: {
     id: string;
     taxiTypeId: string;
     minDistance: number;
     maxDistance: number;
-    price: number;
-    rideMatchingType: string;
-    status: boolean;
+    meterPrice: number;
+    flatFarePrice: number;
     country: string;
 }): Promise<ITaxiTypePricing | null> => {
     try {
@@ -97,14 +95,14 @@ export const updateTaxiTypePricingService = async ({
                         taxiTypeId,
                         minDistance,
                         maxDistance,
-                        price,
-                        rideMatchingType,
-                        status,
+                        meterPrice,
+                        flatFarePrice,
                         country
                     },
                 },
                 { new: true }
             );
+
         return updatedTaxiTypePricing;
     } catch (error) {
         console.log("Error updating taxi type: ", error);

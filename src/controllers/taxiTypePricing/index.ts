@@ -15,8 +15,8 @@ export const createTaxiTypePricing = async (req: Request, res: Response) => {
             taxiTypeId,
             minDistance,
             maxDistance,
-            price,
-            rideMatchingType,
+            meterPrice,
+            flatFarePrice,
             country
         } = req.body;
 
@@ -24,8 +24,8 @@ export const createTaxiTypePricing = async (req: Request, res: Response) => {
             taxiTypeId,
             minDistance,
             maxDistance,
-            price,
-            rideMatchingType,
+            meterPrice,
+            flatFarePrice,
             country
         });
 
@@ -117,9 +117,8 @@ export const updateTaxiTypePricing = async (req: Request, res: Response) => {
             taxiTypeId,
             minDistance,
             maxDistance,
-            price,
-            rideMatchingType,
-            status,
+            meterPrice,
+            flatFarePrice,
             country
         } = req.body;
 
@@ -128,11 +127,11 @@ export const updateTaxiTypePricing = async (req: Request, res: Response) => {
             taxiTypeId,
             minDistance,
             maxDistance,
-            price,
-            rideMatchingType,
-            status,
+            meterPrice,
+            flatFarePrice,
             country
         });
+
         if (!updatedTaxiTypePricing) {
             res.status(404).json({
                 code: messages.NOT_FOUND.code,

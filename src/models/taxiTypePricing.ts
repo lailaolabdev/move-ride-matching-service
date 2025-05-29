@@ -24,17 +24,12 @@ const TaxiTypePricingSchema: Schema = new Schema({
     type: Number,
     required: true
   },
-  price: {
+  meterPrice: {
     type: Number,
     required: true
   },
-  rideMatchingType: {
-    type: String,
-    enum: Object.values(REQUEST_TYPE),
-    require: true
-  },
-  status: {
-    type: Boolean,
+  flatFarePrice: {
+    type: Number,
     default: true
   },
   country: {

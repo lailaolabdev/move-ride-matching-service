@@ -15,14 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTaxiTypePricingService = exports.updateTaxiTypePricingService = exports.getTaxiTypePricingByIdService = exports.getAllTaxiTypePricingService = exports.createTaxiTypePricingService = void 0;
 const taxiTypePricing_1 = __importDefault(require("../models/taxiTypePricing"));
 // CREATE
-const createTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiTypeId, minDistance, maxDistance, price, rideMatchingType, country }) {
+const createTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country }) {
     try {
         const taxiTypePricing = new taxiTypePricing_1.default({
             taxiTypeId,
             minDistance,
             maxDistance,
-            price,
-            rideMatchingType,
+            meterPrice,
+            flatFarePrice,
             country
         });
         const savedTaxiTypePricing = yield taxiTypePricing.save();
@@ -61,16 +61,15 @@ const getTaxiTypePricingByIdService = (id) => __awaiter(void 0, void 0, void 0, 
 });
 exports.getTaxiTypePricingByIdService = getTaxiTypePricingByIdService;
 // UPDATE
-const updateTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiTypeId, minDistance, maxDistance, price, rideMatchingType, status, country }) {
+const updateTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country }) {
     try {
         const updatedTaxiTypePricing = yield taxiTypePricing_1.default.findByIdAndUpdate(id, {
             $set: {
                 taxiTypeId,
                 minDistance,
                 maxDistance,
-                price,
-                rideMatchingType,
-                status,
+                meterPrice,
+                flatFarePrice,
                 country
             },
         }, { new: true });

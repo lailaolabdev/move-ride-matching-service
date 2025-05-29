@@ -17,15 +17,12 @@
  *         maxDistance:
  *           type: number
  *           example: 10
- *         price:
+ *         meterPrice:
  *           type: number
  *           example: 25.5
- *         rideMatchingType:
- *           type: string
- *           example: "meter"
- *         status:
- *           type: boolean
- *           example: true
+ *         flatFarePrice:
+ *           type: number
+ *           example: 25.5
  *         country:
  *           type: string
  *           example: LA
