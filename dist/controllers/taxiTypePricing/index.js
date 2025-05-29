@@ -44,10 +44,13 @@ exports.createTaxiTypePricing = createTaxiTypePricing;
 // READ All Taxi Types
 const getAllTaxiTypePricing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit } = req.query;
+        const { taxiTypeId, skip, limit } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
-        const taxiTypePricings = yield (0, taxiTypePricing_1.getAllTaxiTypePricingService)(parseSkip, parsedLimit);
+        const filter = {};
+        if (taxiTypeId)
+            filter.taxiTypeId = taxiTypeId;
+        const taxiTypePricings = yield (0, taxiTypePricing_1.getAllTaxiTypePricingService)(parseSkip, parsedLimit, filter);
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,
             message: "Taxi Types fetched successfully",

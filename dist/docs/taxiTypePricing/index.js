@@ -88,6 +88,11 @@
  *         schema:
  *           type: integer
  *         example: 10
+ *       - in: query
+ *         name: taxiTypeId
+ *         schema:
+ *           type: string
+ *         example: 67c5587478a1f4ee9d92f75a
  *     responses:
  *       200:
  *         description: List of taxi type pricing records

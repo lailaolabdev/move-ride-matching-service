@@ -38,12 +38,13 @@ export const createTaxiTypePricingService = async ({
 // READ (All Taxi Types)
 export const getAllTaxiTypePricingService = async (
     skip: number,
-    limit: number
+    limit: number,
+    filter: any
 ): Promise<any> => {
     try {
         const total = await taxiTypePricingModel.countDocuments();
         const taxiTypePricing = await taxiTypePricingModel
-            .find()
+            .find(filter)
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });

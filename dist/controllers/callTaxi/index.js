@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
+exports.getTotalFlatFareTime = exports.getTotalMeterTime = exports.gettotalTravelTime = exports.cancelTravelHistoryHistory = exports.travelHistoryHistory = exports.getComentAndRating = exports.chatCallTaxi = exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getThelastRide = exports.getTotalDistance = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -195,6 +195,44 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getCallTaxis = getCallTaxis;
+const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const id = req.user.id;
+        const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${id}`);
+        const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
+        if (!userData) {
+            res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: "User not found" }));
+            return;
+        }
+        let filter = {
+            status: {
+                $in: [
+                    callTaxi_2.STATUS.REQUESTING,
+                    callTaxi_2.STATUS.NO_RECEIVED,
+                    callTaxi_2.STATUS.DRIVER_RECEIVED,
+                    callTaxi_2.STATUS.DRIVER_ARRIVED,
+                    callTaxi_2.STATUS.DEPARTURE
+                ]
+            }
+        };
+        if (userData.role === "CUSTOMER")
+            filter.passengerId = userData._id;
+        if (userData.role === "DRIVER")
+            filter.driverId = userData._id;
+        const callTaxi = yield callTaxi_2.CallTaxi.findOne(filter).lean();
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), callTaxi));
+    }
+    catch (error) {
+        console.log("error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.checkCallTaxiStatus = checkCallTaxiStatus;
 const getUserCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const callTaxis = yield (0, callTaxi_1.getUserCallTaxisService)(req);

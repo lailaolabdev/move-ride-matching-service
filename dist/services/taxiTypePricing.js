@@ -34,11 +34,11 @@ const createTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, fun
 });
 exports.createTaxiTypePricingService = createTaxiTypePricingService;
 // READ (All Taxi Types)
-const getAllTaxiTypePricingService = (skip, limit) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllTaxiTypePricingService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const total = yield taxiTypePricing_1.default.countDocuments();
         const taxiTypePricing = yield taxiTypePricing_1.default
-            .find()
+            .find(filter)
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });

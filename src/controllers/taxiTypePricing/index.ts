@@ -48,13 +48,18 @@ export const createTaxiTypePricing = async (req: Request, res: Response) => {
 // READ All Taxi Types
 export const getAllTaxiTypePricing = async (req: Request, res: Response) => {
     try {
-        const { skip, limit } = req.query;
+        const { taxiTypeId, skip, limit } = req.query;
         const parseSkip = parseInt(skip as string, 10);
         const parsedLimit = parseInt(limit as string, 10);
 
+        const filter: any = {}
+
+        if (taxiTypeId) filter.taxiTypeId = taxiTypeId
+
         const taxiTypePricings = await getAllTaxiTypePricingService(
             parseSkip,
-            parsedLimit
+            parsedLimit,
+            filter
         );
 
         res.status(200).json({

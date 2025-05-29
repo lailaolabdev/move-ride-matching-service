@@ -22,6 +22,7 @@ import {
   getPassengerComplainById,
   getCallTaxiById,
   getCallTaxis,
+  checkCallTaxiStatus,
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
