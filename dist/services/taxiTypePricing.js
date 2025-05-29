@@ -36,7 +36,7 @@ exports.createTaxiTypePricingService = createTaxiTypePricingService;
 // READ (All Taxi Types)
 const getAllTaxiTypePricingService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const total = yield taxiTypePricing_1.default.countDocuments();
+        const total = yield taxiTypePricing_1.default.countDocuments(filter);
         const taxiTypePricing = yield taxiTypePricing_1.default
             .find(filter)
             .skip(skip)

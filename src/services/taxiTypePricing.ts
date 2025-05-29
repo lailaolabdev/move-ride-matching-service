@@ -42,7 +42,7 @@ export const getAllTaxiTypePricingService = async (
     filter: any
 ): Promise<any> => {
     try {
-        const total = await taxiTypePricingModel.countDocuments();
+        const total = await taxiTypePricingModel.countDocuments(filter);
         const taxiTypePricing = await taxiTypePricingModel
             .find(filter)
             .skip(skip)
