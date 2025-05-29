@@ -86,7 +86,7 @@ exports.getCallTaxiById = getCallTaxiById;
 // Get all calling taxi
 const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, } = req.query;
+        const { page = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, } = req.query;
         const match = {};
         // find start and date
         if (startDate && endDate) {
@@ -109,9 +109,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 $lte: Number(maxTotalDistance),
             };
         }
-        const page = 1; // change to your desired page
-        const limit = 10; // change to your desired limit
-        const skip = (page - 1) * limit;
+        const skip = (parseInt(page) - 1) * parseInt(limit);
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
             { $match: match },
             // Lookup passenger
@@ -163,7 +161,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 ]
                 : []),
             { $skip: skip },
-            { $limit: limit },
+            { $limit: parseInt(limit) },
             // Final projection
             {
                 $project: {
