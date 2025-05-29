@@ -34,6 +34,8 @@ router.get("/:id", getCallTaxiById);
 
 router.get("/", checkAuthorizationMiddleware, getCallTaxis);
 
+router.get("/check/status", checkAuthorizationMiddleware, checkCallTaxiStatus);
+
 router.get("/user-history", checkAuthorizationMiddleware, getUserCallTaxis);
 
 // driver complain passenger by call taxi id

@@ -25,7 +25,7 @@ import {
   getPassengerComplainDriverByIdService,
   sentDataToDriverSocket,
 } from "../../services/callTaxi";
-import { CallTaxi, ICallTaxi, STATUS } from "../../models/callTaxi";
+import { CallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
 import { getDriver, getPassenger, pipeline } from "./helper";
 import taxiModel from "../../models/taxi";
@@ -253,6 +253,50 @@ export const getCallTaxis = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const checkCallTaxiStatus = async (req: Request, res: Response) => {
+    try {
+        const id = (req as any).user.id;
+
+        const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${id}`);
+        const userData = user?.data?.user
+
+        if (!userData) {
+            res.status(404).json({
+                ...messages.NOT_FOUND,
+                detail: "User not found"
+            })
+            return
+        }
+
+        let filter: any = {
+            status: {
+                $in: [
+                    STATUS.REQUESTING,
+                    STATUS.NO_RECEIVED,
+                    STATUS.DRIVER_RECEIVED,
+                    STATUS.DRIVER_ARRIVED,
+                    STATUS.DEPARTURE
+                ]
+            }
+        }
+
+        if (userData.role === "CUSTOMER") filter.passengerId = userData._id
+        if (userData.role === "DRIVER") filter.driverId = userData._id
+
+        const callTaxi = await CallTaxi.findOne(filter).lean()
+
+        res.status(200).json({ ...messages.SUCCESSFULLY, ...callTaxi })
+    } catch (error) {
+        console.log("error: ", error);
+
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+}
 
 export const getUserCallTaxis = async (req: Request, res: Response) => {
   try {
