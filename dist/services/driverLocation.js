@@ -17,9 +17,9 @@ const axios_1 = __importDefault(require("axios"));
 const updateDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const driverId = req.user.id;
-        const { longitude, latitude, isOnline } = req.body;
+        const { longitude, latitude, isOnline, registrationSource } = req.body;
         if (isOnline === "online" || isOnline === "offline") {
-            yield axios_1.default.put(`${process.env.SOCKET_SERVICE_URL}/v1/api/driver-location-socket/${driverId}`, { longitude, latitude, isOnline });
+            yield axios_1.default.put(`${process.env.SOCKET_SERVICE_URL}/v1/api/driver-location-socket/${driverId}`, { longitude, latitude, isOnline, registrationSource });
         }
         return true;
     }
