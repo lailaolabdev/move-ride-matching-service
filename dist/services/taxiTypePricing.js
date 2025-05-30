@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTaxiTypePricingService = exports.updateTaxiTypePricingService = exports.getTaxiTypePricingByIdService = exports.getAllTaxiTypePricingService = exports.createTaxiTypePricingService = void 0;
+exports.getTaxiPricingDistance = exports.deleteTaxiTypePricingService = exports.updateTaxiTypePricingService = exports.getTaxiTypePricingByIdService = exports.getAllTaxiTypePricingService = exports.createTaxiTypePricingService = void 0;
 const taxiTypePricing_1 = __importDefault(require("../models/taxiTypePricing"));
 // CREATE
 const createTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country }) {
@@ -93,3 +93,30 @@ const deleteTaxiTypePricingService = (id) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.deleteTaxiTypePricingService = deleteTaxiTypePricingService;
+const getTaxiPricingDistance = (_a) => __awaiter(void 0, [_a], void 0, function* ({ country, distance }) {
+    try {
+        return yield taxiTypePricing_1.default.aggregate([
+            {
+                $match: {
+                    country: country ? country : "LA",
+                    minDistance: { $lte: distance },
+                    maxDistance: { $gt: distance },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'taxitypes', // name of the referenced collection
+                    localField: 'taxiTypeId',
+                    foreignField: '_id',
+                    as: 'taxiType',
+                },
+            },
+            {
+                $unwind: '$taxiType', // optional: flatten the array
+            },
+        ]);
+    }
+    catch (error) {
+    }
+});
+exports.getTaxiPricingDistance = getTaxiPricingDistance;

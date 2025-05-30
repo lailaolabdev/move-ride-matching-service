@@ -8,20 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.calculateDriverDistanceAndDuration = exports.calculateUserDistanceAndDuration = void 0;
 const config_1 = require("../../config");
 const calculation_1 = require("../../services/calculation");
-const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
 const onPeakTime_1 = require("../../services/onPeakTime");
+const taxiTypePricing_1 = require("../../services/taxiTypePricing");
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const { origin, destination, country } = req.body;
-        // Calculate distance and duration
+        // Calculation method:
+        // step 1 : Calculate distance and duration from google map
         const calculate = yield (0, calculation_1.calculateUserDistanceAndDurationService)(origin, destination);
         if (!calculate) {
             res.status(404).json({
@@ -30,43 +28,48 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
             });
             return;
         }
-        // find taxi type pricing base on distance
+        // step 2 : find taxi type pricing base on distance, 
+        // example: distance 5km find distance between 1 - 5
         const distance = calculate.totalDistance;
-        const taxiTypePricing = yield taxiTypePricing_1.default.aggregate([
-            {
-                $match: {
-                    minDistance: { $lte: distance },
-                    maxDistance: { $gt: distance },
-                },
-            },
-            {
-                $lookup: {
-                    from: 'taxitypes', // name of the referenced collection
-                    localField: 'taxiTypeId',
-                    foreignField: '_id',
-                    as: 'taxiType',
-                },
-            },
-            {
-                $unwind: '$taxiType', // optional: flatten the array
-            },
-        ]);
-        const calculation = [];
-        let delayPrice = 0;
-        // Calculate peak time
+        const taxiTypePricing = (_a = (0, taxiTypePricing_1.getTaxiPricingDistance)({
+            country,
+            distance
+        })) !== null && _a !== void 0 ? _a : [];
+        const meter = [];
+        const flatFare = [];
+        let delayPrice = 10;
+        // step 3 : find peak time base on distance
         const onPeakTime = yield (0, onPeakTime_1.getOnPeakTimeService)(req.headers.authorization);
-        const onPeakTimePrice = (_a = onPeakTime.credit) !== null && _a !== void 0 ? _a : 0;
-        const calculatePeakTimePrice = onPeakTimePrice + distance;
+        const onPeakTimePrice = (_b = onPeakTime.credit) !== null && _b !== void 0 ? _b : 0;
+        // step 4 : loop through taxiTypePricing and 
+        // calculate price both meter and flat fare
+        // calculation method: 
+        //
+        // (meter price or flat fare price + peak time price) * total distance +
+        // calculate.priceInPolygon +
+        // delay price * delay duration
         for (let i = 0; i < taxiTypePricing.length; i++) {
-            calculation.push(Object.assign(Object.assign({ id: taxiTypePricing[i].taxiType._id, image: taxiTypePricing[i].taxiType.icon, cartType: taxiTypePricing[i].taxiType.name, seats: taxiTypePricing[i].taxiType.seats }, calculate), { totalPrice: Math.ceil(taxiTypePricing[i].price * distance +
-                    calculatePeakTimePrice +
+            const taxiPricing = {
+                id: taxiTypePricing[i].taxiType._id,
+                image: taxiTypePricing[i].taxiType.icon,
+                cartType: taxiTypePricing[i].taxiType.name,
+                seats: taxiTypePricing[i].taxiType.seats,
+            };
+            meter.push(Object.assign(Object.assign(Object.assign({}, taxiPricing), calculate), { totalPrice: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration) }));
+            flatFare.push(Object.assign(Object.assign(Object.assign({}, taxiPricing), calculate), { actualCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+                    calculate.priceInPolygon +
+                    delayPrice * calculate.delayDuration), estimatedCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+                    calculate.priceInPolygon +
+                    delayPrice * calculate.delayDuration +
+                    30) }));
         }
         res.status(200).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            calculation,
+            meter,
+            flatFare
         });
     }
     catch (error) {

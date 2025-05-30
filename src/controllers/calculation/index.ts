@@ -1,20 +1,22 @@
 import { Request, Response } from "express";
 import { messages } from "../../config";
-import {
-    calculateDriverDistanceAndDurationService,
-    calculateUserDistanceAndDurationService,
-} from "../../services/calculation";
-import taxiTypePricingModel from "../../models/taxiTypePricing";
+import { calculateDriverDistanceAndDurationService, calculateUserDistanceAndDurationService } from "../../services/calculation";
 import { getOnPeakTimeService } from "../../services/onPeakTime";
+import { getTaxiPricingDistance } from "../../services/taxiTypePricing";
 
 export const calculateUserDistanceAndDuration = async (
     req: Request,
     res: Response
 ): Promise<any> => {
     try {
-        const { origin, destination, country } = req.body;
+        const {
+            origin,
+            destination,
+            country
+        } = req.body;
 
-        // Calculate distance and duration
+        // Calculation method:
+        // step 1 : Calculate distance and duration from google map
         const calculate = await calculateUserDistanceAndDurationService(
             origin,
             destination
@@ -29,50 +31,61 @@ export const calculateUserDistanceAndDuration = async (
             return;
         }
 
-        // find taxi type pricing base on distance
+        // step 2 : find taxi type pricing base on distance, 
+        // example: distance 5km find distance between 1 - 5
         const distance = calculate.totalDistance;
 
-        const taxiTypePricing = await taxiTypePricingModel.aggregate([
-            {
-                $match: {
-                    minDistance: { $lte: distance },
-                    maxDistance: { $gt: distance },
-                },
-            },
-            {
-                $lookup: {
-                    from: 'taxitypes', // name of the referenced collection
-                    localField: 'taxiTypeId',
-                    foreignField: '_id',
-                    as: 'taxiType',
-                },
-            },
-            {
-                $unwind: '$taxiType', // optional: flatten the array
-            },
-        ]);
+        const taxiTypePricing: any = getTaxiPricingDistance({
+            country,
+            distance
+        }) ?? []
 
-        const calculation: any = [];
+        const meter: any = [];
+        const flatFare: any = [];
+        let delayPrice = 10;
 
-        let delayPrice = 0;
-
-        // Calculate peak time
+        // step 3 : find peak time base on distance
         const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string)
         const onPeakTimePrice = onPeakTime.credit ?? 0
-        const calculatePeakTimePrice = onPeakTimePrice + distance
 
+        // step 4 : loop through taxiTypePricing and 
+        // calculate price both meter and flat fare
+        // calculation method: 
+        //
+        // (meter price or flat fare price + peak time price) * total distance +
+        // calculate.priceInPolygon +
+        // delay price * delay duration
         for (let i = 0; i < taxiTypePricing.length; i++) {
-            calculation.push({
+            const taxiPricing = {
                 id: taxiTypePricing[i].taxiType._id,
                 image: taxiTypePricing[i].taxiType.icon,
                 cartType: taxiTypePricing[i].taxiType.name,
                 seats: taxiTypePricing[i].taxiType.seats,
+            }
+
+            meter.push({
+                ...taxiPricing,
                 ...calculate,
                 totalPrice: Math.ceil(
-                    taxiTypePricing[i].price * distance +
-                    calculatePeakTimePrice +
+                    (taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration
+                ),
+            });
+
+            flatFare.push({
+                ...taxiPricing,
+                ...calculate,
+                actualCalculate: Math.ceil(
+                    (taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+                    calculate.priceInPolygon +
+                    delayPrice * calculate.delayDuration
+                ),
+                estimatedCalculate: Math.ceil(
+                    (taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+                    calculate.priceInPolygon +
+                    delayPrice * calculate.delayDuration +
+                    30
                 ),
             });
         }
@@ -80,7 +93,8 @@ export const calculateUserDistanceAndDuration = async (
         res.status(200).json({
             code: messages.CREATE_SUCCESSFUL.code,
             message: messages.CREATE_SUCCESSFUL.message,
-            calculation,
+            meter,
+            flatFare
         });
     } catch (error) {
         console.log("error: ", error);

@@ -123,3 +123,37 @@ export const deleteTaxiTypePricingService = async (
         throw error;
     }
 };
+
+export const getTaxiPricingDistance = async ({
+    country,
+    distance
+}: {
+    country: string,
+    distance: number
+}) => {
+    try {
+        return await taxiTypePricingModel.aggregate([
+            {
+                $match: {
+                    country: country ? country : "LA",
+                    minDistance: { $lte: distance },
+                    maxDistance: { $gt: distance },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'taxitypes', // name of the referenced collection
+                    localField: 'taxiTypeId',
+                    foreignField: '_id',
+                    as: 'taxiType',
+                },
+            },
+            {
+                $unwind: '$taxiType', // optional: flatten the array
+            },
+        ]);
+
+    } catch (error) {
+
+    }
+}
