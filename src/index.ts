@@ -18,11 +18,11 @@ import polygonRoute from "./routes/polygon";
 import DrivingLicenseTypeRoute from "./routes/drivingLicenseType";
 import loyaltyRoute from "./routes/loyalty";
 import driverLocationRoute from "./routes/driverLocation";
-import nearByDriverRoute from "./routes/nearByDriver";
 import loyaltyClaimRoute from "./routes/loyaltyClaim";
 import festivalPromotionRoute from "./routes/festivalPromotion";
 import newComerPromotionRoute from "./routes/newComerPromotion";
 import pointPromotionRoute from "./routes/pointPromotion";
+import ratingRoute from "./routes/rating";
 
 dotenv.config();
 
@@ -54,11 +54,11 @@ app.use("/v1/api/polygon", polygonRoute);
 app.use("/v1/api/driving-license-type", DrivingLicenseTypeRoute);
 app.use("/api/v1/loyalty", loyaltyRoute);
 app.use("/api/v1/driver-location", driverLocationRoute);
-app.use("/api/v1/nearby-driver", nearByDriverRoute);
 app.use("/api/v1/loyalty-claim", loyaltyClaimRoute);
 app.use("/api/v1/festival-promotions", festivalPromotionRoute);
 app.use("/api/v1/new-comer-promotions", newComerPromotionRoute);
 app.use("/api/v1/point-promotions", pointPromotionRoute);
+app.use("/api/v1/rating", ratingRoute);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Error handling middleware

@@ -14,10 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateDriverLocationService = void 0;
 const axios_1 = __importDefault(require("axios"));
-const updateDriverLocationService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+const updateDriverLocationService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ driverId, longitude, latitude, isOnline, registrationSource }) {
     try {
-        const driverId = req.user.id;
-        const { longitude, latitude, isOnline, registrationSource } = req.body;
         if (isOnline === "online" || isOnline === "offline") {
             yield axios_1.default.put(`${process.env.SOCKET_SERVICE_URL}/v1/api/driver-location-socket/${driverId}`, { longitude, latitude, isOnline, registrationSource });
         }
