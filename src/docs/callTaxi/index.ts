@@ -13,7 +13,8 @@
  * /v1/api/call-taxi:
  *   get:
  *     summary: Get all taxi calls with optional filters
- *     tags: [CallTaxi]
+ *     tags:
+ *       - Call Taxi
  *     parameters:
  *       - in: query
  *         name: startDate
@@ -98,6 +99,31 @@
  *                         format: date-time
  *       500:
  *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/{id}:
+ *   get:
+ *     summary: Get passenger complain
+ *     description: Get passenger complain by passenger id
+ *     tags:
+ *       - Call Taxi
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "683d1c1f71cc2d05068644e7"
+ *         description: The ID of passenger to be get passenger complains.
+ *     responses:
+ *       200:
+ *         description: Calling taxi updated successfully.
+ *       404:
+ *         description: This ride request was taken.
+ *       500:
+ *         description: Internal server error.
  */
 
 /**

@@ -19,6 +19,7 @@ const callTaxi_2 = require("../../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("./helper");
 const taxi_1 = __importDefault(require("../../models/taxi"));
+const rating_1 = require("../../models/rating");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -252,8 +253,31 @@ const getUserCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.getUserCallTaxis = getUserCallTaxis;
 const createDriverComplain = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         const created = yield (0, callTaxi_1.createDriverComplainPassengerService)(req);
+        if (created) {
+            const sumRating = yield callTaxi_2.CallTaxi.aggregate([
+                {
+                    $match: {
+                        passengerId: created === null || created === void 0 ? void 0 : created.passengerId,
+                        "driverComplain.rating": { $exists: true, $ne: null }
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$passengerId",
+                        averageRating: { $avg: "$driverComplain.rating" },
+                        totalRatings: { $sum: 1 }
+                    }
+                }
+            ]);
+            if (sumRating.length) {
+                const id = (_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id;
+                const averageRating = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating;
+                yield rating_1.ratingModel.findByIdAndUpdate(id, { rating: averageRating });
+            }
+        }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
@@ -271,8 +295,31 @@ const createDriverComplain = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.createDriverComplain = createDriverComplain;
 const createPassengerComplain = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         const created = yield (0, callTaxi_1.createPassengerComplainDriverService)(req);
+        if (created) {
+            const sumRating = yield callTaxi_2.CallTaxi.aggregate([
+                {
+                    $match: {
+                        driverId: created === null || created === void 0 ? void 0 : created.driverId,
+                        "passengerComplain.rating": { $exists: true, $ne: null }
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$driverId",
+                        averageRating: { $avg: "$passengerComplain.rating" },
+                        totalRatings: { $sum: 1 }
+                    }
+                }
+            ]);
+            if (sumRating.length) {
+                const id = (_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id;
+                const averageRating = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating;
+                yield rating_1.ratingModel.findByIdAndUpdate(id, { rating: averageRating });
+            }
+        }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,

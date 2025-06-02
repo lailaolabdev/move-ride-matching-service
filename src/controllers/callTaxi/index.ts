@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { messages } from "../../config";
 import {
-  calculateDriverDistanceAndDurationService,
   createCallTaxiService,
   getDriverCallTaxisService,
   getUserCallTaxisService,
@@ -29,7 +28,7 @@ import { CallTaxi, STATUS } from "../../models/callTaxi";
 import axios from "axios";
 import { getDriver, getPassenger, pipeline } from "./helper";
 import taxiModel from "../../models/taxi";
-import { destination } from "@turf/turf";
+import { ratingModel } from "../../models/rating";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -324,6 +323,34 @@ export const createDriverComplain = async (req: Request, res: Response) => {
   try {
     const created = await createDriverComplainPassengerService(req);
 
+    if (created) {
+      const sumRating = await CallTaxi.aggregate([
+        {
+          $match: {
+            passengerId: created?.passengerId,
+            "driverComplain.rating": { $exists: true, $ne: null }
+          }
+        },
+        {
+          $group: {
+            _id: "$passengerId",
+            averageRating: { $avg: "$driverComplain.rating" },
+            totalRatings: { $sum: 1 }
+          }
+        }
+      ]);
+
+      if (sumRating.length) {
+        const id = sumRating[0]?._id
+        const averageRating = sumRating[0]?.averageRating
+
+        await ratingModel.findByIdAndUpdate(
+          id,
+          { rating: averageRating }
+        )
+      }
+    }
+
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
@@ -343,6 +370,34 @@ export const createDriverComplain = async (req: Request, res: Response) => {
 export const createPassengerComplain = async (req: Request, res: Response) => {
   try {
     const created = await createPassengerComplainDriverService(req);
+
+    if (created) {
+      const sumRating = await CallTaxi.aggregate([
+        {
+          $match: {
+            driverId: created?.driverId,
+            "passengerComplain.rating": { $exists: true, $ne: null }
+          }
+        },
+        {
+          $group: {
+            _id: "$driverId",
+            averageRating: { $avg: "$passengerComplain.rating" },
+            totalRatings: { $sum: 1 }
+          }
+        }
+      ]);
+
+      if (sumRating.length) {
+        const id = sumRating[0]?._id
+        const averageRating = sumRating[0]?.averageRating
+
+        await ratingModel.findByIdAndUpdate(
+          id,
+          { rating: averageRating }
+        )
+      }
+    }
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
