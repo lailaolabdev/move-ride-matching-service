@@ -20,7 +20,9 @@ const apiKey = process.env.API_KEY || 'AIzaSyDdxCKVSzSf5K_ys6fM7mB9eOwKTcYr_Sk';
 const calculateUserDistanceAndDurationService = (origin, destination) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const res = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&departure_time=now&traffic_model=best_guess&key=${apiKey}`);
+        const splitOrigin = roundCoord(origin);
+        const splitDestination = roundCoord(destination);
+        const res = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${splitOrigin}&destination=${splitDestination}&departure_time=now&traffic_model=best_guess&key=${apiKey}`);
         const leg = res.data.routes[0].legs[0]; // ข้อมูลเส้นทางหลัก (leg)
         const totalDistance = ((_a = leg === null || leg === void 0 ? void 0 : leg.distance) === null || _a === void 0 ? void 0 : _a.value) / 1000; // ระยะทางทั้งหมด (กิโลเมตร)
         const duration = leg.duration.value | 0;
@@ -142,3 +144,7 @@ const calculateDriverDistanceAndDurationService = (origin, destination) => __awa
     }
 });
 exports.calculateDriverDistanceAndDurationService = calculateDriverDistanceAndDurationService;
+const roundCoord = (coordStr) => {
+    const [lat, lng] = coordStr.split(",").map(Number);
+    return `${lat.toFixed(6)},${lng.toFixed(6)}`;
+};

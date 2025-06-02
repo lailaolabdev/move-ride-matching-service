@@ -6,7 +6,10 @@ const apiKey = process.env.API_KEY || 'AIzaSyDdxCKVSzSf5K_ys6fM7mB9eOwKTcYr_Sk';
 
 export const calculateUserDistanceAndDurationService = async (origin: string, destination: string) => {
     try {
-        const res = await axios.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&departure_time=now&traffic_model=best_guess&key=${apiKey}`)
+        const splitOrigin = roundCoord(origin);
+        const splitDestination = roundCoord(destination);
+
+        const res = await axios.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${splitOrigin}&destination=${splitDestination}&departure_time=now&traffic_model=best_guess&key=${apiKey}`)
 
         const leg = res.data.routes[0].legs[0]; // ข้อมูลเส้นทางหลัก (leg)
 
@@ -158,3 +161,8 @@ export const calculateDriverDistanceAndDurationService = async (origin: string, 
         throw error;
     }
 }
+
+const roundCoord = (coordStr: any) => {
+    const [lat, lng] = coordStr.split(",").map(Number);
+    return `${lat.toFixed(6)},${lng.toFixed(6)}`;
+};
