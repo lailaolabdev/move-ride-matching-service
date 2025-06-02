@@ -35,7 +35,7 @@ export const calculateUserDistanceAndDuration = async (
         // example: distance 5km find distance between 1 - 5
         const distance = calculate.totalDistance;
 
-        const taxiTypePricing: any = getTaxiPricingDistance({
+        const taxiTypePricing: any = await getTaxiPricingDistance({
             country,
             distance
         }) ?? []
@@ -56,6 +56,8 @@ export const calculateUserDistanceAndDuration = async (
         // calculate.priceInPolygon +
         // delay price * delay duration
         for (let i = 0; i < taxiTypePricing.length; i++) {
+
+
             const taxiPricing = {
                 id: taxiTypePricing[i].taxiType._id,
                 image: taxiTypePricing[i].taxiType.icon,

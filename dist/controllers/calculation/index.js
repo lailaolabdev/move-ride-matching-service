@@ -31,7 +31,7 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
         // step 2 : find taxi type pricing base on distance, 
         // example: distance 5km find distance between 1 - 5
         const distance = calculate.totalDistance;
-        const taxiTypePricing = (_a = (0, taxiTypePricing_1.getTaxiPricingDistance)({
+        const taxiTypePricing = (_a = yield (0, taxiTypePricing_1.getTaxiPricingDistance)({
             country,
             distance
         })) !== null && _a !== void 0 ? _a : [];
