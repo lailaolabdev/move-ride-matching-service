@@ -29,15 +29,31 @@ import { checkAuthorizationMiddleware } from "../middlewares";
 
 const router = express.Router();
 
-router.post("/", checkAuthorizationMiddleware, createCallTaxi);
+router.post(
+  "/",
+  checkAuthorizationMiddleware,
+  createCallTaxi
+);
 
 router.get("/:id", getCallTaxiById);
 
-router.get("/", checkAuthorizationMiddleware, getCallTaxis);
+router.get(
+  "/",
+  checkAuthorizationMiddleware,
+  getCallTaxis
+);
 
-router.get("/check/status", checkAuthorizationMiddleware, checkCallTaxiStatus);
+router.get(
+  "/check/status",
+  checkAuthorizationMiddleware,
+  checkCallTaxiStatus
+);
 
-router.get("/user-history", checkAuthorizationMiddleware, getUserCallTaxis);
+router.get(
+  "/user-history",
+  checkAuthorizationMiddleware,
+  getUserCallTaxis
+);
 
 // driver complain passenger by call taxi id
 router.put(
@@ -61,7 +77,11 @@ router.get(
 );
 
 // get total  ride
-router.get("/total-ride/:id", checkAuthorizationMiddleware, gettotalRide);
+router.get(
+  "/total-ride/:id",
+  checkAuthorizationMiddleware,
+  gettotalRide
+);
 
 // get total distance ride
 router.get(
@@ -71,10 +91,18 @@ router.get(
 );
 
 // get total distance ride
-router.get("/ride-history/:id", checkAuthorizationMiddleware, getRideHistory);
+router.get(
+  "/ride-history/:id",
+  checkAuthorizationMiddleware,
+  getRideHistory
+);
 
 // get total the last ride
-router.get("/last-ride/:id", checkAuthorizationMiddleware, getThelastRide);
+router.get(
+  "/last-ride/:id",
+  checkAuthorizationMiddleware,
+  getThelastRide
+);
 
 // Get all calling taxi
 router.get(
@@ -98,7 +126,11 @@ router.put(
   driverUpdateStatus
 );
 
-router.get("/total-price", checkAuthorizationMiddleware, callTaxiTotalPrice);
+router.get(
+  "/total-price",
+  checkAuthorizationMiddleware,
+  callTaxiTotalPrice
+);
 
 router.get(
   "/comment-rating/:id",
@@ -113,7 +145,11 @@ router.put(
 );
 
 // update chat while processing order
-router.put("/chat-call-taxi/:id", checkAuthorizationMiddleware, chatCallTaxi);
+router.put(
+  "/chat-call-taxi/:id",
+  checkAuthorizationMiddleware,
+  chatCallTaxi
+);
 
 // get total travel history ride
 router.get(
@@ -130,7 +166,11 @@ router.get(
 );
 
 // get total  travel request type meter
-router.get("/total-meter/:id", checkAuthorizationMiddleware, getTotalMeterTime);
+router.get(
+  "/total-meter/:id",
+  checkAuthorizationMiddleware,
+  getTotalMeterTime
+);
 
 // get total  travel request type flat fare
 router.get(

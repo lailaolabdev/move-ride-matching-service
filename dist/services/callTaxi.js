@@ -18,7 +18,7 @@ const axios_1 = __importDefault(require("axios"));
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.user.id;
-        const { carTypeId, driverId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, } = req.body;
+        const { carTypeId, driverId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, actualPrice, estimatedPrice, } = req.body;
         const created = yield callTaxi_1.CallTaxi.create({
             passengerId,
             carTypeId,
@@ -36,6 +36,8 @@ const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
             totalDuration,
             totalDistance,
             totalPrice,
+            actualPrice,
+            estimatedPrice,
         });
         const createdObj = created.toObject();
         createdObj === null || createdObj === void 0 ? true : delete createdObj.passengerComplain;
@@ -211,12 +213,14 @@ exports.getDriverCallTaxisService = getDriverCallTaxisService;
 const updateCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { type, status } = req.body;
+        const { type, status, actualUsedTime } = req.body;
         const updateData = {};
         if (type)
             updateData.type = type;
         if (status)
             updateData.status = status;
+        if (actualUsedTime)
+            updateData.actualUsedTime = actualUsedTime;
         const updated = yield callTaxi_1.CallTaxi.findOneAndUpdate({ _id: id }, updateData, { new: true });
         return updated;
     }

@@ -108,7 +108,7 @@ const CallTaxiSchema: Schema = new Schema(
     },
     totalPrice: {
       type: Number,
-      required: true,
+      default: 0
     },
     status: {
       type: String,
@@ -127,6 +127,9 @@ const CallTaxiSchema: Schema = new Schema(
       },
       default: undefined,
     },
+    actualPrice: Number,
+    estimatedPrice: Number,
+    actualUsedTime: String
   },
   {
     timestamps: true,

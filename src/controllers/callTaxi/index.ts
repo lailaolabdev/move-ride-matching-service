@@ -477,7 +477,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
     // if status from order not equal to "Requesting" and "Accepted"
     // cannot cancel the order
-    if (status === STATUS.CANCELED) {
+    if (status && status === STATUS.CANCELED) {
       if (
         callTaxi.status !== STATUS.REQUESTING ||
         callTaxi.status !== STATUS.DRIVER_RECEIVED

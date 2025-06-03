@@ -390,7 +390,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         }
         // if status from order not equal to "Requesting" and "Accepted"
         // cannot cancel the order
-        if (status === callTaxi_2.STATUS.CANCELED) {
+        if (status && status === callTaxi_2.STATUS.CANCELED) {
             if (callTaxi.status !== callTaxi_2.STATUS.REQUESTING ||
                 callTaxi.status !== callTaxi_2.STATUS.DRIVER_RECEIVED) {
                 res.status(400).json({

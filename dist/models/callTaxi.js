@@ -88,7 +88,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
     },
     totalPrice: {
         type: Number,
-        required: true,
+        default: 0
     },
     status: {
         type: String,
@@ -107,6 +107,9 @@ const CallTaxiSchema = new mongoose_1.Schema({
         },
         default: undefined,
     },
+    actualPrice: Number,
+    estimatedPrice: Number,
+    actualUsedTime: String
 }, {
     timestamps: true,
 });

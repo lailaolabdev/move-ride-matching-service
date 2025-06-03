@@ -22,6 +22,8 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             totalDuration,
             totalDistance,
             totalPrice,
+            actualPrice,
+            estimatedPrice,
         } = req.body
 
         const created = await CallTaxi.create({
@@ -41,6 +43,8 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             totalDuration,
             totalDistance,
             totalPrice,
+            actualPrice,
+            estimatedPrice,
         })
 
         const createdObj: any = created.toObject();
@@ -241,12 +245,13 @@ export const updateCallTaxiService = async (req: Request): Promise<ICallTaxi | n
     try {
         const { id } = req.params
 
-        const { type, status } = req.body
+        const { type, status, actualUsedTime } = req.body
 
         const updateData: any = {}
 
         if (type) updateData.type = type
         if (status) updateData.status = status
+        if (actualUsedTime) updateData.actualUsedTime = actualUsedTime
 
         const updated = await CallTaxi.findOneAndUpdate(
             { _id: id },
