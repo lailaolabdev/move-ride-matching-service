@@ -10,10 +10,11 @@ export const STATUS = {
   NO_RECEIVED: "No_Received", // Driver ບໍ່ກົດຮັບ
   DRIVER_RECEIVED: "Accepted", // Driver ກົດຮັບແລ້ວ
   DRIVER_ARRIVED: "Driver_Arrived", // Driver ມາຮອດແລ້ວ
+  PICKED_UP: "Picked_Up", // ລູກຄ້າຂຶ້ນລົດແລ້ວ
   DEPARTURE: "Departure", // ຢູ່ລະຫວ່າງການເດີນທາງ
   SEND_SUCCESS: "Success", // ສົ່ງລູກຄ້າສຳເລັດ
   PAID: "Paid", // ຈ່າຍເງິນສຳເລັດ(ສຳເລັດການເອີ້ນລົດ)
-  CANCELED: "Canceled", //
+  CANCELED: "Canceled",
   TIMEOUT: "Timeout", // ໝົດເວລາຮອດ Driver ບໍ່ຮັບ
 };
 

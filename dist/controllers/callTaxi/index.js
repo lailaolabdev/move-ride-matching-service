@@ -487,6 +487,8 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             if (callTaxi.status === callTaxi_2.STATUS.DRIVER_RECEIVED)
                 status = callTaxi_2.STATUS.DRIVER_ARRIVED;
             else if (callTaxi.status === callTaxi_2.STATUS.DRIVER_ARRIVED)
+                status = callTaxi_2.STATUS.PICKED_UP;
+            else if (callTaxi.status === callTaxi_2.STATUS.PICKED_UP)
                 status = callTaxi_2.STATUS.DEPARTURE;
             else if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE)
                 status = callTaxi_2.STATUS.SEND_SUCCESS;

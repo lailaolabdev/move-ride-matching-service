@@ -603,6 +603,8 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
       if (callTaxi.status === STATUS.DRIVER_RECEIVED)
         status = STATUS.DRIVER_ARRIVED;
       else if (callTaxi.status === STATUS.DRIVER_ARRIVED)
+        status = STATUS.PICKED_UP;
+      else if (callTaxi.status === STATUS.PICKED_UP)
         status = STATUS.DEPARTURE;
       else if (callTaxi.status === STATUS.DEPARTURE)
         status = STATUS.SEND_SUCCESS;
