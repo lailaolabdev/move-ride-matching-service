@@ -56,8 +56,6 @@ export const calculateUserDistanceAndDuration = async (
         // calculate.priceInPolygon +
         // delay price * delay duration
         for (let i = 0; i < taxiTypePricing.length; i++) {
-
-
             const taxiPricing = {
                 id: taxiTypePricing[i].taxiType._id,
                 image: taxiTypePricing[i].taxiType.icon,
@@ -65,7 +63,7 @@ export const calculateUserDistanceAndDuration = async (
                 seats: taxiTypePricing[i].taxiType.seats,
             }
 
-            meter.push({
+            flatFare.push({
                 ...taxiPricing,
                 ...calculate,
                 totalPrice: Math.ceil(
@@ -75,7 +73,7 @@ export const calculateUserDistanceAndDuration = async (
                 ),
             });
 
-            flatFare.push({
+            meter.push({
                 ...taxiPricing,
                 ...calculate,
                 actualCalculate: Math.ceil(

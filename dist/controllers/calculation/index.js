@@ -55,10 +55,10 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
                 cartType: taxiTypePricing[i].taxiType.name,
                 seats: taxiTypePricing[i].taxiType.seats,
             };
-            meter.push(Object.assign(Object.assign(Object.assign({}, taxiPricing), calculate), { totalPrice: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+            flatFare.push(Object.assign(Object.assign(Object.assign({}, taxiPricing), calculate), { totalPrice: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration) }));
-            flatFare.push(Object.assign(Object.assign(Object.assign({}, taxiPricing), calculate), { actualCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+            meter.push(Object.assign(Object.assign(Object.assign({}, taxiPricing), calculate), { actualCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration), estimatedCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
