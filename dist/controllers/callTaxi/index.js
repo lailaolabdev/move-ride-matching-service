@@ -391,7 +391,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         // if status from order not equal to "Requesting" and "Accepted"
         // cannot cancel the order
         if (status && status === callTaxi_2.STATUS.CANCELED) {
-            if (callTaxi.status !== callTaxi_2.STATUS.REQUESTING ||
+            if (callTaxi.status !== callTaxi_2.STATUS.REQUESTING &&
                 callTaxi.status !== callTaxi_2.STATUS.DRIVER_RECEIVED) {
                 res.status(400).json({
                     code: config_1.messages.BAD_REQUEST.code,
@@ -406,8 +406,14 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                 if (updated) {
                     // if there is driver id send notification to driver using socket
                     if (updated.driverId) {
-                        yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, {
+                        yield axios_1.default.post(
+                        // `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
+                        `http://localhost:3000/v1/api/ride-request-socket/cancel`, {
                             driverId: updated.driverId,
+                        }, {
+                            headers: {
+                                Authorization: req.headers['authorization']
+                            }
                         });
                     }
                     res.status(200).json({

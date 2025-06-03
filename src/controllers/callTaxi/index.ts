@@ -479,7 +479,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     // cannot cancel the order
     if (status && status === STATUS.CANCELED) {
       if (
-        callTaxi.status !== STATUS.REQUESTING ||
+        callTaxi.status !== STATUS.REQUESTING &&
         callTaxi.status !== STATUS.DRIVER_RECEIVED
       ) {
         res.status(400).json({
@@ -497,9 +497,15 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
           // if there is driver id send notification to driver using socket
           if (updated.driverId) {
             await axios.post(
-              `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
+              // `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
+              `http://localhost:3000/v1/api/ride-request-socket/cancel`,
               {
                 driverId: updated.driverId,
+              },
+              {
+                headers: {
+                  Authorization: req.headers['authorization']
+                }
               }
             );
           }
