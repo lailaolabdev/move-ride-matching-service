@@ -20,6 +20,7 @@ const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("./helper");
 const taxi_1 = __importDefault(require("../../models/taxi"));
 const rating_1 = require("../../models/rating");
+const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -71,7 +72,72 @@ exports.createCallTaxi = createCallTaxi;
 const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
+        const callTaxi = yield callTaxi_2.CallTaxi.findById(id).lean();
+        if (callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId) {
+            const vehicleDriver = yield vehicleDriver_1.default.aggregate([
+                {
+                    $match: {
+                        driver: callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId
+                    },
+                },
+                {
+                    $addFields: {
+                        vehicleModelObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                                then: { $toObjectId: "$vehicleModel" },
+                                else: "$vehicleModel"
+                            }
+                        },
+                        vehicleBrandObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                                then: { $toObjectId: "$vehicleBrand" },
+                                else: "$vehicleBrand"
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclemodels',
+                        localField: 'vehicleModelObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleModel'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleModel',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclebrands',
+                        localField: 'vehicleBrandObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleBrand'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleBrand',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        licensePlate: 1,
+                        vehicleModelName: '$vehicleModel.name',
+                        vehicleBrandName: '$vehicleBrand.name'
+                    }
+                }
+            ]);
+            res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi: Object.assign(Object.assign({}, callTaxi), { licensePlate: vehicleDriver[0].licensePlate, vehicleModelName: vehicleDriver[0].vehicleModelName, vehicleBrandName: vehicleDriver[0].vehicleBrandName }) }));
+            return;
+        }
         res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi }));
     }
     catch (error) {

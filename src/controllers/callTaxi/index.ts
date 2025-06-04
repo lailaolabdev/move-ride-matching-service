@@ -29,6 +29,7 @@ import axios from "axios";
 import { getDriver, getPassenger, pipeline } from "./helper";
 import taxiModel from "../../models/taxi";
 import { ratingModel } from "../../models/rating";
+import vehicleDriverModel from "../../models/vehicleDriver";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -101,7 +102,83 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const callTaxi = await CallTaxi.findById(id);
+    const callTaxi = await CallTaxi.findById(id).lean();
+
+    if (callTaxi?.driverId) {
+      const vehicleDriver = await vehicleDriverModel.aggregate([
+        {
+          $match: {
+            driver: callTaxi?.driverId
+          },
+        },
+        {
+          $addFields: {
+            vehicleModelObjectId: {
+              $cond: {
+                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                then: { $toObjectId: "$vehicleModel" },
+                else: "$vehicleModel"
+              }
+            },
+            vehicleBrandObjectId: {
+              $cond: {
+                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                then: { $toObjectId: "$vehicleBrand" },
+                else: "$vehicleBrand"
+              }
+            }
+          }
+        },
+        {
+          $lookup: {
+            from: 'vehiclemodels',
+            localField: 'vehicleModelObjectId',
+            foreignField: '_id',
+            as: 'vehicleModel'
+          }
+        },
+        {
+          $unwind: {
+            path: '$vehicleModel',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: 'vehiclebrands',
+            localField: 'vehicleBrandObjectId',
+            foreignField: '_id',
+            as: 'vehicleBrand'
+          }
+        },
+        {
+          $unwind: {
+            path: '$vehicleBrand',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            licensePlate: 1,
+            vehicleModelName: '$vehicleModel.name',
+            vehicleBrandName: '$vehicleBrand.name'
+          }
+        }
+      ]);
+
+      res.status(200).json({
+        ...messages.SUCCESSFULLY,
+        callTaxi: {
+          ...callTaxi,
+          licensePlate: vehicleDriver[0].licensePlate,
+          vehicleModelName: vehicleDriver[0].vehicleModelName,
+          vehicleBrandName: vehicleDriver[0].vehicleBrandName
+        },
+      });
+
+      return
+    }
 
     res.status(200).json({
       ...messages.SUCCESSFULLY,
