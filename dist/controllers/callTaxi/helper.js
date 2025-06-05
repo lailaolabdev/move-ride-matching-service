@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPassenger = exports.getDriver = exports.pipeline = void 0;
+exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = void 0;
 const axios_1 = __importDefault(require("axios"));
 const config_1 = require("../../config");
 const pipeline = ({ startDate, endDate }) => {
@@ -80,3 +80,8 @@ const getPassenger = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getPassenger = getPassenger;
+const roundCoord = (coordStr) => {
+    const [lat, lng] = coordStr.split(",").map(Number);
+    return `${lat.toFixed(6)},${lng.toFixed(6)}`;
+};
+exports.roundCoord = roundCoord;

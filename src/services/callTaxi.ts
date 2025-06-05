@@ -1,6 +1,7 @@
 import { Request } from "express";
 import { ICallTaxi, CallTaxi, STATUS } from "../models/callTaxi";
 import axios from 'axios'
+import { roundCoord } from "../controllers/callTaxi/helper";
 
 export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
     try {
@@ -26,12 +27,15 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             estimatedPrice,
         } = req.body
 
+        const splitOrigin = roundCoord(origin);
+        const splitDestination = roundCoord(destination);
+
         const created = await CallTaxi.create({
             passengerId,
             carTypeId,
             driverId,
-            origin,
-            destination,
+            origin: splitOrigin,
+            destination: splitDestination,
             originName,
             destinationName,
             requestType,

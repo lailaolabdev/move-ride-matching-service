@@ -572,21 +572,15 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
         const updated: any = await updateCallTaxiService(req);
 
         if (updated) {
-          // if there is driver id send notification to driver using socket
-          if (updated?.driverId) {
-            await axios.post(
-              `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
-              {
-                _id: updated?._id,
-                driverId: updated?.driverId,
-              },
-              {
-                headers: {
-                  Authorization: req.headers['authorization']
-                }
+          await axios.post(
+            `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
+            callTaxi,
+            {
+              headers: {
+                Authorization: req.headers['authorization']
               }
-            );
-          }
+            }
+          );
 
           res.status(200).json({
             code: messages.SUCCESSFULLY.code,

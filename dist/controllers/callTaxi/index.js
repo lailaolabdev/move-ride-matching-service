@@ -468,17 +468,11 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                 // if status is match update order status to canceled
                 const updated = yield (0, callTaxi_1.updateCallTaxiService)(req);
                 if (updated) {
-                    // if there is driver id send notification to driver using socket
-                    if (updated === null || updated === void 0 ? void 0 : updated.driverId) {
-                        yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, {
-                            _id: updated === null || updated === void 0 ? void 0 : updated._id,
-                            driverId: updated === null || updated === void 0 ? void 0 : updated.driverId,
-                        }, {
-                            headers: {
-                                Authorization: req.headers['authorization']
-                            }
-                        });
-                    }
+                    yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, callTaxi, {
+                        headers: {
+                            Authorization: req.headers['authorization']
+                        }
+                    });
                     res.status(200).json({
                         code: config_1.messages.SUCCESSFULLY.code,
                         messages: config_1.messages.SUCCESSFULLY.message,

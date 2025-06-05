@@ -89,3 +89,8 @@ export const getPassenger = async (req: Request, res: Response) => {
         return false
     }
 }
+
+export const roundCoord = (coordStr: any) => {
+    const [lat, lng] = coordStr.split(",").map(Number);
+    return `${lat.toFixed(6)},${lng.toFixed(6)}`;
+};

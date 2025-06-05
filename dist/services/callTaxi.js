@@ -15,16 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTotalFlatFareService = exports.getTotalmeterService = exports.getTotaltravelTimeService = exports.cancelTravelHistoryService = exports.travelHistoryService = exports.getCommentAndRatingService = exports.updateChatCallTaxiService = exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
+const helper_1 = require("../controllers/callTaxi/helper");
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.user.id;
         const { carTypeId, driverId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, actualPrice, estimatedPrice, } = req.body;
+        const splitOrigin = (0, helper_1.roundCoord)(origin);
+        const splitDestination = (0, helper_1.roundCoord)(destination);
         const created = yield callTaxi_1.CallTaxi.create({
             passengerId,
             carTypeId,
             driverId,
-            origin,
-            destination,
+            origin: splitOrigin,
+            destination: splitDestination,
             originName,
             destinationName,
             requestType,
