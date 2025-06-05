@@ -569,7 +569,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
         return;
       } else {
         // if status is match update order status to canceled
-        const updated = await updateCallTaxiService(req);
+        const updated: any = await updateCallTaxiService(req);
 
         if (updated) {
           // if there is driver id send notification to driver using socket
@@ -577,7 +577,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
             await axios.post(
               `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
               {
-                driverId: updated.driverId,
+                _id: updated?._id,
+                driverId: updated?.driverId,
               },
               {
                 headers: {

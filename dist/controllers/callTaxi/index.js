@@ -471,7 +471,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                     // if there is driver id send notification to driver using socket
                     if (updated === null || updated === void 0 ? void 0 : updated.driverId) {
                         yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, {
-                            driverId: updated.driverId,
+                            _id: updated === null || updated === void 0 ? void 0 : updated._id,
+                            driverId: updated === null || updated === void 0 ? void 0 : updated.driverId,
                         }, {
                             headers: {
                                 Authorization: req.headers['authorization']
