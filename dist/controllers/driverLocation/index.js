@@ -20,13 +20,27 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
     var _a;
     try {
         const driverId = req.user.id;
-        const { longitude, latitude, isOnline, registrationSource } = req.body;
+        const { longitude, latitude, isOnline } = req.body;
         const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${driverId}`);
         const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
-        if (!userData || userData.status === "BLOCKED") {
-            res.status(200).json({
+        if (!userData) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: `User with this id: ${driverId} not found`,
+            });
+            return;
+        }
+        if (userData.status === "BLOCKED") {
+            res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
                 message: "Your account has been blocked. Please contact support for more information.",
+            });
+            return;
+        }
+        if (userData.role === "DRIVER") {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: "You are not driver",
             });
             return;
         }
@@ -35,7 +49,7 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             longitude,
             latitude,
             isOnline,
-            registrationSource
+            registrationSource: userData === null || userData === void 0 ? void 0 : userData.registrationSource
         });
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
