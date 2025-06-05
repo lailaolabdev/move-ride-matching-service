@@ -543,10 +543,9 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     const callTaxi = await CallTaxi.findById(id);
 
     if (!callTaxi) {
-      res.status(200).json({
-        code: messages.NOT_FOUND,
-        messages: messages.SUCCESSFULLY.message,
-        detail: "Ride matching not found",
+      res.status(400).json({
+        ...messages.NOT_FOUND,
+        detail: `Ride matching with id:${id} not found`,
       });
 
       return;
@@ -554,6 +553,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
     // if status from order not equal to "Requesting" and "Accepted"
     // cannot cancel the order
+    // Requesting means while passenger is calling for an order 
+    // Accepted means driver is going to pick passenger
     if (status && status === STATUS.CANCELED) {
       if (
         callTaxi.status !== STATUS.REQUESTING &&
@@ -572,7 +573,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
         if (updated) {
           // if there is driver id send notification to driver using socket
-          if (updated.driverId) {
+          if (updated?.driverId) {
             await axios.post(
               // `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
               `http://localhost:3000/v1/api/ride-request-socket/cancel`,

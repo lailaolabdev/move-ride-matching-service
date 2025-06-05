@@ -447,15 +447,13 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         const { status } = req.body;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
-            res.status(200).json({
-                code: config_1.messages.NOT_FOUND,
-                messages: config_1.messages.SUCCESSFULLY.message,
-                detail: "Ride matching not found",
-            });
+            res.status(400).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Ride matching with id:${id} not found` }));
             return;
         }
         // if status from order not equal to "Requesting" and "Accepted"
         // cannot cancel the order
+        // Requesting means while passenger is calling for an order 
+        // Accepted means driver is going to pick passenger
         if (status && status === callTaxi_2.STATUS.CANCELED) {
             if (callTaxi.status !== callTaxi_2.STATUS.REQUESTING &&
                 callTaxi.status !== callTaxi_2.STATUS.DRIVER_RECEIVED) {
@@ -471,7 +469,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                 const updated = yield (0, callTaxi_1.updateCallTaxiService)(req);
                 if (updated) {
                     // if there is driver id send notification to driver using socket
-                    if (updated.driverId) {
+                    if (updated === null || updated === void 0 ? void 0 : updated.driverId) {
                         yield axios_1.default.post(
                         // `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
                         `http://localhost:3000/v1/api/ride-request-socket/cancel`, {

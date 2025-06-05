@@ -143,12 +143,8 @@
  *             properties:
  *               carTypeId:
  *                 type: string
- *                 description: The ID of the car type.
- *                 example: "testId"
- *               driverId:
- *                 type: string
- *                 description: The ID of the driver.
- *                 example: "testId"
+ *                 description: The ID of the taxi type.
+ *                 example: "67c5587478a1f4ee9d92f75a"
  *               origin:
  *                 type: string
  *                 description: The origin coordinates.

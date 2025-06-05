@@ -8,7 +8,7 @@ export const validateParamID = (req: Request, res: Response, next: NextFunction)
     if (!id) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
-            message: messages.BAD_REQUEST,
+            message: messages.BAD_REQUEST.message,
             detail: "Missing required fields: id",
         });
 
@@ -18,7 +18,7 @@ export const validateParamID = (req: Request, res: Response, next: NextFunction)
     if (!Types.ObjectId.isValid(id)) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
-            message: messages.BAD_REQUEST,
+            message: messages.BAD_REQUEST.message,
             detail: "Incorrect id",
         });
 

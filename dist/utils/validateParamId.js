@@ -8,7 +8,7 @@ const validateParamID = (req, res, next) => {
     if (!id) {
         res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
-            message: config_1.messages.BAD_REQUEST,
+            message: config_1.messages.BAD_REQUEST.message,
             detail: "Missing required fields: id",
         });
         return;
@@ -16,7 +16,7 @@ const validateParamID = (req, res, next) => {
     if (!mongoose_1.Types.ObjectId.isValid(id)) {
         res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
-            message: config_1.messages.BAD_REQUEST,
+            message: config_1.messages.BAD_REQUEST.message,
             detail: "Incorrect id",
         });
         return;
