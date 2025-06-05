@@ -31,7 +31,7 @@
 
 /**
  * @swagger
- * /api/v1/ratings:
+ * /api/v1/rating:
  *   post:
  *     summary: Create a new rating
  *     tags:
@@ -64,7 +64,7 @@
 
 /**
  * @swagger
- * /api/v1/ratings:
+ * /api/v1/rating:
  *   get:
  *     summary: Get all ratings
  *     tags:
@@ -101,7 +101,7 @@
 
 /**
  * @swagger
- * /api/v1/ratings/{id}:
+ * /api/v1/rating/{id}:
  *   get:
  *     summary: Get a rating by ID
  *     tags:
@@ -131,7 +131,7 @@
 
 /**
  * @swagger
- * /api/v1/ratings/{id}:
+ * /api/v1/rating/{id}:
  *   put:
  *     summary: Update a rating
  *     tags:
@@ -170,7 +170,7 @@
 
 /**
  * @swagger
- * /api/v1/ratings/{id}:
+ * /api/v1/rating/{id}:
  *   delete:
  *     summary: Delete a rating
  *     tags:

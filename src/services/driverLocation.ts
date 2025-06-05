@@ -1,25 +1,32 @@
-import { Request } from 'express'
-import axios from 'axios';
+import axios from "axios";
 
 export const updateDriverLocationService = async ({
     driverId,
     longitude,
     latitude,
     isOnline,
-    registrationSource
+    registrationSource,
+    rating,
 }: {
-    driverId: string,
-    longitude: number,
-    latitude: number,
-    isOnline: string,
-    registrationSource: string
+    driverId: string;
+    longitude?: number;
+    latitude?: number;
+    isOnline: string;
+    registrationSource?: string;
+    rating?: number;
 }) => {
     try {
         if (isOnline === "online" || isOnline === "offline") {
             await axios.put(
                 `${process.env.SOCKET_SERVICE_URL}/v1/api/driver-location-socket/${driverId}`,
-                { longitude, latitude, isOnline, registrationSource }
-            )
+                {
+                    longitude,
+                    latitude,
+                    isOnline,
+                    registrationSource,
+                    rating,
+                }
+            );
         }
 
         return true;
