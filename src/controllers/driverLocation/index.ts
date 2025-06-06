@@ -29,7 +29,6 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
         driverId,
         longitude,
         latitude,
-        isOnline
       });
 
       res.status(400).json({
@@ -84,13 +83,19 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
       }
     }
 
+    const match = userData?.taxiType.match(/ObjectId\('(.+?)'\)/);
+
+    const taxiTypeId = match ? match[1] : null;
+
+    // step 4: Update driver location from socket
     await updateDriverLocationService({
       driverId,
       longitude,
       latitude,
       isOnline,
       registrationSource: userData?.registrationSource,
-      rating: numberOfRating
+      rating: numberOfRating,
+      taxiType: taxiTypeId
     });
 
     res.status(200).json({

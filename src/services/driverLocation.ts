@@ -4,16 +4,18 @@ export const updateDriverLocationService = async ({
     driverId,
     longitude,
     latitude,
-    isOnline,
+    isOnline = "offline",
     registrationSource,
     rating,
+    taxiType
 }: {
     driverId: string;
     longitude?: number;
     latitude?: number;
-    isOnline: string;
+    isOnline?: string;
     registrationSource?: string;
     rating?: number;
+    taxiType?: string;
 }) => {
     try {
         if (isOnline === "online" || isOnline === "offline") {
@@ -25,6 +27,7 @@ export const updateDriverLocationService = async ({
                     isOnline,
                     registrationSource,
                     rating,
+                    taxiType,
                 }
             );
         }

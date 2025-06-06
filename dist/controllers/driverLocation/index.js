@@ -38,7 +38,6 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 driverId,
                 longitude,
                 latitude,
-                isOnline
             });
             res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
@@ -84,13 +83,17 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 numberOfRating = (_d = rating === null || rating === void 0 ? void 0 : rating.rating) !== null && _d !== void 0 ? _d : 0;
             }
         }
+        const match = userData === null || userData === void 0 ? void 0 : userData.taxiType.match(/ObjectId\('(.+?)'\)/);
+        const taxiTypeId = match ? match[1] : null;
+        // step 4: Update driver location from socket
         yield (0, driverLocation_1.updateDriverLocationService)({
             driverId,
             longitude,
             latitude,
             isOnline,
             registrationSource: userData === null || userData === void 0 ? void 0 : userData.registrationSource,
-            rating: numberOfRating
+            rating: numberOfRating,
+            taxiType: taxiTypeId
         });
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
