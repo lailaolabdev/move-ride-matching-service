@@ -9,7 +9,6 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
 
         const {
             carTypeId,
-            driverId,
             origin,
             destination,
             originName,
@@ -33,7 +32,6 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
         const created = await CallTaxi.create({
             passengerId,
             carTypeId,
-            driverId,
             origin: splitOrigin,
             destination: splitDestination,
             originName,
