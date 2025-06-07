@@ -27,6 +27,7 @@ const festivalPromotion_1 = __importDefault(require("./routes/festivalPromotion"
 const newComerPromotion_1 = __importDefault(require("./routes/newComerPromotion"));
 const pointPromotion_1 = __importDefault(require("./routes/pointPromotion"));
 const rating_1 = __importDefault(require("./routes/rating"));
+const voiceCall_1 = __importDefault(require("./routes/voiceCall"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8001;
@@ -57,6 +58,7 @@ app.use("/api/v1/festival-promotions", festivalPromotion_1.default);
 app.use("/api/v1/new-comer-promotions", newComerPromotion_1.default);
 app.use("/api/v1/point-promotions", pointPromotion_1.default);
 app.use("/api/v1/rating", rating_1.default);
+app.use("/api/v1/voice-call", voiceCall_1.default);
 app.use("/v1/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -23,6 +23,7 @@ import festivalPromotionRoute from "./routes/festivalPromotion";
 import newComerPromotionRoute from "./routes/newComerPromotion";
 import pointPromotionRoute from "./routes/pointPromotion";
 import ratingRoute from "./routes/rating";
+import voiceCallRoute from './routes/voiceCall'
 
 dotenv.config();
 
@@ -59,6 +60,7 @@ app.use("/api/v1/festival-promotions", festivalPromotionRoute);
 app.use("/api/v1/new-comer-promotions", newComerPromotionRoute);
 app.use("/api/v1/point-promotions", pointPromotionRoute);
 app.use("/api/v1/rating", ratingRoute);
+app.use("/api/v1/voice-call", voiceCallRoute);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Error handling middleware
