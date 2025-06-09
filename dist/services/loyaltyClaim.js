@@ -79,6 +79,7 @@ const getAllLoyaltyClaimService = (skip, limit, filter) => __awaiter(void 0, voi
                     'user.phone': 1,
                     'loyalty.name': 1,
                     'loyalty.price': 1,
+                    'loyalty.image': 1,
                     createdAt: 1,
                 }
             }
