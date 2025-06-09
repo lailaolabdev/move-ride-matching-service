@@ -17,6 +17,7 @@ const loyaltyClaim_1 = require("../../services/loyaltyClaim");
 const config_1 = require("../../config");
 const loyalty_1 = require("../../models/loyalty");
 const axios_1 = __importDefault(require("axios"));
+const mongoose_1 = require("mongoose");
 const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     try {
@@ -82,10 +83,16 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.createLoyaltyClaim = createLoyaltyClaim;
 const getAllLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const userId = req.user.id;
+        const role = req.user.role;
         const { skip = 0, limit = 10, status, country, countryCode } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
         const filter = {};
+        if (role === "CUSTOMER" || role === "DRIVER") {
+            if (userId)
+                filter.userId = new mongoose_1.Types.ObjectId(userId);
+        }
         if (status)
             filter.status = status;
         if (country)

@@ -9,6 +9,7 @@ import {
 import { messages } from "../../config";
 import { ILoyalty, loyaltyModel } from "../../models/loyalty";
 import axios from "axios";
+import { Types } from "mongoose";
 
 export const createLoyaltyClaim = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -91,6 +92,9 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
 
 export const getAllLoyaltyClaim = async (req: Request, res: Response) => {
   try {
+    const userId = (req as any).user.id;
+    const role = (req as any).user.role;
+
     const {
       skip = 0,
       limit = 10,
@@ -103,6 +107,10 @@ export const getAllLoyaltyClaim = async (req: Request, res: Response) => {
     const parsedLimit = parseInt(limit as string, 10);
 
     const filter: any = {}
+
+    if (role === "CUSTOMER" || role === "DRIVER") {
+      if (userId) filter.userId = new Types.ObjectId(userId)
+    }
 
     if (status) filter.status = status
     if (country) filter.countryId = country
