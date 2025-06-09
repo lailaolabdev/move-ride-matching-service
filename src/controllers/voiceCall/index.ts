@@ -53,6 +53,10 @@ export const voiceCall = async (req: Request, res: Response) => {
     res.type("text/xml");
     res.send(newtwiml.toString());
 
+    console.log({
+      twiml: newtwiml.toString()
+    });
+
     res.status(201).json({
       ...messages.CREATE_SUCCESSFUL,
       twiml: newtwiml.toString()

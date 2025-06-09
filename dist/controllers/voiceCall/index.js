@@ -48,6 +48,9 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         res.type("text/xml");
         res.send(newtwiml.toString());
+        console.log({
+            twiml: newtwiml.toString()
+        });
         res.status(201).json(Object.assign(Object.assign({}, config_1.messages.CREATE_SUCCESSFUL), { twiml: newtwiml.toString() }));
     }
     catch (error) {
