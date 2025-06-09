@@ -4,10 +4,12 @@ import { messages } from "../../config";
 import axios from "axios";
 import { ratingModel } from "../../models/rating";
 import { CallTaxi } from "../../models/callTaxi";
+import { createClaimMoney } from "../../services/claimMoney";
 
 export const updateDriverLocation = async (req: Request, res: Response) => {
   try {
     const driverId = (req as any).user.id;
+    const token = req.headers.authorization
 
     const { longitude, latitude, isOnline } = req.body
 
@@ -83,11 +85,14 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
       }
     }
 
+    // step 4: Create claiming money
+    await createClaimMoney(token as string)
+
     const match = userData?.taxiType.match(/ObjectId\('(.+?)'\)/);
 
     const taxiTypeId = match ? match[1] : null;
 
-    // step 4: Update driver location from socket
+    // step 5: Update driver location from socket
     await updateDriverLocationService({
       driverId,
       longitude,

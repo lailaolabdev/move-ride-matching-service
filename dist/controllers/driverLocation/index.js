@@ -18,10 +18,12 @@ const config_1 = require("../../config");
 const axios_1 = __importDefault(require("axios"));
 const rating_1 = require("../../models/rating");
 const callTaxi_1 = require("../../models/callTaxi");
+const claimMoney_1 = require("../../services/claimMoney");
 const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     try {
         const driverId = req.user.id;
+        const token = req.headers.authorization;
         const { longitude, latitude, isOnline } = req.body;
         // step 1: update driver location method and check driver's data 
         const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${driverId}`);
@@ -83,9 +85,11 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 numberOfRating = (_d = rating === null || rating === void 0 ? void 0 : rating.rating) !== null && _d !== void 0 ? _d : 0;
             }
         }
+        // step 4: Create claiming money
+        yield (0, claimMoney_1.createClaimMoney)(token);
         const match = userData === null || userData === void 0 ? void 0 : userData.taxiType.match(/ObjectId\('(.+?)'\)/);
         const taxiTypeId = match ? match[1] : null;
-        // step 4: Update driver location from socket
+        // step 5: Update driver location from socket
         yield (0, driverLocation_1.updateDriverLocationService)({
             driverId,
             longitude,
