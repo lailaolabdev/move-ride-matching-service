@@ -76,6 +76,7 @@ export const getAllLoyaltyClaimService = async (
                     'user.phone': 1,
                     'loyalty.name': 1,
                     'loyalty.price': 1,
+                    'loyalty.image': 1,
                     createdAt: 1,
                 }
             }
