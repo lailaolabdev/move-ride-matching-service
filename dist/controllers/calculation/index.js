@@ -15,7 +15,7 @@ const calculation_1 = require("../../services/calculation");
 const onPeakTime_1 = require("../../services/onPeakTime");
 const taxiTypePricing_1 = require("../../services/taxiTypePricing");
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c, _d;
     try {
         const { origin, destination, country } = req.body;
         // Calculation method:
@@ -39,7 +39,7 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
         const flatFare = [];
         let delayPrice = 10;
         // step 3 : find peak time base on distance
-        const onPeakTime = yield (0, onPeakTime_1.getOnPeakTimeService)(req.headers.authorization);
+        const onPeakTime = yield (0, onPeakTime_1.getOnPeakTimeService)(req.headers.authorization, country);
         const onPeakTimePrice = (_b = onPeakTime.credit) !== null && _b !== void 0 ? _b : 0;
         // step 4 : loop through taxiTypePricing and 
         // calculate price both meter and flat fare
@@ -55,10 +55,12 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
                 cartType: taxiTypePricing[i].taxiType.name,
                 seats: taxiTypePricing[i].taxiType.seats,
             };
-            flatFare.push(Object.assign(Object.assign(Object.assign({}, taxiPricing), calculate), { totalPrice: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+            flatFare.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { meterPrice: taxiTypePricing[i].meterPrice, polygonPrice: (_c = calculate.priceInPolygon) !== null && _c !== void 0 ? _c : 0, onPeakTimePrice,
+                delayPrice }), calculate), { totalPrice: Math.ceil((taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration) }));
-            meter.push(Object.assign(Object.assign(Object.assign({}, taxiPricing), calculate), { actualCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+            meter.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { meterPrice: taxiTypePricing[i].meterPrice, polygonPrice: (_d = calculate.priceInPolygon) !== null && _d !== void 0 ? _d : 0, onPeakTimePrice,
+                delayPrice }), calculate), { actualCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration), estimatedCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +

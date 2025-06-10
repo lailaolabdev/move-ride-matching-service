@@ -45,7 +45,7 @@ export const calculateUserDistanceAndDuration = async (
         let delayPrice = 10;
 
         // step 3 : find peak time base on distance
-        const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string)
+        const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string, country)
         const onPeakTimePrice = onPeakTime.credit ?? 0
 
         // step 4 : loop through taxiTypePricing and 
@@ -65,9 +65,13 @@ export const calculateUserDistanceAndDuration = async (
 
             flatFare.push({
                 ...taxiPricing,
+                meterPrice: taxiTypePricing[i].meterPrice,
+                polygonPrice: calculate.priceInPolygon ?? 0,
+                onPeakTimePrice,
+                delayPrice,
                 ...calculate,
                 totalPrice: Math.ceil(
-                    (taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
+                    (taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration
                 ),
@@ -75,6 +79,10 @@ export const calculateUserDistanceAndDuration = async (
 
             meter.push({
                 ...taxiPricing,
+                meterPrice: taxiTypePricing[i].meterPrice,
+                polygonPrice: calculate.priceInPolygon ?? 0,
+                onPeakTimePrice,
+                delayPrice,
                 ...calculate,
                 actualCalculate: Math.ceil(
                     (taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +

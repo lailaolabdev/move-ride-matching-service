@@ -45,44 +45,121 @@
  *                 message:
  *                   type: string
  *                   example: "Create successful"
- *                 calculation:
+ *                 meter:
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
  *                       id:
  *                         type: string
- *                         example: "001"
+ *                         example: "67c5587478a1f4ee9d92f75a"
  *                       image:
  *                         type: string
- *                         example: ""
+ *                         example: "f20acc36-c8a5-44c0-9afd-84020e3b3d0a.png"
  *                       cartType:
  *                         type: string
- *                         example: "suv"
+ *                         example: "type 1"
+ *                       seats:
+ *                         type: integer
+ *                         example: 4
+ *                       meterPrice:
+ *                         type: number
+ *                         example: 11
+ *                       polygonPrice:
+ *                         type: number
+ *                         example: 30.4
+ *                       onPeakTimePrice:
+ *                         type: number
+ *                         example: 10
+ *                       delayPrice:
+ *                         type: number
+ *                         example: 10
  *                       distanceInPolygon:
  *                         type: number
- *                         example: 3.16
+ *                         example: 1.52
  *                       durationInPolygon:
  *                         type: number
- *                         example: 9.75
+ *                         example: 4.17
+ *                       priceInPolygon:
+ *                         type: number
+ *                         example: 30.4
  *                       normalDuration:
  *                         type: number
- *                         example: 17.9
+ *                         example: 18.62
  *                       delayDuration:
  *                         type: number
- *                         example: 2.8
+ *                         example: 0.25
  *                       delayDistance:
  *                         type: number
- *                         example: 1.06
+ *                         example: 0.09
  *                       totalDuration:
  *                         type: number
- *                         example: 20.7
+ *                         example: 18.87
  *                       totalDistance:
  *                         type: number
- *                         example: 6.81
+ *                         example: 6.85
+ *                       actualCalculate:
+ *                         type: number
+ *                         example: 177
+ *                       estimatedCalculate:
+ *                         type: number
+ *                         example: 207
+ *                 flatFare:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "67c5587478a1f4ee9d92f75a"
+ *                       image:
+ *                         type: string
+ *                         example: "f20acc36-c8a5-44c0-9afd-84020e3b3d0a.png"
+ *                       cartType:
+ *                         type: string
+ *                         example: "type 1"
+ *                       seats:
+ *                         type: integer
+ *                         example: 4
+ *                       meterPrice:
+ *                         type: number
+ *                         example: 11
+ *                       polygonPrice:
+ *                         type: number
+ *                         example: 30.4
+ *                       onPeakTimePrice:
+ *                         type: number
+ *                         example: 10
+ *                       delayPrice:
+ *                         type: number
+ *                         example: 10
+ *                       distanceInPolygon:
+ *                         type: number
+ *                         example: 1.52
+ *                       durationInPolygon:
+ *                         type: number
+ *                         example: 4.17
+ *                       priceInPolygon:
+ *                         type: number
+ *                         example: 30.4
+ *                       normalDuration:
+ *                         type: number
+ *                         example: 18.62
+ *                       delayDuration:
+ *                         type: number
+ *                         example: 0.25
+ *                       delayDistance:
+ *                         type: number
+ *                         example: 0.09
+ *                       totalDuration:
+ *                         type: number
+ *                         example: 18.87
+ *                       totalDistance:
+ *                         type: number
+ *                         example: 6.85
  *                       totalPrice:
  *                         type: number
- *                         example: 75.77
+ *                         example: 170
  *       500:
  *         description: Internal server error.
  *         content:
