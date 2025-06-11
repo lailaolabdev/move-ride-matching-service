@@ -378,7 +378,7 @@
  *                   example: "Error details here"
  * /v1/api/call-taxi/ride-history/{id}:
  *   get:
- *     summary: Retrieve ride history ດຶງຂໍ້ມູນການເດີນທາງລ່າສຸດ
+ *     summary: Retrieve ride history ດຶງຂໍ້ມູນລ່າສຸດ ແລະ ປະຫວັດການເດີນທາງ
  *     description: Fetches the ride history for a user, including details such as total distance traveled.
  *     tags:
  *       - Call Taxi
@@ -431,6 +431,18 @@
  *                         type: string
  *                         description: Name or address of the destination location.
  *                         example: "0109, Vientiane"
+ *                       totalPrice:
+ *                         type: number
+ *                         description: Price of the call taxi order.
+ *                         example: 80
+ *                       status:
+ *                         type: string
+ *                         description: Status of the call taxi order.
+ *                         example: "Success"
+ *                       invoiceRequestStatus:
+ *                         type: boolean
+ *                         description: Invoice request status of the call taxi order.
+ *                         example: false
  *                       createdAt:
  *                         type: string
  *                         format: date-time

@@ -110,7 +110,11 @@ const CallTaxiSchema = new mongoose_1.Schema({
     },
     actualPrice: Number,
     estimatedPrice: Number,
-    actualUsedTime: String
+    actualUsedTime: String,
+    invoiceRequestStatus: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true,
 });

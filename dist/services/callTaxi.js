@@ -346,7 +346,6 @@ exports.getTheLastRideService = getTheLastRideService;
 const getHistoryRideService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.params.id;
-        console.log(passengerId);
         let rideHistory = yield callTaxi_1.CallTaxi.aggregate([
             { $match: { passengerId: passengerId } },
             {
@@ -355,6 +354,9 @@ const getHistoryRideService = (req) => __awaiter(void 0, void 0, void 0, functio
                     origin: 1,
                     destinationName: 1,
                     destination: 1,
+                    totalPrice: 1,
+                    status: 1,
+                    invoiceRequestStatus: 1,
                     createdAt: 1
                 }
             }
