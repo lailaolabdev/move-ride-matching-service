@@ -24,6 +24,10 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             totalPrice,
             actualPrice,
             estimatedPrice,
+            price,
+            polygonPrice,
+            onPeakTimePrice,
+            delayPrice
         } = req.body
 
         const splitOrigin = roundCoord(origin);
@@ -47,15 +51,13 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             totalPrice,
             actualPrice,
             estimatedPrice,
+            price,
+            polygonPrice,
+            onPeakTimePrice,
+            delayPrice
         })
 
         const createdObj: any = created.toObject();
-
-        delete createdObj?.passengerComplain;
-        delete createdObj?.driverComplain;
-        delete createdObj?.createdAt;
-        delete createdObj?.updatedAt;
-        delete createdObj?.__v;
 
         return createdObj
     } catch (error) {

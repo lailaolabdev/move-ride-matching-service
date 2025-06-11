@@ -19,20 +19,53 @@ export const STATUS = {
 };
 
 export interface ICallTaxi extends Document {
-  passengerId: String;
-  driverId: String;
-  carTypeId: String;
-  origin: String;
-  destination: String;
-  requestType: String;
-  distanceInPolygon: Number;
-  durationInPolygon: Number;
-  totalDistance: Number;
-  normalDurationMin: Number;
-  trafficDelayMin: Number;
-  totalDurationMin: Number;
-  totalPrice: Number;
-  status: String;
+  // Passenger info
+  passengerId: string;
+  passengerComplain?: {
+    rating?: number;
+    driverBehavior?: string;
+    satisfaction?: string;
+    remark?: string;
+    image?: string[];
+  };
+  carTypeId: string;
+  origin: string;
+  destination: string;
+  originName: string;
+  destinationName: string;
+  requestType: string;
+
+  // Trip data
+  distanceInPolygon: number;
+  durationInPolygon: number;
+  normalDuration: number;
+  delayDuration: number;
+  delayDistance: number;
+  totalDuration: number;
+  totalDistance: number;
+  totalPrice: number;
+  disappear: boolean;
+  status: string;
+
+  // Driver info
+  driverId?: string;
+  driverComplain?: {
+    rating?: number;
+    customerBehavior?: string;
+    satisfaction?: string;
+    remark?: string;
+    image?: string[];
+  };
+
+  // Price calculation details
+  actualPrice?: number;
+  estimatedPrice?: number;
+  actualUsedTime?: string;
+  calculatePrice?: number;
+  polygonPrice?: number;
+  onPeakTimePrice?: number;
+  delayPrice?: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -130,7 +163,23 @@ const CallTaxiSchema: Schema = new Schema(
     },
     actualPrice: Number,
     estimatedPrice: Number,
-    actualUsedTime: String
+    actualUsedTime: String,
+    price: {
+      type: Number,
+      required: true,
+    },
+    polygonPrice: {
+      type: Number,
+      required: true,
+    },
+    onPeakTimePrice: {
+      type: Number,
+      required: true,
+    },
+    delayPrice: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,
