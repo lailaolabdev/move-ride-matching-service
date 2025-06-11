@@ -9,5 +9,7 @@ const ioredis_1 = __importDefault(require("ioredis"));
 const redis = new ioredis_1.default({
     port: 6379,
     host: process.env.REDIS_HOST,
+    family: 4, // IPv4
+    db: 0,
 });
 exports.redis = redis;
