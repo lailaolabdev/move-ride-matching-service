@@ -376,18 +376,26 @@
  *                 detail:
  *                   type: string
  *                   example: "Error details here"
- * /v1/api/call-taxi/ride-history:
+ * /v1/api/call-taxi/ride-history/{id}:
  *   get:
- *     summary: Retrieve ride history
+ *     summary: Retrieve ride history ດຶງຂໍ້ມູນການເດີນທາງລ່າສຸດ
  *     description: Fetches the ride history for a user, including details such as total distance traveled.
  *     tags:
  *       - Call Taxi
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "68254ea9e2f2e47753d2e00b"
+ *         description: The ID of the driver location to get.
  *     responses:
  *       200:
  *         description: Ride history retrieved successfully.
- *         content:
+  *         content:
  *           application/json:
  *             schema:
  *               type: object
@@ -398,29 +406,36 @@
  *                 message:
  *                   type: string
  *                   example: "Successfully"
- *                 History:
- *                   type: object
- *                   properties:
- *                     origin:
- *                       type: string
- *                       description: Taxi Type ID.
- *                       example: "17.967290, 102.608902"
- *                     destination:
- *                       type: string
- *                       description: Taxi Type name.
- *                       example: "17.971523,102.6200467"
- *                     totalDistance:
- *                       type: number
- *                       description: Taxi Type icon.
- *                       example: 7.13
- *                     totalPrice:
- *                       type: number
- *                       description: Taxi Type icon.
- *                       example: 78.4
- *                     date:
- *                       type: string
- *                       description: Taxi Type icon.
- *                       example: "19/03/2025 13:29"
+ *                 history:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: Unique ID of the ride history record.
+ *                         example: "6846514f5476c59644bd2872"
+ *                       origin:
+ *                         type: string
+ *                         description: Coordinates of the ride's starting point.
+ *                         example: "17.973677,102.664599"
+ *                       destination:
+ *                         type: string
+ *                         description: Coordinates of the ride's destination.
+ *                         example: "17.936424,102.671520"
+ *                       originName:
+ *                         type: string
+ *                         description: Name or address of the starting location.
+ *                         example: "Vientiane Vientiane"
+ *                       destinationName:
+ *                         type: string
+ *                         description: Name or address of the destination location.
+ *                         example: "0109, Vientiane"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The date and time when the ride was created.
+ *                         example: "2025-06-09T03:13:19.103Z"
  *
  *       500:
  *         description: Internal server error.
@@ -441,7 +456,7 @@
  */
 /**
  * @swagger
- * /v1/api/call-taxi/last-ride:
+ * /v1/api/call-taxi/last-ride/{id}:
  *   get:
  *     summary: Retrieve the last ride for a passenger
  *     description: Fetches the most recent ride record for a passenger based on their ID.
@@ -449,6 +464,14 @@
  *       -  Call Taxi
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "68254ea9e2f2e47753d2e00b"
+ *         description: The ID of the driver location to get.
  *     responses:
  *       200:
  *         description: Last ride retrieved successfully.
