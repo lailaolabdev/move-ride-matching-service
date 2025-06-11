@@ -405,13 +405,16 @@ export const getHistoryRideService = async (req: Request): Promise<any> => {
         const passengerId = req.params.id
 
         let rideHistory = await CallTaxi.aggregate([
-            { $match: { passengerId: passengerId, status: "Paid" } },
+            { $match: { passengerId: passengerId } },
             {
                 $project: {
+                    originName: 1,
                     origin: 1,
+                    destinationName: 1,
                     destination: 1,
-                    totalDistance: 1,
                     totalPrice: 1,
+                    status: 1,
+                    invoiceRequestStatus: 1,
                     createdAt: 1
                 }
             }
