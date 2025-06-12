@@ -721,7 +721,9 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
           },
         }
       );
+    }
 
+    if (status === STATUS.DEPARTURE) {
       // And then save an order to redis 
       // for calculating meter pricing
       if (confirmed.requestType === REQUEST_TYPE.METERED_FARE) {

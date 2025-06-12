@@ -581,6 +581,8 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
                     Authorization: req.headers.authorization,
                 },
             });
+        }
+        if (status === callTaxi_2.STATUS.DEPARTURE) {
             // And then save an order to redis 
             // for calculating meter pricing
             if (confirmed.requestType === callTaxi_2.REQUEST_TYPE.METERED_FARE) {
