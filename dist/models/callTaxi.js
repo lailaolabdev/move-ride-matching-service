@@ -111,10 +111,22 @@ const CallTaxiSchema = new mongoose_1.Schema({
     actualPrice: Number,
     estimatedPrice: Number,
     actualUsedTime: String,
-    invoiceRequestStatus: {
-        type: Boolean,
-        default: false
-    }
+    price: {
+        type: Number,
+        required: true,
+    },
+    polygonPrice: {
+        type: Number,
+        required: true,
+    },
+    onPeakTimePrice: {
+        type: Number,
+        required: true,
+    },
+    delayPrice: {
+        type: Number,
+        required: true,
+    },
 }, {
     timestamps: true,
 });

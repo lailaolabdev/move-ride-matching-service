@@ -16,7 +16,7 @@ exports.calculateDriverDistanceAndDurationService = exports.calculateUserDistanc
 const axios_1 = __importDefault(require("axios"));
 const turf_1 = require("@turf/turf");
 const polygon_1 = __importDefault(require("../models/polygon"));
-const apiKey = process.env.API_KEY || 'AIzaSyDdxCKVSzSf5K_ys6fM7mB9eOwKTcYr_Sk'; // ใส่ API Key ของคุณ
+const apiKey = process.env.API_KEY; // ใส่ API Key ของคุณ
 const calculateUserDistanceAndDurationService = (origin, destination) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {

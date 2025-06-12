@@ -155,6 +155,14 @@
  *                 type: string
  *                 description: The destination coordinates.
  *                 example: "17.971523,102.6200467"
+ *               originName:
+ *                 type: string
+ *                 description: The origin coordinates.
+ *                 example: "origin name"
+ *               destinationName:
+ *                 type: string
+ *                 description: The destination coordinates.
+ *                 example: "Destination name"
  *               requestType:
  *                 type: string
  *                 description: The fare type.
@@ -181,6 +189,18 @@
  *                 type: number
  *                 example: 7.13
  *               totalPrice:
+ *                 type: number
+ *                 example: 78.4
+ *               price:
+ *                 type: number
+ *                 example: 21.22
+ *               polygonPrice:
+ *                 type: number
+ *                 example: 7.13
+ *               onPeakTimePrice:
+ *                 type: number
+ *                 example: 78.4
+ *               delayPrice:
  *                 type: number
  *                 example: 78.4
  *     responses:

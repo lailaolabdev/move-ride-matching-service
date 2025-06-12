@@ -55,11 +55,11 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
                 cartType: taxiTypePricing[i].taxiType.name,
                 seats: taxiTypePricing[i].taxiType.seats,
             };
-            flatFare.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { meterPrice: taxiTypePricing[i].meterPrice, polygonPrice: (_c = calculate.priceInPolygon) !== null && _c !== void 0 ? _c : 0, onPeakTimePrice,
+            flatFare.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { price: taxiTypePricing[i].flatFarePrice, polygonPrice: (_c = calculate.priceInPolygon) !== null && _c !== void 0 ? _c : 0, onPeakTimePrice,
                 delayPrice }), calculate), { totalPrice: Math.ceil((taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration) }));
-            meter.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { meterPrice: taxiTypePricing[i].meterPrice, polygonPrice: (_d = calculate.priceInPolygon) !== null && _d !== void 0 ? _d : 0, onPeakTimePrice,
+            meter.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { price: taxiTypePricing[i].meterPrice, polygonPrice: (_d = calculate.priceInPolygon) !== null && _d !== void 0 ? _d : 0, onPeakTimePrice,
                 delayPrice }), calculate), { actualCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
                     calculate.priceInPolygon +
                     delayPrice * calculate.delayDuration), estimatedCalculate: Math.ceil((taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +

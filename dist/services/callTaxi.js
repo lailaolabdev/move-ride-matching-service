@@ -19,7 +19,7 @@ const helper_1 = require("../controllers/callTaxi/helper");
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.user.id;
-        const { carTypeId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, actualPrice, estimatedPrice, } = req.body;
+        const { carTypeId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, actualPrice, estimatedPrice, price, polygonPrice, onPeakTimePrice, delayPrice } = req.body;
         const splitOrigin = (0, helper_1.roundCoord)(origin);
         const splitDestination = (0, helper_1.roundCoord)(destination);
         const created = yield callTaxi_1.CallTaxi.create({
@@ -40,13 +40,12 @@ const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
             totalPrice,
             actualPrice,
             estimatedPrice,
+            price,
+            polygonPrice,
+            onPeakTimePrice,
+            delayPrice
         });
         const createdObj = created.toObject();
-        createdObj === null || createdObj === void 0 ? true : delete createdObj.passengerComplain;
-        createdObj === null || createdObj === void 0 ? true : delete createdObj.driverComplain;
-        createdObj === null || createdObj === void 0 ? true : delete createdObj.createdAt;
-        createdObj === null || createdObj === void 0 ? true : delete createdObj.updatedAt;
-        createdObj === null || createdObj === void 0 ? true : delete createdObj.__v;
         return createdObj;
     }
     catch (error) {
@@ -236,7 +235,7 @@ const driverUpdateStatusService = (req, status) => __awaiter(void 0, void 0, voi
     try {
         const { id } = req.params;
         const driverId = req.user.id;
-        const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true }).select("-driverId");
+        const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true });
         return confirmed;
     }
     catch (error) {

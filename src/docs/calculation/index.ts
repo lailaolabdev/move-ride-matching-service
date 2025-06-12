@@ -61,7 +61,7 @@
  *                       seats:
  *                         type: integer
  *                         example: 4
- *                       meterPrice:
+ *                       price:
  *                         type: number
  *                         example: 11
  *                       polygonPrice:

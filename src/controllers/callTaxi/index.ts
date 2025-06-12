@@ -25,12 +25,13 @@ import {
   sentDataToDriverSocket,
   getRideHistoryDetailByIdService,
 } from "../../services/callTaxi";
-import { CallTaxi, STATUS } from "../../models/callTaxi";
+import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
 import { getDriver, getPassenger, pipeline } from "./helper";
 import taxiModel from "../../models/taxi";
 import { ratingModel } from "../../models/rating";
 import vehicleDriverModel from "../../models/vehicleDriver";
+import { redis } from "../../config/redis/redis";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -711,7 +712,8 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     }
 
     if (status === STATUS.DRIVER_RECEIVED) {
-      // Delete ride matching from other when once accepted
+      // Delete ride matching order 
+      // from other when once accepted
       await axios.delete(
         `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed?._id}`,
         {
@@ -720,6 +722,15 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
           },
         }
       );
+
+      // And then save an order to redis 
+      // for calculating meter pricing
+      if (confirmed.requestType === REQUEST_TYPE.METERED_FARE) {
+        await axios.post(
+          `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`,
+          confirmed
+        );
+      }
     }
 
     res.status(200).json({
