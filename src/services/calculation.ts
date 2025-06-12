@@ -2,7 +2,7 @@ import axios from 'axios'
 import { booleanPointInPolygon, point, polygon as turfPolygon } from '@turf/turf'
 import polygonModel from '../models/polygon';
 
-const apiKey = process.env.API_KEY || 'AIzaSyDdxCKVSzSf5K_ys6fM7mB9eOwKTcYr_Sk'; // ใส่ API Key ของคุณ
+const apiKey = process.env.API_KEY; // ใส่ API Key ของคุณ
 
 export const calculateUserDistanceAndDurationService = async (origin: string, destination: string) => {
     try {
