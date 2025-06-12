@@ -725,10 +725,10 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
       // And then save an order to redis 
       // for calculating meter pricing
       if (confirmed.requestType === REQUEST_TYPE.METERED_FARE) {
-        await redis.set(
-          confirmed._id.toString(),
-          JSON.stringify(confirmed)
-        )
+        await axios.post(
+          `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed?._id}`,
+          confirmed
+        );
       }
     }
 

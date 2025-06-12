@@ -21,7 +21,6 @@ const helper_1 = require("./helper");
 const taxi_1 = __importDefault(require("../../models/taxi"));
 const rating_1 = require("../../models/rating");
 const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
-const redis_1 = require("../../config/redis/redis");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -585,7 +584,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             // And then save an order to redis 
             // for calculating meter pricing
             if (confirmed.requestType === callTaxi_2.REQUEST_TYPE.METERED_FARE) {
-                yield redis_1.redis.set(confirmed._id.toString(), JSON.stringify(confirmed));
+                yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed === null || confirmed === void 0 ? void 0 : confirmed._id}`, confirmed);
             }
         }
         res.status(200).json({
