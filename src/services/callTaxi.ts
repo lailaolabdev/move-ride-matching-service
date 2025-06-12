@@ -280,7 +280,7 @@ export const driverUpdateStatusService = async (req: Request, status: String) =>
             id,
             { driverId, status },
             { new: true }
-        ).select("-driverId")
+        )
 
         return confirmed
     } catch (error) {

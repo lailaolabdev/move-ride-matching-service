@@ -235,7 +235,7 @@ const driverUpdateStatusService = (req, status) => __awaiter(void 0, void 0, voi
     try {
         const { id } = req.params;
         const driverId = req.user.id;
-        const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true }).select("-driverId");
+        const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true });
         return confirmed;
     }
     catch (error) {
