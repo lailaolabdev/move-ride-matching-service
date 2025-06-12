@@ -641,10 +641,12 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     }
 
     const taxi = await taxiModel.findById(driverData?.data?.user?.taxi);
+    const rating = await ratingModel.findOne({ userId: driverData?.data?.user?._id })
 
     const driver = {
       image: driverData?.data?.user?.profileImage,
       fullName: driverData?.data?.user?.fullName,
+      rating: rating?.rating,
       licensePlate: driverData?.data?.user?.licensePlate,
       vehicleBrandName: taxi?.vehicleBrandName,
       vehicleModelName: taxi?.vehicleModelName,
