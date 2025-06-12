@@ -55,6 +55,7 @@ export const calculateUserDistanceAndDuration = async (
         // (meter price or flat fare price + peak time price) * total distance +
         // calculate.priceInPolygon +
         // delay price * delay duration
+
         for (let i = 0; i < taxiTypePricing.length; i++) {
             const taxiPricing = {
                 id: taxiTypePricing[i].taxiType._id,
@@ -65,7 +66,7 @@ export const calculateUserDistanceAndDuration = async (
 
             flatFare.push({
                 ...taxiPricing,
-                meterPrice: taxiTypePricing[i].meterPrice,
+                price: taxiTypePricing[i].flatFarePrice,
                 polygonPrice: calculate.priceInPolygon ?? 0,
                 onPeakTimePrice,
                 delayPrice,
@@ -79,7 +80,7 @@ export const calculateUserDistanceAndDuration = async (
 
             meter.push({
                 ...taxiPricing,
-                meterPrice: taxiTypePricing[i].meterPrice,
+                price: taxiTypePricing[i].meterPrice,
                 polygonPrice: calculate.priceInPolygon ?? 0,
                 onPeakTimePrice,
                 delayPrice,
