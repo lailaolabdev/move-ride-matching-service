@@ -2,6 +2,8 @@ import { Request } from "express";
 import { ICallTaxi, CallTaxi, STATUS } from "../models/callTaxi";
 import axios from 'axios'
 import { roundCoord } from "../controllers/callTaxi/helper";
+import { Types } from "mongoose";
+import { destination } from "@turf/turf";
 
 export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
     try {
@@ -341,9 +343,8 @@ export const getTotalRideService = async (req: Request): Promise<any> => {
                 }
             }
         ]);
-        console.log(totalRide)
-        return totalRide.length ? totalRide[0] : { totalRide: 0 }
 
+        return totalRide.length ? totalRide[0] : { totalRide: 0 }
     } catch (error) {
         console.log("Error creating Record: ", error);
         throw error;
@@ -352,11 +353,58 @@ export const getTotalRideService = async (req: Request): Promise<any> => {
 
 export const getRideHistoryDetailByIdService = async (req: Request): Promise<any> => {
     try {
-        const passengerId = req.params.id
+        const id = req.params.id
 
-        const totalRide = await CallTaxi.findOne({ passengerId });
+        const rideHistoryDetail = await CallTaxi.aggregate([
+            {
+                $match: { _id: new Types.ObjectId(id) }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$driverId"] }
+                            }
+                        }
+                    ],
+                    as: "driver",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    originName: 1,
+                    destinationName: 1,
+                    totalDistance: 1,
+                    totalDuration: 1,
+                    requestType: 1,
+                    point: 1,
+                    totalPrice: 1,
+                    "driver._id": 1,
+                    "driver.profileImage": 1,
+                    "driver.fullName": 1,
+                    "driver.licensePlate": 1,
+                    "driver.vehicleModel": 1,
+                    "driver.vehicleBrand": 1,
+                    passengerComplain: 1
+                }
+            }
+        ]);
 
-        return totalRide
+        if (rideHistoryDetail.length && !rideHistoryDetail[0]?.point) {
+            rideHistoryDetail[0].point = 0
+        }
+
+        return rideHistoryDetail.length ? rideHistoryDetail[0] : {}
     } catch (error) {
         console.log("Error creating Record: ", error);
         throw error;

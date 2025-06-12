@@ -84,7 +84,7 @@ router.get(
   gettotalRide
 );
 
-// get total ride
+// get ride history detail by passenger id
 router.get(
   "/ride-history-detail/:id",
   checkAuthorizationMiddleware,

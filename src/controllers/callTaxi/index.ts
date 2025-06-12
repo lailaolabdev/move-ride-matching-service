@@ -782,7 +782,7 @@ export const getRideHistoryDetailById = async (req: Request, res: Response) => {
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
-      ...rideHistoryDetail,
+      rideHistoryDetail
     });
   } catch (error) {
     console.error("Error fetching total ride:", error);
