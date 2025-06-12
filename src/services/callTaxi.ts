@@ -348,6 +348,19 @@ export const getTotalRideService = async (req: Request): Promise<any> => {
     }
 };
 
+export const getRideHistoryDetailByIdService = async (req: Request): Promise<any> => {
+    try {
+        const passengerId = req.params.id
+
+        const totalRide = await CallTaxi.findOne({ passengerId });
+
+        return totalRide
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+}
+
 // get Total Distance Service
 export const getTotalDistanceService = async (req: Request): Promise<any> => {
     try {
