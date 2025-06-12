@@ -7,7 +7,7 @@ exports.redis = void 0;
 const ioredis_1 = __importDefault(require("ioredis"));
 // Initialize Redis client with options
 const redis = new ioredis_1.default({
-    port: 6379,
+    port: 6380,
     host: process.env.REDIS_HOST,
 });
 exports.redis = redis;
