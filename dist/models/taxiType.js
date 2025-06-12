@@ -34,17 +34,12 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const MOTOR_TYPE = {
-    diesel: "DIESEL",
-    ev: "EV"
-};
 const TaxiTypeSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     icon: { type: String, required: true },
     price: { type: Number, required: true },
     seats: { type: Number, required: true },
     country: { type: String, required: true },
-    motorType: { type: String, enum: Object.values(MOTOR_TYPE), required: true },
     status: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: String, required: true },
