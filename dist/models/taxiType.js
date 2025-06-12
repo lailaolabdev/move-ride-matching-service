@@ -40,7 +40,7 @@ const TaxiTypeSchema = new mongoose_1.Schema({
     price: { type: Number, required: true },
     seats: { type: Number, required: true },
     country: { type: String, required: true },
-    status: { type: String, required: true },
+    status: { type: String, default: true },
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: String, required: true },
     createdByFullName: { type: String, required: true },
