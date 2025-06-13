@@ -261,7 +261,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getCallTaxis = getCallTaxis;
 const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b, _c;
     try {
         const id = req.user.id;
         const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${id}`);
@@ -285,8 +285,137 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
             filter.passengerId = userData._id;
         if (userData.role === "DRIVER")
             filter.driverId = userData._id;
-        const callTaxi = yield callTaxi_2.CallTaxi.findOne(filter).lean();
-        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), callTaxi));
+        // if access by customer role we will query driver's vehicle data
+        const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$driverId"] }
+                            }
+                        }
+                    ],
+                    as: "driver",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$passengerId"] }
+                            }
+                        }
+                    ],
+                    as: "passenger",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passenger",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    requestType: 1,
+                    origin: 1,
+                    destination: 1,
+                    originName: 1,
+                    destinationName: 1,
+                    totalPrice: 1,
+                    status: 1,
+                    "passenger._id": 1,
+                    "passenger.fullName": 1,
+                    "passenger.profileImage": 1,
+                    "driver._id": 1,
+                    "driver.fullName": 1,
+                    "driver.profileImage": 1,
+                    "driver.licensePlate": 1
+                }
+            }
+        ]);
+        if (callTaxi.length && filter.passengerId) {
+            const aggregateVehicleDriver = yield vehicleDriver_1.default.aggregate([
+                {
+                    $match: {
+                        driver: (_c = (_b = callTaxi[0]) === null || _b === void 0 ? void 0 : _b.driver) === null || _c === void 0 ? void 0 : _c._id.toString()
+                    },
+                },
+                {
+                    $addFields: {
+                        vehicleModelObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                                then: { $toObjectId: "$vehicleModel" },
+                                else: "$vehicleModel"
+                            }
+                        },
+                        vehicleBrandObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                                then: { $toObjectId: "$vehicleBrand" },
+                                else: "$vehicleBrand"
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclemodels',
+                        localField: 'vehicleModelObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleModel'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleModel',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclebrands',
+                        localField: 'vehicleBrandObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleBrand'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleBrand',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        licensePlate: 1,
+                        vehicleModelName: '$vehicleModel.name',
+                        vehicleBrandName: '$vehicleBrand.name'
+                    }
+                }
+            ]);
+            callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
+            callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
+        }
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi: callTaxi.length ? callTaxi[0] : {} }));
     }
     catch (error) {
         console.log("error: ", error);
@@ -500,7 +629,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.updateCallTaxis = updateCallTaxis;
 const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
     try {
         const user = req.user;
         const { id } = req.params;
@@ -516,10 +645,12 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             return;
         }
         const taxi = yield taxi_1.default.findById((_d = (_c = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.taxi);
+        const rating = yield rating_1.ratingModel.findOne({ userId: (_f = (_e = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f._id });
         const driver = {
-            image: (_f = (_e = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.profileImage,
-            fullName: (_h = (_g = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _g === void 0 ? void 0 : _g.user) === null || _h === void 0 ? void 0 : _h.fullName,
-            licensePlate: (_k = (_j = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _j === void 0 ? void 0 : _j.user) === null || _k === void 0 ? void 0 : _k.licensePlate,
+            image: (_h = (_g = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _g === void 0 ? void 0 : _g.user) === null || _h === void 0 ? void 0 : _h.profileImage,
+            fullName: (_k = (_j = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _j === void 0 ? void 0 : _j.user) === null || _k === void 0 ? void 0 : _k.fullName,
+            rating: rating === null || rating === void 0 ? void 0 : rating.rating,
+            licensePlate: (_m = (_l = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _l === void 0 ? void 0 : _l.user) === null || _m === void 0 ? void 0 : _m.licensePlate,
             vehicleBrandName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleBrandName,
             vehicleModelName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleModelName,
         };
