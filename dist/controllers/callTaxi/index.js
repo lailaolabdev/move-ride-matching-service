@@ -629,7 +629,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.updateCallTaxis = updateCallTaxis;
 const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
     try {
         const user = req.user;
         const { id } = req.params;
@@ -647,10 +647,11 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const taxi = yield taxi_1.default.findById((_d = (_c = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.taxi);
         const rating = yield rating_1.ratingModel.findOne({ userId: (_f = (_e = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f._id });
         const driver = {
-            image: (_h = (_g = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _g === void 0 ? void 0 : _g.user) === null || _h === void 0 ? void 0 : _h.profileImage,
-            fullName: (_k = (_j = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _j === void 0 ? void 0 : _j.user) === null || _k === void 0 ? void 0 : _k.fullName,
+            id: (_h = (_g = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _g === void 0 ? void 0 : _g.user) === null || _h === void 0 ? void 0 : _h._id,
+            image: (_k = (_j = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _j === void 0 ? void 0 : _j.user) === null || _k === void 0 ? void 0 : _k.profileImage,
+            fullName: (_m = (_l = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _l === void 0 ? void 0 : _l.user) === null || _m === void 0 ? void 0 : _m.fullName,
             rating: rating === null || rating === void 0 ? void 0 : rating.rating,
-            licensePlate: (_m = (_l = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _l === void 0 ? void 0 : _l.user) === null || _m === void 0 ? void 0 : _m.licensePlate,
+            licensePlate: (_p = (_o = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _o === void 0 ? void 0 : _o.user) === null || _p === void 0 ? void 0 : _p.licensePlate,
             vehicleBrandName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleBrandName,
             vehicleModelName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleModelName,
         };

@@ -779,6 +779,7 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     const rating = await ratingModel.findOne({ userId: driverData?.data?.user?._id })
 
     const driver = {
+      id: driverData?.data?.user?._id,
       image: driverData?.data?.user?.profileImage,
       fullName: driverData?.data?.user?.fullName,
       rating: rating?.rating,
