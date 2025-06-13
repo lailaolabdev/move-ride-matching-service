@@ -850,9 +850,8 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     if (status === STATUS.DRIVER_RECEIVED) {
       // Delete ride matching order 
       // from other when once accepted
-      await axios.post(
-        `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/`,
-        confirmed,
+      await axios.delete(
+        `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed?._id}`,
         {
           headers: {
             Authorization: req.headers.authorization,

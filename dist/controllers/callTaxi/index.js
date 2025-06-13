@@ -707,7 +707,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (status === callTaxi_2.STATUS.DRIVER_RECEIVED) {
             // Delete ride matching order 
             // from other when once accepted
-            yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/`, confirmed, {
+            yield axios_1.default.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed === null || confirmed === void 0 ? void 0 : confirmed._id}`, {
                 headers: {
                     Authorization: req.headers.authorization,
                 },
