@@ -2,6 +2,9 @@ import { Request } from "express";
 import { ICallTaxi, CallTaxi, STATUS } from "../models/callTaxi";
 import axios from 'axios'
 import { roundCoord } from "../controllers/callTaxi/helper";
+import { Types } from "mongoose";
+import { destination } from "@turf/turf";
+import vehicleDriverModel from "../models/vehicleDriver";
 
 export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
     try {
@@ -341,14 +344,141 @@ export const getTotalRideService = async (req: Request): Promise<any> => {
                 }
             }
         ]);
-        console.log(totalRide)
-        return totalRide.length ? totalRide[0] : { totalRide: 0 }
 
+        return totalRide.length ? totalRide[0] : { totalRide: 0 }
     } catch (error) {
         console.log("Error creating Record: ", error);
         throw error;
     }
 };
+
+export const getRideHistoryDetailByIdService = async (req: Request): Promise<any> => {
+    try {
+        const id = req.params.id
+
+        const rideHistoryDetail = await CallTaxi.aggregate([
+            {
+                $match: { _id: new Types.ObjectId(id) }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$driverId"] }
+                            }
+                        }
+                    ],
+                    as: "driver",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    originName: 1,
+                    destinationName: 1,
+                    totalDistance: 1,
+                    totalDuration: 1,
+                    requestType: 1,
+                    point: 1,
+                    totalPrice: 1,
+                    "driver._id": 1,
+                    "driver.profileImage": 1,
+                    "driver.fullName": 1,
+                    "driver.licensePlate": 1,
+                    passengerComplain: 1
+                }
+            }
+        ]);
+
+        if (rideHistoryDetail.length && !rideHistoryDetail[0]?.point) {
+            rideHistoryDetail[0].point = 0
+        }
+
+        if (rideHistoryDetail.length) {
+            const aggregateVehicleDriver = await vehicleDriverModel.aggregate([
+                {
+                    $match: {
+                        driver: rideHistoryDetail[0]?.driver?._id.toString()
+                    },
+                },
+                {
+                    $addFields: {
+                        vehicleModelObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                                then: { $toObjectId: "$vehicleModel" },
+                                else: "$vehicleModel"
+                            }
+                        },
+                        vehicleBrandObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                                then: { $toObjectId: "$vehicleBrand" },
+                                else: "$vehicleBrand"
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclemodels',
+                        localField: 'vehicleModelObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleModel'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleModel',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclebrands',
+                        localField: 'vehicleBrandObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleBrand'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleBrand',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        licensePlate: 1,
+                        vehicleModelName: '$vehicleModel.name',
+                        vehicleBrandName: '$vehicleBrand.name'
+                    }
+                }
+            ]);
+
+            if (aggregateVehicleDriver.length) {
+                rideHistoryDetail[0].driver.licensePlate = aggregateVehicleDriver[0]?.licensePlate
+                rideHistoryDetail[0].driver.vehicleModelName = aggregateVehicleDriver[0]?.vehicleModelName
+                rideHistoryDetail[0].driver.vehicleBrandName = aggregateVehicleDriver[0]?.vehicleBrandName
+            }
+        }
+
+        return rideHistoryDetail.length ? rideHistoryDetail[0] : {}
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+}
 
 // get Total Distance Service
 export const getTotalDistanceService = async (req: Request): Promise<any> => {
@@ -552,7 +682,6 @@ export const travelHistoryService = async (req: Request): Promise<any> => {
 export const cancelTravelHistoryService = async (req: Request): Promise<any> => {
     try {
         const passengerId = req.params.id
-
 
         let cancelHistory = await CallTaxi.aggregate([
             { $match: { passengerId: passengerId, status: "Canceled" } },

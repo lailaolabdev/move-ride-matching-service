@@ -23,6 +23,7 @@ import {
   getCallTaxiById,
   getCallTaxis,
   checkCallTaxiStatus,
+  getRideHistoryDetailById
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -76,11 +77,18 @@ router.get(
   getPassengerComplainById
 );
 
-// get total  ride
+// get passenger total ride
 router.get(
   "/total-ride/:id",
   checkAuthorizationMiddleware,
   gettotalRide
+);
+
+// get ride history detail by passenger id
+router.get(
+  "/ride-history-detail/:id",
+  checkAuthorizationMiddleware,
+  getRideHistoryDetailById
 );
 
 // get total distance ride
@@ -104,7 +112,7 @@ router.get(
   getThelastRide
 );
 
-// Get all calling taxi
+// Get all driver's order 
 router.get(
   "/calling-taxi-history",
   checkAuthorizationMiddleware,
