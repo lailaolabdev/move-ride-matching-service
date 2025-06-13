@@ -261,7 +261,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getCallTaxis = getCallTaxis;
 const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b, _c;
     try {
         const id = req.user.id;
         const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${id}`);
@@ -285,8 +285,136 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
             filter.passengerId = userData._id;
         if (userData.role === "DRIVER")
             filter.driverId = userData._id;
-        const callTaxi = yield callTaxi_2.CallTaxi.findOne(filter).lean();
-        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), callTaxi));
+        // if access by customer role we will query driver's vehicle data
+        const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$driverId"] }
+                            }
+                        }
+                    ],
+                    as: "driver",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$passengerId"] }
+                            }
+                        }
+                    ],
+                    as: "passenger",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passenger",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    requestType: 1,
+                    origin: 1,
+                    destination: 1,
+                    originName: 1,
+                    destinationName: 1,
+                    totalPrice: 1,
+                    "passenger._id": 1,
+                    "passenger.fullName": 1,
+                    "passenger.profileImage": 1,
+                    "driver._id": 1,
+                    "driver.fullName": 1,
+                    "driver.profileImage": 1,
+                    "driver.licensePlate": 1
+                }
+            }
+        ]);
+        if (callTaxi.length && filter.passengerId) {
+            const aggregateVehicleDriver = yield vehicleDriver_1.default.aggregate([
+                {
+                    $match: {
+                        driver: (_c = (_b = callTaxi[0]) === null || _b === void 0 ? void 0 : _b.driver) === null || _c === void 0 ? void 0 : _c._id.toString()
+                    },
+                },
+                {
+                    $addFields: {
+                        vehicleModelObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                                then: { $toObjectId: "$vehicleModel" },
+                                else: "$vehicleModel"
+                            }
+                        },
+                        vehicleBrandObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                                then: { $toObjectId: "$vehicleBrand" },
+                                else: "$vehicleBrand"
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclemodels',
+                        localField: 'vehicleModelObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleModel'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleModel',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclebrands',
+                        localField: 'vehicleBrandObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleBrand'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleBrand',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        licensePlate: 1,
+                        vehicleModelName: '$vehicleModel.name',
+                        vehicleBrandName: '$vehicleBrand.name'
+                    }
+                }
+            ]);
+            callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
+            callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
+        }
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi: callTaxi.length ? callTaxi[0] : {} }));
     }
     catch (error) {
         console.log("error: ", error);
