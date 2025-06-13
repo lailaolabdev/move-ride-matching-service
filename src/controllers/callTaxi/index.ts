@@ -31,6 +31,7 @@ import taxiModel from "../../models/taxi";
 import { ratingModel } from "../../models/rating";
 import vehicleDriverModel from "../../models/vehicleDriver";
 import { redis } from "../../config/redis/redis";
+import { Types } from "mongoose";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -557,10 +558,17 @@ export const createDriverComplain = async (req: Request, res: Response) => {
         const id = sumRating[0]?._id
         const averageRating = sumRating[0]?.averageRating
 
-        await ratingModel.findByIdAndUpdate(
+        const updatedPassengerRating = await ratingModel.findByIdAndUpdate(
           id,
           { rating: averageRating }
         )
+
+        if (!updatedPassengerRating) {
+          await ratingModel.create({
+            userId: new Types.ObjectId(id),
+            rating: averageRating ?? 0
+          })
+        }
       }
     }
 
@@ -605,10 +613,17 @@ export const createPassengerComplain = async (req: Request, res: Response) => {
         const id = sumRating[0]?._id
         const averageRating = sumRating[0]?.averageRating
 
-        await ratingModel.findByIdAndUpdate(
+        const updatedDriverRating = await ratingModel.findByIdAndUpdate(
           id,
           { rating: averageRating }
         )
+
+        if (!updatedDriverRating) {
+          await ratingModel.create({
+            userId: new Types.ObjectId(id),
+            rating: averageRating ?? 0
+          })
+        }
       }
     }
 

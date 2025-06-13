@@ -21,6 +21,7 @@ const helper_1 = require("./helper");
 const taxi_1 = __importDefault(require("../../models/taxi"));
 const rating_1 = require("../../models/rating");
 const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
+const mongoose_1 = require("mongoose");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -470,7 +471,13 @@ const createDriverComplain = (req, res) => __awaiter(void 0, void 0, void 0, fun
             if (sumRating.length) {
                 const id = (_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id;
                 const averageRating = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating;
-                yield rating_1.ratingModel.findByIdAndUpdate(id, { rating: averageRating });
+                const updatedPassengerRating = yield rating_1.ratingModel.findByIdAndUpdate(id, { rating: averageRating });
+                if (!updatedPassengerRating) {
+                    yield rating_1.ratingModel.create({
+                        userId: new mongoose_1.Types.ObjectId(id),
+                        rating: averageRating !== null && averageRating !== void 0 ? averageRating : 0
+                    });
+                }
             }
         }
         res.status(200).json({
@@ -512,7 +519,13 @@ const createPassengerComplain = (req, res) => __awaiter(void 0, void 0, void 0, 
             if (sumRating.length) {
                 const id = (_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id;
                 const averageRating = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating;
-                yield rating_1.ratingModel.findByIdAndUpdate(id, { rating: averageRating });
+                const updatedDriverRating = yield rating_1.ratingModel.findByIdAndUpdate(id, { rating: averageRating });
+                if (!updatedDriverRating) {
+                    yield rating_1.ratingModel.create({
+                        userId: new mongoose_1.Types.ObjectId(id),
+                        rating: averageRating !== null && averageRating !== void 0 ? averageRating : 0
+                    });
+                }
             }
         }
         res.status(200).json({
