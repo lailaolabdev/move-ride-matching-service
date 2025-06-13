@@ -339,6 +339,7 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     originName: 1,
                     destinationName: 1,
                     totalPrice: 1,
+                    status: 1,
                     "passenger._id": 1,
                     "passenger.fullName": 1,
                     "passenger.profileImage": 1,
