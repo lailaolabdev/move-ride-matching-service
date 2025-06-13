@@ -19,15 +19,17 @@ router.put("/driver-complain/:id", middlewares_1.checkAuthorizationMiddleware, c
 router.put("/passenger-complain/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createPassengerComplain);
 // get passenger complain by passenger id
 router.get("/passenger-complain/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getPassengerComplainById);
-// get total  ride
+// get passenger total ride
 router.get("/total-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.gettotalRide);
+// get ride history detail by passenger id
+router.get("/ride-history-detail/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getRideHistoryDetailById);
 // get total distance ride
 router.get("/total-distance/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getTotalDistance);
 // get total distance ride
 router.get("/ride-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getRideHistory);
 // get total the last ride
 router.get("/last-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getThelastRide);
-// Get all calling taxi
+// Get all driver's order 
 router.get("/calling-taxi-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverCallTaxis);
 // Update type and status by calling taxi id
 router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateCallTaxis);

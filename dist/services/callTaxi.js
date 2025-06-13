@@ -12,10 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalFlatFareService = exports.getTotalmeterService = exports.getTotaltravelTimeService = exports.cancelTravelHistoryService = exports.travelHistoryService = exports.getCommentAndRatingService = exports.updateChatCallTaxiService = exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
+exports.getTotalFlatFareService = exports.getTotalmeterService = exports.getTotaltravelTimeService = exports.cancelTravelHistoryService = exports.travelHistoryService = exports.getCommentAndRatingService = exports.updateChatCallTaxiService = exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("../controllers/callTaxi/helper");
+const mongoose_1 = require("mongoose");
+const vehicleDriver_1 = __importDefault(require("../models/vehicleDriver"));
 const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.user.id;
@@ -288,7 +290,6 @@ const getTotalRideService = (req) => __awaiter(void 0, void 0, void 0, function*
                 }
             }
         ]);
-        console.log(totalRide);
         return totalRide.length ? totalRide[0] : { totalRide: 0 };
     }
     catch (error) {
@@ -297,6 +298,131 @@ const getTotalRideService = (req) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getTotalRideService = getTotalRideService;
+const getRideHistoryDetailByIdService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d, _e, _f;
+    try {
+        const id = req.params.id;
+        const rideHistoryDetail = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: { _id: new mongoose_1.Types.ObjectId(id) }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$driverId"] }
+                            }
+                        }
+                    ],
+                    as: "driver",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    originName: 1,
+                    destinationName: 1,
+                    totalDistance: 1,
+                    totalDuration: 1,
+                    requestType: 1,
+                    point: 1,
+                    totalPrice: 1,
+                    "driver._id": 1,
+                    "driver.profileImage": 1,
+                    "driver.fullName": 1,
+                    "driver.licensePlate": 1,
+                    passengerComplain: 1
+                }
+            }
+        ]);
+        if (rideHistoryDetail.length && !((_a = rideHistoryDetail[0]) === null || _a === void 0 ? void 0 : _a.point)) {
+            rideHistoryDetail[0].point = 0;
+        }
+        if (rideHistoryDetail.length) {
+            const aggregateVehicleDriver = yield vehicleDriver_1.default.aggregate([
+                {
+                    $match: {
+                        driver: (_c = (_b = rideHistoryDetail[0]) === null || _b === void 0 ? void 0 : _b.driver) === null || _c === void 0 ? void 0 : _c._id.toString()
+                    },
+                },
+                {
+                    $addFields: {
+                        vehicleModelObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                                then: { $toObjectId: "$vehicleModel" },
+                                else: "$vehicleModel"
+                            }
+                        },
+                        vehicleBrandObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                                then: { $toObjectId: "$vehicleBrand" },
+                                else: "$vehicleBrand"
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclemodels',
+                        localField: 'vehicleModelObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleModel'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleModel',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclebrands',
+                        localField: 'vehicleBrandObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleBrand'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleBrand',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        licensePlate: 1,
+                        vehicleModelName: '$vehicleModel.name',
+                        vehicleBrandName: '$vehicleBrand.name'
+                    }
+                }
+            ]);
+            if (aggregateVehicleDriver.length) {
+                rideHistoryDetail[0].driver.licensePlate = (_d = aggregateVehicleDriver[0]) === null || _d === void 0 ? void 0 : _d.licensePlate;
+                rideHistoryDetail[0].driver.vehicleModelName = (_e = aggregateVehicleDriver[0]) === null || _e === void 0 ? void 0 : _e.vehicleModelName;
+                rideHistoryDetail[0].driver.vehicleBrandName = (_f = aggregateVehicleDriver[0]) === null || _f === void 0 ? void 0 : _f.vehicleBrandName;
+            }
+        }
+        return rideHistoryDetail.length ? rideHistoryDetail[0] : {};
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getRideHistoryDetailByIdService = getRideHistoryDetailByIdService;
 // get Total Distance Service
 const getTotalDistanceService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {

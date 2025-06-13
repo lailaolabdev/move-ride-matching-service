@@ -4,6 +4,7 @@ import axios from 'axios'
 import { roundCoord } from "../controllers/callTaxi/helper";
 import { Types } from "mongoose";
 import { destination } from "@turf/turf";
+import vehicleDriverModel from "../models/vehicleDriver";
 
 export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
     try {
@@ -393,8 +394,6 @@ export const getRideHistoryDetailByIdService = async (req: Request): Promise<any
                     "driver.profileImage": 1,
                     "driver.fullName": 1,
                     "driver.licensePlate": 1,
-                    "driver.vehicleModel": 1,
-                    "driver.vehicleBrand": 1,
                     passengerComplain: 1
                 }
             }
@@ -402,6 +401,76 @@ export const getRideHistoryDetailByIdService = async (req: Request): Promise<any
 
         if (rideHistoryDetail.length && !rideHistoryDetail[0]?.point) {
             rideHistoryDetail[0].point = 0
+        }
+
+        if (rideHistoryDetail.length) {
+            const aggregateVehicleDriver = await vehicleDriverModel.aggregate([
+                {
+                    $match: {
+                        driver: rideHistoryDetail[0]?.driver?._id.toString()
+                    },
+                },
+                {
+                    $addFields: {
+                        vehicleModelObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                                then: { $toObjectId: "$vehicleModel" },
+                                else: "$vehicleModel"
+                            }
+                        },
+                        vehicleBrandObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                                then: { $toObjectId: "$vehicleBrand" },
+                                else: "$vehicleBrand"
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclemodels',
+                        localField: 'vehicleModelObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleModel'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleModel',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'vehiclebrands',
+                        localField: 'vehicleBrandObjectId',
+                        foreignField: '_id',
+                        as: 'vehicleBrand'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$vehicleBrand',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        licensePlate: 1,
+                        vehicleModelName: '$vehicleModel.name',
+                        vehicleBrandName: '$vehicleBrand.name'
+                    }
+                }
+            ]);
+
+            if (aggregateVehicleDriver.length) {
+                rideHistoryDetail[0].driver.licensePlate = aggregateVehicleDriver[0]?.licensePlate
+                rideHistoryDetail[0].driver.vehicleModelName = aggregateVehicleDriver[0]?.vehicleModelName
+                rideHistoryDetail[0].driver.vehicleBrandName = aggregateVehicleDriver[0]?.vehicleBrandName
+            }
         }
 
         return rideHistoryDetail.length ? rideHistoryDetail[0] : {}
@@ -613,7 +682,6 @@ export const travelHistoryService = async (req: Request): Promise<any> => {
 export const cancelTravelHistoryService = async (req: Request): Promise<any> => {
     try {
         const passengerId = req.params.id
-
 
         let cancelHistory = await CallTaxi.aggregate([
             { $match: { passengerId: passengerId, status: "Canceled" } },
