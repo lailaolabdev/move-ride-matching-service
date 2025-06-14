@@ -355,7 +355,8 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           STATUS.DRIVER_RECEIVED,
           STATUS.DRIVER_ARRIVED,
           STATUS.PICKED_UP,
-          STATUS.DEPARTURE
+          STATUS.DEPARTURE,
+          STATUS.SEND_SUCCESS
         ]
       }
     }
@@ -709,10 +710,10 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     // Accepted means driver is going to pick passenger
     if (status && status === STATUS.CANCELED) {
       if (
-        callTaxi.status !== STATUS.REQUESTING &&
-        callTaxi.status !== STATUS.DRIVER_RECEIVED &&
-        callTaxi.status !== STATUS.DRIVER_ARRIVED &&
-        callTaxi.status !== STATUS.PICKED_UP
+        callTaxi.status === STATUS.DEPARTURE &&
+        callTaxi.status === STATUS.SEND_SUCCESS &&
+        callTaxi.status === STATUS.PAID &&
+        callTaxi.status === STATUS.TIMEOUT
       ) {
         res.status(400).json({
           code: messages.BAD_REQUEST.code,
@@ -722,6 +723,18 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
         return;
       } else {
+        const isValidStatus = Object.values(STATUS).includes(status);
+
+        if (!isValidStatus) {
+          res.status(400).json({
+            code: messages.BAD_REQUEST.code,
+            messages: messages.BAD_REQUEST.message,
+            detail: "Cancel status is incorrect",
+          });
+
+          return;
+        }
+
         // if status is match update order status to canceled
         const updated: any = await updateCallTaxiService(req);
 

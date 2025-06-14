@@ -278,7 +278,8 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     callTaxi_2.STATUS.DRIVER_RECEIVED,
                     callTaxi_2.STATUS.DRIVER_ARRIVED,
                     callTaxi_2.STATUS.PICKED_UP,
-                    callTaxi_2.STATUS.DEPARTURE
+                    callTaxi_2.STATUS.DEPARTURE,
+                    callTaxi_2.STATUS.SEND_SUCCESS
                 ]
             }
         };
@@ -597,10 +598,10 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         // Requesting means while passenger is calling for an order 
         // Accepted means driver is going to pick passenger
         if (status && status === callTaxi_2.STATUS.CANCELED) {
-            if (callTaxi.status !== callTaxi_2.STATUS.REQUESTING &&
-                callTaxi.status !== callTaxi_2.STATUS.DRIVER_RECEIVED &&
-                callTaxi.status !== callTaxi_2.STATUS.DRIVER_ARRIVED &&
-                callTaxi.status !== callTaxi_2.STATUS.PICKED_UP) {
+            if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE &&
+                callTaxi.status === callTaxi_2.STATUS.SEND_SUCCESS &&
+                callTaxi.status === callTaxi_2.STATUS.PAID &&
+                callTaxi.status === callTaxi_2.STATUS.TIMEOUT) {
                 res.status(400).json({
                     code: config_1.messages.BAD_REQUEST.code,
                     messages: config_1.messages.BAD_REQUEST.message,
@@ -609,6 +610,15 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                 return;
             }
             else {
+                const isValidStatus = Object.values(callTaxi_2.STATUS).includes(status);
+                if (!isValidStatus) {
+                    res.status(400).json({
+                        code: config_1.messages.BAD_REQUEST.code,
+                        messages: config_1.messages.BAD_REQUEST.message,
+                        detail: "Cancel status is incorrect",
+                    });
+                    return;
+                }
                 // if status is match update order status to canceled
                 const updated = yield (0, callTaxi_1.updateCallTaxiService)(req);
                 if (updated) {
