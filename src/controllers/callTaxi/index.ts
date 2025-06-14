@@ -16,6 +16,9 @@ import {
   getRideHistoryDetailByIdService,
   getCallTaxisService,
   getDriverRideHistoryDetailByIdService,
+  getTotalDistanceService,
+  getTheLastRideService,
+  getNumberOfCallingTaxiService,
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -1021,3 +1024,40 @@ export const callTaxiTotalPrice = async (req: Request, res: Response) => {
     });
   }
 };
+
+// Report passenger in passenger management page
+// All calling taxis
+// Summary distance in KM
+// Get the last calling
+export const reportPassenger = async (req: Request, res: Response) => {
+  try {
+    const passengerId = req.params.id
+    const { status } = req.query
+
+    const filter: any = {
+      passengerId,
+    }
+
+    if (status) filter.status = status
+
+    const numberOfCallingTaxi = await getNumberOfCallingTaxiService(filter)
+    const totalDistance = await getTotalDistanceService(filter)
+    const getTheLastRide = await getTheLastRideService(filter)
+
+    res.json({
+      ...messages.SUCCESSFULLY,
+      reportPassenger: {
+        numberOfCallingTaxi,
+        totalDistance,
+        getTheLastRide
+      }
+    })
+  } catch (error) {
+    console.error("Error fetching tax info:", error);
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+}

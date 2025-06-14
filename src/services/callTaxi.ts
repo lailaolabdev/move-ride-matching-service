@@ -584,3 +584,69 @@ export const callTaxiTotalPriceReportService = async (pipeline: any) => {
         throw error;
     }
 };
+
+// Report passenger service
+
+export const getNumberOfCallingTaxiService = async (filter: any): Promise<any> => {
+    try {
+        const totalTravel = await CallTaxi.aggregate([
+            { $match: filter },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalTravel: { $sum: 1 },
+                }
+            },
+            {
+                $project: {
+                    totalTravel: 1
+                }
+            }
+        ]);
+
+        return totalTravel.length ? totalTravel[0]?.totalTravel : 0
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+export const getTotalDistanceService = async (filter: any): Promise<any> => {
+    try {
+        const totalDistance = await CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalDistance: { $sum: "$totalDistance" }
+                }
+            },
+            {
+                $project: {
+                    totalDistance: 1
+                }
+            }
+        ]);
+
+        return totalDistance.length ? totalDistance[0]?.totalDistance : 0
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+export const getTheLastRideService = async (filter: any): Promise<any | null> => {
+    try {
+        const latestPaidRide = await CallTaxi.findOne(filter)
+            .sort({ createdAt: -1 }) // Sort by createdAt in descending order (latest first)
+            .limit(1)
+            .exec();
+
+        return latestPaidRide ? latestPaidRide.createdAt.toLocaleDateString("en-GB") : null
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
