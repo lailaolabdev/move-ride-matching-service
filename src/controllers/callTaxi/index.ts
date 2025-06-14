@@ -20,6 +20,7 @@ import {
   getTheLastRideService,
   getNumberOfCallingTaxiService,
   travelHistoryService,
+  getCommentAndRatingService,
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -1065,7 +1066,6 @@ export const reportPassenger = async (req: Request, res: Response) => {
 
 export const travelHistory = async (req: Request, res: Response) => {
   try {
-
     const passengerId = req.params.id
     const {
       page = "1",
@@ -1085,6 +1085,42 @@ export const travelHistory = async (req: Request, res: Response) => {
     if (status) filter.status = status
 
     const travelHistory = await travelHistoryService(skip, limitToNumber, filter)
+
+    res.json({
+      ...messages.SUCCESSFULLY,
+      travelHistory
+    })
+  } catch (error) {
+    console.error("Error fetching tax info:", error);
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+}
+
+export const getCommentAndRating = async (req: Request, res: Response) => {
+  try {
+    const passengerId = req.params.id
+    const {
+      page = "1",
+      limit = "10",
+      status
+    } = req.query
+
+    const pageToNumber = parseInt(page as string, 10)
+    const limitToNumber = parseInt(limit as string, 10)
+
+    const skip = (pageToNumber - 1) * limitToNumber;
+
+    const filter: any = {
+      passengerId,
+    }
+
+    if (status) filter.status = status
+
+    const travelHistory = await getCommentAndRatingService(skip, limitToNumber, filter)
 
     res.json({
       ...messages.SUCCESSFULLY,

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
+exports.getCommentAndRatingService = exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("../controllers/callTaxi/helper");
@@ -631,3 +631,49 @@ const travelHistoryService = (skip, limit, filter) => __awaiter(void 0, void 0, 
     }
 });
 exports.travelHistoryService = travelHistoryService;
+const getCommentAndRatingService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const commentAndRating = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$driverId"] } } }
+                    ],
+                    as: "driver"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    passengerComplain: 1,
+                    fullName: "$driver.fullName",
+                    profileImage: "$driver.profileImage",
+                    createdAt: 1,
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ]);
+        return commentAndRating;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getCommentAndRatingService = getCommentAndRatingService;

@@ -17,7 +17,8 @@ import {
   getRideHistoryDetailById,
   getDriverRideHistoryDetailById,
   reportPassenger,
-  travelHistory
+  travelHistory,
+  getCommentAndRating
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -141,6 +142,12 @@ router.get(
   "/passenger-travel-history/:id",
   checkAuthorizationMiddleware,
   travelHistory
+)
+
+router.get(
+  "/comment-and-rating/:id",
+  checkAuthorizationMiddleware,
+  getCommentAndRating
 )
 
 export default router;

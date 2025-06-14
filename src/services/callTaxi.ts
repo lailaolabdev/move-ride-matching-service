@@ -689,3 +689,53 @@ export const travelHistoryService = async (
         throw error;
     }
 };
+
+export const getCommentAndRatingService = async (
+    skip: number,
+    limit: number,
+    filter: any
+): Promise<any> => {
+    try {
+        const commentAndRating = await CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$driverId"] } } }
+                    ],
+                    as: "driver"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    passengerComplain: 1,
+                    fullName: "$driver.fullName",
+                    profileImage: "$driver.profileImage",
+                    createdAt: 1,
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ])
+
+        return commentAndRating
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+}
