@@ -42,10 +42,10 @@ exports.createFestivalPromotion = createFestivalPromotion;
 // READ ALL
 const getAllFestivalPromotions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, name, usingType, startDate, endDate, status } = req.query;
+        const { skip, limit, name, usingType, startDate, endDate, status, country } = req.query;
         const parsedSkip = parseInt(skip, 10) || 0;
         const parsedLimit = parseInt(limit, 10) || 10;
-        const filter = (0, helper_1.filterPromotion)(name, usingType, startDate, endDate, status);
+        const filter = (0, helper_1.filterPromotion)(name, usingType, startDate, endDate, status, country);
         const festivalPromotions = yield (0, festivalPromotion_1.getAllFestivalPromotionsService)(parsedSkip, parsedLimit, filter);
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,

@@ -46,7 +46,8 @@ export const getAllFestivalPromotions = async (req: Request, res: Response) => {
             usingType,
             startDate,
             endDate,
-            status
+            status,
+            country
         } = req.query;
 
         const parsedSkip = parseInt(skip as string, 10) || 0;
@@ -57,7 +58,8 @@ export const getAllFestivalPromotions = async (req: Request, res: Response) => {
             usingType,
             startDate,
             endDate,
-            status
+            status,
+            country
         );
 
         const festivalPromotions = await getAllFestivalPromotionsService(

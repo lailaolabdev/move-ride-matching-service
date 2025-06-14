@@ -3,7 +3,8 @@ export const filterPromotion = (
   usingType?: any,
   startDate?: any,
   endDate?: any,
-  status?: any
+  status?: any,
+  country?: any
 ) => {
   const filter: any = {}
 
@@ -19,6 +20,8 @@ export const filterPromotion = (
   }
 
   if (status !== undefined) filter.status = status === "true";
+
+  if (country) filter.country = country
 
   return filter
 } 
