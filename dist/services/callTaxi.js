@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalFlatFareService = exports.getTotalmeterService = exports.getTotaltravelTimeService = exports.cancelTravelHistoryService = exports.travelHistoryService = exports.getCommentAndRatingService = exports.updateChatCallTaxiService = exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
+exports.getTotalFlatFareService = exports.getTotalmeterService = exports.getTotaltravelTimeService = exports.cancelTravelHistoryService = exports.travelHistoryService = exports.getCommentAndRatingService = exports.updateChatCallTaxiService = exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("../controllers/callTaxi/helper");
@@ -432,6 +432,57 @@ const getRideHistoryDetailByIdService = (req) => __awaiter(void 0, void 0, void 
     }
 });
 exports.getRideHistoryDetailByIdService = getRideHistoryDetailByIdService;
+const getDriverRideHistoryDetailByIdService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const driverId = req.user.id;
+        const driverRideHistoryDetail = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: { driverId }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$passengerId"] }
+                            }
+                        }
+                    ],
+                    as: "passenger",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passenger",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    requestType: 1,
+                    totalDistance: 1,
+                    toTalDuration: 1,
+                    totalPrice: 1,
+                    driverComplain: 1,
+                    status: 1,
+                    createdAt: 1,
+                    "passenger._id": 1,
+                    "passenger.fullName": 1,
+                    "passenger.profileImage": 1,
+                }
+            }
+        ]);
+        return driverRideHistoryDetail;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getDriverRideHistoryDetailByIdService = getDriverRideHistoryDetailByIdService;
 // get Total Distance Service
 const getTotalDistanceService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -21,8 +21,12 @@ router.put("/passenger-complain/:id", middlewares_1.checkAuthorizationMiddleware
 router.get("/passenger-complain/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getPassengerComplainById);
 // get passenger total ride
 router.get("/total-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.gettotalRide);
+// using
 // get ride history detail by passenger id
 router.get("/ride-history-detail/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getRideHistoryDetailById);
+// using
+// get ride history detail by passenger id
+router.get("/driver/ride-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverRideHistoryDetailById);
 // get total distance ride
 router.get("/total-distance/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getTotalDistance);
 // get total distance ride

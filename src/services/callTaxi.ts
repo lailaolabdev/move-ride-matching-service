@@ -489,6 +489,58 @@ export const getRideHistoryDetailByIdService = async (req: Request): Promise<any
     }
 }
 
+export const getDriverRideHistoryDetailByIdService = async (req: Request): Promise<any> => {
+    try {
+        const driverId = (req as any).user.id;
+
+        const driverRideHistoryDetail = await CallTaxi.aggregate([
+            {
+                $match: { driverId }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$passengerId"] }
+                            }
+                        }
+                    ],
+                    as: "passenger",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passenger",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    requestType: 1,
+                    totalDistance: 1,
+                    toTalDuration: 1,
+                    totalPrice: 1,
+                    driverComplain: 1,
+                    status: 1,
+                    createdAt: 1,
+                    "passenger._id": 1,
+                    "passenger.fullName": 1,
+                    "passenger.profileImage": 1,
+                }
+            }
+        ]);
+
+        return driverRideHistoryDetail
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+}
+
 // get Total Distance Service
 export const getTotalDistanceService = async (req: Request): Promise<any> => {
     try {

@@ -25,6 +25,7 @@ import {
   sentDataToDriverSocket,
   getRideHistoryDetailByIdService,
   getCallTaxisService,
+  getDriverRideHistoryDetailByIdService,
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -961,6 +962,28 @@ export const getRideHistoryDetailById = async (req: Request, res: Response) => {
     });
   }
 }
+
+export const getDriverRideHistoryDetailById = async (req: Request, res: Response) => {
+  try {
+    const riderRideHistoryDetail = await getDriverRideHistoryDetailByIdService(req);
+
+    res.status(200).json({
+      code: messages.SUCCESSFULLY.code,
+      messages: messages.SUCCESSFULLY.message,
+      riderRideHistoryDetail
+    });
+  } catch (error) {
+    console.error("Error fetching total ride:", error);
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+}
+
+
+
 
 // report total totalDistance
 export const getTotalDistance = async (req: Request, res: Response) => {
