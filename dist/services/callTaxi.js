@@ -76,7 +76,16 @@ const getCallTaxisService = (req) => __awaiter(void 0, void 0, void 0, function*
         const passengerId = req.user.id;
         const callTaxi = yield callTaxi_1.CallTaxi.findOne({
             passengerId,
-            status: { $in: ["Requesting", "Accepted", "Driver_Arrived", "departure", "Success"] }
+            status: {
+                $in: [
+                    callTaxi_1.STATUS.REQUESTING,
+                    callTaxi_1.STATUS.DRIVER_RECEIVED,
+                    callTaxi_1.STATUS.DRIVER_ARRIVED,
+                    callTaxi_1.STATUS.PICKED_UP,
+                    callTaxi_1.STATUS.DEPARTURE,
+                    callTaxi_1.STATUS.SEND_SUCCESS
+                ]
+            }
         });
         return callTaxi ? callTaxi : null;
     }

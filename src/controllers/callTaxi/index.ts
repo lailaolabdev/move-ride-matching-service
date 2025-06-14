@@ -24,6 +24,7 @@ import {
   getPassengerComplainDriverByIdService,
   sentDataToDriverSocket,
   getRideHistoryDetailByIdService,
+  getCallTaxisService,
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -31,25 +32,24 @@ import { getDriver, getPassenger, pipeline } from "./helper";
 import taxiModel from "../../models/taxi";
 import { ratingModel } from "../../models/rating";
 import vehicleDriverModel from "../../models/vehicleDriver";
-import { redis } from "../../config/redis/redis";
 import { Types } from "mongoose";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
     const passengerId = (req as any).user.id;
 
-    // // If production deployed uncomment this
-    // const isCallTaxiExist = await getCallTaxisService(req)
+    // If production deployed uncomment this
+    const isCallTaxiExist = await getCallTaxisService(req)
 
-    // if (isCallTaxiExist) {
-    //     res.status(400).json({
-    //         code: messages.BAD_REQUEST.code,
-    //         message: messages.BAD_REQUEST.message,
-    //         detail: "A taxi request is already in progress"
-    //     });
+    if (isCallTaxiExist) {
+      res.status(400).json({
+        code: messages.BAD_REQUEST.code,
+        message: messages.BAD_REQUEST.message,
+        detail: "Yor are in a processing"
+      });
 
-    //     return
-    // }
+      return
+    }
 
     // Fetch user data
     const passenger = await getPassenger(req, res);
@@ -710,7 +710,9 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (status && status === STATUS.CANCELED) {
       if (
         callTaxi.status !== STATUS.REQUESTING &&
-        callTaxi.status !== STATUS.DRIVER_RECEIVED
+        callTaxi.status !== STATUS.DRIVER_RECEIVED &&
+        callTaxi.status !== STATUS.DRIVER_ARRIVED &&
+        callTaxi.status !== STATUS.PICKED_UP
       ) {
         res.status(400).json({
           code: messages.BAD_REQUEST.code,

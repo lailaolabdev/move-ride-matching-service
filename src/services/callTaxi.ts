@@ -95,7 +95,16 @@ export const getCallTaxisService = async (req: Request): Promise<ICallTaxi | nul
 
         const callTaxi = await CallTaxi.findOne({
             passengerId,
-            status: { $in: ["Requesting", "Accepted", "Driver_Arrived", "departure", "Success"] }
+            status: {
+                $in: [
+                    STATUS.REQUESTING,
+                    STATUS.DRIVER_RECEIVED,
+                    STATUS.DRIVER_ARRIVED,
+                    STATUS.PICKED_UP,
+                    STATUS.DEPARTURE,
+                    STATUS.SEND_SUCCESS
+                ]
+            }
         })
 
         return callTaxi ? callTaxi : null

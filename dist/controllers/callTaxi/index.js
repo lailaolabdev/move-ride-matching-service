@@ -26,16 +26,16 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
     var _a, _b;
     try {
         const passengerId = req.user.id;
-        // // If production deployed uncomment this
-        // const isCallTaxiExist = await getCallTaxisService(req)
-        // if (isCallTaxiExist) {
-        //     res.status(400).json({
-        //         code: messages.BAD_REQUEST.code,
-        //         message: messages.BAD_REQUEST.message,
-        //         detail: "A taxi request is already in progress"
-        //     });
-        //     return
-        // }
+        // If production deployed uncomment this
+        const isCallTaxiExist = yield (0, callTaxi_1.getCallTaxisService)(req);
+        if (isCallTaxiExist) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: config_1.messages.BAD_REQUEST.message,
+                detail: "Yor are in a processing"
+            });
+            return;
+        }
         // Fetch user data
         const passenger = yield (0, helper_1.getPassenger)(req, res);
         if (!passenger) {
@@ -275,7 +275,6 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
             status: {
                 $in: [
                     callTaxi_2.STATUS.REQUESTING,
-                    callTaxi_2.STATUS.NO_RECEIVED,
                     callTaxi_2.STATUS.DRIVER_RECEIVED,
                     callTaxi_2.STATUS.DRIVER_ARRIVED,
                     callTaxi_2.STATUS.PICKED_UP,
@@ -599,7 +598,9 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         // Accepted means driver is going to pick passenger
         if (status && status === callTaxi_2.STATUS.CANCELED) {
             if (callTaxi.status !== callTaxi_2.STATUS.REQUESTING &&
-                callTaxi.status !== callTaxi_2.STATUS.DRIVER_RECEIVED) {
+                callTaxi.status !== callTaxi_2.STATUS.DRIVER_RECEIVED &&
+                callTaxi.status !== callTaxi_2.STATUS.DRIVER_ARRIVED &&
+                callTaxi.status !== callTaxi_2.STATUS.PICKED_UP) {
                 res.status(400).json({
                     code: config_1.messages.BAD_REQUEST.code,
                     messages: config_1.messages.BAD_REQUEST.message,
