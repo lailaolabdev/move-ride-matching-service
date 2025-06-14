@@ -18,7 +18,7 @@ export const filterPromotion = (
     };
   }
 
-  if (status) filter.status = status
+  if (status !== undefined) filter.status = status === "true";
 
   return filter
 } 

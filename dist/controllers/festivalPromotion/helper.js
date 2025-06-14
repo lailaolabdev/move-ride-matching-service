@@ -13,8 +13,8 @@ const filterPromotion = (name, usingType, startDate, endDate, status) => {
             $lte: new Date(endDate),
         };
     }
-    if (status)
-        filter.status = status;
+    if (status !== undefined)
+        filter.status = status === "true";
     return filter;
 };
 exports.filterPromotion = filterPromotion;

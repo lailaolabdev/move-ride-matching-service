@@ -57,7 +57,7 @@ export const getAllPointPromotions = async (req: Request, res: Response) => {
         if (name) filter.name = { $regex: name, $options: "i" };
         if (type) filter.type = type;
         if (country) filter.country = country;
-        if (status !== undefined) filter.status = status;
+        if (status !== undefined) filter.status = status === "true";
 
         const pointPromotions = await getAllPointPromotionsService(
             parsedSkip,

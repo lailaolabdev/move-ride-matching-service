@@ -55,7 +55,7 @@ const getAllPointPromotions = (req, res) => __awaiter(void 0, void 0, void 0, fu
         if (country)
             filter.country = country;
         if (status !== undefined)
-            filter.status = status;
+            filter.status = status === "true";
         const pointPromotions = yield (0, pointPromotion_1.getAllPointPromotionsService)(parsedSkip, parsedLimit, filter);
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,
