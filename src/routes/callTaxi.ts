@@ -7,7 +7,6 @@ import {
   updateCallTaxis,
   gettotalRide,
   getRideHistory,
-  updateStartAndComment,
   callTaxiTotalPrice,
   createDriverComplain,
   createPassengerComplain,
@@ -126,12 +125,6 @@ router.get(
   "/total-price",
   checkAuthorizationMiddleware,
   callTaxiTotalPrice
-);
-
-router.put(
-  "/rating-comment/:id",
-  checkAuthorizationMiddleware,
-  updateStartAndComment
 );
 
 export default router;

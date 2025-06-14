@@ -8,7 +8,6 @@ import {
   driverUpdateStatusService,
   getTotalRideService,
   getHistoryRideService,
-  updateStarAndCommentService,
   callTaxiTotalPriceReportService,
   createDriverComplainPassengerService,
   createPassengerComplainDriverService,
@@ -998,11 +997,13 @@ export const getRideHistory = async (req: Request, res: Response) => {
 export const callTaxiTotalPrice = async (req: Request, res: Response) => {
   try {
     const { startDate, endDate } = req.query;
+
     // Create pipeline
     const pipeneMongo = pipeline({
       startDate: startDate ? new Date(startDate as string) : undefined,
       endDate: endDate ? new Date(endDate as string) : undefined,
     });
+
     // Call the  service function
     const totalPrice = await callTaxiTotalPriceReportService(pipeneMongo);
 
@@ -1013,36 +1014,6 @@ export const callTaxiTotalPrice = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error fetching tax info:", error);
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-export const updateStartAndComment = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  try {
-    const { id } = req.params;
-    const { rating, comment } = req.body;
-    if (rating > 5) {
-      return res.status(400).json({
-        code: messages.BAD_REQUEST.code,
-        messages: messages.BAD_GATEWAY.message,
-        detail:
-          "The rating must not exceed 5. Please provide a value between 1 and 5.",
-      });
-    }
-    await updateStarAndCommentService(id, rating, comment);
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-    });
-  } catch (error) {
-    console.error(error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
