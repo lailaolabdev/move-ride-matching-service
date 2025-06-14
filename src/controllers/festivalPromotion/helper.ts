@@ -2,7 +2,8 @@ export const filterPromotion = (
   name?: any,
   usingType?: any,
   startDate?: any,
-  endDate?: any
+  endDate?: any,
+  status?: any
 ) => {
   const filter: any = {}
 
@@ -16,6 +17,8 @@ export const filterPromotion = (
       $lte: new Date(endDate as string),
     };
   }
+
+  if (status) filter.status = status
 
   return filter
 } 

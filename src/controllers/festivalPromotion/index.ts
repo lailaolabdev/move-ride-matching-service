@@ -39,12 +39,26 @@ export const createFestivalPromotion = async (req: Request, res: Response) => {
 // READ ALL
 export const getAllFestivalPromotions = async (req: Request, res: Response) => {
     try {
-        const { skip, limit, name, usingType, startDate, endDate } = req.query;
+        const {
+            skip,
+            limit,
+            name,
+            usingType,
+            startDate,
+            endDate,
+            status
+        } = req.query;
 
         const parsedSkip = parseInt(skip as string, 10) || 0;
         const parsedLimit = parseInt(limit as string, 10) || 10;
 
-        const filter = filterPromotion(name, usingType, startDate, endDate);
+        const filter = filterPromotion(
+            name,
+            usingType,
+            startDate,
+            endDate,
+            status
+        );
 
         const festivalPromotions = await getAllFestivalPromotionsService(
             parsedSkip,

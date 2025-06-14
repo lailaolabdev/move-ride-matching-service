@@ -35,7 +35,7 @@ exports.createFestivalPromotionService = createFestivalPromotionService;
 // READ All Festival Promotions
 const getAllFestivalPromotionsService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const total = yield festivalPromotion_1.default.countDocuments();
+        const total = yield festivalPromotion_1.default.countDocuments(filter);
         const festivalPromotions = yield festivalPromotion_1.default
             .find(filter)
             .skip(skip)

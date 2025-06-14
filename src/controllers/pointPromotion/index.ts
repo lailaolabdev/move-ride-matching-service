@@ -41,7 +41,14 @@ export const createPointPromotion = async (req: Request, res: Response) => {
 // READ ALL
 export const getAllPointPromotions = async (req: Request, res: Response) => {
     try {
-        const { skip, limit, name, type, status, country } = req.query;
+        const {
+            skip,
+            limit,
+            name,
+            type,
+            status,
+            country
+        } = req.query;
 
         const parsedSkip = parseInt(skip as string, 10) || 0;
         const parsedLimit = parseInt(limit as string, 10) || 10;
@@ -50,9 +57,13 @@ export const getAllPointPromotions = async (req: Request, res: Response) => {
         if (name) filter.name = { $regex: name, $options: "i" };
         if (type) filter.type = type;
         if (country) filter.country = country;
-        if (status !== undefined) filter.status = status === "true";
+        if (status !== undefined) filter.status = status;
 
-        const pointPromotions = await getAllPointPromotionsService(parsedSkip, parsedLimit, filter);
+        const pointPromotions = await getAllPointPromotionsService(
+            parsedSkip,
+            parsedLimit,
+            filter
+        );
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,

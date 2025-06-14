@@ -37,12 +37,20 @@ export const createNewComerPromotion = async (req: Request, res: Response) => {
 // READ ALL
 export const getAllNewComerPromotions = async (req: Request, res: Response) => {
     try {
-        const { skip, limit, name, usingType, startDate, endDate } = req.query;
+        const {
+            skip,
+            limit,
+            name,
+            usingType,
+            startDate,
+            endDate,
+            status
+        } = req.query;
 
         const parsedSkip = parseInt(skip as string, 10) || 0;
         const parsedLimit = parseInt(limit as string, 10) || 10;
 
-        const filter = filterPromotion(name);
+        const filter = filterPromotion(name, status);
 
         const newComerPromotions = await getAllNewComerPromotionsService(
             parsedSkip,

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filterPromotion = void 0;
-const filterPromotion = (name, usingType, startDate, endDate) => {
+const filterPromotion = (name, usingType, startDate, endDate, status) => {
     const filter = {};
     if (name)
         filter.name = { $regex: name, $options: "i" };
@@ -13,6 +13,8 @@ const filterPromotion = (name, usingType, startDate, endDate) => {
             $lte: new Date(endDate),
         };
     }
+    if (status)
+        filter.status = status;
     return filter;
 };
 exports.filterPromotion = filterPromotion;

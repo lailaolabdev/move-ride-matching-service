@@ -40,10 +40,10 @@ exports.createNewComerPromotion = createNewComerPromotion;
 // READ ALL
 const getAllNewComerPromotions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, name, usingType, startDate, endDate } = req.query;
+        const { skip, limit, name, usingType, startDate, endDate, status } = req.query;
         const parsedSkip = parseInt(skip, 10) || 0;
         const parsedLimit = parseInt(limit, 10) || 10;
-        const filter = (0, helper_1.filterPromotion)(name);
+        const filter = (0, helper_1.filterPromotion)(name, status);
         const newComerPromotions = yield (0, newComerPromotion_1.getAllNewComerPromotionsService)(parsedSkip, parsedLimit, filter);
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,

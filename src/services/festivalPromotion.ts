@@ -40,7 +40,7 @@ export const getAllFestivalPromotionsService = async (
     filter: any
 ): Promise<any> => {
     try {
-        const total = await festivalPromotionModel.countDocuments();
+        const total = await festivalPromotionModel.countDocuments(filter);
         const festivalPromotions = await festivalPromotionModel
             .find(filter)
             .skip(skip)
