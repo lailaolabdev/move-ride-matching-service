@@ -1,5 +1,6 @@
 import { Request } from 'express'
 import { IRating, ratingModel } from '../models/rating'
+import { Types } from 'mongoose'
 
 // Create a new rating
 export const createRatingService = async (req: Request): Promise<IRating> => {
@@ -71,6 +72,42 @@ export const updateRatingService = async (req: Request): Promise<IRating | null>
 export const deleteRatingService = async (id: string): Promise<IRating | null> => {
   try {
     return await ratingModel.findByIdAndDelete(id)
+  } catch (error) {
+    console.log('Error deleting rating:', error)
+    throw error
+  }
+}
+
+export const getRatingWithInfoService = async (id: string) => {
+  try {
+    const driverInfo = await ratingModel.aggregate([
+      {
+        $match: {
+          userId: new Types.ObjectId(id)
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: '$user'
+      },
+      {
+        $project: {
+          _id: 1,
+          rating: 1,
+          fullName: "$user.fullName",
+          profileImage: "$user.profileImage",
+        }
+      }
+    ])
+
+    return driverInfo.length ? driverInfo[0] : {}
   } catch (error) {
     console.log('Error deleting rating:', error)
     throw error

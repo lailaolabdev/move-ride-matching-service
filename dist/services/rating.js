@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteRatingService = exports.updateRatingService = exports.getRatingByIdService = exports.getAllRatingsService = exports.createRatingService = void 0;
+exports.getRatingWithInfoService = exports.deleteRatingService = exports.updateRatingService = exports.getRatingByIdService = exports.getAllRatingsService = exports.createRatingService = void 0;
 const rating_1 = require("../models/rating");
+const mongoose_1 = require("mongoose");
 // Create a new rating
 const createRatingService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -79,3 +80,39 @@ const deleteRatingService = (id) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.deleteRatingService = deleteRatingService;
+const getRatingWithInfoService = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const driverInfo = yield rating_1.ratingModel.aggregate([
+            {
+                $match: {
+                    userId: new mongoose_1.Types.ObjectId(id)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $project: {
+                    _id: 1,
+                    rating: 1,
+                    fullName: "$user.fullName",
+                    profileImage: "$user.profileImage",
+                }
+            }
+        ]);
+        return driverInfo.length ? driverInfo[0] : {};
+    }
+    catch (error) {
+        console.log('Error deleting rating:', error);
+        throw error;
+    }
+});
+exports.getRatingWithInfoService = getRatingWithInfoService;

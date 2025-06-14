@@ -12,4 +12,5 @@ router.get('/', middlewares_1.checkAuthorizationMiddleware, rating_1.getAllRatin
 router.get('/:id', middlewares_1.checkAuthorizationMiddleware, rating_1.getRatingById);
 router.put('/:id', middlewares_1.checkAuthorizationMiddleware, rating_1.updateRating);
 router.delete('/:id', middlewares_1.checkAuthorizationMiddleware, rating_1.deleteRating);
+router.get('/:id/with-info', middlewares_1.checkAuthorizationMiddleware, rating_1.getRatingWithInfo);
 exports.default = router;
