@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStartAndComment = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
+exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -867,25 +867,30 @@ const callTaxiTotalPrice = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.callTaxiTotalPrice = callTaxiTotalPrice;
-const updateStartAndComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// Report passenger in passenger management page in admin dashboard
+// All calling taxis
+// Summary distance in KM
+// Get the last calling
+const reportPassenger = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        const { rating, comment } = req.body;
-        if (rating > 5) {
-            return res.status(400).json({
-                code: config_1.messages.BAD_REQUEST.code,
-                messages: config_1.messages.BAD_GATEWAY.message,
-                detail: "The rating must not exceed 5. Please provide a value between 1 and 5.",
-            });
-        }
-        yield (0, callTaxi_1.updateStarAndCommentService)(id, rating, comment);
-        res.status(200).json({
-            code: config_1.messages.SUCCESSFULLY.code,
-            messages: config_1.messages.SUCCESSFULLY.message,
-        });
+        const passengerId = req.params.id;
+        const { status } = req.query;
+        const filter = {
+            passengerId,
+        };
+        if (status)
+            filter.status = status;
+        const numberOfCallingTaxi = yield (0, callTaxi_1.getNumberOfCallingTaxiService)(filter);
+        const totalDistance = yield (0, callTaxi_1.getTotalDistanceService)(filter);
+        const getTheLastRide = yield (0, callTaxi_1.getTheLastRideService)(filter);
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { reportPassenger: {
+                numberOfCallingTaxi,
+                totalDistance,
+                getTheLastRide
+            } }));
     }
     catch (error) {
-        console.error(error);
+        console.error("Error fetching tax info:", error);
         res.status(500).json({
             code: config_1.messages.INTERNAL_SERVER_ERROR.code,
             message: config_1.messages.INTERNAL_SERVER_ERROR.message,
@@ -893,4 +898,29 @@ const updateStartAndComment = (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
 });
-exports.updateStartAndComment = updateStartAndComment;
+exports.reportPassenger = reportPassenger;
+const travelHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const passengerId = req.params.id;
+        const { page = "1", limit = "10", status } = req.query;
+        const pageToNumber = parseInt(page, 10);
+        const limitToNumber = parseInt(limit, 10);
+        const skip = (pageToNumber - 1) * limitToNumber;
+        const filter = {
+            passengerId,
+        };
+        if (status)
+            filter.status = status;
+        const travelHistory = yield (0, callTaxi_1.travelHistoryService)(skip, limitToNumber, filter);
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { travelHistory }));
+    }
+    catch (error) {
+        console.error("Error fetching tax info:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.travelHistory = travelHistory;

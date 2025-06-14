@@ -2,8 +2,7 @@ import { Request } from "express";
 import { ICallTaxi, CallTaxi, STATUS } from "../models/callTaxi";
 import axios from 'axios'
 import { roundCoord } from "../controllers/callTaxi/helper";
-import { Types } from "mongoose";
-import { destination } from "@turf/turf";
+import { Types } from "mongoose"
 import vehicleDriverModel from "../models/vehicleDriver";
 
 export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
@@ -586,7 +585,6 @@ export const callTaxiTotalPriceReportService = async (pipeline: any) => {
 };
 
 // Report passenger service
-
 export const getNumberOfCallingTaxiService = async (filter: any): Promise<any> => {
     try {
         const totalTravel = await CallTaxi.aggregate([
@@ -644,7 +642,48 @@ export const getTheLastRideService = async (filter: any): Promise<any | null> =>
             .limit(1)
             .exec();
 
-        return latestPaidRide ? latestPaidRide.createdAt.toLocaleDateString("en-GB") : null
+        return latestPaidRide ? latestPaidRide.createdAt : null
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+// get calling taxi in passenger detail in admin dashboard
+export const travelHistoryService = async (
+    skip: number,
+    limit: number,
+    filter: any
+): Promise<any> => {
+    try {
+        const total = await CallTaxi.countDocuments(filter)
+        const rideHistory = await CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $project: {
+                    originName: 1,
+                    destinationName: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1,
+                    driverComplain: 1,
+                    passengerComplain: 1
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+        ])
+
+        return {
+            total,
+            rideHistory: rideHistory.length ? rideHistory : []
+        }
     } catch (error) {
         console.log("Error creating Record: ", error);
         throw error;

@@ -36,5 +36,8 @@ router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthori
 // Driver update order processing status
 router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.driverUpdateStatus);
 router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.callTaxiTotalPrice);
-router.put("/rating-comment/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateStartAndComment);
+// Report in admin dashboard part
+// By passenger id
+router.get("/report-passenger/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.reportPassenger);
+router.get("/passenger-travel-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.travelHistory);
 exports.default = router;
