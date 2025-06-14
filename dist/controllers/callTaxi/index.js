@@ -278,6 +278,7 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     callTaxi_2.STATUS.NO_RECEIVED,
                     callTaxi_2.STATUS.DRIVER_RECEIVED,
                     callTaxi_2.STATUS.DRIVER_ARRIVED,
+                    callTaxi_2.STATUS.PICKED_UP,
                     callTaxi_2.STATUS.DEPARTURE
                 ]
             }

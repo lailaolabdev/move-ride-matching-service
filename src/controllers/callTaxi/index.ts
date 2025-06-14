@@ -352,9 +352,9 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
       status: {
         $in: [
           STATUS.REQUESTING,
-          STATUS.NO_RECEIVED,
           STATUS.DRIVER_RECEIVED,
           STATUS.DRIVER_ARRIVED,
+          STATUS.PICKED_UP,
           STATUS.DEPARTURE
         ]
       }
