@@ -6,17 +6,9 @@ import {
   getUserCallTaxis,
   updateCallTaxis,
   gettotalRide,
-  getTotalDistance,
-  getThelastRide,
   getRideHistory,
-  chatCallTaxi,
   updateStartAndComment,
-  getComentAndRating,
   callTaxiTotalPrice,
-  travelHistoryHistory,
-  cancelTravelHistoryHistory,
-  getTotalMeterTime,
-  getTotalFlatFareTime,
   createDriverComplain,
   createPassengerComplain,
   getPassengerComplainById,
@@ -103,23 +95,9 @@ router.get(
 
 // get total distance ride
 router.get(
-  "/total-distance/:id",
-  checkAuthorizationMiddleware,
-  getTotalDistance
-);
-
-// get total distance ride
-router.get(
   "/ride-history/:id",
   checkAuthorizationMiddleware,
   getRideHistory
-);
-
-// get total the last ride
-router.get(
-  "/last-ride/:id",
-  checkAuthorizationMiddleware,
-  getThelastRide
 );
 
 // Get all driver's order 
@@ -150,51 +128,10 @@ router.get(
   callTaxiTotalPrice
 );
 
-router.get(
-  "/comment-rating/:id",
-  checkAuthorizationMiddleware,
-  getComentAndRating
-);
-
 router.put(
   "/rating-comment/:id",
   checkAuthorizationMiddleware,
   updateStartAndComment
-);
-
-// update chat while processing order
-router.put(
-  "/chat-call-taxi/:id",
-  checkAuthorizationMiddleware,
-  chatCallTaxi
-);
-
-// get total travel history ride
-router.get(
-  "/travel-history/:id",
-  checkAuthorizationMiddleware,
-  travelHistoryHistory
-);
-
-// get total cancel travel history ride
-router.get(
-  "/cancel-history/:id",
-  checkAuthorizationMiddleware,
-  cancelTravelHistoryHistory
-);
-
-// get total  travel request type meter
-router.get(
-  "/total-meter/:id",
-  checkAuthorizationMiddleware,
-  getTotalMeterTime
-);
-
-// get total  travel request type flat fare
-router.get(
-  "/flat-fare/:id",
-  checkAuthorizationMiddleware,
-  getTotalFlatFareTime
 );
 
 export default router;

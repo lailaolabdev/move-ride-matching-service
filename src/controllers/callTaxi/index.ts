@@ -7,18 +7,9 @@ import {
   updateCallTaxiService,
   driverUpdateStatusService,
   getTotalRideService,
-  getTotalDistanceService,
-  getTheLastRideService,
   getHistoryRideService,
-  getCommentAndRatingService,
-  updateChatCallTaxiService,
   updateStarAndCommentService,
   callTaxiTotalPriceReportService,
-  travelHistoryService,
-  cancelTravelHistoryService,
-  getTotaltravelTimeService,
-  getTotalmeterService,
-  getTotalFlatFareService,
   createDriverComplainPassengerService,
   createPassengerComplainDriverService,
   getPassengerComplainDriverByIdService,
@@ -982,51 +973,6 @@ export const getDriverRideHistoryDetailById = async (req: Request, res: Response
   }
 }
 
-
-
-
-// report total totalDistance
-export const getTotalDistance = async (req: Request, res: Response) => {
-  try {
-    const totalDistance = await getTotalDistanceService(req);
-
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      ...totalDistance,
-    });
-  } catch (error) {
-    console.error("Error fetching total ride:", error);
-
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-// report total the last ride
-export const getThelastRide = async (req: Request, res: Response) => {
-  try {
-    const lastRide = await getTheLastRideService(req);
-
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      ...lastRide,
-    });
-  } catch (error) {
-    console.error("Error fetching total ride:", error);
-
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
 // report ride history
 export const getRideHistory = async (req: Request, res: Response) => {
   try {
@@ -1097,163 +1043,6 @@ export const updateStartAndComment = async (
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-export const chatCallTaxi = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    let { message } = req.body;
-
-    const chatId = (req as any).user.id;
-
-    const chatData = [
-      {
-        id: chatId,
-        message: message,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ];
-
-    const data = await updateChatCallTaxiService(id, chatData);
-    // const data=  await updateChatCallTaxiService(id, chat);
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      data: data,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-export const getComentAndRating = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const data = await getCommentAndRatingService(id);
-    // const data=  await updateChatCallTaxiService(id, chat);
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      data: data,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-// report ride history
-export const travelHistoryHistory = async (req: Request, res: Response) => {
-  try {
-    const travelHistory = await travelHistoryService(req);
-
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      travelHistory,
-    });
-  } catch (error) {
-    console.error("Error fetching total ride:", error);
-
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-export const cancelTravelHistoryHistory = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const travelHistory = await cancelTravelHistoryService(req);
-
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      travelHistory,
-    });
-  } catch (error) {
-    console.error("Error fetching total ride:", error);
-
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-// total travel time
-export const gettotalTravelTime = async (req: Request, res: Response) => {
-  try {
-    const totalTravelTime = await getTotaltravelTimeService(req);
-
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      ...totalTravelTime,
-    });
-  } catch (error) {
-    console.error("Error fetching total ride:", error);
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-// get total travel request type meter
-export const getTotalMeterTime = async (req: Request, res: Response) => {
-  try {
-    const totalMeterTime = await getTotalmeterService(req);
-
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      ...totalMeterTime,
-    });
-  } catch (error) {
-    console.error("Error fetching total ride:", error);
-    res.status(500).json({
-      code: messages.INTERNAL_SERVER_ERROR.code,
-      message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message,
-    });
-  }
-};
-
-// get total travel request type meter
-export const getTotalFlatFareTime = async (req: Request, res: Response) => {
-  try {
-    const totalFlatFare = await getTotalFlatFareService(req);
-    console.log(totalFlatFare);
-    res.status(200).json({
-      code: messages.SUCCESSFULLY.code,
-      messages: messages.SUCCESSFULLY.message,
-      ...totalFlatFare,
-    });
-  } catch (error) {
-    console.error("Error fetching total ride:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
