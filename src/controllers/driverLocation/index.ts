@@ -89,7 +89,7 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
     await createClaimMoney({
       token: token as string,
       driverId,
-      registrationSource: userData.registrationSource,
+      driverRegistrationSource: userData.registrationSource,
       taxDeducted: 10,
     })
 

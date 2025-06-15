@@ -89,7 +89,7 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
         yield (0, claimMoney_1.createClaimMoney)({
             token: token,
             driverId,
-            registrationSource: userData.registrationSource,
+            driverRegistrationSource: userData.registrationSource,
             taxDeducted: 10,
         });
         const match = userData === null || userData === void 0 ? void 0 : userData.taxiType.match(/ObjectId\('(.+?)'\)/);

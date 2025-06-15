@@ -4,7 +4,7 @@ export const createClaimMoney = async (data:
   {
     token: string
     driverId: string,
-    registrationSource: string,
+    driverRegistrationSource: string,
     taxDeducted: number,
   }) => {
   try {
@@ -12,7 +12,7 @@ export const createClaimMoney = async (data:
       `${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money`,
       {
         driverId: data.driverId,
-        registrationSource: data.registrationSource,
+        driverRegistrationSource: data.driverRegistrationSource,
         taxDeducted: data.taxDeducted,
 
       },
