@@ -19,14 +19,9 @@ router.put("/driver-complain/:id", middlewares_1.checkAuthorizationMiddleware, c
 router.put("/passenger-complain/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createPassengerComplain);
 // get passenger complain by passenger id
 router.get("/passenger-complain/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getPassengerComplainById);
-// get passenger total ride
-router.get("/total-ride/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.gettotalRide);
 // using
 // get ride history detail by passenger id
 router.get("/ride-history-detail/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getRideHistoryDetailById);
-// using
-// get ride history detail by passenger id
-router.get("/driver/ride-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverRideHistoryDetailById);
 // get total distance ride
 router.get("/ride-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getRideHistory);
 // Get all driver's order 
@@ -41,4 +36,8 @@ router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_
 router.get("/report-passenger/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.reportPassenger);
 router.get("/passenger-travel-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.travelHistory);
 router.get("/comment-and-rating/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getCommentAndRating);
+// Report in driver part
+// By driver id
+router.get("/driver/ride-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverRideHistoryDetailById);
+router.get('/driver/total-income', middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getTotalDriverIncome);
 exports.default = router;

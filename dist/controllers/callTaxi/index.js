@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
+exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -949,3 +949,20 @@ const getCommentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.getCommentAndRating = getCommentAndRating;
+// Report driver part
+const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const driverId = req.user.id;
+        const totalIncome = yield (0, callTaxi_1.getTotalDriverIncomeService)(driverId);
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { totalIncome }));
+    }
+    catch (error) {
+        console.error("Error fetching tax info:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getTotalDriverIncome = getTotalDriverIncome;

@@ -21,6 +21,7 @@ import {
   getNumberOfCallingTaxiService,
   travelHistoryService,
   getCommentAndRatingService,
+  getTotalDriverIncomeService,
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -1125,6 +1126,27 @@ export const getCommentAndRating = async (req: Request, res: Response) => {
     res.json({
       ...messages.SUCCESSFULLY,
       travelHistory
+    })
+  } catch (error) {
+    console.error("Error fetching tax info:", error);
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+}
+
+// Report driver part
+export const getTotalDriverIncome = async (req: Request, res: Response) => {
+  try {
+    const driverId = (req as any).user.id;
+
+    const totalIncome = await getTotalDriverIncomeService(driverId)
+
+    res.json({
+      ...messages.SUCCESSFULLY,
+      totalIncome
     })
   } catch (error) {
     console.error("Error fetching tax info:", error);

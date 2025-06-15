@@ -18,10 +18,12 @@ import {
   getDriverRideHistoryDetailById,
   reportPassenger,
   travelHistory,
-  getCommentAndRating
+  getCommentAndRating,
+  getTotalDriverIncome
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
+import { getTotalDriverIncomeService } from "../services/callTaxi";
 
 const router = express.Router();
 
@@ -72,27 +74,12 @@ router.get(
   getPassengerComplainById
 );
 
-// get passenger total ride
-router.get(
-  "/total-ride/:id",
-  checkAuthorizationMiddleware,
-  gettotalRide
-);
-
 // using
 // get ride history detail by passenger id
 router.get(
   "/ride-history-detail/:id",
   checkAuthorizationMiddleware,
   getRideHistoryDetailById
-);
-
-// using
-// get ride history detail by passenger id
-router.get(
-  "/driver/ride-history",
-  checkAuthorizationMiddleware,
-  getDriverRideHistoryDetailById
 );
 
 // get total distance ride
@@ -148,6 +135,20 @@ router.get(
   "/comment-and-rating/:id",
   checkAuthorizationMiddleware,
   getCommentAndRating
+)
+
+// Report in driver part
+// By driver id
+router.get(
+  "/driver/ride-history",
+  checkAuthorizationMiddleware,
+  getDriverRideHistoryDetailById
+);
+
+router.get(
+  '/driver/total-income',
+  checkAuthorizationMiddleware,
+  getTotalDriverIncome
 )
 
 export default router;

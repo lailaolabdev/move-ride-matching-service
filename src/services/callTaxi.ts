@@ -739,3 +739,31 @@ export const getCommentAndRatingService = async (
         throw error;
     }
 }
+
+// Report driver part
+export const getTotalDriverIncomeService = async (driverId: any): Promise<any> => {
+    try {
+        const totalIncome = await CallTaxi.aggregate([
+            {
+                $match: { driverId, status: "Paid" }
+            },
+            {
+                $group: {
+                    _id: null, // or "$driverId" if you want to group by driver
+                    totalIncome: { $sum: "$totalPrice" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalIncome: 1
+                }
+            }
+        ])
+
+        return totalIncome.length ? totalIncome[0].totalIncome : 0
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+}
