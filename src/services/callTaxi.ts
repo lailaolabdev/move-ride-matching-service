@@ -522,7 +522,7 @@ export const getDriverRideHistoryDetailByIdService = async (req: Request): Promi
                     _id: 1,
                     requestType: 1,
                     totalDistance: 1,
-                    toTalDuration: 1,
+                    totalDuration: 1,
                     totalPrice: 1,
                     driverComplain: 1,
                     status: 1,

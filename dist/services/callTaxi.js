@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStarAndCommentService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
+exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("../controllers/callTaxi/helper");
@@ -464,7 +464,7 @@ const getDriverRideHistoryDetailByIdService = (req) => __awaiter(void 0, void 0,
                     _id: 1,
                     requestType: 1,
                     totalDistance: 1,
-                    toTalDuration: 1,
+                    totalDuration: 1,
                     totalPrice: 1,
                     driverComplain: 1,
                     status: 1,
@@ -527,18 +527,3 @@ const callTaxiTotalPriceReportService = (pipeline) => __awaiter(void 0, void 0, 
     }
 });
 exports.callTaxiTotalPriceReportService = callTaxiTotalPriceReportService;
-const updateStarAndCommentService = (id, rating, comment) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const date = {
-            rating: rating,
-            comment: comment,
-        };
-        const starDate = yield callTaxi_1.CallTaxi.findOneAndUpdate({ _id: id }, date, { new: true });
-        return starDate;
-    }
-    catch (error) {
-        console.log("Error creating Record: ", error);
-        return null;
-    }
-});
-exports.updateStarAndCommentService = updateStarAndCommentService;

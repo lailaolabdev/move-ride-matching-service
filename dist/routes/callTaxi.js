@@ -36,5 +36,4 @@ router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthori
 // Driver update order processing status
 router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.driverUpdateStatus);
 router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.callTaxiTotalPrice);
-router.put("/rating-comment/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateStartAndComment);
 exports.default = router;
