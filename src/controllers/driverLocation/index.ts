@@ -86,7 +86,12 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
     }
 
     // step 4: Create claiming money
-    await createClaimMoney(token as string)
+    await createClaimMoney({
+      token: token as string,
+      driverId,
+      registrationSource: userData.registrationSource,
+      taxDeducted: 10,
+    })
 
     const match = userData?.taxiType.match(/ObjectId\('(.+?)'\)/);
 

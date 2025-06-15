@@ -14,11 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createClaimMoney = void 0;
 const axios_1 = __importDefault(require("axios"));
-const createClaimMoney = (token) => __awaiter(void 0, void 0, void 0, function* () {
+const createClaimMoney = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield axios_1.default.post(`${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money`, {}, {
+        yield axios_1.default.post(`${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money`, {
+            driverId: data.driverId,
+            registrationSource: data.registrationSource,
+            taxDeducted: data.taxDeducted,
+        }, {
             headers: {
-                Authorization: token,
+                Authorization: data.token,
             },
         });
     }

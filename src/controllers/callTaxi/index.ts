@@ -719,51 +719,45 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
         });
 
         return;
-      } else {
-        const isValidStatus = Object.values(STATUS).includes(status);
-
-        if (!isValidStatus) {
-          res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            messages: messages.BAD_REQUEST.message,
-            detail: "Cancel status is incorrect",
-          });
-
-          return;
-        }
-
-        // if status is match update order status to canceled
-        const updated: any = await updateCallTaxiService(req);
-
-        if (updated) {
-          await axios.post(
-            `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
-            callTaxi,
-            {
-              headers: {
-                Authorization: req.headers['authorization']
-              }
-            }
-          );
-
-          res.status(200).json({
-            code: messages.SUCCESSFULLY.code,
-            messages: messages.SUCCESSFULLY.message,
-            data: updated,
-          });
-
-          return;
-        }
       }
     }
 
-    const updated = await updateCallTaxiService(req);
+    const isValidStatus = Object.values(STATUS).includes(status);
+
+    if (!isValidStatus) {
+      res.status(400).json({
+        code: messages.BAD_REQUEST.code,
+        messages: messages.BAD_REQUEST.message,
+        detail: "Cancel status is incorrect",
+      });
+
+      return;
+    }
+
+
+    const updated: any = await updateCallTaxiService(req);
+
+    console.log(updated);
+
+    // if status is canceled notify to driver
+    if (updated && updated.status === STATUS.CANCELED) {
+      await axios.post(
+        `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
+        callTaxi,
+        {
+          headers: {
+            Authorization: req.headers['authorization']
+          }
+        }
+      );
+    }
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
       data: updated,
     });
+
   } catch (error) {
     console.error("Error fetching tax info:", error);
 

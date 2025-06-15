@@ -86,7 +86,12 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             }
         }
         // step 4: Create claiming money
-        yield (0, claimMoney_1.createClaimMoney)(token);
+        yield (0, claimMoney_1.createClaimMoney)({
+            token: token,
+            driverId,
+            registrationSource: userData.registrationSource,
+            taxDeducted: 10,
+        });
         const match = userData === null || userData === void 0 ? void 0 : userData.taxiType.match(/ObjectId\('(.+?)'\)/);
         const taxiTypeId = match ? match[1] : null;
         // step 5: Update driver location from socket
