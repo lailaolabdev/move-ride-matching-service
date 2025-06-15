@@ -2,8 +2,7 @@ import { Request } from "express";
 import { ICallTaxi, CallTaxi, STATUS } from "../models/callTaxi";
 import axios from 'axios'
 import { roundCoord } from "../controllers/callTaxi/helper";
-import { Types } from "mongoose";
-import { destination } from "@turf/turf";
+import { Types } from "mongoose"
 import vehicleDriverModel from "../models/vehicleDriver";
 
 export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
@@ -584,3 +583,159 @@ export const callTaxiTotalPriceReportService = async (pipeline: any) => {
         throw error;
     }
 };
+
+// Report passenger service
+export const getNumberOfCallingTaxiService = async (filter: any): Promise<any> => {
+    try {
+        const totalTravel = await CallTaxi.aggregate([
+            { $match: filter },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalTravel: { $sum: 1 },
+                }
+            },
+            {
+                $project: {
+                    totalTravel: 1
+                }
+            }
+        ]);
+
+        return totalTravel.length ? totalTravel[0]?.totalTravel : 0
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+export const getTotalDistanceService = async (filter: any): Promise<any> => {
+    try {
+        const totalDistance = await CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalDistance: { $sum: "$totalDistance" }
+                }
+            },
+            {
+                $project: {
+                    totalDistance: 1
+                }
+            }
+        ]);
+
+        return totalDistance.length ? totalDistance[0]?.totalDistance : 0
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+export const getTheLastRideService = async (filter: any): Promise<any | null> => {
+    try {
+        const latestPaidRide = await CallTaxi.findOne(filter)
+            .sort({ createdAt: -1 }) // Sort by createdAt in descending order (latest first)
+            .limit(1)
+            .exec();
+
+        return latestPaidRide ? latestPaidRide.createdAt : null
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+// get calling taxi in passenger detail in admin dashboard
+export const travelHistoryService = async (
+    skip: number,
+    limit: number,
+    filter: any
+): Promise<any> => {
+    try {
+        const total = await CallTaxi.countDocuments(filter)
+        const rideHistory = await CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $project: {
+                    originName: 1,
+                    destinationName: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1,
+                    driverComplain: 1,
+                    passengerComplain: 1
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+        ])
+
+        return {
+            total,
+            rideHistory: rideHistory.length ? rideHistory : []
+        }
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+};
+
+export const getCommentAndRatingService = async (
+    skip: number,
+    limit: number,
+    filter: any
+): Promise<any> => {
+    try {
+        const commentAndRating = await CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$driverId"] } } }
+                    ],
+                    as: "driver"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    passengerComplain: 1,
+                    fullName: "$driver.fullName",
+                    profileImage: "$driver.profileImage",
+                    createdAt: 1,
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ])
+
+        return commentAndRating
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+}

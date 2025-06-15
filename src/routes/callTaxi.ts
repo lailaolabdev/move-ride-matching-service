@@ -15,7 +15,10 @@ import {
   getCallTaxis,
   checkCallTaxiStatus,
   getRideHistoryDetailById,
-  getDriverRideHistoryDetailById
+  getDriverRideHistoryDetailById,
+  reportPassenger,
+  travelHistory,
+  getCommentAndRating
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -126,5 +129,25 @@ router.get(
   checkAuthorizationMiddleware,
   callTaxiTotalPrice
 );
+
+// Report in admin dashboard part
+// By passenger id
+router.get(
+  "/report-passenger/:id",
+  checkAuthorizationMiddleware,
+  reportPassenger
+)
+
+router.get(
+  "/passenger-travel-history/:id",
+  checkAuthorizationMiddleware,
+  travelHistory
+)
+
+router.get(
+  "/comment-and-rating/:id",
+  checkAuthorizationMiddleware,
+  getCommentAndRating
+)
 
 export default router;

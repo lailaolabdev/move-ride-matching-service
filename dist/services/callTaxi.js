@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getCommentAndRatingService = exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
@@ -527,3 +528,153 @@ const callTaxiTotalPriceReportService = (pipeline) => __awaiter(void 0, void 0, 
     }
 });
 exports.callTaxiTotalPriceReportService = callTaxiTotalPriceReportService;
+// Report passenger service
+const getNumberOfCallingTaxiService = (filter) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const totalTravel = yield callTaxi_1.CallTaxi.aggregate([
+            { $match: filter },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalTravel: { $sum: 1 },
+                }
+            },
+            {
+                $project: {
+                    totalTravel: 1
+                }
+            }
+        ]);
+        return totalTravel.length ? (_a = totalTravel[0]) === null || _a === void 0 ? void 0 : _a.totalTravel : 0;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getNumberOfCallingTaxiService = getNumberOfCallingTaxiService;
+const getTotalDistanceService = (filter) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const totalDistance = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $group: {
+                    _id: "$passengerId",
+                    totalDistance: { $sum: "$totalDistance" }
+                }
+            },
+            {
+                $project: {
+                    totalDistance: 1
+                }
+            }
+        ]);
+        return totalDistance.length ? (_a = totalDistance[0]) === null || _a === void 0 ? void 0 : _a.totalDistance : 0;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTotalDistanceService = getTotalDistanceService;
+const getTheLastRideService = (filter) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const latestPaidRide = yield callTaxi_1.CallTaxi.findOne(filter)
+            .sort({ createdAt: -1 }) // Sort by createdAt in descending order (latest first)
+            .limit(1)
+            .exec();
+        return latestPaidRide ? latestPaidRide.createdAt : null;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTheLastRideService = getTheLastRideService;
+// get calling taxi in passenger detail in admin dashboard
+const travelHistoryService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const total = yield callTaxi_1.CallTaxi.countDocuments(filter);
+        const rideHistory = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $project: {
+                    originName: 1,
+                    destinationName: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    createdAt: 1,
+                    driverComplain: 1,
+                    passengerComplain: 1
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+        ]);
+        return {
+            total,
+            rideHistory: rideHistory.length ? rideHistory : []
+        };
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.travelHistoryService = travelHistoryService;
+const getCommentAndRatingService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const commentAndRating = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$driverId"] } } }
+                    ],
+                    as: "driver"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    passengerComplain: 1,
+                    fullName: "$driver.fullName",
+                    profileImage: "$driver.profileImage",
+                    createdAt: 1,
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ]);
+        return commentAndRating;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getCommentAndRatingService = getCommentAndRatingService;
