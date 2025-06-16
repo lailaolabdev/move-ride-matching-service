@@ -620,7 +620,6 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             return;
         }
         const updated = yield (0, callTaxi_1.updateCallTaxiService)(req);
-        console.log(updated);
         // if status is canceled notify to driver
         if (updated && updated.status === callTaxi_2.STATUS.CANCELED) {
             yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, callTaxi, {

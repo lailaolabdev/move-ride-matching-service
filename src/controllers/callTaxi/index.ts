@@ -734,10 +734,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       return;
     }
 
-
     const updated: any = await updateCallTaxiService(req);
-
-    console.log(updated);
 
     // if status is canceled notify to driver
     if (updated && updated.status === STATUS.CANCELED) {

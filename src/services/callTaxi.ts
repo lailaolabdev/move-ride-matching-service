@@ -663,14 +663,20 @@ export const travelHistoryService = async (
             },
             {
                 $project: {
+                    origin: 1,
+                    destination: 1,
                     originName: 1,
                     destinationName: 1,
+                    totalDuration: 1,
                     totalDistance: 1,
                     totalPrice: 1,
                     createdAt: 1,
                     driverComplain: 1,
                     passengerComplain: 1
                 }
+            },
+            {
+                $sort: { createdAt: -1 }
             },
             {
                 $skip: skip

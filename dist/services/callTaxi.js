@@ -604,14 +604,20 @@ const travelHistoryService = (skip, limit, filter) => __awaiter(void 0, void 0, 
             },
             {
                 $project: {
+                    origin: 1,
+                    destination: 1,
                     originName: 1,
                     destinationName: 1,
+                    totalDuration: 1,
                     totalDistance: 1,
                     totalPrice: 1,
                     createdAt: 1,
                     driverComplain: 1,
                     passengerComplain: 1
                 }
+            },
+            {
+                $sort: { createdAt: -1 }
             },
             {
                 $skip: skip
