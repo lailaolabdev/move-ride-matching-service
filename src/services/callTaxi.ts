@@ -552,10 +552,17 @@ export const getHistoryRideService = async (req: Request): Promise<any> => {
                     origin: 1,
                     destinationName: 1,
                     destination: 1,
+                    totalDuration: 1,
+                    totalDistance: 1,
                     totalPrice: 1,
                     status: 1,
                     invoiceRequestStatus: 1,
                     createdAt: 1
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1
                 }
             }
         ])
