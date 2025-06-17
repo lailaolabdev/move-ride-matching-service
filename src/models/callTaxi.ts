@@ -193,22 +193,22 @@ const CallTaxiSchema: Schema = new Schema(
       type: String,
       required: true,
     },
-    country: {
-      type: String,
-      required: true,
-    },
-    countryCode: {
-      type: String,
-      required: true,
-    },
-    platform: {
-      type: String,
-      default: "TAXI",
-    },
-    currency: {
-      type: String,
-      require: true
-    }
+    // country: {
+    //   type: String,
+    //   required: true,
+    // },
+    // countryCode: {
+    //   type: String,
+    //   required: true,
+    // },
+    // platform: {
+    //   type: String,
+    //   default: "TAXI",
+    // },
+    // currency: {
+    //   type: String,
+    //   require: true
+    // }
   },
   {
     timestamps: true,

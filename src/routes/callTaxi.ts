@@ -33,6 +33,7 @@ router.post(
   createCallTaxi
 );
 
+// Admin also use this route for detail
 router.get("/:id", getCallTaxiById);
 
 router.get(

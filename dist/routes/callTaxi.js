@@ -9,6 +9,7 @@ const validateParamId_1 = require("../utils/validateParamId");
 const middlewares_1 = require("../middlewares");
 const router = express_1.default.Router();
 router.post("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createCallTaxi);
+// Admin also use this route for detail
 router.get("/:id", callTaxi_1.getCallTaxiById);
 router.get("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getCallTaxis);
 router.get("/check/status", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.checkCallTaxiStatus);
