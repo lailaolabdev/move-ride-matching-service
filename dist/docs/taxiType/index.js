@@ -9,9 +9,6 @@
  *         - name
  *         - icon
  *         - seats
- *         - minDistance
- *         - maxDistance
- *         - meterPrice
  *         - country
  *       properties:
  *         id:
@@ -26,18 +23,6 @@
  *         seats:
  *           type: number
  *           example: 4
- *         minDistance:
- *           type: number
- *           example: 0
- *         maxDistance:
- *           type: number
- *           example: 10
- *         meterPrice:
- *           type: number
- *           example: 25.5
- *         flatFarePrice:
- *           type: number
- *           example: 25.5
  *         country:
  *           type: string
  *           example: "LA"

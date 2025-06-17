@@ -1,16 +1,11 @@
 import taxiTypeModel from "../models/taxiType";
 import { ITaxiType } from "../models/taxiType";
-import taxiTypePricingModel from "../models/taxiTypePricing";
 
 // CREATE
 export const createTaxiTypeService = async ({
     name,
     icon,
     seats,
-    minDistance,
-    maxDistance,
-    meterPrice,
-    flatFarePrice,
     country,
     createdBy,
     createdByFullName
@@ -18,10 +13,6 @@ export const createTaxiTypeService = async ({
     name: string;
     icon: string;
     seats: number;
-    minDistance: number;
-    maxDistance: number;
-    meterPrice: number;
-    flatFarePrice: number;
     country: string;
     createdBy: string;
     createdByFullName: string;
@@ -37,17 +28,6 @@ export const createTaxiTypeService = async ({
         });
 
         const savedTaxiType = await taxiType.save();
-
-        const taxiTypePricing = new taxiTypePricingModel({
-            taxiTypeId: savedTaxiType._id,
-            minDistance,
-            maxDistance,
-            meterPrice,
-            flatFarePrice,
-            country
-        });
-
-        await taxiTypePricing.save();
 
         return savedTaxiType;
     } catch (error) {
@@ -94,10 +74,6 @@ export const updateTaxiTypeService = async ({
     name,
     icon,
     seats,
-    minDistance,
-    maxDistance,
-    meterPrice,
-    flatFarePrice,
     country,
     updatedBy,
     updatedByFullName,
@@ -106,10 +82,6 @@ export const updateTaxiTypeService = async ({
     name: string;
     icon: string;
     seats: number;
-    minDistance: number;
-    maxDistance: number;
-    meterPrice: number;
-    flatFarePrice: number;
     country: string;
     updatedBy: string;
     updatedByFullName: string;
@@ -123,10 +95,6 @@ export const updateTaxiTypeService = async ({
                         name,
                         icon,
                         seats,
-                        // minDistance,
-                        // maxDistance,
-                        // meterPrice,
-                        // flatFarePrice,
                         country,
                         updatedBy,
                         updatedByFullName,

@@ -16,15 +16,11 @@ const index_1 = require("../../config/index"); // Assuming you have a messages f
 const createTaxiType = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user; // Assuming user data is added to the request object (e.g., via authentication middleware)
-        const { name, icon, seats, minDistance, maxDistance, meterPrice, flatFarePrice, country } = req.body;
+        const { name, icon, seats, country } = req.body;
         const taxiType = yield (0, taxiType_1.createTaxiTypeService)({
             name,
             icon,
             seats,
-            minDistance,
-            maxDistance,
-            meterPrice,
-            flatFarePrice,
             country,
             createdBy: user.id,
             createdByFullName: user.fullName
@@ -112,10 +108,6 @@ const updateTaxiType = (req, res) => __awaiter(void 0, void 0, void 0, function*
             name,
             icon,
             seats,
-            minDistance,
-            maxDistance,
-            meterPrice,
-            flatFarePrice,
             country,
             updatedBy: user.id,
             updatedByFullName: user.fullName

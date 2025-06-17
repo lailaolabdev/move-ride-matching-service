@@ -17,10 +17,6 @@ export const createTaxiType = async (req: Request, res: Response) => {
             name,
             icon,
             seats,
-            minDistance,
-            maxDistance,
-            meterPrice,
-            flatFarePrice,
             country
         } = req.body;
 
@@ -28,10 +24,6 @@ export const createTaxiType = async (req: Request, res: Response) => {
             name,
             icon,
             seats,
-            minDistance,
-            maxDistance,
-            meterPrice,
-            flatFarePrice,
             country,
             createdBy: user.id,
             createdByFullName: user.fullName
@@ -139,10 +131,6 @@ export const updateTaxiType = async (req: Request, res: Response) => {
             name,
             icon,
             seats,
-            minDistance,
-            maxDistance,
-            meterPrice,
-            flatFarePrice,
             country,
             updatedBy: user.id,
             updatedByFullName: user.fullName
