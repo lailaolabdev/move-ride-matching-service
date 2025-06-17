@@ -17,17 +17,22 @@ const helper_1 = require("./helper");
 const createTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user;
-        const { taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, country } = req.body;
+        const { taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, 
+        // passengerMin,
+        // passengerMax,
+        // meteredFare,
+        // flatFare,
+        country } = req.body;
         const taxi = yield (0, taxi_1.createTaxiService)({
             taxiType,
             vehicleModel,
             vehicleModelName,
             vehicleBrand,
             vehicleBrandName,
-            passengerMin,
-            passengerMax,
-            meteredFare,
-            flatFare,
+            // passengerMin,
+            // passengerMax,
+            // meteredFare,
+            // flatFare,
             country,
             createdBy: user.id,
             createdByFullName: user.fullName
@@ -114,10 +119,10 @@ const updateTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             taxiType: req.body.taxiType,
             vehicleModel: req.body.vehicleModel,
             vehicleBrand: req.body.vehicleBrand,
-            passengerMin: req.body.passengerMin,
-            passengerMax: req.body.passengerMax,
-            meteredFare: req.body.meteredFare,
-            flatFare: req.body.flatFare,
+            // passengerMin: req.body.passengerMin,
+            // passengerMax: req.body.passengerMax,
+            // meteredFare: req.body.meteredFare,
+            // flatFare: req.body.flatFare,
             updatedBy: user.id,
             updatedByFullName: user.fullName
         });

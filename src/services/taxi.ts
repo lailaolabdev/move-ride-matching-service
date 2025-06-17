@@ -4,17 +4,29 @@ import { ITaxi } from '../models/taxi';
 
 // CREATE
 export const createTaxiService = async (
-    { taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, createdBy, createdByFullName, country }:
+    {
+        taxiType,
+        vehicleModel,
+        vehicleModelName,
+        vehicleBrand,
+        vehicleBrandName,
+        // passengerMin,
+        // passengerMax,
+        // meteredFare,
+        // flatFare,
+        createdBy,
+        createdByFullName,
+        country }:
         {
             taxiType: string;
             vehicleModel: string;
             vehicleModelName: string;
             vehicleBrand: string;
             vehicleBrandName: string;
-            passengerMin: number;
-            passengerMax: number;
-            meteredFare: number;
-            flatFare: number;
+            // passengerMin: number;
+            // passengerMax: number;
+            // meteredFare: number;
+            // flatFare: number;
             country: string;
             createdBy: string;
             createdByFullName: string;
@@ -26,10 +38,10 @@ export const createTaxiService = async (
             vehicleModelName,
             vehicleBrand,
             vehicleBrandName,
-            passengerMin,
-            passengerMax,
-            meteredFare,
-            flatFare,
+            // passengerMin,
+            // passengerMax,
+            // meteredFare,
+            // flatFare,
             country,
             createdBy,
             createdByFullName,
@@ -84,16 +96,18 @@ export const getTaxiByIdService = async (id: string): Promise<ITaxi | null> => {
 
 // UPDATE
 export const updateTaxiService = async (
-    { id, taxiType, vehicleModel, vehicleBrand, passengerMin, passengerMax, meteredFare, flatFare, updatedBy, updatedByFullName }:
+    { id, taxiType, vehicleModel, vehicleBrand,
+        // passengerMin, passengerMax, meteredFare, flatFare,
+        updatedBy, updatedByFullName }:
         {
             id: string;
             taxiType: string;
             vehicleModel?: string;
             vehicleBrand?: string;
-            passengerMin?: number;
-            passengerMax?: number;
-            meteredFare?: number;
-            flatFare?: number;
+            // passengerMin?: number;
+            // passengerMax?: number;
+            // meteredFare?: number;
+            // flatFare?: number;
             updatedBy: string;
             updatedByFullName: string;
         }): Promise<ITaxi | null> => {
@@ -105,10 +119,10 @@ export const updateTaxiService = async (
                     taxiType,
                     vehicleModel,
                     vehicleBrand,
-                    passengerMin,
-                    passengerMax,
-                    meteredFare,
-                    flatFare,
+                    // passengerMin,
+                    // passengerMax,
+                    // meteredFare,
+                    // flatFare,
                     updatedBy,
                     updatedAt: new Date(),
                     updatedByFullName

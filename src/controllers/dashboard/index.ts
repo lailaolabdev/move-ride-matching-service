@@ -67,8 +67,22 @@ export const summaryRevenueCallTaxi = async (req: Request, res: Response) => {
             code: messages.INTERNAL_SERVER_ERROR.code,
             message: messages.INTERNAL_SERVER_ERROR.message,
         });
+        return;
     }
 };
+
+export const summaryRideCallTaxi = async (req: Request, res: Response) => {
+    try {
+
+    } catch (error) {
+        console.log("error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+        });
+        return;
+    }
+}
 
 
 

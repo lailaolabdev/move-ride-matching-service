@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.scriptToUpdateCountry = exports.summaryRevenueCallTaxi = void 0;
+exports.scriptToUpdateCountry = exports.summaryRideCallTaxi = exports.summaryRevenueCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../models/callTaxi");
 const summaryRevenueCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -74,9 +74,23 @@ const summaryRevenueCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, f
             code: config_1.messages.INTERNAL_SERVER_ERROR.code,
             message: config_1.messages.INTERNAL_SERVER_ERROR.message,
         });
+        return;
     }
 });
 exports.summaryRevenueCallTaxi = summaryRevenueCallTaxi;
+const summaryRideCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+    }
+    catch (error) {
+        console.log("error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+        });
+        return;
+    }
+});
+exports.summaryRideCallTaxi = summaryRideCallTaxi;
 const scriptToUpdateCountry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const country = "67c6c076d9ba8fe6164eac43"; // Example country ID

@@ -7,7 +7,17 @@ import { filterTaxis } from './helper';
 export const createTaxi = async (req: Request, res: Response) => {
     try {
         const user = (req as any).user;
-        const { taxiType, vehicleModel, vehicleModelName, vehicleBrand, vehicleBrandName, passengerMin, passengerMax, meteredFare, flatFare, country } = req.body;
+        const {
+            taxiType,
+            vehicleModel,
+            vehicleModelName,
+            vehicleBrand,
+            vehicleBrandName,
+            // passengerMin,
+            // passengerMax,
+            // meteredFare,
+            // flatFare,
+            country } = req.body;
 
         const taxi = await createTaxiService({
             taxiType,
@@ -15,10 +25,10 @@ export const createTaxi = async (req: Request, res: Response) => {
             vehicleModelName,
             vehicleBrand,
             vehicleBrandName,
-            passengerMin,
-            passengerMax,
-            meteredFare,
-            flatFare,
+            // passengerMin,
+            // passengerMax,
+            // meteredFare,
+            // flatFare,
             country,
             createdBy: user.id,
             createdByFullName: user.fullName
@@ -106,10 +116,10 @@ export const updateTaxi = async (req: Request, res: Response) => {
             taxiType: req.body.taxiType,
             vehicleModel: req.body.vehicleModel,
             vehicleBrand: req.body.vehicleBrand,
-            passengerMin: req.body.passengerMin,
-            passengerMax: req.body.passengerMax,
-            meteredFare: req.body.meteredFare,
-            flatFare: req.body.flatFare,
+            // passengerMin: req.body.passengerMin,
+            // passengerMax: req.body.passengerMax,
+            // meteredFare: req.body.meteredFare,
+            // flatFare: req.body.flatFare,
             updatedBy: user.id,
             updatedByFullName: user.fullName
         });

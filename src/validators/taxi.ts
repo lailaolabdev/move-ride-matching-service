@@ -25,34 +25,34 @@ export const validateCreateTaxi = (req: Request, res: Response, next: NextFuncti
         });
         return;
     }
-    if (passengerMin === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: passengerMin'
-        });
-        return;
-    }
-    if (passengerMax === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: passengerMax'
-        });
-        return;
-    }
-    if (meteredFare === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: meteredFare'
-        });
-        return;
-    }
-    if (flatFare === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: flatFare'
-        });
-        return;
-    }
+    // if (passengerMin === undefined) {
+    //     res.status(400).json({
+    //         code: messages.BAD_REQUEST.code,
+    //         message: 'Missing required field: passengerMin'
+    //     });
+    //     return;
+    // }
+    // if (passengerMax === undefined) {
+    //     res.status(400).json({
+    //         code: messages.BAD_REQUEST.code,
+    //         message: 'Missing required field: passengerMax'
+    //     });
+    //     return;
+    // }
+    // if (meteredFare === undefined) {
+    //     res.status(400).json({
+    //         code: messages.BAD_REQUEST.code,
+    //         message: 'Missing required field: meteredFare'
+    //     });
+    //     return;
+    // }
+    // if (flatFare === undefined) {
+    //     res.status(400).json({
+    //         code: messages.BAD_REQUEST.code,
+    //         message: 'Missing required field: flatFare'
+    //     });
+    //     return;
+    // }
     if (country === undefined) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
