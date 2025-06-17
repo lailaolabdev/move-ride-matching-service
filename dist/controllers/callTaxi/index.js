@@ -22,6 +22,7 @@ const taxi_1 = __importDefault(require("../../models/taxi"));
 const rating_1 = require("../../models/rating");
 const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
 const mongoose_1 = require("mongoose");
+const calculation_1 = require("../calculation");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -661,7 +662,7 @@ exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { status } = req.body;
+        const { type, status, actualUsedTime } = req.body;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
             res.status(400).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Ride matching with id:${id} not found` }));
@@ -693,7 +694,25 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             });
             return;
         }
-        const updated = yield (0, callTaxi_1.updateCallTaxiService)(req);
+        // Update call taxi part
+        const updateData = {};
+        if (type)
+            updateData.type = type;
+        if (actualUsedTime)
+            updateData.actualUsedTime = actualUsedTime;
+        if (status) {
+            // If status is paid add calculatedPrice and driverRate to 
+            // calculate driver income
+            if (status === callTaxi_2.STATUS.PAID) {
+                const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
+                if (calculatedPrice && driverRate) {
+                    updateData.driverIncome = calculatedPrice;
+                    updateData.driverRate = driverRate;
+                }
+            }
+            updateData.status = status;
+        }
+        const updated = yield (0, callTaxi_1.updateCallTaxiService)({ id, updateData });
         // if status is canceled notify to driver
         if (updated && updated.status === callTaxi_2.STATUS.CANCELED) {
             yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, callTaxi, {

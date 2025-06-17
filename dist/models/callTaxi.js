@@ -135,6 +135,8 @@ const CallTaxiSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    driverIncome: Number,
+    driverRate: Number
     // country: {
     //   type: String,
     //   required: true,

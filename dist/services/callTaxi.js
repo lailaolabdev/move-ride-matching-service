@@ -227,17 +227,8 @@ const getDriverCallTaxisService = (req) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getDriverCallTaxisService = getDriverCallTaxisService;
-const updateCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+const updateCallTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, updateData }) {
     try {
-        const { id } = req.params;
-        const { type, status, actualUsedTime } = req.body;
-        const updateData = {};
-        if (type)
-            updateData.type = type;
-        if (status)
-            updateData.status = status;
-        if (actualUsedTime)
-            updateData.actualUsedTime = actualUsedTime;
         const updated = yield callTaxi_1.CallTaxi.findOneAndUpdate({ _id: id }, updateData, { new: true });
         return updated;
     }

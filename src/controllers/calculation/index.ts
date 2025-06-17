@@ -4,6 +4,7 @@ import { calculateDriverDistanceAndDurationService, calculateUserDistanceAndDura
 import { getOnPeakTimeService } from "../../services/onPeakTime";
 import { getTaxiPricingDistance } from "../../services/taxiTypePricing";
 import { driverRateModel } from "../../models/driverRate";
+import { Types } from "mongoose";
 
 export const calculateUserDistanceAndDuration = async (
     req: Request,
@@ -152,7 +153,7 @@ export const driverRateCal = async (callTaxi: any) => {
     try {
         // Fetch the driverRate based on the taxiType
         const driverRates = await driverRateModel.find({
-            taxiType: callTaxi.carTypeId, // Assuming carTypeId matches taxiType in driverRate
+            taxiType: new Types.ObjectId(callTaxi?.carTypeId) // Assuming carTypeId matches taxiType in driverRate
         });
 
         if (driverRates.length === 0) {
@@ -173,7 +174,7 @@ export const driverRateCal = async (callTaxi: any) => {
                 // Return the calculated price and the corresponding driver rate
                 return {
                     calculatedPrice,
-                    driverRate: rate,
+                    driverRate: rate?.percentage,
                 };
             }
         }
