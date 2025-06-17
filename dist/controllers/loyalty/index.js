@@ -43,7 +43,7 @@ const createLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.createLoyalty = createLoyalty;
 const getAllLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, country, countryCode, name } = req.query;
+        const { skip, limit, country, countryCode, name, startDate, endDate } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
         const filter = {};
@@ -53,6 +53,28 @@ const getAllLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             filter.countryCode = countryCode;
         if (name)
             filter.name = { $regex: name, $options: 'i' };
+        if (startDate || endDate) {
+            const createdAtFilter = {};
+            if (startDate) {
+                const startLao = new Date(startDate);
+                // Convert to UTC by subtracting 7 hours immediately
+                startLao.setHours(startLao.getHours() - 7);
+                startLao.setMinutes(0);
+                startLao.setSeconds(0);
+                startLao.setMilliseconds(0);
+                createdAtFilter.$gte = startLao;
+            }
+            if (endDate) {
+                const endLao = new Date(endDate);
+                // Convert to UTC by subtracting 7 hours immediately
+                endLao.setHours(endLao.getHours() - 7 + 23);
+                endLao.setMinutes(59);
+                endLao.setSeconds(59);
+                endLao.setMilliseconds(999);
+                createdAtFilter.$lte = endLao;
+            }
+            filter.createdAt = createdAtFilter;
+        }
         const loyalties = yield (0, loyalty_1.getAllLoyaltyService)(parseSkip, parsedLimit, filter);
         res.status(200).json(Object.assign({ code: config_1.messages.SUCCESSFULLY.code, message: "Loyalty fetched successfully" }, loyalties));
     }

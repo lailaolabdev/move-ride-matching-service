@@ -100,7 +100,9 @@ export const getAllLoyaltyClaim = async (req: Request, res: Response) => {
       limit = 10,
       status,
       country,
-      countryCode
+      countryCode,
+      startDate,
+      endDate
     } = req.query;
 
     const parseSkip = parseInt(skip as string, 10);
@@ -115,6 +117,31 @@ export const getAllLoyaltyClaim = async (req: Request, res: Response) => {
     if (status) filter.status = status
     if (country) filter.countryId = country
     if (countryCode) filter.countryCode = countryCode
+    if (startDate || endDate) {
+      const createdAtFilter: any = {};
+
+      if (startDate) {
+        const startLao = new Date(startDate as string);
+        // Convert to UTC by subtracting 7 hours immediately
+        startLao.setHours(startLao.getHours() - 7);
+        startLao.setMinutes(0);
+        startLao.setSeconds(0);
+        startLao.setMilliseconds(0);
+        createdAtFilter.$gte = startLao;
+      }
+
+      if (endDate) {
+        const endLao = new Date(endDate as string);
+        // Convert to UTC by subtracting 7 hours immediately
+        endLao.setHours(endLao.getHours() - 7 + 23);
+        endLao.setMinutes(59);
+        endLao.setSeconds(59);
+        endLao.setMilliseconds(999);
+        createdAtFilter.$lte = endLao;
+      }
+
+      filter.createdAt = createdAtFilter;
+    }
 
     const loyaltyClaim = await getAllLoyaltyClaimService(parseSkip, parsedLimit, filter);
 
