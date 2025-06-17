@@ -182,7 +182,7 @@ const CallTaxiSchema: Schema = new Schema(
     },
     isClaim: {
       type: Boolean,
-      require: false
+      default: false
     }
   },
   {

@@ -43,7 +43,7 @@ const createLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.createLoyalty = createLoyalty;
 const getAllLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, country, countryCode } = req.query;
+        const { skip, limit, country, countryCode, name } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
         const filter = {};
@@ -51,6 +51,8 @@ const getAllLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             filter.countryId = country;
         if (countryCode)
             filter.countryCode = countryCode;
+        if (name)
+            filter.name = { $regex: name, $options: 'i' };
         const loyalties = yield (0, loyalty_1.getAllLoyaltyService)(parseSkip, parsedLimit, filter);
         res.status(200).json(Object.assign({ code: config_1.messages.SUCCESSFULLY.code, message: "Loyalty fetched successfully" }, loyalties));
     }
