@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.messages = exports.deleteKeysByPattern = void 0;
+exports.driverRateCal = exports.messages = exports.deleteKeysByPattern = void 0;
 const redis_1 = require("./redis/redis");
 const deleteKeysByPattern = (pattern) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -122,3 +122,11 @@ exports.messages = {
         message: "already exist"
     },
 };
+const driverRateCal = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+    }
+    catch (error) {
+        console.log("error: ", error);
+    }
+});
+exports.driverRateCal = driverRateCal;

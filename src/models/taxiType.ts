@@ -17,10 +17,10 @@ const TaxiTypeSchema: Schema = new Schema({
         type: String,
         required: true
     },
-    seats: {
-        type: Number,
-        required: true
-    },
+    // seats: {
+    //     type: Number,
+    //     required: true
+    // },
     country: {
         type: String,
         required: true

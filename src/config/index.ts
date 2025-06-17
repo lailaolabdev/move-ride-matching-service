@@ -123,3 +123,12 @@ export interface IErrorResponse {
     message: string;
     detail?: string;
 }
+
+
+export const driverRateCal = async ()=> {
+    try {
+        
+    } catch (error) {
+        console.log("error: ", error)
+    }
+}
