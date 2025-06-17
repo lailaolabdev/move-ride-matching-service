@@ -87,15 +87,10 @@ export const calculateUserDistanceAndDuration = async (
                 delayPrice,
                 ...calculate,
                 actualCalculate: Math.ceil(
-                    (taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
-                    calculate.priceInPolygon +
-                    delayPrice * calculate.delayDuration
+                    taxiTypePricing[i].meterPrice * distance
                 ),
                 estimatedCalculate: Math.ceil(
-                    (taxiTypePricing[i].meterPrice + onPeakTimePrice) * distance +
-                    calculate.priceInPolygon +
-                    delayPrice * calculate.delayDuration +
-                    30
+                    taxiTypePricing[i].meterPrice * distance + 30
                 ),
             });
         }
