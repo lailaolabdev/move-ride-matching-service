@@ -85,7 +85,7 @@ const getAllLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const userId = req.user.id;
         const role = req.user.role;
-        const { skip = 0, limit = 10, status, country, countryCode } = req.query;
+        const { skip = 0, limit = 10, status, country, countryCode, startDate, endDate } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
         const filter = {};
@@ -99,6 +99,28 @@ const getAllLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
             filter.countryId = country;
         if (countryCode)
             filter.countryCode = countryCode;
+        if (startDate || endDate) {
+            const createdAtFilter = {};
+            if (startDate) {
+                const startLao = new Date(startDate);
+                // Convert to UTC by subtracting 7 hours immediately
+                startLao.setHours(startLao.getHours() - 7);
+                startLao.setMinutes(0);
+                startLao.setSeconds(0);
+                startLao.setMilliseconds(0);
+                createdAtFilter.$gte = startLao;
+            }
+            if (endDate) {
+                const endLao = new Date(endDate);
+                // Convert to UTC by subtracting 7 hours immediately
+                endLao.setHours(endLao.getHours() - 7 + 23);
+                endLao.setMinutes(59);
+                endLao.setSeconds(59);
+                endLao.setMilliseconds(999);
+                createdAtFilter.$lte = endLao;
+            }
+            filter.createdAt = createdAtFilter;
+        }
         const loyaltyClaim = yield (0, loyaltyClaim_1.getAllLoyaltyClaimService)(parseSkip, parsedLimit, filter);
         res.status(200).json(Object.assign({ code: config_1.messages.SUCCESSFULLY.code, message: "Loyalty claim fetched successfully" }, loyaltyClaim));
     }
