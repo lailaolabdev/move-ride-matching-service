@@ -24,6 +24,7 @@ import newComerPromotionRoute from "./routes/newComerPromotion";
 import pointPromotionRoute from "./routes/pointPromotion";
 import ratingRoute from "./routes/rating";
 import voiceCallRoute from './routes/voiceCall'
+import dashboardRoute from "./routes/dashboard"
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use("/api/v1/point-promotions", pointPromotionRoute);
 app.use("/api/v1/rating", ratingRoute);
 app.use("/api/v1/voice-call", voiceCallRoute);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/api/v1/dashboards", dashboardRoute);
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

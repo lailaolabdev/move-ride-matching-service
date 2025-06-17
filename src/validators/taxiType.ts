@@ -5,11 +5,11 @@ export const validateCreateTaxiType = (req: Request, res: Response, next: NextFu
     const {
         name,
         icon,
-        seats,
-        minDistance,
-        maxDistance,
-        meterPrice,
-        country
+        // seats,
+        // minDistance,
+        // maxDistance,
+        // meterPrice,
+        country 
     } = req.body;
 
     if (!name) {
@@ -28,37 +28,37 @@ export const validateCreateTaxiType = (req: Request, res: Response, next: NextFu
         return
     }
 
-    if (seats === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: seats'
-        });
-        return
-    }
+    // if (seats === undefined) {
+    //     res.status(400).json({
+    //         code: messages.BAD_REQUEST.code,
+    //         message: 'Missing required field: seats'
+    //     });
+    //     return
+    // }
 
-    if (minDistance === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: minDistance'
-        });
-        return
-    }
+    // if (minDistance === undefined) {
+    //     res.status(400).json({
+    //         code: messages.BAD_REQUEST.code,
+    //         message: 'Missing required field: minDistance'
+    //     });
+    //     return
+    // }
 
-    if (maxDistance === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: maxDistance'
-        });
-        return
-    }
+    // if (maxDistance === undefined) {
+    //     res.status(400).json({
+    //         code: messages.BAD_REQUEST.code,
+    //         message: 'Missing required field: maxDistance'
+    //     });
+    //     return
+    // }
 
-    if (meterPrice === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: meterPrice'
-        });
-        return
-    }
+    // if (meterPrice === undefined) {
+    //     res.status(400).json({
+    //         code: messages.BAD_REQUEST.code,
+    //         message: 'Missing required field: meterPrice'
+    //     });
+    //     return
+    // }
 
     if (!country) {
         res.status(400).json({

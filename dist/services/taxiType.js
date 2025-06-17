@@ -15,12 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTaxiDistance = exports.deleteTaxiTypeService = exports.updateTaxiTypeService = exports.getTaxiTypeByIdService = exports.getAllTaxiTypeService = exports.createTaxiTypeService = void 0;
 const taxiType_1 = __importDefault(require("../models/taxiType"));
 // CREATE
-const createTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, icon, seats, country, createdBy, createdByFullName }) {
+const createTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, icon, 
+// seats,
+country, createdBy, createdByFullName }) {
     try {
         const taxiType = new taxiType_1.default({
             name,
             icon,
-            seats,
+            // seats,
             country,
             createdBy,
             createdByFullName
