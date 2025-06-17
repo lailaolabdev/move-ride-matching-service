@@ -5,11 +5,7 @@ export interface ITaxiType extends Document {
     name: string,
     icon: string,
     seats: number,
-    minDistance: number
-    maxDistance: number
-    price: number
-    rideMatchingType: string
-    status: boolean
+    country: string,
 }
 
 const TaxiTypeSchema: Schema = new Schema({
@@ -24,22 +20,6 @@ const TaxiTypeSchema: Schema = new Schema({
     seats: {
         type: Number,
         required: true
-    },
-    minDistance: {
-        type: Number,
-        required: true
-    },
-    maxDistance: {
-        type: Number,
-        required: true
-    },
-    meterPrice: {
-        type: Number,
-        required: true
-    },
-    flatFarePrice: {
-        type: Number,
-        default: true
     },
     country: {
         type: String,

@@ -1,5 +1,6 @@
 import taxiTypeModel from "../models/taxiType";
 import { ITaxiType } from "../models/taxiType";
+import taxiTypePricingModel from "../models/taxiTypePricing";
 
 // CREATE
 export const createTaxiTypeService = async ({
@@ -30,16 +31,23 @@ export const createTaxiTypeService = async ({
             name,
             icon,
             seats,
-            minDistance,
-            maxDistance,
-            meterPrice,
-            flatFarePrice,
             country,
             createdBy,
             createdByFullName
         });
 
         const savedTaxiType = await taxiType.save();
+
+        const taxiTypePricing = new taxiTypePricingModel({
+            taxiTypeId: savedTaxiType._id,
+            minDistance,
+            maxDistance,
+            meterPrice,
+            flatFarePrice,
+            country
+        });
+
+        await taxiTypePricing.save();
 
         return savedTaxiType;
     } catch (error) {
@@ -115,10 +123,10 @@ export const updateTaxiTypeService = async ({
                         name,
                         icon,
                         seats,
-                        minDistance,
-                        maxDistance,
-                        meterPrice,
-                        flatFarePrice,
+                        // minDistance,
+                        // maxDistance,
+                        // meterPrice,
+                        // flatFarePrice,
                         country,
                         updatedBy,
                         updatedByFullName,

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTaxiDistance = exports.deleteTaxiTypeService = exports.updateTaxiTypeService = exports.getTaxiTypeByIdService = exports.getAllTaxiTypeService = exports.createTaxiTypeService = void 0;
 const taxiType_1 = __importDefault(require("../models/taxiType"));
+const taxiTypePricing_1 = __importDefault(require("../models/taxiTypePricing"));
 // CREATE
 const createTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, icon, seats, minDistance, maxDistance, meterPrice, flatFarePrice, country, createdBy, createdByFullName }) {
     try {
@@ -21,15 +22,20 @@ const createTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* 
             name,
             icon,
             seats,
-            minDistance,
-            maxDistance,
-            meterPrice,
-            flatFarePrice,
             country,
             createdBy,
             createdByFullName
         });
         const savedTaxiType = yield taxiType.save();
+        const taxiTypePricing = new taxiTypePricing_1.default({
+            taxiTypeId: savedTaxiType._id,
+            minDistance,
+            maxDistance,
+            meterPrice,
+            flatFarePrice,
+            country
+        });
+        yield taxiTypePricing.save();
         return savedTaxiType;
     }
     catch (error) {
@@ -72,10 +78,10 @@ const updateTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* 
                 name,
                 icon,
                 seats,
-                minDistance,
-                maxDistance,
-                meterPrice,
-                flatFarePrice,
+                // minDistance,
+                // maxDistance,
+                // meterPrice,
+                // flatFarePrice,
                 country,
                 updatedBy,
                 updatedByFullName,

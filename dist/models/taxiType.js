@@ -47,22 +47,6 @@ const TaxiTypeSchema = new mongoose_1.Schema({
         type: Number,
         required: true
     },
-    minDistance: {
-        type: Number,
-        required: true
-    },
-    maxDistance: {
-        type: Number,
-        required: true
-    },
-    meterPrice: {
-        type: Number,
-        required: true
-    },
-    flatFarePrice: {
-        type: Number,
-        default: true
-    },
     country: {
         type: String,
         required: true
