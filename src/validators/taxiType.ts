@@ -2,36 +2,62 @@ import { Request, Response, NextFunction } from 'express';
 import { messages } from '../config';
 
 export const validateCreateTaxiType = (req: Request, res: Response, next: NextFunction) => {
-    const { name, icon, price, seats, country } = req.body;
+    const {
+        name,
+        icon,
+        seats,
+        minDistance,
+        maxDistance,
+        meterPrice,
+        country
+    } = req.body;
+
     if (!name) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
             message: 'Missing required field: name'
         });
-        return;
+        return
     }
+
     if (!icon) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
             message: 'Missing required field: icon'
         });
-        return;
+        return
     }
 
-    if (!price) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: price'
-        });
-        return;
-    }
-
-    if (!seats) {
+    if (seats === undefined) {
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
             message: 'Missing required field: seats'
         });
-        return;
+        return
+    }
+
+    if (minDistance === undefined) {
+        res.status(400).json({
+            code: messages.BAD_REQUEST.code,
+            message: 'Missing required field: minDistance'
+        });
+        return
+    }
+
+    if (maxDistance === undefined) {
+        res.status(400).json({
+            code: messages.BAD_REQUEST.code,
+            message: 'Missing required field: maxDistance'
+        });
+        return
+    }
+
+    if (meterPrice === undefined) {
+        res.status(400).json({
+            code: messages.BAD_REQUEST.code,
+            message: 'Missing required field: meterPrice'
+        });
+        return
     }
 
     if (!country) {
@@ -39,7 +65,7 @@ export const validateCreateTaxiType = (req: Request, res: Response, next: NextFu
             code: messages.BAD_REQUEST.code,
             message: 'Missing required field: country'
         });
-        return;
+        return
     }
 
     next();

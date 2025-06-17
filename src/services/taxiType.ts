@@ -1,109 +1,132 @@
-import { deleteKeysByPattern } from '../config';
-import taxiTypeModel from '../models/taxiType';
-import { ITaxiType } from '../models/taxiType';
+import taxiTypeModel from "../models/taxiType";
+import { ITaxiType } from "../models/taxiType";
 
 // CREATE
-export const createTaxiTypeService = async (
-    {
-        name,
-        icon,
-        price,
-        seats,
-        createdBy,
-        country,
-        createdByFullName
-    }:
-        {
-            name: string,
-            icon: string,
-            price: number,
-            seats: number,
-            country: string,
-            createdBy: string,
-            createdByFullName: string
-        }): Promise<ITaxiType | null> => {
+export const createTaxiTypeService = async ({
+    name,
+    icon,
+    seats,
+    minDistance,
+    maxDistance,
+    meterPrice,
+    flatFarePrice,
+    country,
+    createdBy,
+    createdByFullName
+}: {
+    name: string;
+    icon: string;
+    seats: number;
+    minDistance: number;
+    maxDistance: number;
+    meterPrice: number;
+    flatFarePrice: number;
+    country: string;
+    createdBy: string;
+    createdByFullName: string;
+}): Promise<ITaxiType | null> => {
     try {
         const taxiType = new taxiTypeModel({
             name,
             icon,
-            price,
             seats,
+            minDistance,
+            maxDistance,
+            meterPrice,
+            flatFarePrice,
             country,
             createdBy,
-            createdByFullName,
+            createdByFullName
         });
 
-        if (taxiType) {
-            await deleteKeysByPattern('taxiTypes*'); // Invalidate the cache (if needed)
-        }
-
         const savedTaxiType = await taxiType.save();
+
         return savedTaxiType;
     } catch (error) {
-        console.log("Error creating taxi type: ", error);
         throw error;
     }
 };
 
 // READ (All Taxi Types)
-export const getAllTaxiTypesService = async (skip: number, limit: number): Promise<any> => {
+export const getAllTaxiTypeService = async (
+    skip: number,
+    limit: number,
+    filter: any
+): Promise<any> => {
     try {
-        const total = await taxiTypeModel.countDocuments();
-        const taxiTypes = await taxiTypeModel.find()
+        const total = await taxiTypeModel.countDocuments(filter);
+        const taxiType = await taxiTypeModel
+            .find(filter)
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
-        return { total, taxiTypes };
+
+        return { total, taxiType };
     } catch (error) {
-        console.log("Error retrieving taxi types: ", error);
         throw error;
     }
 };
 
 // READ (Taxi Type by ID)
-export const getTaxiTypeByIdService = async (id: string): Promise<ITaxiType | null> => {
+export const getTaxiTypeByIdService = async (
+    id: string
+): Promise<ITaxiType | null> => {
     try {
         const taxiType = await taxiTypeModel.findById(id);
+
         return taxiType;
     } catch (error) {
-        console.log("Error retrieving taxi type by ID: ", error);
         throw error;
     }
 };
 
 // UPDATE
-export const updateTaxiTypeService = async (
-    {
-        id,
-        name,
-        icon,
-        price,
-        updatedBy,
-        updatedByFullName
-    }:
-        {
-            id: string,
-            name?: string,
-            icon?: string,
-            price: number,
-            updatedBy: string,
-            updatedByFullName: string
-        }): Promise<ITaxiType | null> => {
+export const updateTaxiTypeService = async ({
+    id,
+    name,
+    icon,
+    seats,
+    minDistance,
+    maxDistance,
+    meterPrice,
+    flatFarePrice,
+    country,
+    updatedBy,
+    updatedByFullName,
+}: {
+    id: string;
+    name: string;
+    icon: string;
+    seats: number;
+    minDistance: number;
+    maxDistance: number;
+    meterPrice: number;
+    flatFarePrice: number;
+    country: string;
+    updatedBy: string;
+    updatedByFullName: string;
+}): Promise<ITaxiType | null> => {
     try {
-        const updatedTaxiType = await taxiTypeModel.findByIdAndUpdate(
-            id,
-            {
-                $set: {
-                    name,
-                    icon,
-                    price,
-                    updatedBy,
-                    updatedAt: new Date(),
-                    updatedByFullName
+        const updatedTaxiType =
+            await taxiTypeModel.findByIdAndUpdate(
+                id,
+                {
+                    $set: {
+                        name,
+                        icon,
+                        seats,
+                        minDistance,
+                        maxDistance,
+                        meterPrice,
+                        flatFarePrice,
+                        country,
+                        updatedBy,
+                        updatedByFullName,
+                    },
                 },
-            },
-            { new: true }
-        );
+                { new: true }
+            );
+
         return updatedTaxiType;
     } catch (error) {
         console.log("Error updating taxi type: ", error);
@@ -112,12 +135,49 @@ export const updateTaxiTypeService = async (
 };
 
 // DELETE
-export const deleteTaxiTypeService = async (id: string): Promise<ITaxiType | null> => {
+export const deleteTaxiTypeService = async (
+    id: string
+): Promise<ITaxiType | null> => {
     try {
-        const deleteTaxiType = await taxiTypeModel.findByIdAndDelete(id);
+        const deleteTaxiType =
+            await taxiTypeModel.findByIdAndDelete(id);
         return deleteTaxiType;
     } catch (error) {
         console.log("Error deleting taxi type: ", error);
         throw error;
     }
 };
+
+export const getTaxiDistance = async ({
+    country,
+    distance
+}: {
+    country: string,
+    distance: number
+}) => {
+    try {
+        return await taxiTypeModel.aggregate([
+            {
+                $match: {
+                    country: country ? country : "LA",
+                    minDistance: { $lte: distance },
+                    maxDistance: { $gt: distance },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'taxitypes', // name of the referenced collection
+                    localField: 'taxiTypeId',
+                    foreignField: '_id',
+                    as: 'taxiType',
+                },
+            },
+            {
+                $unwind: '$taxiType', // optional: flatten the array
+            },
+        ]);
+
+    } catch (error) {
+
+    }
+}

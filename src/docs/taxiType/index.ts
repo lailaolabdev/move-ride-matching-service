@@ -1,6 +1,45 @@
 /**
  * @swagger
  * components:
+ *   schemas:
+ *     TaxiType:
+ *       type: object
+ *       required:
+ *         - name
+ *         - icon
+ *         - seats
+ *         - minDistance
+ *         - maxDistance
+ *         - meterPrice
+ *         - country
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "663e9e2012ad2c5e13a1e34f"
+ *         name:
+ *           type: string
+ *           example: "Standard"
+ *         icon:
+ *           type: string
+ *           example: "https://example.com/icons/standard.png"
+ *         seats:
+ *           type: number
+ *           example: 4
+ *         minDistance:
+ *           type: number
+ *           example: 0
+ *         maxDistance:
+ *           type: number
+ *           example: 10
+ *         meterPrice:
+ *           type: number
+ *           example: 25.5
+ *         flatFarePrice:
+ *           type: number
+ *           example: 25.5
+ *         country:
+ *           type: string
+ *           example: "LA"
  *   securitySchemes:
  *     BearerAuth:
  *       type: http
@@ -12,10 +51,9 @@
  * @swagger
  * /api/v1/taxi-types:
  *   post:
- *     summary: Create a new taxi type
- *     description: Create a new taxi type with specified name and icon.
+ *     summary: Create a new taxi type 
  *     tags:
- *       - Taxi Type
+ *       - Taxi Type 
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -23,19 +61,10 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 description: The name of the taxi type.
- *                 example: "SUV"
- *               icon:
- *                 type: string
- *                 description: The icon for the taxi type.
- *                 example: "suv_icon.png"
+ *             $ref: '#/components/schemas/TaxiType'
  *     responses:
  *       201:
- *         description: Taxi type created successfully.
+ *         description: Created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -46,49 +75,18 @@
  *                   example: "CREATE_SUCCESSFUL"
  *                 message:
  *                   type: string
- *                   example: "Taxi Type created successfully"
- *                 taxiType:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       description: Taxi Type ID.
- *                       example: "63d2fcd0c90a5300188b4567"
- *                     name:
- *                       type: string
- *                       description: Taxi Type name.
- *                       example: "SUV"
- *                     icon:
- *                       type: string
- *                       description: Taxi Type icon.
- *                       example: "suv_icon.png"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: string
- *                   example: "INTERNAL_SERVER_ERROR"
- *                 message:
- *                   type: string
- *                   example: "Internal server error"
- *                 detail:
- *                   type: string
- *                   example: "Error details here"
+ *                   example: "Taxi type  created successfully"
+ *                 data:
+ *                   $ref: '#/components/schemas/TaxiType'
  */
-
 
 /**
  * @swagger
  * /api/v1/taxi-types:
  *   get:
- *     summary: Get all taxi types
- *     description: Retrieve a list of all available taxi types.
+ *     summary: Get all taxi type  records
  *     tags:
- *       - Taxi Type
+ *       - Taxi Type 
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -96,17 +94,20 @@
  *         name: skip
  *         schema:
  *           type: integer
- *           example: 0
- *         description: The number of records to skip for pagination.
+ *         example: 0
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *           example: 50
- *         description: The maximum number of records to return for pagination.
+ *         example: 10
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         example: "Standard"
  *     responses:
  *       200:
- *         description: Successfully fetched all taxi types.
+ *         description: List of taxi type  records
  *         content:
  *           application/json:
  *             schema:
@@ -115,66 +116,30 @@
  *                 code:
  *                   type: string
  *                   example: "SUCCESSFUL"
- *                 message:
- *                   type: string
- *                   example: "Taxi Types fetched successfully"
- *                 taxiTypes:
+ *                 data:
  *                   type: array
  *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                         description: Taxi Type ID.
- *                         example: "63d2fcd0c90a5300188b4567"
- *                       name:
- *                         type: string
- *                         description: Taxi Type name.
- *                         example: "SUV"
- *                       icon:
- *                         type: string
- *                         description: Taxi Type icon.
- *                         example: "suv_icon.png"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: string
- *                   example: "INTERNAL_SERVER_ERROR"
- *                 message:
- *                   type: string
- *                   example: "Internal server error"
- *                 detail:
- *                   type: string
- *                   example: "Error details here"
+ *                     $ref: '#/components/schemas/TaxiType'
  */
-
 
 /**
  * @swagger
  * /api/v1/taxi-types/{id}:
  *   get:
- *     summary: Get taxi type by ID
- *     description: Retrieve a specific taxi type by its ID.
+ *     summary: Get taxi type  by ID
  *     tags:
- *       - Taxi Type
+ *       - Taxi Type 
  *     security:
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *           example: "63d2fcd0c90a5300188b4567"
- *         description: The ID of the taxi type.
+ *         required: true
  *     responses:
  *       200:
- *         description: Successfully fetched taxi type.
+ *         description:  record found
  *         content:
  *           application/json:
  *             schema:
@@ -183,92 +148,34 @@
  *                 code:
  *                   type: string
  *                   example: "SUCCESSFUL"
- *                 message:
- *                   type: string
- *                   example: "Taxi Type fetched successfully"
- *                 taxiType:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       description: Taxi Type ID.
- *                       example: "63d2fcd0c90a5300188b4567"
- *                     name:
- *                       type: string
- *                       description: Taxi Type name.
- *                       example: "SUV"
- *                     icon:
- *                       type: string
- *                       description: Taxi Type icon.
- *                       example: "suv_icon.png"
- *       404:
- *         description: Taxi Type not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: string
- *                   example: "NOT_FOUND"
- *                 message:
- *                   type: string
- *                   example: "Taxi Type not found"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: string
- *                   example: "INTERNAL_SERVER_ERROR"
- *                 message:
- *                   type: string
- *                   example: "Internal server error"
- *                 detail:
- *                   type: string
- *                   example: "Error details here"
+ *                 data:
+ *                   $ref: '#/components/schemas/TaxiType'
  */
-
 
 /**
  * @swagger
  * /api/v1/taxi-types/{id}:
  *   put:
- *     summary: Update a taxi type
- *     description: Update the name or icon of an existing taxi type.
+ *     summary: Update a taxi type  record
  *     tags:
- *       - Taxi Type
+ *       - Taxi Type 
  *     security:
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *           example: "63d2fcd0c90a5300188b4567"
- *         description: The ID of the taxi type to be updated.
+ *         required: true
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 description: The name of the taxi type.
- *                 example: "Luxury Sedan"
- *               icon:
- *                 type: string
- *                 description: The icon for the taxi type.
- *                 example: "luxury_sedan_icon.png"
+ *             $ref: '#/components/schemas/TaxiType'
  *     responses:
  *       200:
- *         description: Taxi type updated successfully.
+ *         description:  record updated
  *         content:
  *           application/json:
  *             schema:
@@ -277,77 +184,28 @@
  *                 code:
  *                   type: string
  *                   example: "SUCCESSFUL"
- *                 message:
- *                   type: string
- *                   example: "Taxi Type updated successfully"
- *                 updatedTaxiType:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       description: Taxi Type ID.
- *                       example: "63d2fcd0c90a5300188b4567"
- *                     name:
- *                       type: string
- *                       description: Taxi Type name.
- *                       example: "Luxury Sedan"
- *                     icon:
- *                       type: string
- *                       description: Taxi Type icon.
- *                       example: "luxury_sedan_icon.png"
- *       404:
- *         description: Taxi Type not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: string
- *                   example: "NOT_FOUND"
- *                 message:
- *                   type: string
- *                   example: "Taxi Type not found"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: string
- *                   example: "INTERNAL_SERVER_ERROR"
- *                 message:
- *                   type: string
- *                   example: "Internal server error"
- *                 detail:
- *                   type: string
- *                   example: "Error details here"
+ *                 data:
+ *                   $ref: '#/components/schemas/TaxiType'
  */
-
 
 /**
  * @swagger
  * /api/v1/taxi-types/{id}:
  *   delete:
- *     summary: Delete a taxi type
- *     description: Remove a taxi type from the system by its ID.
+ *     summary: Delete a taxi type  record
  *     tags:
- *       - Taxi Type
+ *       - Taxi Type 
  *     security:
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *           example: "63d2fcd0c90a5300188b4567"
- *         description: The ID of the taxi type to delete.
+ *         required: true
  *     responses:
  *       200:
- *         description: Taxi type deleted successfully.
+ *         description: Deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -358,34 +216,5 @@
  *                   example: "SUCCESSFUL"
  *                 message:
  *                   type: string
- *                   example: "Taxi Type deleted successfully"
- *       404:
- *         description: Taxi Type not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: string
- *                   example: "NOT_FOUND"
- *                 message:
- *                   type: string
- *                   example: "Taxi Type not found"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: string
- *                   example: "INTERNAL_SERVER_ERROR"
- *                 message:
- *                   type: string
- *                   example: "Internal server error"
- *                 detail:
- *                   type: string
- *                   example: "Error details here"
+ *                   example: "Deleted successfully"
  */

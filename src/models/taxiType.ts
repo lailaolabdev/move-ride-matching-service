@@ -1,33 +1,57 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { REQUEST_TYPE } from './callTaxi';
 
 export interface ITaxiType extends Document {
-    name: string;
-    icon: string;
-    price: number;
-    seats: number;
-    createdAt: Date;
-    createdBy: string;
-    createdByFullName: string;
-    updatedAt: Date;
-    updatedBy: string;
-    updatedByFullName: string;
+    name: string,
+    icon: string,
+    seats: number,
+    minDistance: number
+    maxDistance: number
+    price: number
+    rideMatchingType: string
+    status: boolean
 }
 
 const TaxiTypeSchema: Schema = new Schema({
-    name: { type: String, required: true },
-    icon: { type: String, required: true },
-    price: { type: Number, required: true },
-    seats: { type: Number, required: true },
-    country: { type: String, required: true },
-    status: { type: String, default: true },
-    createdAt: { type: Date, default: Date.now },
-    createdBy: { type: String, required: true },
-    createdByFullName: { type: String, required: true },
-    updatedAt: { type: Date, default: Date.now },
-    updatedBy: { type: String },
-    updatedByFullName: String
+    name: {
+        type: String,
+        required: true
+    },
+    icon: {
+        type: String,
+        required: true
+    },
+    seats: {
+        type: Number,
+        required: true
+    },
+    minDistance: {
+        type: Number,
+        required: true
+    },
+    maxDistance: {
+        type: Number,
+        required: true
+    },
+    meterPrice: {
+        type: Number,
+        required: true
+    },
+    flatFarePrice: {
+        type: Number,
+        default: true
+    },
+    country: {
+        type: String,
+        required: true
+    },
+}, {
+    timestamps: true
 });
 
-const taxiTypeModel = mongoose.model<ITaxiType>('TaxiType', TaxiTypeSchema);
+const taxiTypeModel = mongoose.model<ITaxiType>(
+    'TaxiType',
+    TaxiTypeSchema
+);
 
 export default taxiTypeModel;

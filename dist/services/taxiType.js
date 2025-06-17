@@ -12,49 +12,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTaxiTypeService = exports.updateTaxiTypeService = exports.getTaxiTypeByIdService = exports.getAllTaxiTypesService = exports.createTaxiTypeService = void 0;
-const config_1 = require("../config");
+exports.getTaxiDistance = exports.deleteTaxiTypeService = exports.updateTaxiTypeService = exports.getTaxiTypeByIdService = exports.getAllTaxiTypeService = exports.createTaxiTypeService = void 0;
 const taxiType_1 = __importDefault(require("../models/taxiType"));
 // CREATE
-const createTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, icon, price, seats, createdBy, country, createdByFullName }) {
+const createTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, icon, seats, minDistance, maxDistance, meterPrice, flatFarePrice, country, createdBy, createdByFullName }) {
     try {
         const taxiType = new taxiType_1.default({
             name,
             icon,
-            price,
             seats,
+            minDistance,
+            maxDistance,
+            meterPrice,
+            flatFarePrice,
             country,
             createdBy,
-            createdByFullName,
+            createdByFullName
         });
-        if (taxiType) {
-            yield (0, config_1.deleteKeysByPattern)('taxiTypes*'); // Invalidate the cache (if needed)
-        }
         const savedTaxiType = yield taxiType.save();
         return savedTaxiType;
     }
     catch (error) {
-        console.log("Error creating taxi type: ", error);
         throw error;
     }
 });
 exports.createTaxiTypeService = createTaxiTypeService;
 // READ (All Taxi Types)
-const getAllTaxiTypesService = (skip, limit) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllTaxiTypeService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const total = yield taxiType_1.default.countDocuments();
-        const taxiTypes = yield taxiType_1.default.find()
+        const total = yield taxiType_1.default.countDocuments(filter);
+        const taxiType = yield taxiType_1.default
+            .find(filter)
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
-        return { total, taxiTypes };
+        return { total, taxiType };
     }
     catch (error) {
-        console.log("Error retrieving taxi types: ", error);
         throw error;
     }
 });
-exports.getAllTaxiTypesService = getAllTaxiTypesService;
+exports.getAllTaxiTypeService = getAllTaxiTypeService;
 // READ (Taxi Type by ID)
 const getTaxiTypeByIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -62,22 +60,25 @@ const getTaxiTypeByIdService = (id) => __awaiter(void 0, void 0, void 0, functio
         return taxiType;
     }
     catch (error) {
-        console.log("Error retrieving taxi type by ID: ", error);
         throw error;
     }
 });
 exports.getTaxiTypeByIdService = getTaxiTypeByIdService;
 // UPDATE
-const updateTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, icon, price, updatedBy, updatedByFullName }) {
+const updateTaxiTypeService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, icon, seats, minDistance, maxDistance, meterPrice, flatFarePrice, country, updatedBy, updatedByFullName, }) {
     try {
         const updatedTaxiType = yield taxiType_1.default.findByIdAndUpdate(id, {
             $set: {
                 name,
                 icon,
-                price,
+                seats,
+                minDistance,
+                maxDistance,
+                meterPrice,
+                flatFarePrice,
+                country,
                 updatedBy,
-                updatedAt: new Date(),
-                updatedByFullName
+                updatedByFullName,
             },
         }, { new: true });
         return updatedTaxiType;
@@ -100,3 +101,30 @@ const deleteTaxiTypeService = (id) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.deleteTaxiTypeService = deleteTaxiTypeService;
+const getTaxiDistance = (_a) => __awaiter(void 0, [_a], void 0, function* ({ country, distance }) {
+    try {
+        return yield taxiType_1.default.aggregate([
+            {
+                $match: {
+                    country: country ? country : "LA",
+                    minDistance: { $lte: distance },
+                    maxDistance: { $gt: distance },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'taxitypes', // name of the referenced collection
+                    localField: 'taxiTypeId',
+                    foreignField: '_id',
+                    as: 'taxiType',
+                },
+            },
+            {
+                $unwind: '$taxiType', // optional: flatten the array
+            },
+        ]);
+    }
+    catch (error) {
+    }
+});
+exports.getTaxiDistance = getTaxiDistance;

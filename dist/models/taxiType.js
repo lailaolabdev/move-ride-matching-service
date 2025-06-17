@@ -35,18 +35,40 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const TaxiTypeSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    icon: { type: String, required: true },
-    price: { type: Number, required: true },
-    seats: { type: Number, required: true },
-    country: { type: String, required: true },
-    status: { type: String, default: true },
-    createdAt: { type: Date, default: Date.now },
-    createdBy: { type: String, required: true },
-    createdByFullName: { type: String, required: true },
-    updatedAt: { type: Date, default: Date.now },
-    updatedBy: { type: String },
-    updatedByFullName: String
+    name: {
+        type: String,
+        required: true
+    },
+    icon: {
+        type: String,
+        required: true
+    },
+    seats: {
+        type: Number,
+        required: true
+    },
+    minDistance: {
+        type: Number,
+        required: true
+    },
+    maxDistance: {
+        type: Number,
+        required: true
+    },
+    meterPrice: {
+        type: Number,
+        required: true
+    },
+    flatFarePrice: {
+        type: Number,
+        default: true
+    },
+    country: {
+        type: String,
+        required: true
+    },
+}, {
+    timestamps: true
 });
 const taxiTypeModel = mongoose_1.default.model('TaxiType', TaxiTypeSchema);
 exports.default = taxiTypeModel;
