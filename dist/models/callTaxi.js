@@ -127,6 +127,10 @@ const CallTaxiSchema = new mongoose_1.Schema({
         type: Number,
         required: true,
     },
+    isClaim: {
+        type: Boolean,
+        require: false
+    }
 }, {
     timestamps: true,
 });

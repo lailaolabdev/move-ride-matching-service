@@ -180,6 +180,10 @@ const CallTaxiSchema: Schema = new Schema(
       type: Number,
       required: true,
     },
+    isClaim: {
+      type: Boolean,
+      require: false
+    }
   },
   {
     timestamps: true,
