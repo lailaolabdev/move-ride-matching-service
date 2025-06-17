@@ -9,11 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateDriverDistanceAndDuration = exports.calculateUserDistanceAndDuration = void 0;
+exports.driverRateCal = exports.calculateDriverDistanceAndDuration = exports.calculateUserDistanceAndDuration = void 0;
 const config_1 = require("../../config");
 const calculation_1 = require("../../services/calculation");
 const onPeakTime_1 = require("../../services/onPeakTime");
 const taxiTypePricing_1 = require("../../services/taxiTypePricing");
+const driverRate_1 = require("../../models/driverRate");
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     try {
@@ -110,3 +111,33 @@ const calculateDriverDistanceAndDuration = (req, res) => __awaiter(void 0, void 
     }
 });
 exports.calculateDriverDistanceAndDuration = calculateDriverDistanceAndDuration;
+const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Fetch the driverRate based on the taxiType
+        const driverRates = yield driverRate_1.driverRateModel.find({
+            taxiType: callTaxi.carTypeId, // Assuming carTypeId matches taxiType in driverRate
+        });
+        if (driverRates.length === 0) {
+            return {
+                message: "No driver rates found for this taxi type."
+            };
+        }
+        for (const rate of driverRates) {
+            // Check if the totalDistance is within the range of minDistance and maxDistance
+            if (callTaxi.totalDistance >= rate.minDistance &&
+                callTaxi.totalDistance <= rate.maxDistance) {
+                // Calculate the total price based on the percentage
+                const calculatedPrice = (rate.percentage / 100) * callTaxi.totalPrice;
+                // Return the calculated price and the corresponding driver rate
+                return {
+                    calculatedPrice,
+                    driverRate: rate,
+                };
+            }
+        }
+    }
+    catch (error) {
+        console.log("error: ", error);
+    }
+});
+exports.driverRateCal = driverRateCal;

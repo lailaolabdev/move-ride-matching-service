@@ -3,6 +3,7 @@ import { messages } from "../../config";
 import { calculateDriverDistanceAndDurationService, calculateUserDistanceAndDurationService } from "../../services/calculation";
 import { getOnPeakTimeService } from "../../services/onPeakTime";
 import { getTaxiPricingDistance } from "../../services/taxiTypePricing";
+import { driverRateModel } from "../../models/driverRate";
 
 export const calculateUserDistanceAndDuration = async (
     req: Request,
@@ -150,3 +151,39 @@ export const calculateDriverDistanceAndDuration = async (
         });
     }
 };
+
+
+export const driverRateCal = async (callTaxi: any) => {
+    try {
+        // Fetch the driverRate based on the taxiType
+        const driverRates = await driverRateModel.find({
+            taxiType: callTaxi.carTypeId, // Assuming carTypeId matches taxiType in driverRate
+        });
+
+        if (driverRates.length === 0) {
+            return {
+                message: "No driver rates found for this taxi type."
+            };
+        }
+
+        for (const rate of driverRates) {
+            // Check if the totalDistance is within the range of minDistance and maxDistance
+            if (
+                callTaxi.totalDistance >= rate.minDistance &&
+                callTaxi.totalDistance <= rate.maxDistance
+            ) {
+                // Calculate the total price based on the percentage
+                const calculatedPrice = (rate.percentage / 100) * callTaxi.totalPrice;
+
+                // Return the calculated price and the corresponding driver rate
+                return {
+                    calculatedPrice,
+                    driverRate: rate,
+                };
+            }
+        }
+
+    } catch (error) {
+        console.log("error: ", error)
+    }
+}
