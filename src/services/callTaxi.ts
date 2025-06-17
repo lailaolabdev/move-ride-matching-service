@@ -4,6 +4,7 @@ import axios from 'axios'
 import { roundCoord } from "../controllers/callTaxi/helper";
 import { Types } from "mongoose"
 import vehicleDriverModel from "../models/vehicleDriver";
+import { generateBillNumber } from "../utils/generateBillNumber";
 
 export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
     try {
@@ -29,7 +30,9 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             price,
             polygonPrice,
             onPeakTimePrice,
-            delayPrice
+            delayPrice,
+            country,
+            countryCode,
         } = req.body
 
         const splitOrigin = roundCoord(origin);
@@ -56,7 +59,11 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             price,
             polygonPrice,
             onPeakTimePrice,
-            delayPrice
+            delayPrice,
+            country,
+            countryCode,
+            currency: countryCode === "LA" ? "LAK" : "BATH",
+            billNumber: generateBillNumber()
         })
 
         const createdObj: any = created.toObject();

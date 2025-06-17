@@ -65,6 +65,11 @@ export interface ICallTaxi extends Document {
   polygonPrice?: number;
   onPeakTimePrice?: number;
   delayPrice?: number;
+  billNumber: string,
+  country: string,
+  countryCode: string,
+  platform: string,
+  currency: string
 
   createdAt: Date;
   updatedAt: Date;
@@ -183,6 +188,26 @@ const CallTaxiSchema: Schema = new Schema(
     isClaim: {
       type: Boolean,
       default: false
+    },
+    billNumber: {
+      type: String,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true,
+    },
+    countryCode: {
+      type: String,
+      required: true,
+    },
+    platform: {
+      type: String,
+      default: "TAXI",
+    },
+    currency: {
+      type: String,
+      require: true
     }
   },
   {
