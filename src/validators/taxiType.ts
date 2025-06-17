@@ -6,9 +6,6 @@ export const validateCreateTaxiType = (req: Request, res: Response, next: NextFu
         name,
         icon,
         seats,
-        minDistance,
-        maxDistance,
-        meterPrice,
         country
     } = req.body;
 
@@ -32,30 +29,6 @@ export const validateCreateTaxiType = (req: Request, res: Response, next: NextFu
         res.status(400).json({
             code: messages.BAD_REQUEST.code,
             message: 'Missing required field: seats'
-        });
-        return
-    }
-
-    if (minDistance === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: minDistance'
-        });
-        return
-    }
-
-    if (maxDistance === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: maxDistance'
-        });
-        return
-    }
-
-    if (meterPrice === undefined) {
-        res.status(400).json({
-            code: messages.BAD_REQUEST.code,
-            message: 'Missing required field: meterPrice'
         });
         return
     }
