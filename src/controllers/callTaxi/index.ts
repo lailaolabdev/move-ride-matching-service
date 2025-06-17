@@ -102,13 +102,86 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const callTaxi = await CallTaxi.findById(id).lean();
+    const callTaxi = await CallTaxi.aggregate([
+      {
+        $match: { _id: new Types.ObjectId(id) }
+      },
 
-    if (callTaxi?.driverId) {
+      {
+        $lookup: {
+          from: "users",
+          let: { passengerId: { $toObjectId: "$passengerId" } },
+          pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$passengerId"] } } }],
+          as: "passengerDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$passengerDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      // Lookup driver
+      {
+        $lookup: {
+          from: "users",
+          let: { driverId: { $toObjectId: "$driverId" } },
+          pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$driverId"] } } }],
+          as: "driverDetails",
+        },
+      },
+      { $unwind: { path: "$driverDetails", preserveNullAndEmptyArrays: true } },
+
+      {
+        $project: {
+          "_id": 1,
+          "passengerId": 1,
+          "carTypeId": 1,
+          "origin": 1,
+          "destination": 1,
+          "originName": 1,
+          "destinationName": 1,
+          "requestType": 1,
+          "distanceInPolygon": 1,
+          "durationInPolygon": 1,
+          "normalDuration": 1,
+          "delayDuration": 1,
+          "delayDistance": 1,
+          "totalDuration": 1,
+          "totalDistance": 1,
+          "totalPrice": 1,
+          "status": 1,
+          "price": 1,
+          "polygonPrice": 1,
+          "onPeakTimePrice": 1,
+          "delayPrice": 1,
+          "createdAt": 1,
+          "updatedAt": 1,
+          "driverId": 1,
+          "country": 1,
+          "countryCode": 1,
+          "driverComplain": 1,
+          "passengerComplain": 1,
+          "driverDetails._id": 1,
+          "driverDetails.profileImage": 1,
+          "driverDetails.fullName": 1,
+          "driverDetails.phone": 1,
+          "driverDetails.email": 1,
+          "passengerDetails._id": 1,
+          "passengerDetails.profileImage": 1,
+          "passengerDetails.fullName": 1,
+          "passengerDetails.phone": 1,
+          "passengerDetails.email": 1,
+        }
+      }
+    ]);
+
+    if (callTaxi[0]?.driverDetails) {
       const vehicleDriver = await vehicleDriverModel.aggregate([
         {
           $match: {
-            driver: callTaxi?.driverId
+            driver: callTaxi[0]?.driverId
           },
         },
         {
@@ -167,14 +240,13 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
         }
       ]);
 
+      callTaxi[0].driverDetails.licensePlate = vehicleDriver[0].licensePlate
+      callTaxi[0].driverDetails.vehicleModelName = vehicleDriver[0].vehicleModelName
+      callTaxi[0].driverDetails.vehicleBrandName = vehicleDriver[0].vehicleBrandName
+
       res.status(200).json({
         ...messages.SUCCESSFULLY,
-        callTaxi: {
-          ...callTaxi,
-          licensePlate: vehicleDriver[0].licensePlate,
-          vehicleModelName: vehicleDriver[0].vehicleModelName,
-          vehicleBrandName: vehicleDriver[0].vehicleBrandName
-        },
+        ...callTaxi[0],
       });
 
       return

@@ -130,7 +130,27 @@ const CallTaxiSchema = new mongoose_1.Schema({
     isClaim: {
         type: Boolean,
         default: false
-    }
+    },
+    billNumber: {
+        type: String,
+        required: true,
+    },
+    // country: {
+    //   type: String,
+    //   required: true,
+    // },
+    // countryCode: {
+    //   type: String,
+    //   required: true,
+    // },
+    // platform: {
+    //   type: String,
+    //   default: "TAXI",
+    // },
+    // currency: {
+    //   type: String,
+    //   require: true
+    // }
 }, {
     timestamps: true,
 });

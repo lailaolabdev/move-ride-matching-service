@@ -71,14 +71,85 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.createCallTaxi = createCallTaxi;
 const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         const { id } = req.params;
-        const callTaxi = yield callTaxi_2.CallTaxi.findById(id).lean();
-        if (callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId) {
+        const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
+            {
+                $match: { _id: new mongoose_1.Types.ObjectId(id) }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$passengerId"] } } }],
+                    as: "passengerDetails",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passengerDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            // Lookup driver
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$driverId"] } } }],
+                    as: "driverDetails",
+                },
+            },
+            { $unwind: { path: "$driverDetails", preserveNullAndEmptyArrays: true } },
+            {
+                $project: {
+                    "_id": 1,
+                    "passengerId": 1,
+                    "carTypeId": 1,
+                    "origin": 1,
+                    "destination": 1,
+                    "originName": 1,
+                    "destinationName": 1,
+                    "requestType": 1,
+                    "distanceInPolygon": 1,
+                    "durationInPolygon": 1,
+                    "normalDuration": 1,
+                    "delayDuration": 1,
+                    "delayDistance": 1,
+                    "totalDuration": 1,
+                    "totalDistance": 1,
+                    "totalPrice": 1,
+                    "status": 1,
+                    "price": 1,
+                    "polygonPrice": 1,
+                    "onPeakTimePrice": 1,
+                    "delayPrice": 1,
+                    "createdAt": 1,
+                    "updatedAt": 1,
+                    "driverId": 1,
+                    "country": 1,
+                    "countryCode": 1,
+                    "driverComplain": 1,
+                    "passengerComplain": 1,
+                    "driverDetails._id": 1,
+                    "driverDetails.profileImage": 1,
+                    "driverDetails.fullName": 1,
+                    "driverDetails.phone": 1,
+                    "driverDetails.email": 1,
+                    "passengerDetails._id": 1,
+                    "passengerDetails.profileImage": 1,
+                    "passengerDetails.fullName": 1,
+                    "passengerDetails.phone": 1,
+                    "passengerDetails.email": 1,
+                }
+            }
+        ]);
+        if ((_a = callTaxi[0]) === null || _a === void 0 ? void 0 : _a.driverDetails) {
             const vehicleDriver = yield vehicleDriver_1.default.aggregate([
                 {
                     $match: {
-                        driver: callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId
+                        driver: (_b = callTaxi[0]) === null || _b === void 0 ? void 0 : _b.driverId
                     },
                 },
                 {
@@ -136,7 +207,10 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     }
                 }
             ]);
-            res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi: Object.assign(Object.assign({}, callTaxi), { licensePlate: vehicleDriver[0].licensePlate, vehicleModelName: vehicleDriver[0].vehicleModelName, vehicleBrandName: vehicleDriver[0].vehicleBrandName }) }));
+            callTaxi[0].driverDetails.licensePlate = vehicleDriver[0].licensePlate;
+            callTaxi[0].driverDetails.vehicleModelName = vehicleDriver[0].vehicleModelName;
+            callTaxi[0].driverDetails.vehicleBrandName = vehicleDriver[0].vehicleBrandName;
+            res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), callTaxi[0]));
             return;
         }
         res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi }));
