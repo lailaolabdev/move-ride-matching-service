@@ -666,7 +666,7 @@ exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime } = req.body;
+        const { type, status, actualUsedTime, claimMoney } = req.body;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
             res.status(400).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Ride matching with id:${id} not found` }));
@@ -704,6 +704,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.type = type;
         if (actualUsedTime)
             updateData.actualUsedTime = actualUsedTime;
+        if (claimMoney)
+            updateData.claimMoney = claimMoney;
         if (status) {
             // If status is paid add calculatedPrice and driverRate to 
             // calculate driver income

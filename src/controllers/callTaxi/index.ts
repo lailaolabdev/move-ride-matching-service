@@ -766,7 +766,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const { type, status, actualUsedTime } = req.body;
+    const { type, status, actualUsedTime, claimMoney } = req.body;
 
     const callTaxi = await CallTaxi.findById(id);
 
@@ -817,6 +817,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
     if (type) updateData.type = type
     if (actualUsedTime) updateData.actualUsedTime = actualUsedTime
+    if (claimMoney) updateData.claimMoney = claimMoney
     if (status) {
       // If status is paid add calculatedPrice and driverRate to 
       // calculate driver income
