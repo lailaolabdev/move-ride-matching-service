@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { REQUEST_TYPE } from './callTaxi';
 
 export interface ITaxiType extends Document {
     name: string,
@@ -17,10 +16,10 @@ const TaxiTypeSchema: Schema = new Schema({
         type: String,
         required: true
     },
-    // seats: {
-    //     type: Number,
-    //     required: true
-    // },
+    seats: {
+        type: Number,
+        required: true
+    },
     country: {
         type: String,
         required: true

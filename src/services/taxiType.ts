@@ -5,14 +5,14 @@ import { ITaxiType } from "../models/taxiType";
 export const createTaxiTypeService = async ({
     name,
     icon,
-    // seats,
+    seats,
     country,
     createdBy,
     createdByFullName
 }: {
     name: string;
     icon: string;
-    // seats: number;
+    seats: number;
     country: string;
     createdBy: string;
     createdByFullName: string;
@@ -21,7 +21,7 @@ export const createTaxiTypeService = async ({
         const taxiType = new taxiTypeModel({
             name,
             icon,
-            // seats,
+            seats,
             country,
             createdBy,
             createdByFullName
