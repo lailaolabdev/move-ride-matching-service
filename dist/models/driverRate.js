@@ -59,4 +59,4 @@ const driverRateSchema = new mongoose_1.Schema({
     updatedByFullName: String,
     country: String,
 });
-exports.driverRateModel = mongoose_1.default.model("driverrate", driverRateSchema);
+exports.driverRateModel = mongoose_1.default.model("driverate", driverRateSchema);

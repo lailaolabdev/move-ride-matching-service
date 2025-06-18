@@ -32,6 +32,6 @@ const driverRateSchema = new Schema({
 });
 
 export const driverRateModel = mongoose.model<IDriverRate>(
-    "driverrate",
+    "driverate",
     driverRateSchema
 );

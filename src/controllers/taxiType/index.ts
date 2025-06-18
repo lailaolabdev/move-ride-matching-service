@@ -16,14 +16,14 @@ export const createTaxiType = async (req: Request, res: Response) => {
         const {
             name,
             icon,
-            // seats,
+            seats,
             country
         } = req.body;
 
         const taxiType = await createTaxiTypeService({
             name,
             icon,
-            // seats,
+            seats,
             country,
             createdBy: user.id,
             createdByFullName: user.fullName

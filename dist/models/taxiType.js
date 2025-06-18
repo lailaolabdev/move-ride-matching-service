@@ -43,10 +43,10 @@ const TaxiTypeSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    // seats: {
-    //     type: Number,
-    //     required: true
-    // },
+    seats: {
+        type: Number,
+        required: true
+    },
     country: {
         type: String,
         required: true

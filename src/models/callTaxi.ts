@@ -193,6 +193,8 @@ const CallTaxiSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    driverIncome: Number,
+    driverRate: Number
     // country: {
     //   type: String,
     //   required: true,

@@ -30,6 +30,7 @@ import taxiModel from "../../models/taxi";
 import { ratingModel } from "../../models/rating";
 import vehicleDriverModel from "../../models/vehicleDriver";
 import { Types } from "mongoose";
+import { driverRateCal } from "../calculation";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -760,7 +761,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const { status } = req.body;
+    const { type, status, actualUsedTime } = req.body;
 
     const callTaxi = await CallTaxi.findById(id);
 
@@ -806,7 +807,28 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       return;
     }
 
-    const updated: any = await updateCallTaxiService(req);
+    // Update call taxi part
+    const updateData: any = {}
+
+    if (type) updateData.type = type
+    if (actualUsedTime) updateData.actualUsedTime = actualUsedTime
+    if (status) {
+      // If status is paid add calculatedPrice and driverRate to 
+      // calculate driver income
+      if (status === STATUS.PAID) {
+
+        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
+
+        if (calculatedPrice && driverRate) {
+          updateData.driverIncome = calculatedPrice
+          updateData.driverRate = driverRate
+        }
+      }
+
+      updateData.status = status
+    }
+
+    const updated: any = await updateCallTaxiService({ id, updateData });
 
     // if status is canceled notify to driver
     if (updated && updated.status === STATUS.CANCELED) {

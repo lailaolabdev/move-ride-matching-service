@@ -15,6 +15,7 @@ const calculation_1 = require("../../services/calculation");
 const onPeakTime_1 = require("../../services/onPeakTime");
 const taxiTypePricing_1 = require("../../services/taxiTypePricing");
 const driverRate_1 = require("../../models/driverRate");
+const mongoose_1 = require("mongoose");
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     try {
@@ -110,7 +111,7 @@ const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* 
     try {
         // Fetch the driverRate based on the taxiType
         const driverRates = yield driverRate_1.driverRateModel.find({
-            taxiType: callTaxi.carTypeId, // Assuming carTypeId matches taxiType in driverRate
+            taxiType: new mongoose_1.Types.ObjectId(callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.carTypeId) // Assuming carTypeId matches taxiType in driverRate
         });
         if (driverRates.length === 0) {
             return {
@@ -126,7 +127,7 @@ const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* 
                 // Return the calculated price and the corresponding driver rate
                 return {
                     calculatedPrice,
-                    driverRate: rate,
+                    driverRate: rate === null || rate === void 0 ? void 0 : rate.percentage,
                 };
             }
         }
