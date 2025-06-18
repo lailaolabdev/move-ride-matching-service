@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalDriverIncomeService = exports.getCommentAndRatingService = exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
+exports.getTotalDriverIncomeServiceThatWasNotClaim = exports.getTotalDriverIncomeService = exports.getCommentAndRatingService = exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("../controllers/callTaxi/helper");
@@ -716,3 +716,34 @@ const getTotalDriverIncomeService = (driverId) => __awaiter(void 0, void 0, void
     }
 });
 exports.getTotalDriverIncomeService = getTotalDriverIncomeService;
+const getTotalDriverIncomeServiceThatWasNotClaim = (driverId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const totalIncome = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: {
+                    driverId,
+                    status: "Paid",
+                    isClaim: false,
+                }
+            },
+            {
+                $group: {
+                    _id: null, // or "$driverId" if you want to group by driver
+                    totalIncome: { $sum: "$totalPrice" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalIncome: 1
+                }
+            }
+        ]);
+        return totalIncome.length ? totalIncome[0].totalIncome : 0;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getTotalDriverIncomeServiceThatWasNotClaim = getTotalDriverIncomeServiceThatWasNotClaim;

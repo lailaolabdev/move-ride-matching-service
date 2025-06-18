@@ -22,6 +22,7 @@ import {
   travelHistoryService,
   getCommentAndRatingService,
   getTotalDriverIncomeService,
+  getTotalDriverIncomeServiceThatWasNotClaim,
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -1232,10 +1233,12 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
     const driverId = (req as any).user.id;
 
     const totalIncome = await getTotalDriverIncomeService(driverId)
+    const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId)
 
     res.json({
       ...messages.SUCCESSFULLY,
-      totalIncome
+      totalIncome,
+      totalIncomeThatWasNotClaim
     })
   } catch (error) {
     console.error("Error fetching tax info:", error);

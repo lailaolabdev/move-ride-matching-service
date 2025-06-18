@@ -1042,7 +1042,9 @@ const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, fun
     try {
         const driverId = req.user.id;
         const totalIncome = yield (0, callTaxi_1.getTotalDriverIncomeService)(driverId);
-        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { totalIncome }));
+        const totalIncomeThatWasNotClaim = yield (0, callTaxi_1.getTotalDriverIncomeServiceThatWasNotClaim)(driverId);
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { totalIncome,
+            totalIncomeThatWasNotClaim }));
     }
     catch (error) {
         console.error("Error fetching tax info:", error);
