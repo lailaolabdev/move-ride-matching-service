@@ -90,7 +90,7 @@ export const createCallTaxi = async (req: Request, res: Response) => {
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
       message: messages.CREATE_SUCCESSFUL.message,
-      // callTaxi: { ...data },
+      callTaxi: { ...data },
     });
   } catch (error) {
     console.log("error: ", error);

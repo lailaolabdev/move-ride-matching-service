@@ -62,7 +62,7 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            // callTaxi: { ...data },
+            callTaxi: Object.assign({}, data),
         });
     }
     catch (error) {
