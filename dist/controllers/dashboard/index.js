@@ -62,6 +62,7 @@ const summaryRevenueCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, f
                 message: config_1.messages.SUCCESSFULLY.message,
                 totalPrice: result[0].totalPrice,
                 totalClaimedPrice: result[0].totalClaimedPrice,
+                totalNotClaimedPrice: 0,
             });
         }
         else {

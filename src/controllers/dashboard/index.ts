@@ -54,6 +54,7 @@ export const summaryRevenueCallTaxi = async (req: Request, res: Response) => {
                 message: messages.SUCCESSFULLY.message,
                 totalPrice: result[0].totalPrice,
                 totalClaimedPrice: result[0].totalClaimedPrice,
+                totalNotClaimedPrice: 0,
             });
         } else {
             res.status(200).json({
