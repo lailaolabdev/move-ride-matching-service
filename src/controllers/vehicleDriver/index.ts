@@ -10,6 +10,7 @@ import {
     getVehicleDriverByDriverIdService
 } from '../../services/vehicleDriver';
 import { getAllTaxiService } from '../../services/taxi';
+import { Types } from 'mongoose';
 
 // CREATE Taxi
 export const createVehicleDriver = async (req: Request, res: Response) => {
@@ -17,7 +18,7 @@ export const createVehicleDriver = async (req: Request, res: Response) => {
         const user = (req as any).user;
         const { taxiType, vehicleModel, vehicleBrand, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate } = req.body;
 
-        const taxis = await getAllTaxiService(0, 1, { vehicleModel, vehicleBrand, taxiType });
+        const taxis = await getAllTaxiService(0, 1, { vehicleModel, vehicleBrand, taxiType: new Types.ObjectId(taxiType) });
 
         if (taxis.taxies.length < 1) {
             res.status(400).json({

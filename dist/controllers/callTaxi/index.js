@@ -43,7 +43,11 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
             res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${passengerId} not found` }));
             return;
         }
-        const callTaxi = yield (0, callTaxi_1.createCallTaxiService)(req);
+        const callTaxi = yield (0, callTaxi_1.createCallTaxiService)({
+            req,
+            passengerFullName: passenger === null || passenger === void 0 ? void 0 : passenger.fullName,
+            passengerPhoneNumber: passenger === null || passenger === void 0 ? void 0 : passenger.phone
+        });
         if (!callTaxi) {
             res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,

@@ -61,7 +61,11 @@ export const createCallTaxi = async (req: Request, res: Response) => {
       return;
     }
 
-    const callTaxi: any = await createCallTaxiService(req);
+    const callTaxi: any = await createCallTaxiService({
+      req,
+      passengerFullName: passenger?.fullName,
+      passengerPhoneNumber: passenger?.phone
+    });
 
     if (!callTaxi) {
       res.status(400).json({
