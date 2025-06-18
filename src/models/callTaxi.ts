@@ -194,15 +194,9 @@ const CallTaxiSchema: Schema = new Schema(
       required: true,
     },
     driverIncome: Number,
-    driverRate: Number
-    // country: {
-    //   type: String,
-    //   required: true,
-    // },
-    // countryCode: {
-    //   type: String,
-    //   required: true,
-    // },
+    driverRate: Number,
+    country: String,
+    countryCode: String,
     // platform: {
     //   type: String,
     //   default: "TAXI",
