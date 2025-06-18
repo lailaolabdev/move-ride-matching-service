@@ -142,15 +142,9 @@ const CallTaxiSchema = new mongoose_1.Schema({
     country: String,
     countryCode: String,
     driverFullName: String,
-    driverPhoneNumber: String
-    // platform: {
-    //   type: String,
-    //   default: "TAXI",
-    // },
-    // currency: {
-    //   type: String,
-    //   require: true
-    // }
+    driverPhoneNumber: String,
+    currency: String,
+    claimMoney: String
 }, {
     timestamps: true,
 });
