@@ -14,12 +14,13 @@ const config_1 = require("../../config");
 const helper_1 = require("./helper");
 const vehicleDriver_1 = require("../../services/vehicleDriver");
 const taxi_1 = require("../../services/taxi");
+const mongoose_1 = require("mongoose");
 // CREATE Taxi
 const createVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user;
         const { taxiType, vehicleModel, vehicleBrand, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate } = req.body;
-        const taxis = yield (0, taxi_1.getAllTaxiService)(0, 1, { vehicleModel, vehicleBrand, taxiType });
+        const taxis = yield (0, taxi_1.getAllTaxiService)(0, 1, { vehicleModel, vehicleBrand, taxiType: new mongoose_1.Types.ObjectId(taxiType) });
         if (taxis.taxies.length < 1) {
             res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
