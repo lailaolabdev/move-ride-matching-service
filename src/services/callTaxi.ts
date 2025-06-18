@@ -6,7 +6,15 @@ import { Types } from "mongoose"
 import vehicleDriverModel from "../models/vehicleDriver";
 import { generateBillNumber } from "../utils/generateBillNumber";
 
-export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | null> => {
+export const createCallTaxiService = async ({
+    req,
+    passengerFullName,
+    passengerPhoneNumber
+}: {
+    req: Request,
+    passengerFullName?: String,
+    passengerPhoneNumber?: String
+}): Promise<ICallTaxi | null> => {
     try {
         const passengerId = (req as any).user.id;
 
@@ -63,7 +71,9 @@ export const createCallTaxiService = async (req: Request): Promise<ICallTaxi | n
             country,
             countryCode,
             currency: countryCode === "LA" ? "LAK" : "BATH",
-            billNumber: generateBillNumber()
+            billNumber: generateBillNumber(),
+            passengerFullName,
+            passengerPhoneNumber
         })
 
         const createdObj: any = created.toObject();

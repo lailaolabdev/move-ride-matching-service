@@ -19,7 +19,7 @@ const helper_1 = require("../controllers/callTaxi/helper");
 const mongoose_1 = require("mongoose");
 const vehicleDriver_1 = __importDefault(require("../models/vehicleDriver"));
 const generateBillNumber_1 = require("../utils/generateBillNumber");
-const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+const createCallTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ req, passengerFullName, passengerPhoneNumber }) {
     try {
         const passengerId = req.user.id;
         const { carTypeId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, actualPrice, estimatedPrice, price, polygonPrice, onPeakTimePrice, delayPrice, country, countryCode, } = req.body;
@@ -50,7 +50,9 @@ const createCallTaxiService = (req) => __awaiter(void 0, void 0, void 0, functio
             country,
             countryCode,
             currency: countryCode === "LA" ? "LAK" : "BATH",
-            billNumber: (0, generateBillNumber_1.generateBillNumber)()
+            billNumber: (0, generateBillNumber_1.generateBillNumber)(),
+            passengerFullName,
+            passengerPhoneNumber
         });
         const createdObj = created.toObject();
         return createdObj;

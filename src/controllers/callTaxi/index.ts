@@ -61,7 +61,11 @@ export const createCallTaxi = async (req: Request, res: Response) => {
       return;
     }
 
-    const callTaxi: any = await createCallTaxiService(req);
+    const callTaxi: any = await createCallTaxiService({
+      req,
+      passengerFullName: passenger?.fullName,
+      passengerPhoneNumber: passenger?.phone
+    });
 
     if (!callTaxi) {
       res.status(400).json({
@@ -86,7 +90,7 @@ export const createCallTaxi = async (req: Request, res: Response) => {
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
       message: messages.CREATE_SUCCESSFUL.message,
-      callTaxi: { ...data },
+      // callTaxi: { ...data },
     });
   } catch (error) {
     console.log("error: ", error);

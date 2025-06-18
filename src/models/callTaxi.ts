@@ -70,6 +70,8 @@ export interface ICallTaxi extends Document {
   countryCode: string,
   platform: string,
   currency: string
+  passengerFullName: String,
+  passengerPhoneNumber: String,
 
   createdAt: Date;
   updatedAt: Date;
@@ -82,6 +84,8 @@ const CallTaxiSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    passengerFullName: String,
+    passengerPhoneNumber: String,
     passengerComplain: {
       type: {
         rating: Number,
@@ -194,7 +198,9 @@ const CallTaxiSchema: Schema = new Schema(
       required: true,
     },
     driverIncome: Number,
-    driverRate: Number
+    driverRate: Number,
+    driverFullName: String,
+    driverPhoneNumber: String
     // country: {
     //   type: String,
     //   required: true,

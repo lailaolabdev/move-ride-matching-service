@@ -24,6 +24,8 @@ const CallTaxiSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    passengerFullName: String,
+    passengerPhoneNumber: String,
     passengerComplain: {
         type: {
             rating: Number,
@@ -136,7 +138,9 @@ const CallTaxiSchema = new mongoose_1.Schema({
         required: true,
     },
     driverIncome: Number,
-    driverRate: Number
+    driverRate: Number,
+    driverFullName: String,
+    driverPhoneNumber: String
     // country: {
     //   type: String,
     //   required: true,
