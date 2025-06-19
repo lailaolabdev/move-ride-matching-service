@@ -698,7 +698,7 @@ const getTotalDriverIncomeService = (driverId) => __awaiter(void 0, void 0, void
             {
                 $group: {
                     _id: null, // or "$driverId" if you want to group by driver
-                    totalIncome: { $sum: "$totalPrice" }
+                    totalIncome: { $sum: "$driverIncome" }
                 }
             },
             {
@@ -729,7 +729,7 @@ const getTotalDriverIncomeServiceThatWasNotClaim = (driverId) => __awaiter(void 
             {
                 $group: {
                     _id: null, // or "$driverId" if you want to group by driver
-                    totalIncome: { $sum: "$totalPrice" }
+                    totalIncome: { $sum: "$driverIncome" }
                 }
             },
             {

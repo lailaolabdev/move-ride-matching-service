@@ -773,7 +773,7 @@ export const getTotalDriverIncomeService = async (driverId: any): Promise<any> =
             {
                 $group: {
                     _id: null, // or "$driverId" if you want to group by driver
-                    totalIncome: { $sum: "$totalPrice" }
+                    totalIncome: { $sum: "$driverIncome" }
                 }
             },
             {
@@ -804,7 +804,7 @@ export const getTotalDriverIncomeServiceThatWasNotClaim = async (driverId: any):
             {
                 $group: {
                     _id: null, // or "$driverId" if you want to group by driver
-                    totalIncome: { $sum: "$totalPrice" }
+                    totalIncome: { $sum: "$driverIncome" }
                 }
             },
             {
