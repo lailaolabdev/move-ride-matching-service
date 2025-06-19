@@ -265,6 +265,18 @@ const getTopTenDriver = (req, res) => __awaiter(void 0, void 0, void 0, function
                 $group: {
                     _id: "$driverId", // Group by driverId (it’s a string)
                     totalCalls: { $sum: 1 }, // Count the total number of "Paid" calls for each driver
+                    totalMeterCalls: {
+                        $sum: {
+                            $cond: [{ $eq: ["$requestType", "meter"] }, 1, 0], // Count trips with "meter" request type
+                        },
+                    },
+                    totalFlatFareCalls: {
+                        $sum: {
+                            $cond: [{ $eq: ["$requestType", "flat_fare"] }, 1, 0], // Count trips with "flat_fare" request type
+                        },
+                    },
+                    totalOfDriverIncome: { $sum: "$driverIncome" }, // Sum of all driver incomes
+                    driverFullName: { $first: "$driverFullName" }, // Get the driver's full name (from the CallTaxi collection)
                 },
             },
             {
@@ -274,10 +286,29 @@ const getTopTenDriver = (req, res) => __awaiter(void 0, void 0, void 0, function
                 $limit: 10, // Limit to the top 10 drivers
             },
             {
+                $lookup: {
+                    from: "ratings", // Lookup in the ratings collection
+                    localField: "_id", // Match driverId in CallTaxi with userId in Rating
+                    foreignField: "driverId",
+                    as: "ratingInfo", // Join the rating info to each record
+                },
+            },
+            {
+                $unwind: {
+                    path: "$ratingInfo", // Flatten the ratingInfo array to get the rating details
+                    preserveNullAndEmptyArrays: true, // If no rating exists, preserve the document
+                },
+            },
+            {
                 $project: {
                     _id: 0, // Exclude _id from the result
                     driverId: "$_id", // Use driverId
                     totalCalls: 1, // Display the total calls
+                    totalMeterCalls: 1, // Display the total trips with meter request type
+                    totalFlatFareCalls: 1, // Display the total trips with flat fare request type
+                    totalOfDriverIncome: 1, // Display the total of driver income
+                    driverFullName: 1, // Display the driver full name from the CallTaxi collection
+                    rating: { $ifNull: ["$ratingInfo.rating", 0] }, // Use $ifNull to set rating to 0 if no rating exists
                 },
             },
         ]);
@@ -332,6 +363,22 @@ const getTopTenPassenger = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 $group: {
                     _id: "$passengerId", // Group by passengerId (it’s a string)
                     totalTrips: { $sum: 1 }, // Count the total number of "Paid" trips for each passenger
+                    totalCancelTrips: {
+                        $sum: {
+                            $cond: [{ $eq: ["$status", "Canceled"] }, 1, 0], // Count trips with "Canceled" status
+                        },
+                    },
+                    totalMeterTrips: {
+                        $sum: {
+                            $cond: [{ $eq: ["$requestType", "meter"] }, 1, 0], // Count trips with "meter" request type
+                        },
+                    },
+                    totalFlatFareTrips: {
+                        $sum: {
+                            $cond: [{ $eq: ["$requestType", "flat_fare"] }, 1, 0], // Count trips with "flat_fare" request type
+                        },
+                    },
+                    passengerFullName: { $first: "$passengerFullName" }, // Get passengerFullName from the CallTaxi collection
                 },
             },
             {
@@ -345,6 +392,10 @@ const getTopTenPassenger = (req, res) => __awaiter(void 0, void 0, void 0, funct
                     _id: 0, // Exclude _id from the result
                     passengerId: "$_id", // Use passengerId
                     totalTrips: 1, // Display the total trips
+                    totalCancelTrips: 1, // Display the total canceled trips
+                    totalMeterTrips: 1, // Display the total trips with meter request type
+                    totalFlatFareTrips: 1, // Display the total trips with flat fare request type
+                    passengerFullName: 1, // Display the passenger full name from the CallTaxi collection
                 },
             },
         ]);
