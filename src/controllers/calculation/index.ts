@@ -152,33 +152,20 @@ export const calculateDriverDistanceAndDuration = async (
 export const driverRateCal = async (callTaxi: any) => {
     try {
         // Fetch the driverRate based on the taxiType
-        const driverRates = await driverRateModel.find({
-            taxiType: new Types.ObjectId(callTaxi?.carTypeId) // Assuming carTypeId matches taxiType in driverRate
+        // if country code find by country code also
+        const driverRates = await driverRateModel.findOne({
+            minDistance: { $lte: callTaxi.totalDistance },
+            maxDistance: { $gte: callTaxi.totalDistance }
         });
 
-        if (driverRates.length === 0) {
-            return {
-                message: "No driver rates found for this taxi type."
-            };
+        if (driverRates) {
+            const calculatedPrice = (driverRates?.percentage / 100) * callTaxi.totalPrice;
+
+            // Return the calculated price and the corresponding driver rate
+            return { calculatedPrice, driverRate: driverRates?.percentage };
         }
 
-        for (const rate of driverRates) {
-            // Check if the totalDistance is within the range of minDistance and maxDistance
-            if (
-                callTaxi.totalDistance >= rate.minDistance &&
-                callTaxi.totalDistance <= rate.maxDistance
-            ) {
-                // Calculate the total price based on the percentage
-                const calculatedPrice = (rate.percentage / 100) * callTaxi.totalPrice;
-
-                // Return the calculated price and the corresponding driver rate
-                return {
-                    calculatedPrice,
-                    driverRate: rate?.percentage,
-                };
-            }
-        }
-
+        return { message: "No driver rates found for this taxi type." };
     } catch (error) {
         console.log("error: ", error)
     }

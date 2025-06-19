@@ -17,3 +17,24 @@ export const formatTime = (date: any): string => {
   const m = date.getMinutes().toString().padStart(2, '0');
   return `${h}:${m}`;
 };
+
+export const getBangkokTodayUTC = () => {
+  const bangkokOffset = 7 * 60; // 7 hours in minutes
+
+  const now = new Date();
+  const bangkokNow = new Date(now.getTime() + bangkokOffset * 60000);
+
+  // Get Bangkok's start of day
+  const bangkokStartOfDay = new Date(bangkokNow);
+  bangkokStartOfDay.setHours(0, 0, 0, 0);
+
+  // Get Bangkok's end of day
+  const bangkokEndOfDay = new Date(bangkokNow);
+  bangkokEndOfDay.setHours(23, 59, 59, 999);
+
+  // Convert Bangkok's start and end of day back to UTC
+  const startOfDayUTC = new Date(bangkokStartOfDay.getTime() - bangkokOffset * 60000);
+  const endOfDayUTC = new Date(bangkokEndOfDay.getTime() - bangkokOffset * 60000);
+
+  return { startOfDayUTC, endOfDayUTC }
+}

@@ -15,7 +15,6 @@ const calculation_1 = require("../../services/calculation");
 const onPeakTime_1 = require("../../services/onPeakTime");
 const taxiTypePricing_1 = require("../../services/taxiTypePricing");
 const driverRate_1 = require("../../models/driverRate");
-const mongoose_1 = require("mongoose");
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     try {
@@ -110,27 +109,17 @@ exports.calculateDriverDistanceAndDuration = calculateDriverDistanceAndDuration;
 const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Fetch the driverRate based on the taxiType
-        const driverRates = yield driverRate_1.driverRateModel.find({
-            taxiType: new mongoose_1.Types.ObjectId(callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.carTypeId) // Assuming carTypeId matches taxiType in driverRate
+        // if country code find by country code also
+        const driverRates = yield driverRate_1.driverRateModel.findOne({
+            minDistance: { $lte: callTaxi.totalDistance },
+            maxDistance: { $gte: callTaxi.totalDistance }
         });
-        if (driverRates.length === 0) {
-            return {
-                message: "No driver rates found for this taxi type."
-            };
+        if (driverRates) {
+            const calculatedPrice = ((driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage) / 100) * callTaxi.totalPrice;
+            // Return the calculated price and the corresponding driver rate
+            return { calculatedPrice, driverRate: driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage };
         }
-        for (const rate of driverRates) {
-            // Check if the totalDistance is within the range of minDistance and maxDistance
-            if (callTaxi.totalDistance >= rate.minDistance &&
-                callTaxi.totalDistance <= rate.maxDistance) {
-                // Calculate the total price based on the percentage
-                const calculatedPrice = (rate.percentage / 100) * callTaxi.totalPrice;
-                // Return the calculated price and the corresponding driver rate
-                return {
-                    calculatedPrice,
-                    driverRate: rate === null || rate === void 0 ? void 0 : rate.percentage,
-                };
-            }
-        }
+        return { message: "No driver rates found for this taxi type." };
     }
     catch (error) {
         console.log("error: ", error);

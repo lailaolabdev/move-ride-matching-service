@@ -6,15 +6,16 @@ export const createClaimMoney = async (data:
     driverId: string,
     driverRegistrationSource: string,
     taxDeducted: number,
+    income?: number
   }) => {
   try {
-    await axios.post(
+    const res = await axios.post(
       `${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money`,
       {
         driverId: data.driverId,
         driverRegistrationSource: data.driverRegistrationSource,
         taxDeducted: data.taxDeducted,
-
+        income: data.income || 0
       },
       {
         headers: {
@@ -22,9 +23,65 @@ export const createClaimMoney = async (data:
         },
       }
     );
+
+    return res?.data?.claim
   } catch (error) {
     console.log(error);
 
     return false
   }
 };
+
+export const getClaimMoney = async (data:
+  {
+    token: string
+    driverId: string,
+    startDate: Date,
+    endDate: Date,
+  }) => {
+  try {
+    const res = await axios.get(
+      `${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money/${data.driverId}/driver`,
+      {
+        headers: {
+          Authorization: data.token,
+        },
+      }
+    );
+
+    return res?.data?.claim
+  } catch (error) {
+    console.log(error);
+
+    return false
+  }
+};
+
+export const updateClaimMoney = async (data:
+  {
+    token: string
+    id: string,
+    income: number
+  }) => {
+  try {
+    const res = await axios.put(
+      `${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money/${data.id}`,
+      {
+        income: data.income
+      },
+      {
+        headers: {
+          Authorization: data.token,
+        },
+      }
+    );
+
+    return res?.data?.claim
+  } catch (error) {
+    console.log(error);
+
+    return false
+  }
+};
+
+

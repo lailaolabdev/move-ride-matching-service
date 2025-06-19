@@ -23,6 +23,8 @@ const rating_1 = require("../../models/rating");
 const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
 const mongoose_1 = require("mongoose");
 const calculation_1 = require("../calculation");
+const claimMoney_1 = require("../../services/claimMoney");
+const timezone_1 = require("../../utils/timezone");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -664,9 +666,11 @@ const getDriverCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d;
     try {
         const { id } = req.params;
         const { type, status, actualUsedTime, claimMoney } = req.body;
+        const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
             res.status(400).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Ride matching with id:${id} not found` }));
@@ -712,6 +716,42 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             if (status === callTaxi_2.STATUS.PAID) {
                 const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
                 if (calculatedPrice && driverRate) {
+                    const { startOfDayUTC, endOfDayUTC } = (0, timezone_1.getBangkokTodayUTC)();
+                    const claimMoney = yield (0, claimMoney_1.getClaimMoney)({
+                        token,
+                        driverId: callTaxi.driverId,
+                        startDate: startOfDayUTC,
+                        endDate: endOfDayUTC
+                    });
+                    if (claimMoney) {
+                        const income = claimMoney.income + calculatedPrice;
+                        const updateClaim = yield (0, claimMoney_1.updateClaimMoney)({
+                            token,
+                            id: claimMoney._id,
+                            income
+                        });
+                        if (updateClaim)
+                            updateData.claimMoney = updateClaim._id;
+                    }
+                    else {
+                        const driver = yield axios_1.default.get(`
+                   ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId}`, {
+                            headers: {
+                                Authorization: `${req.headers["authorization"]}`
+                            }
+                        });
+                        const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
+                        const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
+                        const createClaim = yield (0, claimMoney_1.createClaimMoney)({
+                            token: token,
+                            driverId,
+                            driverRegistrationSource,
+                            taxDeducted: 10,
+                            income: calculatedPrice
+                        });
+                        if (createClaim)
+                            updateData.claimMoney = createClaim._id;
+                    }
                     updateData.driverIncome = calculatedPrice;
                     updateData.driverRate = driverRate;
                 }
@@ -730,7 +770,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            data: updated,
+            // data: updated,
         });
     }
     catch (error) {

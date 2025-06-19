@@ -32,6 +32,8 @@ import { ratingModel } from "../../models/rating";
 import vehicleDriverModel from "../../models/vehicleDriver";
 import { Types } from "mongoose";
 import { driverRateCal } from "../calculation";
+import { createClaimMoney, getClaimMoney, updateClaimMoney } from "../../services/claimMoney";
+import { getBangkokTodayUTC } from "../../utils/timezone";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -765,8 +767,8 @@ export const getDriverCallTaxis = async (req: Request, res: Response) => {
 export const updateCallTaxis = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-
     const { type, status, actualUsedTime, claimMoney } = req.body;
+    const token = req.headers.authorization!
 
     const callTaxi = await CallTaxi.findById(id);
 
@@ -826,6 +828,49 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
         const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
 
         if (calculatedPrice && driverRate) {
+          const { startOfDayUTC, endOfDayUTC } = getBangkokTodayUTC()
+
+          const claimMoney: any = await getClaimMoney({
+            token,
+            driverId: callTaxi.driverId!,
+            startDate: startOfDayUTC,
+            endDate: endOfDayUTC
+          })
+
+          if (claimMoney) {
+            const income = claimMoney.income + calculatedPrice
+
+            const updateClaim = await updateClaimMoney({
+              token,
+              id: claimMoney._id,
+              income
+            })
+
+            if (updateClaim) updateData.claimMoney = updateClaim._id
+          } else {
+            const driver = await axios.get(`
+                   ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi?.driverId}`,
+              {
+                headers: {
+                  Authorization: `${req.headers["authorization"]}`
+                }
+              }
+            );
+
+            const driverId = driver?.data?.user?._id
+            const driverRegistrationSource = driver?.data?.user?.registrationSource
+
+            const createClaim = await createClaimMoney({
+              token: token as string,
+              driverId,
+              driverRegistrationSource,
+              taxDeducted: 10,
+              income: calculatedPrice
+            })
+
+            if (createClaim) updateData.claimMoney = createClaim._id
+          }
+
           updateData.driverIncome = calculatedPrice
           updateData.driverRate = driverRate
         }
@@ -852,7 +897,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
-      data: updated,
+      // data: updated,
     });
 
   } catch (error) {
