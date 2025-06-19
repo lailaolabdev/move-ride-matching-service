@@ -724,7 +724,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                         endDate: endOfDayUTC
                     });
                     if (claimMoney) {
-                        const income = claimMoney.income + calculatedPrice;
+                        const income = claimMoney.income + (calculatedPrice - (callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.totalPrice));
                         const updateClaim = yield (0, claimMoney_1.updateClaimMoney)({
                             token,
                             id: claimMoney._id,
@@ -747,7 +747,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                             driverId,
                             driverRegistrationSource,
                             taxDeducted: 10,
-                            income: calculatedPrice
+                            income: calculatedPrice - (callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.totalPrice)
                         });
                         if (createClaim)
                             updateData.claimMoney = createClaim._id;
