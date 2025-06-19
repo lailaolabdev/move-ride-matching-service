@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
+exports.getDriverPaymentDetail = exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -669,7 +669,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
     var _a, _b, _c, _d;
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime, claimMoney } = req.body;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod } = req.body;
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
@@ -710,54 +710,59 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.actualUsedTime = actualUsedTime;
         if (claimMoney)
             updateData.claimMoney = claimMoney;
-        if (status) {
-            // If status is paid add calculatedPrice and driverRate to 
-            // calculate driver income
-            if (status === callTaxi_2.STATUS.PAID) {
-                const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
-                if (calculatedPrice && driverRate) {
-                    const { startOfDayUTC, endOfDayUTC } = (0, timezone_1.getBangkokTodayUTC)();
-                    const claimMoney = yield (0, claimMoney_1.getClaimMoney)({
-                        token,
-                        driverId: callTaxi.driverId,
-                        startDate: startOfDayUTC,
-                        endDate: endOfDayUTC
-                    });
-                    if (claimMoney) {
-                        const income = claimMoney.income + calculatedPrice;
-                        const updateClaim = yield (0, claimMoney_1.updateClaimMoney)({
+        if (point)
+            updateData.point = point;
+        if (paymentMethod)
+            updateData.paymentMethod = paymentMethod;
+        if (point)
+            if (status) {
+                // If status is paid add calculatedPrice and driverRate to 
+                // calculate driver income
+                if (status === callTaxi_2.STATUS.PAID) {
+                    const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
+                    if (calculatedPrice && driverRate) {
+                        const { startOfDayUTC, endOfDayUTC } = (0, timezone_1.getBangkokTodayUTC)();
+                        const claimMoney = yield (0, claimMoney_1.getClaimMoney)({
                             token,
-                            id: claimMoney._id,
-                            income
+                            driverId: callTaxi.driverId,
+                            startDate: startOfDayUTC,
+                            endDate: endOfDayUTC
                         });
-                        if (updateClaim)
-                            updateData.claimMoney = updateClaim._id;
-                    }
-                    else {
-                        const driver = yield axios_1.default.get(`
+                        if (claimMoney) {
+                            const income = claimMoney.income + calculatedPrice;
+                            const updateClaim = yield (0, claimMoney_1.updateClaimMoney)({
+                                token,
+                                id: claimMoney._id,
+                                income
+                            });
+                            if (updateClaim)
+                                updateData.claimMoney = updateClaim._id;
+                        }
+                        else {
+                            const driver = yield axios_1.default.get(`
                    ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId}`, {
-                            headers: {
-                                Authorization: `${req.headers["authorization"]}`
-                            }
-                        });
-                        const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
-                        const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
-                        const createClaim = yield (0, claimMoney_1.createClaimMoney)({
-                            token: token,
-                            driverId,
-                            driverRegistrationSource,
-                            taxDeducted: 10,
-                            income: calculatedPrice
-                        });
-                        if (createClaim)
-                            updateData.claimMoney = createClaim._id;
+                                headers: {
+                                    Authorization: `${req.headers["authorization"]}`
+                                }
+                            });
+                            const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
+                            const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
+                            const createClaim = yield (0, claimMoney_1.createClaimMoney)({
+                                token: token,
+                                driverId,
+                                driverRegistrationSource,
+                                taxDeducted: 10,
+                                income: calculatedPrice
+                            });
+                            if (createClaim)
+                                updateData.claimMoney = createClaim._id;
+                        }
+                        updateData.driverIncome = calculatedPrice;
+                        updateData.driverRate = driverRate;
                     }
-                    updateData.driverIncome = calculatedPrice;
-                    updateData.driverRate = driverRate;
                 }
+                updateData.status = status;
             }
-            updateData.status = status;
-        }
         const updated = yield (0, callTaxi_1.updateCallTaxiService)({ id, updateData });
         // if status is canceled notify to driver
         if (updated && updated.status === callTaxi_2.STATUS.CANCELED) {
@@ -1098,3 +1103,20 @@ const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getTotalDriverIncome = getTotalDriverIncome;
+// Report payment detail in travel history page
+const getDriverPaymentDetail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const callTaxiId = req.params.id;
+        const driverPaymentDetail = yield (0, callTaxi_1.getDriverPaymentDetailService)(callTaxiId);
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { driverPaymentDetail }));
+    }
+    catch (error) {
+        console.error("Error fetching tax info:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getDriverPaymentDetail = getDriverPaymentDetail;

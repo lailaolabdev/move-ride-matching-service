@@ -37,7 +37,7 @@ exports.ratingModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const RatingSchema = new mongoose_1.Schema({
     userId: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     rating: {

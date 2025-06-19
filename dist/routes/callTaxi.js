@@ -41,4 +41,5 @@ router.get("/comment-and-rating/:id", middlewares_1.checkAuthorizationMiddleware
 // By driver id
 router.get("/driver/ride-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverRideHistoryDetailById);
 router.get('/driver/total-income', middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getTotalDriverIncome);
+router.get('/driver/payment-detail/:id', middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverPaymentDetail);
 exports.default = router;

@@ -7,7 +7,7 @@ export interface IRating extends Document {
 
 const RatingSchema = new Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true
   },
   rating: {

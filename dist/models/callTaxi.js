@@ -144,7 +144,10 @@ const CallTaxiSchema = new mongoose_1.Schema({
     driverFullName: String,
     driverPhoneNumber: String,
     currency: String,
-    claimMoney: String
+    claimMoney: String,
+    point: Number,
+    paymentMethod: String,
+    registrationSource: String
 }, {
     timestamps: true,
 });

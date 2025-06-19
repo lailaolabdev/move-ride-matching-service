@@ -2,7 +2,7 @@ import { Request } from "express";
 import { ICallTaxi, CallTaxi, STATUS } from "../models/callTaxi";
 import axios from 'axios'
 import { roundCoord } from "../controllers/callTaxi/helper";
-import { Types } from "mongoose"
+import mongoose, { Types } from "mongoose"
 import vehicleDriverModel from "../models/vehicleDriver";
 import { generateBillNumber } from "../utils/generateBillNumber";
 
@@ -816,6 +816,32 @@ export const getTotalDriverIncomeServiceThatWasNotClaim = async (driverId: any):
         ])
 
         return totalIncome.length ? totalIncome[0].totalIncome : 0
+    } catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+}
+
+export const getDriverPaymentDetailService = async (callTaxiId: any): Promise<any> => {
+    try {
+        const driverPayment = await CallTaxi.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(callTaxiId)
+                }
+            },
+            {
+                $project: {
+                    billNumber: 1,
+                    requestType: 1,
+                    paymentMethod: 1,
+                    point: 1,
+                    totalPrice: 1
+                }
+            }
+        ])
+
+        return driverPayment.length ? driverPayment[0] : null
     } catch (error) {
         console.log("Error creating Record: ", error);
         throw error;

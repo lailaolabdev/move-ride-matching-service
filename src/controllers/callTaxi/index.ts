@@ -23,6 +23,7 @@ import {
   getCommentAndRatingService,
   getTotalDriverIncomeService,
   getTotalDriverIncomeServiceThatWasNotClaim,
+  getDriverPaymentDetailService,
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -767,7 +768,14 @@ export const getDriverCallTaxis = async (req: Request, res: Response) => {
 export const updateCallTaxis = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { type, status, actualUsedTime, claimMoney } = req.body;
+    const {
+      type,
+      status,
+      actualUsedTime,
+      claimMoney,
+      point,
+      paymentMethod
+    } = req.body;
     const token = req.headers.authorization!
 
     const callTaxi = await CallTaxi.findById(id);
@@ -820,64 +828,67 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (type) updateData.type = type
     if (actualUsedTime) updateData.actualUsedTime = actualUsedTime
     if (claimMoney) updateData.claimMoney = claimMoney
-    if (status) {
-      // If status is paid add calculatedPrice and driverRate to 
-      // calculate driver income
-      if (status === STATUS.PAID) {
+    if (point) updateData.point = point
+    if (paymentMethod) updateData.paymentMethod = paymentMethod
 
-        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
+    if (point)
+      if (status) {
+        // If status is paid add calculatedPrice and driverRate to 
+        // calculate driver income
+        if (status === STATUS.PAID) {
+          const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
 
-        if (calculatedPrice && driverRate) {
-          const { startOfDayUTC, endOfDayUTC } = getBangkokTodayUTC()
+          if (calculatedPrice && driverRate) {
+            const { startOfDayUTC, endOfDayUTC } = getBangkokTodayUTC()
 
-          const claimMoney: any = await getClaimMoney({
-            token,
-            driverId: callTaxi.driverId!,
-            startDate: startOfDayUTC,
-            endDate: endOfDayUTC
-          })
-
-          if (claimMoney) {
-            const income = claimMoney.income + calculatedPrice
-
-            const updateClaim = await updateClaimMoney({
+            const claimMoney: any = await getClaimMoney({
               token,
-              id: claimMoney._id,
-              income
+              driverId: callTaxi.driverId!,
+              startDate: startOfDayUTC,
+              endDate: endOfDayUTC
             })
 
-            if (updateClaim) updateData.claimMoney = updateClaim._id
-          } else {
-            const driver = await axios.get(`
+            if (claimMoney) {
+              const income = claimMoney.income + calculatedPrice
+
+              const updateClaim = await updateClaimMoney({
+                token,
+                id: claimMoney._id,
+                income
+              })
+
+              if (updateClaim) updateData.claimMoney = updateClaim._id
+            } else {
+              const driver = await axios.get(`
                    ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi?.driverId}`,
-              {
-                headers: {
-                  Authorization: `${req.headers["authorization"]}`
+                {
+                  headers: {
+                    Authorization: `${req.headers["authorization"]}`
+                  }
                 }
-              }
-            );
+              );
 
-            const driverId = driver?.data?.user?._id
-            const driverRegistrationSource = driver?.data?.user?.registrationSource
+              const driverId = driver?.data?.user?._id
+              const driverRegistrationSource = driver?.data?.user?.registrationSource
 
-            const createClaim = await createClaimMoney({
-              token: token as string,
-              driverId,
-              driverRegistrationSource,
-              taxDeducted: 10,
-              income: calculatedPrice
-            })
+              const createClaim = await createClaimMoney({
+                token: token as string,
+                driverId,
+                driverRegistrationSource,
+                taxDeducted: 10,
+                income: calculatedPrice
+              })
 
-            if (createClaim) updateData.claimMoney = createClaim._id
+              if (createClaim) updateData.claimMoney = createClaim._id
+            }
+
+            updateData.driverIncome = calculatedPrice
+            updateData.driverRate = driverRate
           }
-
-          updateData.driverIncome = calculatedPrice
-          updateData.driverRate = driverRate
         }
-      }
 
-      updateData.status = status
-    }
+        updateData.status = status
+      }
 
     const updated: any = await updateCallTaxiService({ id, updateData });
 
@@ -1285,6 +1296,27 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
       ...messages.SUCCESSFULLY,
       totalIncome,
       totalIncomeThatWasNotClaim
+    })
+  } catch (error) {
+    console.error("Error fetching tax info:", error);
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+}
+
+// Report payment detail in travel history page
+export const getDriverPaymentDetail = async (req: Request, res: Response) => {
+  try {
+    const callTaxiId = req.params.id
+
+    const driverPaymentDetail = await getDriverPaymentDetailService(callTaxiId)
+
+    res.json({
+      ...messages.SUCCESSFULLY,
+      driverPaymentDetail,
     })
   } catch (error) {
     console.error("Error fetching tax info:", error);

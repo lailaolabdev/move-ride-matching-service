@@ -204,7 +204,10 @@ const CallTaxiSchema: Schema = new Schema(
     driverFullName: String,
     driverPhoneNumber: String,
     currency: String,
-    claimMoney: String
+    claimMoney: String,
+    point: Number,
+    paymentMethod: String,
+    registrationSource: String
   },
   {
     timestamps: true,

@@ -19,7 +19,8 @@ import {
   reportPassenger,
   travelHistory,
   getCommentAndRating,
-  getTotalDriverIncome
+  getTotalDriverIncome,
+  getDriverPaymentDetail
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -150,6 +151,12 @@ router.get(
   '/driver/total-income',
   checkAuthorizationMiddleware,
   getTotalDriverIncome
+)
+
+router.get(
+  '/driver/payment-detail/:id',
+  checkAuthorizationMiddleware,
+  getDriverPaymentDetail
 )
 
 export default router;
