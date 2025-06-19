@@ -831,64 +831,63 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (point) updateData.point = point
     if (paymentMethod) updateData.paymentMethod = paymentMethod
 
-    if (point)
-      if (status) {
-        // If status is paid add calculatedPrice and driverRate to 
-        // calculate driver income
-        if (status === STATUS.PAID) {
-          const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
+    if (status) {
+      // If status is paid add calculatedPrice and driverRate to 
+      // calculate driver income
+      if (status === STATUS.PAID) {
+        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
 
-          if (calculatedPrice && driverRate) {
-            const { startOfDayUTC, endOfDayUTC } = getBangkokTodayUTC()
+        if (calculatedPrice && driverRate) {
+          const { startOfDayUTC, endOfDayUTC } = getBangkokTodayUTC()
 
-            const claimMoney: any = await getClaimMoney({
+          const claimMoney: any = await getClaimMoney({
+            token,
+            driverId: callTaxi.driverId!,
+            startDate: startOfDayUTC,
+            endDate: endOfDayUTC
+          })
+
+          if (claimMoney) {
+            const income = claimMoney.income + calculatedPrice
+
+            const updateClaim = await updateClaimMoney({
               token,
-              driverId: callTaxi.driverId!,
-              startDate: startOfDayUTC,
-              endDate: endOfDayUTC
+              id: claimMoney._id,
+              income
             })
 
-            if (claimMoney) {
-              const income = claimMoney.income + calculatedPrice
-
-              const updateClaim = await updateClaimMoney({
-                token,
-                id: claimMoney._id,
-                income
-              })
-
-              if (updateClaim) updateData.claimMoney = updateClaim._id
-            } else {
-              const driver = await axios.get(`
+            if (updateClaim) updateData.claimMoney = updateClaim._id
+          } else {
+            const driver = await axios.get(`
                    ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi?.driverId}`,
-                {
-                  headers: {
-                    Authorization: `${req.headers["authorization"]}`
-                  }
+              {
+                headers: {
+                  Authorization: `${req.headers["authorization"]}`
                 }
-              );
+              }
+            );
 
-              const driverId = driver?.data?.user?._id
-              const driverRegistrationSource = driver?.data?.user?.registrationSource
+            const driverId = driver?.data?.user?._id
+            const driverRegistrationSource = driver?.data?.user?.registrationSource
 
-              const createClaim = await createClaimMoney({
-                token: token as string,
-                driverId,
-                driverRegistrationSource,
-                taxDeducted: 10,
-                income: calculatedPrice
-              })
+            const createClaim = await createClaimMoney({
+              token: token as string,
+              driverId,
+              driverRegistrationSource,
+              taxDeducted: 10,
+              income: calculatedPrice
+            })
 
-              if (createClaim) updateData.claimMoney = createClaim._id
-            }
-
-            updateData.driverIncome = calculatedPrice
-            updateData.driverRate = driverRate
+            if (createClaim) updateData.claimMoney = createClaim._id
           }
-        }
 
-        updateData.status = status
+          updateData.driverIncome = calculatedPrice
+          updateData.driverRate = driverRate
+        }
       }
+
+      updateData.status = status
+    }
 
     const updated: any = await updateCallTaxiService({ id, updateData });
 
@@ -908,7 +907,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
-      // data: updated,
+      data: updated,
     });
 
   } catch (error) {

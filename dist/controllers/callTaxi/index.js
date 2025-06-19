@@ -714,55 +714,54 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.point = point;
         if (paymentMethod)
             updateData.paymentMethod = paymentMethod;
-        if (point)
-            if (status) {
-                // If status is paid add calculatedPrice and driverRate to 
-                // calculate driver income
-                if (status === callTaxi_2.STATUS.PAID) {
-                    const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
-                    if (calculatedPrice && driverRate) {
-                        const { startOfDayUTC, endOfDayUTC } = (0, timezone_1.getBangkokTodayUTC)();
-                        const claimMoney = yield (0, claimMoney_1.getClaimMoney)({
+        if (status) {
+            // If status is paid add calculatedPrice and driverRate to 
+            // calculate driver income
+            if (status === callTaxi_2.STATUS.PAID) {
+                const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
+                if (calculatedPrice && driverRate) {
+                    const { startOfDayUTC, endOfDayUTC } = (0, timezone_1.getBangkokTodayUTC)();
+                    const claimMoney = yield (0, claimMoney_1.getClaimMoney)({
+                        token,
+                        driverId: callTaxi.driverId,
+                        startDate: startOfDayUTC,
+                        endDate: endOfDayUTC
+                    });
+                    if (claimMoney) {
+                        const income = claimMoney.income + calculatedPrice;
+                        const updateClaim = yield (0, claimMoney_1.updateClaimMoney)({
                             token,
-                            driverId: callTaxi.driverId,
-                            startDate: startOfDayUTC,
-                            endDate: endOfDayUTC
+                            id: claimMoney._id,
+                            income
                         });
-                        if (claimMoney) {
-                            const income = claimMoney.income + calculatedPrice;
-                            const updateClaim = yield (0, claimMoney_1.updateClaimMoney)({
-                                token,
-                                id: claimMoney._id,
-                                income
-                            });
-                            if (updateClaim)
-                                updateData.claimMoney = updateClaim._id;
-                        }
-                        else {
-                            const driver = yield axios_1.default.get(`
-                   ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId}`, {
-                                headers: {
-                                    Authorization: `${req.headers["authorization"]}`
-                                }
-                            });
-                            const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
-                            const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
-                            const createClaim = yield (0, claimMoney_1.createClaimMoney)({
-                                token: token,
-                                driverId,
-                                driverRegistrationSource,
-                                taxDeducted: 10,
-                                income: calculatedPrice
-                            });
-                            if (createClaim)
-                                updateData.claimMoney = createClaim._id;
-                        }
-                        updateData.driverIncome = calculatedPrice;
-                        updateData.driverRate = driverRate;
+                        if (updateClaim)
+                            updateData.claimMoney = updateClaim._id;
                     }
+                    else {
+                        const driver = yield axios_1.default.get(`
+                   ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId}`, {
+                            headers: {
+                                Authorization: `${req.headers["authorization"]}`
+                            }
+                        });
+                        const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
+                        const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
+                        const createClaim = yield (0, claimMoney_1.createClaimMoney)({
+                            token: token,
+                            driverId,
+                            driverRegistrationSource,
+                            taxDeducted: 10,
+                            income: calculatedPrice
+                        });
+                        if (createClaim)
+                            updateData.claimMoney = createClaim._id;
+                    }
+                    updateData.driverIncome = calculatedPrice;
+                    updateData.driverRate = driverRate;
                 }
-                updateData.status = status;
             }
+            updateData.status = status;
+        }
         const updated = yield (0, callTaxi_1.updateCallTaxiService)({ id, updateData });
         // if status is canceled notify to driver
         if (updated && updated.status === callTaxi_2.STATUS.CANCELED) {
@@ -775,7 +774,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            // data: updated,
+            data: updated,
         });
     }
     catch (error) {
