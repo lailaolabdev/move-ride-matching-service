@@ -838,7 +838,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
           })
 
           if (claimMoney) {
-            const income = claimMoney.income + (calculatedPrice - callTaxi?.totalPrice)
+            const income = claimMoney.income + calculatedPrice
 
             const updateClaim = await updateClaimMoney({
               token,
@@ -865,7 +865,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
               driverId,
               driverRegistrationSource,
               taxDeducted: 10,
-              income: calculatedPrice - callTaxi?.totalPrice
+              income: calculatedPrice
             })
 
             if (createClaim) updateData.claimMoney = createClaim._id
