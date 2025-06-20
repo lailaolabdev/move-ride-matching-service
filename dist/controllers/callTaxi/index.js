@@ -823,6 +823,13 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
             return;
         }
+        if (callTaxi.status === callTaxi_2.STATUS.CANCELED) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: "Cannot accept this order due to cancel",
+            });
+            return;
+        }
         // Update status
         let status = "";
         if (!callTaxi.driverId) {

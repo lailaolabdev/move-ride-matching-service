@@ -974,6 +974,15 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
       return;
     }
 
+    if (callTaxi.status === STATUS.CANCELED) {
+      res.status(400).json({
+        code: messages.BAD_REQUEST.code,
+        message: "Cannot accept this order due to cancel",
+      });
+
+      return;
+    }
+
     // Update status
     let status: String = "";
 
