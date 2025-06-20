@@ -40,7 +40,7 @@ export const getClaimMoney = async (data:
   }) => {
   try {
     const res = await axios.get(
-      `${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money/${data.driverId}/driver`,
+      `${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money/${data.driverId}/driver?status=${data.status}`,
       {
         headers: {
           Authorization: data.token,

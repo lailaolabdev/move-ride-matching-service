@@ -38,7 +38,7 @@ exports.createClaimMoney = createClaimMoney;
 const getClaimMoney = (data) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const res = yield axios_1.default.get(`${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money/${data.driverId}/driver`, {
+        const res = yield axios_1.default.get(`${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money/${data.driverId}/driver?status=${data.status}`, {
             headers: {
                 Authorization: data.token,
             },
