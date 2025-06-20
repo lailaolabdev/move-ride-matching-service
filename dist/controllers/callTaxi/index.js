@@ -24,7 +24,6 @@ const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
 const mongoose_1 = require("mongoose");
 const calculation_1 = require("../calculation");
 const claimMoney_1 = require("../../services/claimMoney");
-const timezone_1 = require("../../utils/timezone");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -676,6 +675,15 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             res.status(400).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Ride matching with id:${id} not found` }));
             return;
         }
+        const isValidStatus = Object.values(callTaxi_2.STATUS).includes(status);
+        if (!isValidStatus) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                messages: config_1.messages.BAD_REQUEST.message,
+                detail: "Cancel status is incorrect",
+            });
+            return;
+        }
         // if status from order not equal to "Requesting" and "Accepted"
         // cannot cancel the order
         // Requesting means while passenger is calling for an order 
@@ -692,15 +700,6 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                 });
                 return;
             }
-        }
-        const isValidStatus = Object.values(callTaxi_2.STATUS).includes(status);
-        if (!isValidStatus) {
-            res.status(400).json({
-                code: config_1.messages.BAD_REQUEST.code,
-                messages: config_1.messages.BAD_REQUEST.message,
-                detail: "Cancel status is incorrect",
-            });
-            return;
         }
         // Update call taxi part
         const updateData = {};
@@ -719,13 +718,12 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             // calculate driver income
             if (status === callTaxi_2.STATUS.PAID) {
                 const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
+                // Calculate price and driver rate
                 if (calculatedPrice && driverRate) {
-                    const { startOfDayUTC, endOfDayUTC } = (0, timezone_1.getBangkokTodayUTC)();
                     const claimMoney = yield (0, claimMoney_1.getClaimMoney)({
                         token,
                         driverId: callTaxi.driverId,
-                        startDate: startOfDayUTC,
-                        endDate: endOfDayUTC
+                        status: "WAITING_TO_CHECK",
                     });
                     if (claimMoney) {
                         const income = claimMoney.income + calculatedPrice;

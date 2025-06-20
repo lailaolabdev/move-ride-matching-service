@@ -789,6 +789,18 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       return;
     }
 
+    const isValidStatus = Object.values(STATUS).includes(status);
+
+    if (!isValidStatus) {
+      res.status(400).json({
+        code: messages.BAD_REQUEST.code,
+        messages: messages.BAD_REQUEST.message,
+        detail: "Cancel status is incorrect",
+      });
+
+      return;
+    }
+
     // if status from order not equal to "Requesting" and "Accepted"
     // cannot cancel the order
     // Requesting means while passenger is calling for an order 
@@ -810,18 +822,6 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       }
     }
 
-    const isValidStatus = Object.values(STATUS).includes(status);
-
-    if (!isValidStatus) {
-      res.status(400).json({
-        code: messages.BAD_REQUEST.code,
-        messages: messages.BAD_REQUEST.message,
-        detail: "Cancel status is incorrect",
-      });
-
-      return;
-    }
-
     // Update call taxi part
     const updateData: any = {}
 
@@ -837,14 +837,12 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       if (status === STATUS.PAID) {
         const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
 
+        // Calculate price and driver rate
         if (calculatedPrice && driverRate) {
-          const { startOfDayUTC, endOfDayUTC } = getBangkokTodayUTC()
-
           const claimMoney: any = await getClaimMoney({
             token,
             driverId: callTaxi.driverId!,
-            startDate: startOfDayUTC,
-            endDate: endOfDayUTC
+            status: "WAITING_TO_CHECK",
           })
 
           if (claimMoney) {
@@ -909,7 +907,6 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       messages: messages.SUCCESSFULLY.message,
       data: updated,
     });
-
   } catch (error) {
     console.error("Error fetching tax info:", error);
 

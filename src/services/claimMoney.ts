@@ -36,8 +36,7 @@ export const getClaimMoney = async (data:
   {
     token: string
     driverId: string,
-    startDate: Date,
-    endDate: Date,
+    status?: string
   }) => {
   try {
     const res = await axios.get(
