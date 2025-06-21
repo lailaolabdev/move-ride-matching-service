@@ -259,6 +259,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             };
         }
         const skip = (parseInt(page) - 1) * parseInt(limit);
+        const total = yield callTaxi_2.CallTaxi.countDocuments(match);
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
             { $match: match },
             // Lookup passenger
@@ -331,7 +332,8 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 },
             },
         ]);
-        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi }));
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { total,
+            callTaxi }));
     }
     catch (error) {
         console.log("error: ", error);

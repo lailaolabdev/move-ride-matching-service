@@ -320,6 +320,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
+    const total = await CallTaxi.countDocuments(match)
     const callTaxi = await CallTaxi.aggregate([
       { $match: match },
 
@@ -400,6 +401,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
 
     res.status(200).json({
       ...messages.SUCCESSFULLY,
+      total,
       callTaxi,
     });
   } catch (error) {
