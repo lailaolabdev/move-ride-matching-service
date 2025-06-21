@@ -377,6 +377,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
 
       { $skip: skip },
       { $limit: parseInt(limit) },
+      { $sort: { createdAt: -1 } },
 
       // Final projection
       {

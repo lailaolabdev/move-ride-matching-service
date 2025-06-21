@@ -312,6 +312,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 : []),
             { $skip: skip },
             { $limit: parseInt(limit) },
+            { $sort: { createdAt: -1 } },
             // Final projection
             {
                 $project: {
