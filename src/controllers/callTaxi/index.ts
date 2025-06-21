@@ -1017,7 +1017,15 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     }
 
     // Confirmed order
-    const confirmed = await driverUpdateStatusService(req, status);
+    const confirmed = await driverUpdateStatusService(
+      {
+        req,
+        status,
+        driverRegistrationSource: driverData?.data?.user?.registrationSource,
+        driverFullName: driverData?.data?.user?.phone,
+        driverPhoneNumber: driverData?.data?.user?.phone,
+      }
+    );
 
     if (!confirmed) {
       res.status(404).json({

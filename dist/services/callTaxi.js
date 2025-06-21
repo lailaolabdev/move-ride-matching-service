@@ -273,11 +273,15 @@ const updateCallTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* 
     }
 });
 exports.updateCallTaxiService = updateCallTaxiService;
-const driverUpdateStatusService = (req, status) => __awaiter(void 0, void 0, void 0, function* () {
+const driverUpdateStatusService = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        const driverId = req.user.id;
-        const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, { driverId, status }, { new: true });
+        const { id } = data.req.params;
+        const driverId = data.req.user.id;
+        const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, {
+            driverId,
+            status: data.status,
+            driverRegistrationSource: data.driverRegistrationSource
+        }, { new: true });
         return confirmed;
     }
     catch (error) {

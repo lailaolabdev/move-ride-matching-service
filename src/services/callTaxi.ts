@@ -292,14 +292,26 @@ export const updateCallTaxiService = async ({ id, updateData }: {
     }
 };
 
-export const driverUpdateStatusService = async (req: Request, status: String) => {
+export const driverUpdateStatusService = async (data:
+    {
+        req: Request,
+        status: String,
+        driverRegistrationSource: string
+        driverFullName: string,
+        driverPhoneNumber: string,
+    }
+) => {
     try {
-        const { id } = req.params
-        const driverId = (req as any).user.id;
+        const { id } = data.req.params
+        const driverId = (data.req as any).user.id;
 
         const confirmed = await CallTaxi.findByIdAndUpdate(
             id,
-            { driverId, status },
+            {
+                driverId,
+                status: data.status,
+                driverRegistrationSource: data.driverRegistrationSource
+            },
             { new: true }
         )
 

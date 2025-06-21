@@ -786,7 +786,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.updateCallTaxis = updateCallTaxis;
 const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
     try {
         const user = req.user;
         const { id } = req.params;
@@ -861,7 +861,13 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             }
         }
         // Confirmed order
-        const confirmed = yield (0, callTaxi_1.driverUpdateStatusService)(req, status);
+        const confirmed = yield (0, callTaxi_1.driverUpdateStatusService)({
+            req,
+            status,
+            driverRegistrationSource: (_r = (_q = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _q === void 0 ? void 0 : _q.user) === null || _r === void 0 ? void 0 : _r.registrationSource,
+            driverFullName: (_t = (_s = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _s === void 0 ? void 0 : _s.user) === null || _t === void 0 ? void 0 : _t.phone,
+            driverPhoneNumber: (_v = (_u = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _u === void 0 ? void 0 : _u.user) === null || _v === void 0 ? void 0 : _v.phone,
+        });
         if (!confirmed) {
             res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
