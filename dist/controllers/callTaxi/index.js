@@ -148,6 +148,7 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     "passengerDetails.fullName": 1,
                     "passengerDetails.phone": 1,
                     "passengerDetails.email": 1,
+                    "registrationSource": 1,
                 }
             }
         ]);

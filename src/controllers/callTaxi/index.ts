@@ -182,6 +182,7 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
           "passengerDetails.fullName": 1,
           "passengerDetails.phone": 1,
           "passengerDetails.email": 1,
+          "registrationSource": 1,
         }
       }
     ]);
