@@ -393,6 +393,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
           totalPrice: 1,
           status: 1,
           createdAt: 1,
+          registrationSource: 1,
         },
       },
     ]);
