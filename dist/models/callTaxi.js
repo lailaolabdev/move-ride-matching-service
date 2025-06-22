@@ -147,7 +147,11 @@ const CallTaxiSchema = new mongoose_1.Schema({
     claimMoney: String,
     point: Number,
     paymentMethod: String,
-    registrationSource: String
+    registrationSource: String,
+    isRequestTaxInvoice: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true,
 });

@@ -5,6 +5,6 @@ import { registerVoiceCallToken, voiceCall } from '../controllers/voiceCall';
 const router = express.Router();
 
 router.get('/token', checkAuthorizationMiddleware, registerVoiceCallToken);
-router.post('/', checkAuthorizationMiddleware, voiceCall);
+router.post('/', voiceCall);
 
 export default router;
