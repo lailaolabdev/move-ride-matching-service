@@ -50,17 +50,12 @@ export const voiceCall = async (req: Request, res: Response) => {
       newtwiml.say("Thanks for calling!");
     }
 
-    res.type("text/xml");
-    res.send(newtwiml.toString());
-
     console.log({
       twiml: newtwiml.toString()
     });
 
-    res.status(201).json({
-      ...messages.CREATE_SUCCESSFUL,
-      twiml: newtwiml.toString()
-    });
+    res.type("text/xml");
+    res.send(newtwiml.toString());
   } catch (error) {
     console.log("Error: ", error);
 
