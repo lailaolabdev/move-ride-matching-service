@@ -1052,7 +1052,7 @@ exports.reportPassenger = reportPassenger;
 const travelHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.params.id;
-        const { page = "1", limit = "10", status } = req.query;
+        const { page = "1", limit = "10", status, startDate, endDate, isRequestTaxInvoice } = req.query;
         const pageToNumber = parseInt(page, 10);
         const limitToNumber = parseInt(limit, 10);
         const skip = (pageToNumber - 1) * limitToNumber;
@@ -1061,6 +1061,30 @@ const travelHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         };
         if (status)
             filter.status = status;
+        if (isRequestTaxInvoice)
+            filter.isRequestTaxInvoice = isRequestTaxInvoice;
+        if (startDate || endDate) {
+            const createdAtFilter = {};
+            if (startDate) {
+                const startLao = new Date(startDate);
+                // Convert to UTC by subtracting 7 hours immediately
+                startLao.setHours(startLao.getHours() - 7);
+                startLao.setMinutes(0);
+                startLao.setSeconds(0);
+                startLao.setMilliseconds(0);
+                createdAtFilter.$gte = startLao;
+            }
+            if (endDate) {
+                const endLao = new Date(endDate);
+                // Convert to UTC by subtracting 7 hours immediately
+                endLao.setHours(endLao.getHours() - 7 + 23);
+                endLao.setMinutes(59);
+                endLao.setSeconds(59);
+                endLao.setMilliseconds(999);
+                createdAtFilter.$lte = endLao;
+            }
+            filter.createdAt = createdAtFilter;
+        }
         const travelHistory = yield (0, callTaxi_1.travelHistoryService)(skip, limitToNumber, filter);
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { travelHistory }));
     }

@@ -1237,7 +1237,10 @@ export const travelHistory = async (req: Request, res: Response) => {
     const {
       page = "1",
       limit = "10",
-      status
+      status,
+      startDate,
+      endDate,
+      isRequestTaxInvoice
     } = req.query
 
     const pageToNumber = parseInt(page as string, 10)
@@ -1250,6 +1253,32 @@ export const travelHistory = async (req: Request, res: Response) => {
     }
 
     if (status) filter.status = status
+    if (isRequestTaxInvoice) filter.isRequestTaxInvoice = isRequestTaxInvoice
+    if (startDate || endDate) {
+      const createdAtFilter: any = {};
+
+      if (startDate) {
+        const startLao = new Date(startDate as string);
+        // Convert to UTC by subtracting 7 hours immediately
+        startLao.setHours(startLao.getHours() - 7);
+        startLao.setMinutes(0);
+        startLao.setSeconds(0);
+        startLao.setMilliseconds(0);
+        createdAtFilter.$gte = startLao;
+      }
+
+      if (endDate) {
+        const endLao = new Date(endDate as string);
+        // Convert to UTC by subtracting 7 hours immediately
+        endLao.setHours(endLao.getHours() - 7 + 23);
+        endLao.setMinutes(59);
+        endLao.setSeconds(59);
+        endLao.setMilliseconds(999);
+        createdAtFilter.$lte = endLao;
+      }
+
+      filter.createdAt = createdAtFilter;
+    }
 
     const travelHistory = await travelHistoryService(skip, limitToNumber, filter)
 
