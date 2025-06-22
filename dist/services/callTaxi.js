@@ -45,7 +45,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDriverPaymentDetailService = exports.getTotalDriverIncomeServiceThatWasNotClaim = exports.getTotalDriverIncomeService = exports.getCommentAndRatingService = exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
+exports.getDriverPaymentDetailService = exports.getTotalDriverIncomeServiceThatWasNotClaim = exports.getTotalDriverIncomeService = exports.getDriverCommentAndRatingService = exports.getPassengerCommentAndRatingService = exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("../controllers/callTaxi/helper");
@@ -679,7 +679,7 @@ const travelHistoryService = (skip, limit, filter) => __awaiter(void 0, void 0, 
     }
 });
 exports.travelHistoryService = travelHistoryService;
-const getCommentAndRatingService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
+const getPassengerCommentAndRatingService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const commentAndRating = yield callTaxi_1.CallTaxi.aggregate([
             {
@@ -724,7 +724,53 @@ const getCommentAndRatingService = (skip, limit, filter) => __awaiter(void 0, vo
         throw error;
     }
 });
-exports.getCommentAndRatingService = getCommentAndRatingService;
+exports.getPassengerCommentAndRatingService = getPassengerCommentAndRatingService;
+const getDriverCommentAndRatingService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const commentAndRating = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$passengerId"] } } }
+                    ],
+                    as: "passenger"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$passenger",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    driverComplain: 1,
+                    fullName: "$passenger.fullName",
+                    profileImage: "$passenger.profileImage",
+                    createdAt: 1,
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ]);
+        return commentAndRating;
+    }
+    catch (error) {
+        console.log("Error creating Record: ", error);
+        throw error;
+    }
+});
+exports.getDriverCommentAndRatingService = getDriverCommentAndRatingService;
 // Report driver part
 const getTotalDriverIncomeService = (driverId) => __awaiter(void 0, void 0, void 0, function* () {
     try {

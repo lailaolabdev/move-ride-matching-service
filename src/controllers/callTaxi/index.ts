@@ -20,10 +20,11 @@ import {
   getTheLastRideService,
   getNumberOfCallingTaxiService,
   travelHistoryService,
-  getCommentAndRatingService,
+  getPassengerCommentAndRatingService,
   getTotalDriverIncomeService,
   getTotalDriverIncomeServiceThatWasNotClaim,
   getDriverPaymentDetailService,
+  getDriverCommentAndRatingService,
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
@@ -1268,11 +1269,12 @@ export const travelHistory = async (req: Request, res: Response) => {
 
 export const getCommentAndRating = async (req: Request, res: Response) => {
   try {
-    const passengerId = req.params.id
+    const userId = req.params.id
     const {
       page = "1",
       limit = "10",
-      status
+      status,
+      role = 'CUSTOMER'
     } = req.query
 
     const pageToNumber = parseInt(page as string, 10)
@@ -1280,13 +1282,15 @@ export const getCommentAndRating = async (req: Request, res: Response) => {
 
     const skip = (pageToNumber - 1) * limitToNumber;
 
-    const filter: any = {
-      passengerId,
-    }
+    const filter: any = {}
 
     if (status) filter.status = status
+    if (role === "DRIVER") filter.driverId = userId
+    if (role === "CUSTOMER") filter.passengerId = userId
 
-    const travelHistory = await getCommentAndRatingService(skip, limitToNumber, filter)
+    const travelHistory = role === "DRIVER"
+      ? await getDriverCommentAndRatingService(skip, limitToNumber, filter)
+      : await getPassengerCommentAndRatingService(skip, limitToNumber, filter)
 
     res.json({
       ...messages.SUCCESSFULLY,

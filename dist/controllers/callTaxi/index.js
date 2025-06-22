@@ -1076,17 +1076,21 @@ const travelHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.travelHistory = travelHistory;
 const getCommentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const passengerId = req.params.id;
-        const { page = "1", limit = "10", status } = req.query;
+        const userId = req.params.id;
+        const { page = "1", limit = "10", status, role = 'CUSTOMER' } = req.query;
         const pageToNumber = parseInt(page, 10);
         const limitToNumber = parseInt(limit, 10);
         const skip = (pageToNumber - 1) * limitToNumber;
-        const filter = {
-            passengerId,
-        };
+        const filter = {};
         if (status)
             filter.status = status;
-        const travelHistory = yield (0, callTaxi_1.getCommentAndRatingService)(skip, limitToNumber, filter);
+        if (role === "DRIVER")
+            filter.driverId = userId;
+        if (role === "CUSTOMER")
+            filter.passengerId = userId;
+        const travelHistory = role === "DRIVER"
+            ? yield (0, callTaxi_1.getDriverCommentAndRatingService)(skip, limitToNumber, filter)
+            : yield (0, callTaxi_1.getPassengerCommentAndRatingService)(skip, limitToNumber, filter);
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { travelHistory }));
     }
     catch (error) {
