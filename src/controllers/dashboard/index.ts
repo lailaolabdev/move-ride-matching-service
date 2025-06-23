@@ -6,39 +6,45 @@ import mongoose from "mongoose";
 
 export const summaryRevenueCallTaxi = async (req: Request, res: Response) => {
     try {
-        // Extract filters from the query parameters
         const { startDate, endDate, country } = req.query;
 
-        // Build the filter object
-        let filter: any = {};
+        let filter: any = {
+            status: "Paid", // Only include records with status = "Paid"
+        };
 
-        // Add the startDate and endDate filters if they are provided
         if (startDate && endDate) {
             filter.createdAt = {
-                $gte: new Date(startDate as string),  // Greater than or equal to startDate
-                $lte: new Date(endDate as string),    // Less than or equal to endDate
+                $gte: new Date(startDate as string),
+                $lte: new Date(endDate as string),
             };
         }
 
-        // Add the country filter if it's provided
         if (country) {
             filter.country = country;
         }
 
-        // Perform the aggregation to calculate the total price and the total price for isClaim = true
         const result = await CallTaxi.aggregate([
             {
-                $match: filter, // Apply the filters (startDate, endDate, country)
+                $match: filter,
             },
             {
                 $group: {
-                    _id: null, // No grouping by specific field, we want the total sum
-                    totalPrice: { $sum: "$totalPrice" }, // Sum the totalPrice field
-                    totalClaimedPrice: {
+                    _id: null,
+                    totalPrice: { $sum: "$totalPrice" },
+                    totalClaimedDriverIncome: {
                         $sum: {
                             $cond: {
-                                if: { $eq: ["$isClaim", true] }, // Only sum totalPrice if isClaim is true
-                                then: "$totalPrice",
+                                if: { $eq: ["$isClaim", true] },
+                                then: "$driverIncome",
+                                else: 0,
+                            },
+                        },
+                    },
+                    totalNotClaimedDriverIncome: {
+                        $sum: {
+                            $cond: {
+                                if: { $eq: ["$isClaim", false] },
+                                then: "$driverIncome",
                                 else: 0,
                             },
                         },
@@ -47,22 +53,26 @@ export const summaryRevenueCallTaxi = async (req: Request, res: Response) => {
             },
         ]);
 
-        // Check if the result has a totalPrice field and send the response
         if (result.length > 0) {
+            const { totalPrice, totalClaimedDriverIncome, totalNotClaimedDriverIncome } = result[0];
+            const taxiIncome = totalPrice - (totalClaimedDriverIncome + totalNotClaimedDriverIncome);
+
             res.status(200).json({
                 code: messages.SUCCESSFULLY.code,
                 message: messages.SUCCESSFULLY.message,
-                totalPrice: result[0].totalPrice,
-                totalClaimedPrice: result[0].totalClaimedPrice,
-                totalNotClaimedPrice: 0,
+                totalPrice: parseFloat(totalPrice.toFixed(3)),
+                totalClaimedDriverIncome: parseFloat(totalClaimedDriverIncome.toFixed(3)),
+                totalNotClaimedDriverIncome: parseFloat(totalNotClaimedDriverIncome.toFixed(3)),
+                taxiIncome: parseFloat(taxiIncome.toFixed(3)),
             });
         } else {
             res.status(200).json({
                 code: messages.SUCCESSFULLY.code,
                 message: messages.SUCCESSFULLY.message,
                 totalPrice: 0,
-                totalClaimedPrice: 0,
-                totalNotClaimedPrice: 0,
+                totalClaimedDriverIncome: 0,
+                totalNotClaimedDriverIncome: 0,
+                taxiIncome: 0,
             });
         }
     } catch (error) {
@@ -71,9 +81,10 @@ export const summaryRevenueCallTaxi = async (req: Request, res: Response) => {
             code: messages.INTERNAL_SERVER_ERROR.code,
             message: messages.INTERNAL_SERVER_ERROR.message,
         });
-        return;
     }
 };
+
+
 
 export const summaryRideCallTaxi = async (req: Request, res: Response) => {
     try {
