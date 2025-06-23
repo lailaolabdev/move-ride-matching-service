@@ -235,8 +235,10 @@ exports.getCallTaxiById = getCallTaxiById;
 // Get all calling taxi
 const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { page = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, } = req.query;
+        const { page = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, claimMoney } = req.query;
         const match = {};
+        if (claimMoney)
+            match.claimMoney = claimMoney;
         // find start and date
         if (startDate && endDate) {
             match.createdAt = {

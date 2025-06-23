@@ -291,9 +291,12 @@ export const getCallTaxis = async (req: Request, res: Response) => {
       minTotalDistance,
       maxTotalDistance,
       search,
+      claimMoney
     }: any = req.query;
 
     const match: any = {};
+
+    if (claimMoney) match.claimMoney = claimMoney
 
     // find start and date
     if (startDate && endDate) {
