@@ -400,6 +400,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
           status: 1,
           createdAt: 1,
           registrationSource: 1,
+          driverIncome: 1
         },
       },
     ]);

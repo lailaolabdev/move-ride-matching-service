@@ -332,6 +332,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                     status: 1,
                     createdAt: 1,
                     registrationSource: 1,
+                    driverIncome: 1
                 },
             },
         ]);
