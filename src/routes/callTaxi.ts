@@ -127,8 +127,9 @@ router.get(
   reportPassenger
 )
 
+// Use both driver and passenger
 router.get(
-  "/passenger-travel-history/:id",
+  "/travel-history/:id",
   checkAuthorizationMiddleware,
   travelHistory
 )

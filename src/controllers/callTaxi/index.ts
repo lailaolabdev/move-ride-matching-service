@@ -1237,14 +1237,15 @@ export const reportPassenger = async (req: Request, res: Response) => {
 
 export const travelHistory = async (req: Request, res: Response) => {
   try {
-    const passengerId = req.params.id
+    const userId = req.params.id
     const {
       page = "1",
       limit = "10",
       status,
       startDate,
       endDate,
-      isRequestTaxInvoice
+      isRequestTaxInvoice,
+      role = "CUSTOMER"
     } = req.query
 
     const pageToNumber = parseInt(page as string, 10)
@@ -1252,10 +1253,10 @@ export const travelHistory = async (req: Request, res: Response) => {
 
     const skip = (pageToNumber - 1) * limitToNumber;
 
-    const filter: any = {
-      passengerId,
-    }
+    const filter: any = {}
 
+    if (role === "DRIVER") filter.driverId = userId
+    if (role === "CUSTOMER") filter.passengerId = userId
     if (status) filter.status = status
     if (isRequestTaxInvoice) filter.isRequestTaxInvoice = isRequestTaxInvoice
     if (startDate || endDate) {

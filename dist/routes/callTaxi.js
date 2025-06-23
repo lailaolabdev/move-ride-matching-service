@@ -35,7 +35,8 @@ router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_
 // Report in admin dashboard part
 // By passenger id
 router.get("/report-passenger/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.reportPassenger);
-router.get("/passenger-travel-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.travelHistory);
+// Use both driver and passenger
+router.get("/travel-history/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.travelHistory);
 router.get("/comment-and-rating/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getCommentAndRating);
 // Report in driver part
 // By driver id

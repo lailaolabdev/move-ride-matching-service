@@ -1054,14 +1054,16 @@ const reportPassenger = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.reportPassenger = reportPassenger;
 const travelHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const passengerId = req.params.id;
-        const { page = "1", limit = "10", status, startDate, endDate, isRequestTaxInvoice } = req.query;
+        const userId = req.params.id;
+        const { page = "1", limit = "10", status, startDate, endDate, isRequestTaxInvoice, role = "CUSTOMER" } = req.query;
         const pageToNumber = parseInt(page, 10);
         const limitToNumber = parseInt(limit, 10);
         const skip = (pageToNumber - 1) * limitToNumber;
-        const filter = {
-            passengerId,
-        };
+        const filter = {};
+        if (role === "DRIVER")
+            filter.driverId = userId;
+        if (role === "CUSTOMER")
+            filter.passengerId = userId;
         if (status)
             filter.status = status;
         if (isRequestTaxInvoice)
