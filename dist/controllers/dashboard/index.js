@@ -19,35 +19,41 @@ const axios_1 = __importDefault(require("axios"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const summaryRevenueCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Extract filters from the query parameters
         const { startDate, endDate, country } = req.query;
-        // Build the filter object
-        let filter = {};
-        // Add the startDate and endDate filters if they are provided
+        let filter = {
+            status: "Paid", // Only include records with status = "Paid"
+        };
         if (startDate && endDate) {
             filter.createdAt = {
-                $gte: new Date(startDate), // Greater than or equal to startDate
-                $lte: new Date(endDate), // Less than or equal to endDate
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
             };
         }
-        // Add the country filter if it's provided
         if (country) {
             filter.country = country;
         }
-        // Perform the aggregation to calculate the total price and the total price for isClaim = true
         const result = yield callTaxi_1.CallTaxi.aggregate([
             {
-                $match: filter, // Apply the filters (startDate, endDate, country)
+                $match: filter,
             },
             {
                 $group: {
-                    _id: null, // No grouping by specific field, we want the total sum
-                    totalPrice: { $sum: "$totalPrice" }, // Sum the totalPrice field
-                    totalClaimedPrice: {
+                    _id: null,
+                    totalPrice: { $sum: "$totalPrice" },
+                    totalClaimedDriverIncome: {
                         $sum: {
                             $cond: {
-                                if: { $eq: ["$isClaim", true] }, // Only sum totalPrice if isClaim is true
-                                then: "$totalPrice",
+                                if: { $eq: ["$isClaim", true] },
+                                then: "$driverIncome",
+                                else: 0,
+                            },
+                        },
+                    },
+                    totalNotClaimedDriverIncome: {
+                        $sum: {
+                            $cond: {
+                                if: { $eq: ["$isClaim", false] },
+                                then: "$driverIncome",
                                 else: 0,
                             },
                         },
@@ -55,14 +61,16 @@ const summaryRevenueCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, f
                 },
             },
         ]);
-        // Check if the result has a totalPrice field and send the response
         if (result.length > 0) {
+            const { totalPrice, totalClaimedDriverIncome, totalNotClaimedDriverIncome } = result[0];
+            const taxiIncome = totalPrice - (totalClaimedDriverIncome + totalNotClaimedDriverIncome);
             res.status(200).json({
                 code: config_1.messages.SUCCESSFULLY.code,
                 message: config_1.messages.SUCCESSFULLY.message,
-                totalPrice: result[0].totalPrice,
-                totalClaimedPrice: result[0].totalClaimedPrice,
-                totalNotClaimedPrice: 0,
+                totalPrice: parseFloat(totalPrice.toFixed(3)),
+                totalClaimedDriverIncome: parseFloat(totalClaimedDriverIncome.toFixed(3)),
+                totalNotClaimedDriverIncome: parseFloat(totalNotClaimedDriverIncome.toFixed(3)),
+                taxiIncome: parseFloat(taxiIncome.toFixed(3)),
             });
         }
         else {
@@ -70,8 +78,9 @@ const summaryRevenueCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, f
                 code: config_1.messages.SUCCESSFULLY.code,
                 message: config_1.messages.SUCCESSFULLY.message,
                 totalPrice: 0,
-                totalClaimedPrice: 0,
-                totalNotClaimedPrice: 0,
+                totalClaimedDriverIncome: 0,
+                totalNotClaimedDriverIncome: 0,
+                taxiIncome: 0,
             });
         }
     }
@@ -81,7 +90,6 @@ const summaryRevenueCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, f
             code: config_1.messages.INTERNAL_SERVER_ERROR.code,
             message: config_1.messages.INTERNAL_SERVER_ERROR.message,
         });
-        return;
     }
 });
 exports.summaryRevenueCallTaxi = summaryRevenueCallTaxi;
