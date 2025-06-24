@@ -250,7 +250,7 @@ exports.getCallTaxiById = getCallTaxiById;
 // Get all calling taxi
 const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { page = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, claimMoney } = req.query;
+        const { skip = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, claimMoney } = req.query;
         const match = {};
         if (claimMoney)
             match.claimMoney = claimMoney;
@@ -275,7 +275,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 $lte: Number(maxTotalDistance),
             };
         }
-        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const parseSkip = parseInt(skip, 10);
         const total = yield callTaxi_2.CallTaxi.countDocuments(match);
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
             { $match: match },
@@ -327,7 +327,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                     },
                 ]
                 : []),
-            { $skip: skip },
+            { $skip: parseSkip },
             { $limit: parseInt(limit) },
             { $sort: { createdAt: -1 } },
             // Final projection
@@ -1121,10 +1121,9 @@ exports.travelHistory = travelHistory;
 const getCommentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.params.id;
-        const { page = "1", limit = "10", status, role = 'CUSTOMER' } = req.query;
-        const pageToNumber = parseInt(page, 10);
+        const { skip = "1", limit = "10", status, role = 'CUSTOMER' } = req.query;
+        const skipToNumber = parseInt(skip, 10);
         const limitToNumber = parseInt(limit, 10);
-        const skip = (pageToNumber - 1) * limitToNumber;
         const filter = {};
         if (status)
             filter.status = status;
@@ -1133,8 +1132,8 @@ const getCommentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, func
         if (role === "CUSTOMER")
             filter.passengerId = userId;
         const travelHistory = role === "DRIVER"
-            ? yield (0, callTaxi_1.getDriverCommentAndRatingService)(skip, limitToNumber, filter)
-            : yield (0, callTaxi_1.getPassengerCommentAndRatingService)(skip, limitToNumber, filter);
+            ? yield (0, callTaxi_1.getDriverCommentAndRatingService)(skipToNumber, limitToNumber, filter)
+            : yield (0, callTaxi_1.getPassengerCommentAndRatingService)(skipToNumber, limitToNumber, filter);
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { travelHistory }));
     }
     catch (error) {
