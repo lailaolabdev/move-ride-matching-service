@@ -517,7 +517,13 @@ export const getDriverRideHistoryDetailByIdService = async (req: Request): Promi
 
         const driverRideHistoryDetail = await CallTaxi.aggregate([
             {
-                $match: { driverId }
+                $match: {
+                    driverId,
+                    $or: [
+                        { status: "Paid" },
+                        { status: "Canceled" }
+                    ]
+                }
             },
             {
                 $lookup: {
@@ -549,6 +555,7 @@ export const getDriverRideHistoryDetailByIdService = async (req: Request): Promi
                     driverComplain: 1,
                     status: 1,
                     createdAt: 1,
+                    billNumber: 1,
                     "passenger._id": 1,
                     "passenger.fullName": 1,
                     "passenger.profileImage": 1,

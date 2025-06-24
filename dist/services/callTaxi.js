@@ -472,7 +472,13 @@ const getDriverRideHistoryDetailByIdService = (req) => __awaiter(void 0, void 0,
         const driverId = req.user.id;
         const driverRideHistoryDetail = yield callTaxi_1.CallTaxi.aggregate([
             {
-                $match: { driverId }
+                $match: {
+                    driverId,
+                    $or: [
+                        { status: "Paid" },
+                        { status: "Canceled" }
+                    ]
+                }
             },
             {
                 $lookup: {
@@ -504,6 +510,7 @@ const getDriverRideHistoryDetailByIdService = (req) => __awaiter(void 0, void 0,
                     driverComplain: 1,
                     status: 1,
                     createdAt: 1,
+                    billNumber: 1,
                     "passenger._id": 1,
                     "passenger.fullName": 1,
                     "passenger.profileImage": 1,
