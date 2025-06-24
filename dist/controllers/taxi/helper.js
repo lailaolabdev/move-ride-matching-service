@@ -59,6 +59,9 @@ const filterTaxis = (query) => {
     if (query.vehicleModel) {
         filter.vehicleModel = query.vehicleModel;
     }
+    if (query.country) {
+        filter.country = query.country;
+    }
     return filter;
 };
 exports.filterTaxis = filterTaxis;

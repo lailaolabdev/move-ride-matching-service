@@ -301,7 +301,7 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
 export const getCallTaxis = async (req: Request, res: Response) => {
   try {
     const {
-      page = 1,
+      skip = 1,
       limit = 10,
       startDate,
       endDate,
@@ -341,7 +341,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
       };
     }
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const parseSkip = parseInt(skip as string, 10);
 
     const total = await CallTaxi.countDocuments(match)
     const callTaxi = await CallTaxi.aggregate([
@@ -398,7 +398,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
         ]
         : []),
 
-      { $skip: skip },
+      { $skip: parseSkip },
       { $limit: parseInt(limit) },
       { $sort: { createdAt: -1 } },
 
@@ -1324,16 +1324,15 @@ export const getCommentAndRating = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id
     const {
-      page = "1",
+      skip = "1",
       limit = "10",
       status,
       role = 'CUSTOMER'
     } = req.query
 
-    const pageToNumber = parseInt(page as string, 10)
+    const skipToNumber = parseInt(skip as string, 10)
     const limitToNumber = parseInt(limit as string, 10)
 
-    const skip = (pageToNumber - 1) * limitToNumber;
 
     const filter: any = {}
 
@@ -1342,8 +1341,8 @@ export const getCommentAndRating = async (req: Request, res: Response) => {
     if (role === "CUSTOMER") filter.passengerId = userId
 
     const travelHistory = role === "DRIVER"
-      ? await getDriverCommentAndRatingService(skip, limitToNumber, filter)
-      : await getPassengerCommentAndRatingService(skip, limitToNumber, filter)
+      ? await getDriverCommentAndRatingService(skipToNumber, limitToNumber, filter)
+      : await getPassengerCommentAndRatingService(skipToNumber, limitToNumber, filter)
 
     res.json({
       ...messages.SUCCESSFULLY,
