@@ -56,9 +56,11 @@ export const voiceCall = async (req: Request, res: Response) => {
       AccountSid
     } = req.body;
 
+    console.log("body: ", req.body);
+
     if (To) {
-      const caller = From.replace("client:", "")
-      const receiver = To.replace("client:", "")
+      const caller = From.toString().replace("client:", "")
+      const receiver = To.toString().replace("client:", "")
 
       const dial = newtwiml.dial();
       dial.client(receiver);
@@ -66,7 +68,7 @@ export const voiceCall = async (req: Request, res: Response) => {
       const body = {
         recipient: receiver,
         title: "Incoming Call",
-        body: `Call from ${From}`,
+        body: `Call from ${caller}`,
         CallSid,
         From: caller,
         To: receiver

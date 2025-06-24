@@ -43,15 +43,16 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newtwiml = new twilio_1.twiml.VoiceResponse();
         const { ApplicationSid, ApiVersion, Called, Caller, CallStatus, From, To, CallSid, Direction, AccountSid } = req.body;
+        console.log("body: ", req.body);
         if (To) {
-            const caller = From.replace("client:", "");
-            const receiver = To.replace("client:", "");
+            const caller = From.toString().replace("client:", "");
+            const receiver = To.toString().replace("client:", "");
             const dial = newtwiml.dial();
             dial.client(receiver);
             const body = {
                 recipient: receiver,
                 title: "Incoming Call",
-                body: `Call from ${From}`,
+                body: `Call from ${caller}`,
                 CallSid,
                 From: caller,
                 To: receiver
