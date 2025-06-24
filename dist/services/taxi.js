@@ -86,7 +86,7 @@ const getTaxiByIdService = (id) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getTaxiByIdService = getTaxiByIdService;
 // UPDATE
-const updateTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiType, vehicleModel, vehicleBrand, 
+const updateTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiType, vehicleModel, vehicleBrand, isOpened, 
 // passengerMin, passengerMax, meteredFare, flatFare,
 updatedBy, updatedByFullName }) {
     try {
@@ -95,6 +95,7 @@ updatedBy, updatedByFullName }) {
                 taxiType,
                 vehicleModel,
                 vehicleBrand,
+                isOpened,
                 // passengerMin,
                 // passengerMax,
                 // meteredFare,
