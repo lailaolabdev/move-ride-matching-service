@@ -135,12 +135,12 @@ export const createDriverComplainPassengerService = async (req: Request) => {
     try {
         const { id } = req.params
 
-        const { rating, driverBehavior, satisfaction, remark, image } = req.body
+        const { rating, customerBehavior, satisfaction, remark, image } = req.body
 
         const driverComplain: any = {}
 
         if (rating) driverComplain.rating = rating
-        if (driverBehavior) driverComplain.driverBehavior = driverBehavior
+        if (customerBehavior) driverComplain.customerBehavior = customerBehavior
         if (satisfaction) driverComplain.satisfaction = satisfaction
         if (remark) driverComplain.remark = remark
         if (image && image.length) driverComplain.image = image

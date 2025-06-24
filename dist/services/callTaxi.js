@@ -138,12 +138,12 @@ exports.getCallTaxisService = getCallTaxisService;
 const createDriverComplainPassengerService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { rating, driverBehavior, satisfaction, remark, image } = req.body;
+        const { rating, customerBehavior, satisfaction, remark, image } = req.body;
         const driverComplain = {};
         if (rating)
             driverComplain.rating = rating;
-        if (driverBehavior)
-            driverComplain.driverBehavior = driverBehavior;
+        if (customerBehavior)
+            driverComplain.customerBehavior = customerBehavior;
         if (satisfaction)
             driverComplain.satisfaction = satisfaction;
         if (remark)
