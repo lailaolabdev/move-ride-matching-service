@@ -39,6 +39,7 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newtwiml = new twilio_1.twiml.VoiceResponse();
         const to = req.body.To;
+        console.log(req.body);
         if (to) {
             const dial = newtwiml.dial();
             dial.client(to.replace("client:", ""));
@@ -46,9 +47,6 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         else {
             newtwiml.say("Thanks for calling!");
         }
-        console.log({
-            twiml: newtwiml.toString()
-        });
         res.type("text/xml");
         res.send(newtwiml.toString());
     }

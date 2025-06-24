@@ -43,16 +43,14 @@ export const voiceCall = async (req: Request, res: Response) => {
     const newtwiml = new twiml.VoiceResponse();
     const to = req.body.To;
 
+    console.log(req.body);
+
     if (to) {
       const dial = newtwiml.dial();
       dial.client(to.replace("client:", ""));
     } else {
       newtwiml.say("Thanks for calling!");
     }
-
-    console.log({
-      twiml: newtwiml.toString()
-    });
 
     res.type("text/xml");
     res.send(newtwiml.toString());
