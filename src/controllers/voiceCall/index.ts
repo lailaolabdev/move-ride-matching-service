@@ -65,12 +65,12 @@ export const voiceCall = async (req: Request, res: Response) => {
 
       if (CallStatus === 'ringing') {
         const noti = await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, {
-          "recipient": receiver,
+          "recipient": receiver.toString(),
           "title": "Incoming Call",
           "body": "Calling",
-          "CallSid": CallSid,
-          "From": caller,
-          "To": receiver
+          "CallSid": CallSid.toString(),
+          "From": caller.toString(),
+          "To": receiver.toString()
         })
 
         console.log(noti.data);

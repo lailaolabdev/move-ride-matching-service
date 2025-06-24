@@ -50,12 +50,12 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             dial.client(receiver);
             if (CallStatus === 'ringing') {
                 const noti = yield axios_1.default.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, {
-                    "recipient": receiver,
+                    "recipient": receiver.toString(),
                     "title": "Incoming Call",
                     "body": "Calling",
-                    "CallSid": CallSid,
-                    "From": caller,
-                    "To": receiver
+                    "CallSid": CallSid.toString(),
+                    "From": caller.toString(),
+                    "To": receiver.toString()
                 });
                 console.log(noti.data);
             }
