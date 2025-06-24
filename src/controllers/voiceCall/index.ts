@@ -67,7 +67,7 @@ export const voiceCall = async (req: Request, res: Response) => {
         const noti = await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, {
           "recipient": receiver,
           "title": "Incoming Call",
-          "body": "Call from ${From}",
+          "body": "Calling",
           "CallSid": CallSid,
           "From": caller,
           "To": receiver
