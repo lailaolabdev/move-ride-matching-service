@@ -28,14 +28,13 @@ import {
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
-import { getDriver, getPassenger, pipeline } from "./helper";
+import { getCountry, getDriver, getPassenger, pipeline } from "./helper";
 import taxiModel from "../../models/taxi";
 import { ratingModel } from "../../models/rating";
 import vehicleDriverModel from "../../models/vehicleDriver";
 import { Types } from "mongoose";
 import { driverRateCal } from "../calculation";
 import { createClaimMoney, getClaimMoney, updateClaimMoney } from "../../services/claimMoney";
-import { getBangkokTodayUTC } from "../../utils/timezone";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -66,6 +65,26 @@ export const createCallTaxi = async (req: Request, res: Response) => {
       return;
     }
 
+    // Find country id
+    const country: any = await getCountry(
+      req.body.country,
+      req.headers.authorization!
+    )
+
+    if (!country) {
+      res.status(400).json({
+        code: messages.BAD_REQUEST.code,
+        message: messages.BAD_REQUEST.message,
+      });
+
+      return;
+    } else {
+      req.body.currency = country?.currency
+      req.body.country = country?._id
+      req.body.countryCode = country?.code
+    }
+
+    // Create call taxi
     const callTaxi: any = await createCallTaxiService({
       req,
       passengerFullName: passenger?.fullName,
@@ -95,7 +114,7 @@ export const createCallTaxi = async (req: Request, res: Response) => {
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
       message: messages.CREATE_SUCCESSFUL.message,
-      callTaxi: { ...data },
+      callTaxi: data
     });
   } catch (error) {
     console.log("error: ", error);

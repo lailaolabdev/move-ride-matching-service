@@ -203,6 +203,9 @@
  *               delayPrice:
  *                 type: number
  *                 example: 78.4
+ *               country:
+ *                 type: string
+ *                 example: 67c6c05bd9ba8fe6164eac3f
  *     responses:
  *       200:
  *         description: Ride request created successfully.

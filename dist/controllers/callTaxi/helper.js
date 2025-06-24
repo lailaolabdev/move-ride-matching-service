@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = void 0;
+exports.getCountry = exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = void 0;
 const axios_1 = __importDefault(require("axios"));
 const config_1 = require("../../config");
 const pipeline = ({ startDate, endDate }) => {
@@ -85,3 +85,19 @@ const roundCoord = (coordStr) => {
     return `${lat.toFixed(6)},${lng.toFixed(6)}`;
 };
 exports.roundCoord = roundCoord;
+const getCountry = (id, token) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const countryData = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/countries/${id}`, {
+            headers: {
+                Authorization: token,
+            },
+        });
+        return (_a = countryData === null || countryData === void 0 ? void 0 : countryData.data) === null || _a === void 0 ? void 0 : _a.country;
+    }
+    catch (error) {
+        console.log(error);
+        return false;
+    }
+});
+exports.getCountry = getCountry;

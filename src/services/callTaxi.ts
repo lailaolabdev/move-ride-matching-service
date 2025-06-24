@@ -41,6 +41,7 @@ export const createCallTaxiService = async ({
             delayPrice,
             country,
             countryCode,
+            currency
         } = req.body
 
         const splitOrigin = roundCoord(origin);
@@ -70,7 +71,7 @@ export const createCallTaxiService = async ({
             delayPrice,
             country,
             countryCode,
-            currency: countryCode === "LA" ? "LAK" : "BATH",
+            currency: currency,
             billNumber: generateBillNumber(),
             passengerFullName,
             passengerPhoneNumber

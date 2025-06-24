@@ -55,7 +55,7 @@ const generateBillNumber_1 = require("../utils/generateBillNumber");
 const createCallTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ req, passengerFullName, passengerPhoneNumber }) {
     try {
         const passengerId = req.user.id;
-        const { carTypeId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, actualPrice, estimatedPrice, price, polygonPrice, onPeakTimePrice, delayPrice, country, countryCode, } = req.body;
+        const { carTypeId, origin, destination, originName, destinationName, requestType, distanceInPolygon, durationInPolygon, normalDuration, delayDuration, delayDistance, totalDuration, totalDistance, totalPrice, actualPrice, estimatedPrice, price, polygonPrice, onPeakTimePrice, delayPrice, country, countryCode, currency } = req.body;
         const splitOrigin = (0, helper_1.roundCoord)(origin);
         const splitDestination = (0, helper_1.roundCoord)(destination);
         const created = yield callTaxi_1.CallTaxi.create({
@@ -82,7 +82,7 @@ const createCallTaxiService = (_a) => __awaiter(void 0, [_a], void 0, function* 
             delayPrice,
             country,
             countryCode,
-            currency: countryCode === "LA" ? "LAK" : "BATH",
+            currency: currency,
             billNumber: (0, generateBillNumber_1.generateBillNumber)(),
             passengerFullName,
             passengerPhoneNumber

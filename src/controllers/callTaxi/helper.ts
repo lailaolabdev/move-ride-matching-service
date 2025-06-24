@@ -94,3 +94,22 @@ export const roundCoord = (coordStr: any) => {
     const [lat, lng] = coordStr.split(",").map(Number);
     return `${lat.toFixed(6)},${lng.toFixed(6)}`;
 };
+
+export const getCountry = async (id: string, token: string) => {
+    try {
+        const countryData = await axios.get(
+            `${process.env.USER_SERVICE_URL}/v1/api/countries/${id}`,
+            {
+                headers: {
+                    Authorization: token,
+                },
+            }
+        );
+
+        return countryData?.data?.country
+    } catch (error) {
+        console.log(error);
+
+        return false
+    }
+} 

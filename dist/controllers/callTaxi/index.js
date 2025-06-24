@@ -44,6 +44,21 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
             res.status(404).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Driver id: ${passengerId} not found` }));
             return;
         }
+        // Find country id
+        const country = yield (0, helper_1.getCountry)(req.body.country, req.headers.authorization);
+        if (!country) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: config_1.messages.BAD_REQUEST.message,
+            });
+            return;
+        }
+        else {
+            req.body.currency = country === null || country === void 0 ? void 0 : country.currency;
+            req.body.country = country === null || country === void 0 ? void 0 : country._id;
+            req.body.countryCode = country === null || country === void 0 ? void 0 : country.code;
+        }
+        // Create call taxi
         const callTaxi = yield (0, callTaxi_1.createCallTaxiService)({
             req,
             passengerFullName: passenger === null || passenger === void 0 ? void 0 : passenger.fullName,
@@ -63,7 +78,7 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            callTaxi: Object.assign({}, data),
+            callTaxi: data
         });
     }
     catch (error) {
