@@ -48,14 +48,22 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const receiver = To.replace("client:", "");
             const dial = newtwiml.dial();
             dial.client(receiver);
+            console.log({
+                recipient: receiver,
+                title: "Incoming Call",
+                body: `Call from ${From}`,
+                CallSid,
+                From: caller,
+                To: receiver
+            });
             if (CallStatus === 'ringing') {
                 const noti = yield axios_1.default.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, {
-                    "recipient": receiver.toString(),
+                    "recipient": "68254ea9e2f2e47753d2e00b",
                     "title": "Incoming Call",
-                    "body": "Calling",
-                    "CallSid": CallSid.toString(),
-                    "From": caller.toString(),
-                    "To": receiver.toString()
+                    "body": "Call from ${From}",
+                    "CallSid": "CAb1ab806bfbcc95abafd793d9b9fc02d4",
+                    "From": "6853ba90575356cc7bb8def9",
+                    "To": "68254ea9e2f2e47753d2e00b"
                 });
                 console.log(noti.data);
             }
