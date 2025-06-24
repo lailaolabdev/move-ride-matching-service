@@ -46,6 +46,10 @@ const taxiSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    isOpened: {
+        type: Boolean,
+        default: true
+    },
     // passengerMin: { type: Number, required: true },
     // passengerMax: { type: Number, required: true },
     // meteredFare: { type: Number, required: true },
@@ -55,8 +59,8 @@ const taxiSchema = new mongoose_1.Schema({
     createdBy: { type: String, required: true },
     createdByFullName: { type: String, required: true },
     updatedAt: { type: Date, default: Date.now },
-    updatedBy: { type: String },
-    updatedByFullName: { type: String },
+    updatedBy: String,
+    updatedByFullName: String,
 });
 const taxiModel = mongoose_1.default.model('Taxi', taxiSchema);
 exports.default = taxiModel;

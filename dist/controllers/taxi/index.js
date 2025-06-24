@@ -119,6 +119,7 @@ const updateTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             taxiType: req.body.taxiType,
             vehicleModel: req.body.vehicleModel,
             vehicleBrand: req.body.vehicleBrand,
+            isOpened: req.body.isOpened,
             // passengerMin: req.body.passengerMin,
             // passengerMax: req.body.passengerMax,
             // meteredFare: req.body.meteredFare,
