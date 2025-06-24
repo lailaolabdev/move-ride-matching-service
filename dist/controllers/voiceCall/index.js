@@ -8,10 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.voiceCall = exports.registerVoiceCallToken = void 0;
 const config_1 = require("../../config");
 const twilio_1 = require("twilio");
+const axios_1 = __importDefault(require("axios"));
 const AccessToken = twilio_1.jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
 const registerVoiceCallToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -38,11 +42,23 @@ exports.registerVoiceCallToken = registerVoiceCallToken;
 const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newtwiml = new twilio_1.twiml.VoiceResponse();
-        const to = req.body.To;
-        console.log(req.body);
-        if (to) {
+        const { ApplicationSid, ApiVersion, Called, Caller, CallStatus, From, To, CallSid, Direction, AccountSid } = req.body;
+        if (To) {
+            const caller = From.replace("client:", "");
+            const receiver = To.replace("client:", "");
             const dial = newtwiml.dial();
-            dial.client(to.replace("client:", ""));
+            dial.client(receiver);
+            if (CallStatus === 'ringing') {
+                const noti = yield axios_1.default.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, {
+                    recipient: receiver,
+                    title: "Incoming Call",
+                    body: `Call from ${From}`,
+                    CallSid,
+                    From: caller,
+                    To: receiver,
+                });
+                console.log(noti);
+            }
         }
         else {
             newtwiml.say("Thanks for calling!");

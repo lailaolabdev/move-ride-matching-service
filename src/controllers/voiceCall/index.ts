@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { messages } from '../../config';
 import { jwt, twiml } from 'twilio';
+import axios from 'axios';
 
 const AccessToken = jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
@@ -41,13 +42,39 @@ export const registerVoiceCallToken = async (req: Request, res: Response) => {
 export const voiceCall = async (req: Request, res: Response) => {
   try {
     const newtwiml = new twiml.VoiceResponse();
-    const to = req.body.To;
 
-    console.log(req.body);
+    const {
+      ApplicationSid,
+      ApiVersion,
+      Called,
+      Caller,
+      CallStatus,
+      From,
+      To,
+      CallSid,
+      Direction,
+      AccountSid
+    } = req.body;
 
-    if (to) {
+    if (To) {
+      const caller = From.replace("client:", "")
+      const receiver = To.replace("client:", "")
+
       const dial = newtwiml.dial();
-      dial.client(to.replace("client:", ""));
+      dial.client(receiver);
+
+      if (CallStatus === 'ringing') {
+        const noti = await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, {
+          recipient: receiver,
+          title: "Incoming Call",
+          body: `Call from ${From}`,
+          CallSid,
+          From: caller,
+          To: receiver,
+        })
+
+        console.log(noti);
+      }
     } else {
       newtwiml.say("Thanks for calling!");
     }
