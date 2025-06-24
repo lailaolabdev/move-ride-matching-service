@@ -637,7 +637,7 @@ export const createDriverComplain = async (req: Request, res: Response) => {
         },
         {
           $group: {
-            _id: "$passengerId",
+            _id: "$driverId",
             averageRating: { $avg: "$driverComplain.rating" },
             totalRatings: { $sum: 1 }
           }
@@ -645,17 +645,17 @@ export const createDriverComplain = async (req: Request, res: Response) => {
       ]);
 
       if (sumRating.length) {
-        const id = sumRating[0]?._id
+        const id = new Types.ObjectId(sumRating[0]?._id)
         const averageRating = sumRating[0]?.averageRating
 
-        const updatedPassengerRating = await ratingModel.findByIdAndUpdate(
-          id,
+        const updatedPassengerRating = await ratingModel.findOneAndUpdate(
+          { userId: id },
           { rating: averageRating }
         )
 
         if (!updatedPassengerRating) {
           await ratingModel.create({
-            userId: new Types.ObjectId(id),
+            userId: id,
             rating: averageRating ?? 0
           })
         }
@@ -692,7 +692,7 @@ export const createPassengerComplain = async (req: Request, res: Response) => {
         },
         {
           $group: {
-            _id: "$driverId",
+            _id: "$passengerId",
             averageRating: { $avg: "$passengerComplain.rating" },
             totalRatings: { $sum: 1 }
           }
@@ -700,17 +700,17 @@ export const createPassengerComplain = async (req: Request, res: Response) => {
       ]);
 
       if (sumRating.length) {
-        const id = sumRating[0]?._id
+        const id = new Types.ObjectId(sumRating[0]?._id)
         const averageRating = sumRating[0]?.averageRating
 
-        const updatedDriverRating = await ratingModel.findByIdAndUpdate(
-          id,
+        const updatedPassengerRating = await ratingModel.findOneAndUpdate(
+          { userId: id },
           { rating: averageRating }
         )
 
-        if (!updatedDriverRating) {
+        if (!updatedPassengerRating) {
           await ratingModel.create({
-            userId: new Types.ObjectId(id),
+            userId: id,
             rating: averageRating ?? 0
           })
         }

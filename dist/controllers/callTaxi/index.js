@@ -551,19 +551,19 @@ const createDriverComplain = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 },
                 {
                     $group: {
-                        _id: "$passengerId",
+                        _id: "$driverId",
                         averageRating: { $avg: "$driverComplain.rating" },
                         totalRatings: { $sum: 1 }
                     }
                 }
             ]);
             if (sumRating.length) {
-                const id = (_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id;
+                const id = new mongoose_1.Types.ObjectId((_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id);
                 const averageRating = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating;
-                const updatedPassengerRating = yield rating_1.ratingModel.findByIdAndUpdate(id, { rating: averageRating });
+                const updatedPassengerRating = yield rating_1.ratingModel.findOneAndUpdate({ userId: id }, { rating: averageRating });
                 if (!updatedPassengerRating) {
                     yield rating_1.ratingModel.create({
-                        userId: new mongoose_1.Types.ObjectId(id),
+                        userId: id,
                         rating: averageRating !== null && averageRating !== void 0 ? averageRating : 0
                     });
                 }
@@ -599,19 +599,19 @@ const createPassengerComplain = (req, res) => __awaiter(void 0, void 0, void 0, 
                 },
                 {
                     $group: {
-                        _id: "$driverId",
+                        _id: "$passengerId",
                         averageRating: { $avg: "$passengerComplain.rating" },
                         totalRatings: { $sum: 1 }
                     }
                 }
             ]);
             if (sumRating.length) {
-                const id = (_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id;
+                const id = new mongoose_1.Types.ObjectId((_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id);
                 const averageRating = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating;
-                const updatedDriverRating = yield rating_1.ratingModel.findByIdAndUpdate(id, { rating: averageRating });
-                if (!updatedDriverRating) {
+                const updatedPassengerRating = yield rating_1.ratingModel.findOneAndUpdate({ userId: id }, { rating: averageRating });
+                if (!updatedPassengerRating) {
                     yield rating_1.ratingModel.create({
-                        userId: new mongoose_1.Types.ObjectId(id),
+                        userId: id,
                         rating: averageRating !== null && averageRating !== void 0 ? averageRating : 0
                     });
                 }

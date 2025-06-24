@@ -13,10 +13,12 @@ exports.getRatingWithInfo = exports.deleteRating = exports.updateRating = export
 const rating_1 = require("../../services/rating");
 const config_1 = require("../../config");
 const rating_2 = require("../../models/rating");
+const mongoose_1 = require("mongoose");
 const createRating = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.body;
-        const existingRating = yield rating_2.ratingModel.findOne({ userId });
+        const convertToMongoId = new mongoose_1.Types.ObjectId(userId);
+        const existingRating = yield rating_2.ratingModel.findOne({ userId: convertToMongoId });
         if (existingRating) {
             res.status(400).json({
                 code: config_1.messages.ALREADY_EXIST.code,

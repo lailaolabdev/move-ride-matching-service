@@ -9,12 +9,15 @@ import {
 } from "../../services/rating";
 import { messages } from "../../config";
 import { ratingModel } from "../../models/rating";
+import { Types } from "mongoose";
 
 export const createRating = async (req: Request, res: Response) => {
   try {
     const { userId } = req.body
 
-    const existingRating = await ratingModel.findOne({ userId });
+    const convertToMongoId = new Types.ObjectId(userId)
+
+    const existingRating = await ratingModel.findOne({ userId: convertToMongoId });
 
     if (existingRating) {
       res.status(400).json({
