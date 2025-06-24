@@ -77,6 +77,10 @@ const filterTaxis = (query: any): FilterQuery<any> => {
         filter.vehicleModel = query.vehicleModel;
     }
 
+    if (query.country) {
+        filter.country = query.country;
+    }
+
 
     return filter;
 };

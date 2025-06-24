@@ -45,7 +45,7 @@ exports.createTaxiType = createTaxiType;
 // READ All Taxi Types
 const getAllTaxiType = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { taxiTypeId, skip, limit, name } = req.query;
+        const { taxiTypeId, skip, limit, name, startDate, endDate, country } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
         const filter = {};
@@ -53,6 +53,31 @@ const getAllTaxiType = (req, res) => __awaiter(void 0, void 0, void 0, function*
             filter.taxiTypeId = taxiTypeId;
         if (name)
             filter.name = { $regex: name, $options: 'i' };
+        if (startDate || endDate) {
+            const createdAtFilter = {};
+            if (startDate) {
+                const startLao = new Date(startDate);
+                // Convert to UTC by subtracting 7 hours immediately
+                startLao.setHours(startLao.getHours() - 7);
+                startLao.setMinutes(0);
+                startLao.setSeconds(0);
+                startLao.setMilliseconds(0);
+                createdAtFilter.$gte = startLao;
+            }
+            if (endDate) {
+                const endLao = new Date(endDate);
+                // Convert to UTC by subtracting 7 hours immediately
+                endLao.setHours(endLao.getHours() - 7 + 23);
+                endLao.setMinutes(59);
+                endLao.setSeconds(59);
+                endLao.setMilliseconds(999);
+                createdAtFilter.$lte = endLao;
+            }
+            filter.createdAt = createdAtFilter;
+        }
+        if (country) {
+            filter.country = country;
+        }
         const taxiTypes = yield (0, taxiType_1.getAllTaxiTypeService)(parseSkip, parsedLimit, filter);
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,

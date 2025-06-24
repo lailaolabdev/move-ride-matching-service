@@ -58,7 +58,7 @@ export const getAllTaxies = async (req: Request, res: Response) => {
         const parseSkip = parseInt(skip as string, 10);
         const parsedLimit = parseInt(limit as string, 10);
 
-        const filter = await filterTaxis(req);
+        const filter = await filterTaxis(req.query);
 
         const taxies = await getAllTaxiService(parseSkip, parsedLimit, filter);
         res.status(200).json({

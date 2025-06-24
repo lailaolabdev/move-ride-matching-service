@@ -61,7 +61,7 @@ const getAllTaxies = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const { skip, limit } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
-        const filter = yield (0, helper_1.filterTaxis)(req);
+        const filter = yield (0, helper_1.filterTaxis)(req.query);
         const taxies = yield (0, taxi_1.getAllTaxiService)(parseSkip, parsedLimit, filter);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
