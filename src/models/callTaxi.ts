@@ -173,6 +173,7 @@ const CallTaxiSchema: Schema = new Schema(
     actualPrice: Number,
     estimatedPrice: Number,
     actualUsedTime: String,
+    // price from distance per KM
     price: {
       type: Number,
       required: true,
@@ -211,7 +212,13 @@ const CallTaxiSchema: Schema = new Schema(
     isRequestTaxInvoice: {
       type: Boolean,
       default: false
-    }
+    },
+    promotion: String,
+    promotionName: String,
+    promotionPrice: Number,
+    promotionPercentage: Number,
+    promotionType: String,
+    promotionPeriod: String,
   },
   {
     timestamps: true,

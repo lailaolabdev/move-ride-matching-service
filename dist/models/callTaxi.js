@@ -113,6 +113,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
     actualPrice: Number,
     estimatedPrice: Number,
     actualUsedTime: String,
+    // price from distance per KM
     price: {
         type: Number,
         required: true,
@@ -151,7 +152,13 @@ const CallTaxiSchema = new mongoose_1.Schema({
     isRequestTaxInvoice: {
         type: Boolean,
         default: false
-    }
+    },
+    promotion: String,
+    promotionName: String,
+    promotionPrice: Number,
+    promotionPercentage: Number,
+    promotionType: String,
+    promotionPeriod: String,
 }, {
     timestamps: true,
 });
