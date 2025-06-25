@@ -695,7 +695,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
     var _a, _b, _c, _d;
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, festivalPromotion } = req.body;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion } = req.body;
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
@@ -740,6 +740,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.point = point;
         if (paymentMethod)
             updateData.paymentMethod = paymentMethod;
+        if (promotionPrice)
+            updateData.promotionPrice = promotionPrice;
         if (festivalPromotion)
             updateData.festivalPromotion = festivalPromotion;
         if (status) {

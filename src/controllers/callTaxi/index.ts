@@ -809,6 +809,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       claimMoney,
       point,
       paymentMethod,
+      promotionPrice,
       festivalPromotion
     } = req.body;
     const token = req.headers.authorization!
@@ -865,6 +866,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (claimMoney) updateData.claimMoney = claimMoney
     if (point) updateData.point = point
     if (paymentMethod) updateData.paymentMethod = paymentMethod
+    if (promotionPrice) updateData.promotionPrice = promotionPrice
     if (festivalPromotion) updateData.festivalPromotion = festivalPromotion
 
     if (status) {

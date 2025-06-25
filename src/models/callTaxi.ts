@@ -216,12 +216,12 @@ const CallTaxiSchema: Schema = new Schema(
     licensePlate: String,
     vehicleBrandName: String,
     vehicleModelName: String,
+    promotionPrice: Number,
     festivalPromotion: {
       type: [
         {
           promotion: String,
           promotionName: String,
-          promotionPrice: Number,
           promotionPercentage: Number,
           promotionType: String,
           promotionPeriod: {
