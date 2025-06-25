@@ -124,7 +124,7 @@ export const summaryRideCallTaxi = async (req: Request, res: Response) => {
 
         // Aggregation pipeline for the three groups
         const aggregationResult = await CallTaxi.aggregate([
-            // Group 1: callStatistic (Total, Success, Cancel)
+            // Group 1: callStatistic (Total, Success, Cancel, InProcess)
             {
                 $facet: {
                     callStatistic: [
@@ -140,6 +140,15 @@ export const summaryRideCallTaxi = async (req: Request, res: Response) => {
                                 },
                                 canceledCalls: {
                                     $sum: { $cond: [{ $eq: ["$status", "Canceled"] }, 1, 0] },
+                                },
+                                inProcessCalls: {
+                                    $sum: {
+                                        $cond: [
+                                            { $in: ["$status", ["Accepted", "Driver_Arrived", "Picked_Up", "Departure", "Success"]] },
+                                            1,
+                                            0
+                                        ]
+                                    }
                                 },
                             },
                         },
@@ -208,14 +217,15 @@ export const summaryRideCallTaxi = async (req: Request, res: Response) => {
                 totalCalls: callStatistic.totalCalls || 0,
                 successCalls: callStatistic.successCalls || 0,
                 canceledCalls: callStatistic.canceledCalls || 0,
+                inProcessCalls: callStatistic.inProcessCalls || 0,
             },
             lastSixMonth: lastSixMonthWithDefaults,
         });
     } catch (error) {
         console.log("Error in getting call statistics:", error);
         res.status(500).json({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "An error occurred while fetching the call statistics.",
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
         });
     }
 };
@@ -228,7 +238,7 @@ export const getCallingTransaction = async (req: Request, res: Response) => {
         const { status, startDate, endDate, country } = req.query; // Get query parameters
 
         // Default statuses if no status is provided
-        const statuses = status ? [status] : ["Accepted", "Driver_Arrived", "Picked_Up", "Departure"];
+        const statuses = status ? [status] : ["Accepted", "Driver_Arrived", "Picked_Up", "Departure", "Success"];
 
         // Build query object for filtering by status and createdAt date range
         const query: any = {
