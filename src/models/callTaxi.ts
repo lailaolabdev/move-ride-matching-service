@@ -213,8 +213,12 @@ const CallTaxiSchema: Schema = new Schema(
       type: Boolean,
       default: false
     },
+    promotion: String,
+    promotionName: String,
     promotionPrice: Number,
     promotionPercentage: Number,
+    promotionType: String,
+    promotionPeriod: String,
   },
   {
     timestamps: true,
