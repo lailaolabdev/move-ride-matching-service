@@ -219,6 +219,9 @@ const CallTaxiSchema: Schema = new Schema(
     promotionPercentage: Number,
     promotionType: String,
     promotionPeriod: String,
+    licensePlate: String,
+    vehicleBrandName: String,
+    vehicleModelName: String
   },
   {
     timestamps: true,

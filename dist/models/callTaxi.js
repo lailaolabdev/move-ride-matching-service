@@ -159,6 +159,9 @@ const CallTaxiSchema = new mongoose_1.Schema({
     promotionPercentage: Number,
     promotionType: String,
     promotionPeriod: String,
+    licensePlate: String,
+    vehicleBrandName: String,
+    vehicleModelName: String
 }, {
     timestamps: true,
 });
