@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTaxiService = exports.updateTaxiService = exports.getTaxiByIdService = exports.getAllTaxiService = exports.createTaxiService = void 0;
+exports.getVehicleModelsService = exports.getVehicleBrandsService = exports.deleteTaxiService = exports.updateTaxiService = exports.getTaxiByIdService = exports.getAllTaxiService = exports.createTaxiService = void 0;
 const config_1 = require("../config");
 const taxi_1 = __importDefault(require("../models/taxi"));
 // CREATE
@@ -125,3 +125,65 @@ const deleteTaxiService = (id) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.deleteTaxiService = deleteTaxiService;
+const getVehicleBrandsService = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const deletedTaxi = yield taxi_1.default.aggregate([
+            {
+                $group: {
+                    _id: {
+                        vehicleBrand: "$vehicleBrand",
+                        vehicleBrandName: "$vehicleBrandName"
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    vehicleBrand: "$_id.vehicleBrand",
+                    vehicleBrandName: "$_id.vehicleBrandName"
+                }
+            }
+        ]);
+        return deletedTaxi;
+    }
+    catch (error) {
+        console.log("Error deleting vehicle: ", error);
+        throw error;
+    }
+});
+exports.getVehicleBrandsService = getVehicleBrandsService;
+const getVehicleModelsService = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vehicleModels = yield taxi_1.default.aggregate([
+            {
+                $group: {
+                    _id: {
+                        vehicleBrand: "$vehicleBrand",
+                        vehicleBrandName: "$vehicleBrandName"
+                    },
+                    models: {
+                        $push: {
+                            _id: "$vehicleModel",
+                            name: "$vehicleModelName",
+                            isOpened: { $ifNull: ["$isOpened", false] }
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    vehicleBrand: "$_id.vehicleBrand",
+                    vehicleBrandName: "$_id.vehicleBrandName",
+                    models: 1
+                }
+            }
+        ]);
+        return vehicleModels;
+    }
+    catch (error) {
+        console.log("Error deleting vehicle: ", error);
+        throw error;
+    }
+});
+exports.getVehicleModelsService = getVehicleModelsService;

@@ -1,5 +1,13 @@
 import { Request, Response } from 'express';
-import { createTaxiService, deleteTaxiService, getAllTaxiService, getTaxiByIdService, updateTaxiService } from '../../services/taxi';
+import {
+    createTaxiService,
+    deleteTaxiService,
+    getAllTaxiService,
+    getTaxiByIdService,
+    getVehicleBrandsService,
+    getVehicleModelsService,
+    updateTaxiService
+} from '../../services/taxi';
 import { messages } from '../../config';
 import { filterTaxis } from './helper';
 
@@ -178,3 +186,46 @@ export const deleteTaxi = async (req: Request, res: Response) => {
         return;
     }
 };
+
+export const getVehicleBrands = async (req: Request, res: Response) => {
+    try {
+        const vehicleBrands = await getVehicleBrandsService();
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: 'Vehicle deleted successfully',
+            vehicleBrands
+        });
+        return;
+    } catch (error) {
+        console.log("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message
+        });
+        return;
+    }
+};
+
+export const getVehicleModels = async (req: Request, res: Response) => {
+    try {
+        const vehicleBrands = await getVehicleModelsService();
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: 'Vehicle deleted successfully',
+            vehicleBrands
+        });
+        return;
+    } catch (error) {
+        console.log("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message
+        });
+        return;
+    }
+};
+

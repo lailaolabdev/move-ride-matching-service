@@ -96,7 +96,7 @@ export const getTaxiByIdService = async (id: string): Promise<ITaxi | null> => {
 
 // UPDATE
 export const updateTaxiService = async (
-    { id, taxiType, vehicleModel, vehicleBrand,isOpened,
+    { id, taxiType, vehicleModel, vehicleBrand, isOpened,
         // passengerMin, passengerMax, meteredFare, flatFare,
         updatedBy, updatedByFullName }:
         {
@@ -144,6 +144,68 @@ export const deleteTaxiService = async (id: string): Promise<ITaxi | null> => {
     try {
         const deletedTaxi = await taxiModel.findByIdAndDelete(id);
         return deletedTaxi;
+    } catch (error) {
+        console.log("Error deleting vehicle: ", error);
+        throw error;
+    }
+};
+
+export const getVehicleBrandsService = async (): Promise<any | null> => {
+    try {
+        const deletedTaxi = await taxiModel.aggregate([
+            {
+                $group: {
+                    _id: {
+                        vehicleBrand: "$vehicleBrand",
+                        vehicleBrandName: "$vehicleBrandName"
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    vehicleBrand: "$_id.vehicleBrand",
+                    vehicleBrandName: "$_id.vehicleBrandName"
+                }
+            }
+        ]);
+
+        return deletedTaxi;
+    } catch (error) {
+        console.log("Error deleting vehicle: ", error);
+        throw error;
+    }
+};
+
+export const getVehicleModelsService = async (): Promise<any | null> => {
+    try {
+        const vehicleModels = await taxiModel.aggregate([
+            {
+                $group: {
+                    _id: {
+                        vehicleBrand: "$vehicleBrand",
+                        vehicleBrandName: "$vehicleBrandName"
+                    },
+                    models: {
+                        $push: {
+                            _id: "$vehicleModel",
+                            name: "$vehicleModelName",
+                            isOpened: { $ifNull: ["$isOpened", false] }
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    vehicleBrand: "$_id.vehicleBrand",
+                    vehicleBrandName: "$_id.vehicleBrandName",
+                    models: 1
+                }
+            }
+        ]);
+
+        return vehicleModels;
     } catch (error) {
         console.log("Error deleting vehicle: ", error);
         throw error;

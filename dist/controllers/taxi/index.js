@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTaxi = exports.updateTaxi = exports.getVehicleById = exports.getAllTaxies = exports.createTaxi = void 0;
+exports.getVehicleModels = exports.getVehicleBrands = exports.deleteTaxi = exports.updateTaxi = exports.getVehicleById = exports.getAllTaxies = exports.createTaxi = void 0;
 const taxi_1 = require("../../services/taxi");
 const config_1 = require("../../config");
 const helper_1 = require("./helper");
@@ -181,3 +181,45 @@ const deleteTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteTaxi = deleteTaxi;
+const getVehicleBrands = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vehicleBrands = yield (0, taxi_1.getVehicleBrandsService)();
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            message: 'Vehicle deleted successfully',
+            vehicleBrands
+        });
+        return;
+    }
+    catch (error) {
+        console.log("Error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message
+        });
+        return;
+    }
+});
+exports.getVehicleBrands = getVehicleBrands;
+const getVehicleModels = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const vehicleBrands = yield (0, taxi_1.getVehicleModelsService)();
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            message: 'Vehicle deleted successfully',
+            vehicleBrands
+        });
+        return;
+    }
+    catch (error) {
+        console.log("Error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message
+        });
+        return;
+    }
+});
+exports.getVehicleModels = getVehicleModels;

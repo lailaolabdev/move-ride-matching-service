@@ -13,4 +13,6 @@ router.get('/', middlewares_1.checkAuthorizationMiddleware, taxi_2.getAllTaxies)
 router.get('/:id', middlewares_1.checkAuthorizationMiddleware, taxi_2.getVehicleById);
 router.put('/:id', middlewares_1.checkAuthorizationMiddleware, taxi_2.updateTaxi);
 router.delete('/:id', middlewares_1.checkAuthorizationMiddleware, taxi_2.deleteTaxi);
+router.get('/kyc/vehicle-brands', taxi_2.getVehicleBrands);
+router.get('/kyc/vehicle-models', taxi_2.getVehicleModels);
 exports.default = router;
