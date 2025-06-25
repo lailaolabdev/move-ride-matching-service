@@ -110,8 +110,17 @@ export const summaryRideCallTaxi = async (req: Request, res: Response) => {
         // Build the filter for the country if provided
         const filter: any = {};
         if (country) {
-            filter.country = new mongoose.Types.ObjectId(country as string); // Assuming country is an ObjectId
+            filter.country = country; // Assuming country is an ObjectId
         }
+
+        if (startDate && endDate) {
+            filter.createdAt = {
+                $gte: new Date(startDate as string),
+                $lte: new Date(endDate as string),
+            };
+        }
+
+        console.log("filter: ", filter)
 
         // Aggregation pipeline for the three groups
         const aggregationResult = await CallTaxi.aggregate([
@@ -120,13 +129,7 @@ export const summaryRideCallTaxi = async (req: Request, res: Response) => {
                 $facet: {
                     callStatistic: [
                         {
-                            $match: {
-                                createdAt: {
-                                    $gte: startDate ? new Date(startDate as string) : new Date(0),
-                                    $lte: endDate ? new Date(endDate as string) : new Date(),
-                                },
-                                ...filter, // Include the country filter
-                            },
+                            $match: filter,
                         },
                         {
                             $group: {
@@ -267,7 +270,7 @@ export const getTopTenDriver = async (req: Request, res: Response) => {
     try {
         const { status, startDate, endDate, country } = req.query; // Get query parameters
         const statuses = status ? [status] : ["Paid"]; // Only filter for "Paid" status for now
-        
+
         // Build the query for the filters
         const filter: any = { status: { $in: statuses } };
 
@@ -372,7 +375,7 @@ export const getTopTenPassenger = async (req: Request, res: Response) => {
     try {
         const { status, startDate, endDate, country } = req.query; // Get query parameters
         const statuses = status ? [status] : ["Paid"]; // Only filter for "Paid" status for now
-        
+
         // Build the query for the filters
         const filter: any = { status: { $in: statuses } };
 
