@@ -112,7 +112,8 @@ const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* 
         // if country code find by country code also
         const driverRates = yield driverRate_1.driverRateModel.findOne({
             minDistance: { $lte: callTaxi.totalDistance },
-            maxDistance: { $gte: callTaxi.totalDistance }
+            maxDistance: { $gte: callTaxi.totalDistance },
+            countryCode: callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.countryCode
         });
         if (driverRates) {
             const calculatedPrice = ((driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage) / 100) * callTaxi.totalPrice;

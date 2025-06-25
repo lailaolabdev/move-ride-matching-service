@@ -155,7 +155,8 @@ export const driverRateCal = async (callTaxi: any) => {
         // if country code find by country code also
         const driverRates = await driverRateModel.findOne({
             minDistance: { $lte: callTaxi.totalDistance },
-            maxDistance: { $gte: callTaxi.totalDistance }
+            maxDistance: { $gte: callTaxi.totalDistance },
+            countryCode: callTaxi?.countryCode
         });
 
         if (driverRates) {
