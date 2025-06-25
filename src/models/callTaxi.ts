@@ -213,15 +213,22 @@ const CallTaxiSchema: Schema = new Schema(
       type: Boolean,
       default: false
     },
-    promotion: String,
-    promotionName: String,
-    promotionPrice: Number,
-    promotionPercentage: Number,
-    promotionType: String,
-    promotionPeriod: String,
     licensePlate: String,
     vehicleBrandName: String,
-    vehicleModelName: String
+    vehicleModelName: String,
+    promotion: {
+      type: [
+        {
+          promotion: String,
+          promotionName: String,
+          promotionPrice: Number,
+          promotionPercentage: Number,
+          promotionType: String,
+          promotionPeriod: String,
+        }
+      ],
+      default: undefined, // or you can use default: []
+    },
   },
   {
     timestamps: true,
