@@ -803,7 +803,9 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       actualUsedTime,
       claimMoney,
       point,
-      paymentMethod
+      paymentMethod,
+      promotionPrice,
+      promotionPercentage
     } = req.body;
     const token = req.headers.authorization!
 
@@ -859,6 +861,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (claimMoney) updateData.claimMoney = claimMoney
     if (point) updateData.point = point
     if (paymentMethod) updateData.paymentMethod = paymentMethod
+    if (promotionPrice) updateData.promotionPrice = promotionPrice
+    if (promotionPercentage) updateData.promotionPercentage = promotionPercentage
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to 
