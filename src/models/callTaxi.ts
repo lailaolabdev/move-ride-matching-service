@@ -216,7 +216,7 @@ const CallTaxiSchema: Schema = new Schema(
     licensePlate: String,
     vehicleBrandName: String,
     vehicleModelName: String,
-    promotion: {
+    festivalPromotion: {
       type: [
         {
           promotion: String,
@@ -224,7 +224,10 @@ const CallTaxiSchema: Schema = new Schema(
           promotionPrice: Number,
           promotionPercentage: Number,
           promotionType: String,
-          promotionPeriod: String,
+          promotionPeriod: {
+            startDate: Date,
+            endDate: Date,
+          },
         }
       ],
       default: undefined, // or you can use default: []

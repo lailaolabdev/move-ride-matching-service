@@ -156,7 +156,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
     licensePlate: String,
     vehicleBrandName: String,
     vehicleModelName: String,
-    promotion: {
+    festivalPromotion: {
         type: [
             {
                 promotion: String,
@@ -164,7 +164,10 @@ const CallTaxiSchema = new mongoose_1.Schema({
                 promotionPrice: Number,
                 promotionPercentage: Number,
                 promotionType: String,
-                promotionPeriod: String,
+                promotionPeriod: {
+                    startDate: Date,
+                    endDate: Date,
+                },
             }
         ],
         default: undefined, // or you can use default: []
