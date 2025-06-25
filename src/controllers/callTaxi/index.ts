@@ -284,7 +284,7 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
 
     res.status(200).json({
       ...messages.SUCCESSFULLY,
-      callTaxi: callTaxi[0],
+      ...callTaxi[0],
     });
   } catch (error) {
     console.log("error: ", error);
