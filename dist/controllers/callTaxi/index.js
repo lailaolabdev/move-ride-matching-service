@@ -235,7 +235,7 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
             res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), callTaxi[0]));
             return;
         }
-        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi: callTaxi[0] }));
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), callTaxi[0]));
     }
     catch (error) {
         console.log("error: ", error);
