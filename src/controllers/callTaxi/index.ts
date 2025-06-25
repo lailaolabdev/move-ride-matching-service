@@ -310,7 +310,8 @@ export const getCallTaxis = async (req: Request, res: Response) => {
       minTotalDistance,
       maxTotalDistance,
       search,
-      claimMoney
+      claimMoney,
+      country
     }: any = req.query;
 
     const match: any = {};
@@ -340,9 +341,13 @@ export const getCallTaxis = async (req: Request, res: Response) => {
         $lte: Number(maxTotalDistance),
       };
     }
+    if (country) {
+      match.country = country;
+    }
 
     const parseSkip = parseInt(skip as string, 10);
 
+    console.log("match: ", match);
     const total = await CallTaxi.countDocuments(match)
     const callTaxi = await CallTaxi.aggregate([
       { $match: match },
@@ -398,9 +403,9 @@ export const getCallTaxis = async (req: Request, res: Response) => {
         ]
         : []),
 
+      { $sort: { createdAt: -1 } },
       { $skip: parseSkip },
       { $limit: parseInt(limit) },
-      { $sort: { createdAt: -1 } },
 
       // Final projection
       {

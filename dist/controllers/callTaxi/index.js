@@ -250,7 +250,7 @@ exports.getCallTaxiById = getCallTaxiById;
 // Get all calling taxi
 const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, claimMoney } = req.query;
+        const { skip = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, claimMoney, country } = req.query;
         const match = {};
         if (claimMoney)
             match.claimMoney = claimMoney;
@@ -275,7 +275,11 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 $lte: Number(maxTotalDistance),
             };
         }
+        if (country) {
+            match.country = country;
+        }
         const parseSkip = parseInt(skip, 10);
+        console.log("match: ", match);
         const total = yield callTaxi_2.CallTaxi.countDocuments(match);
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
             { $match: match },
@@ -327,9 +331,9 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                     },
                 ]
                 : []),
+            { $sort: { createdAt: -1 } },
             { $skip: parseSkip },
             { $limit: parseInt(limit) },
-            { $sort: { createdAt: -1 } },
             // Final projection
             {
                 $project: {

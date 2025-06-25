@@ -16,7 +16,6 @@ exports.scriptToUpdateCountry = exports.getTopTenPassenger = exports.getTopTenDr
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
-const mongoose_1 = __importDefault(require("mongoose"));
 const summaryRevenueCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { startDate, endDate, country } = req.query;
@@ -115,8 +114,15 @@ const summaryRideCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, func
         // Build the filter for the country if provided
         const filter = {};
         if (country) {
-            filter.country = new mongoose_1.default.Types.ObjectId(country); // Assuming country is an ObjectId
+            filter.country = country; // Assuming country is an ObjectId
         }
+        if (startDate && endDate) {
+            filter.createdAt = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
+            };
+        }
+        console.log("filter: ", filter);
         // Aggregation pipeline for the three groups
         const aggregationResult = yield callTaxi_1.CallTaxi.aggregate([
             // Group 1: callStatistic (Total, Success, Cancel)
@@ -124,10 +130,7 @@ const summaryRideCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, func
                 $facet: {
                     callStatistic: [
                         {
-                            $match: Object.assign({ createdAt: {
-                                    $gte: startDate ? new Date(startDate) : new Date(0),
-                                    $lte: endDate ? new Date(endDate) : new Date(),
-                                } }, filter),
+                            $match: filter,
                         },
                         {
                             $group: {
@@ -231,7 +234,7 @@ const getCallingTransaction = (req, res) => __awaiter(void 0, void 0, void 0, fu
         }
         // Fetch the calling transactions with the specified filters
         const callingTransactions = yield callTaxi_1.CallTaxi.find(query)
-            .select("passengerId carTypeId status totalDistance totalPrice createdAt originName destinationName");
+            .select("passengerId carTypeId status totalDistance totalPrice createdAt originName destinationName passengerFullName driverFullName passengerPhoneNumber");
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             message: config_1.messages.SUCCESSFULLY.message,
