@@ -234,7 +234,7 @@ const getCallingTransaction = (req, res) => __awaiter(void 0, void 0, void 0, fu
         }
         // Fetch the calling transactions with the specified filters
         const callingTransactions = yield callTaxi_1.CallTaxi.find(query)
-            .select("passengerId carTypeId status totalDistance totalPrice createdAt originName destinationName");
+            .select("passengerId carTypeId status totalDistance totalPrice createdAt originName destinationName passengerFullName driverFullName passengerPhoneNumber");
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             message: config_1.messages.SUCCESSFULLY.message,

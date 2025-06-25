@@ -249,7 +249,7 @@ export const getCallingTransaction = async (req: Request, res: Response) => {
 
         // Fetch the calling transactions with the specified filters
         const callingTransactions = await CallTaxi.find(query)
-            .select("passengerId carTypeId status totalDistance totalPrice createdAt originName destinationName");
+            .select("passengerId carTypeId status totalDistance totalPrice createdAt originName destinationName passengerFullName driverFullName passengerPhoneNumber");
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
