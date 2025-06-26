@@ -531,6 +531,8 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           destinationName: 1,
           totalPrice: 1,
           status: 1,
+          totalDistance: 1,
+          totalDuration: 1,
           "passenger._id": 1,
           "passenger.fullName": 1,
           "passenger.profileImage": 1,
