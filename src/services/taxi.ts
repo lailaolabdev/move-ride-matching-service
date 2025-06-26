@@ -154,6 +154,11 @@ export const getVehicleBrandsService = async (): Promise<any | null> => {
     try {
         const deletedTaxi = await taxiModel.aggregate([
             {
+                $match: {
+                    isOpened: true
+                }
+            },
+            {
                 $group: {
                     _id: {
                         taxiType: "$taxiType",
@@ -182,6 +187,11 @@ export const getVehicleBrandsService = async (): Promise<any | null> => {
 export const getVehicleModelsService = async (): Promise<any | null> => {
     try {
         const vehicleModels = await taxiModel.aggregate([
+            {
+                $match: {
+                    isOpened: true
+                }
+            },
             {
                 $group: {
                     _id: {

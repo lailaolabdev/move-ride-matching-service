@@ -129,6 +129,11 @@ const getVehicleBrandsService = () => __awaiter(void 0, void 0, void 0, function
     try {
         const deletedTaxi = yield taxi_1.default.aggregate([
             {
+                $match: {
+                    isOpened: true
+                }
+            },
+            {
                 $group: {
                     _id: {
                         taxiType: "$taxiType",
@@ -157,6 +162,11 @@ exports.getVehicleBrandsService = getVehicleBrandsService;
 const getVehicleModelsService = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vehicleModels = yield taxi_1.default.aggregate([
+            {
+                $match: {
+                    isOpened: true
+                }
+            },
             {
                 $group: {
                     _id: {
