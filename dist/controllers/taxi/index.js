@@ -184,11 +184,7 @@ exports.deleteTaxi = deleteTaxi;
 const getVehicleBrands = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vehicleBrands = yield (0, taxi_1.getVehicleBrandsService)();
-        res.status(200).json({
-            code: config_1.messages.SUCCESSFULLY.code,
-            message: 'Vehicle deleted successfully',
-            vehicleBrands
-        });
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { vehicleBrands }));
         return;
     }
     catch (error) {
@@ -205,11 +201,7 @@ exports.getVehicleBrands = getVehicleBrands;
 const getVehicleModels = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const vehicleBrands = yield (0, taxi_1.getVehicleModelsService)();
-        res.status(200).json({
-            code: config_1.messages.SUCCESSFULLY.code,
-            message: 'Vehicle deleted successfully',
-            vehicleBrands
-        });
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { vehicleBrands }));
         return;
     }
     catch (error) {

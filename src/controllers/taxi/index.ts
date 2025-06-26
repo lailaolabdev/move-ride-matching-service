@@ -192,8 +192,7 @@ export const getVehicleBrands = async (req: Request, res: Response) => {
         const vehicleBrands = await getVehicleBrandsService();
 
         res.status(200).json({
-            code: messages.SUCCESSFULLY.code,
-            message: 'Vehicle deleted successfully',
+            ...messages.SUCCESSFULLY,
             vehicleBrands
         });
         return;
@@ -213,8 +212,7 @@ export const getVehicleModels = async (req: Request, res: Response) => {
         const vehicleBrands = await getVehicleModelsService();
 
         res.status(200).json({
-            code: messages.SUCCESSFULLY.code,
-            message: 'Vehicle deleted successfully',
+            ...messages.SUCCESSFULLY,
             vehicleBrands
         });
         return;
