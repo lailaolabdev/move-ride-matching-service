@@ -28,7 +28,7 @@ import {
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
-import { getCountry, getDriver, getPassenger, pipeline } from "./helper";
+import { getCountry, getDriver, getDriverLatLong, getPassenger, notifyDriverWhenCancel, pipeline, removeCallTaxiFromRedis } from "./helper";
 import taxiModel from "../../models/taxi";
 import { ratingModel } from "../../models/rating";
 import vehicleDriverModel from "../../models/vehicleDriver";
@@ -544,7 +544,6 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
       }
     ])
 
-
     if (callTaxi.length && filter.passengerId) {
       const aggregateVehicleDriver = await vehicleDriverModel.aggregate([
         {
@@ -610,6 +609,13 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
 
       callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName
       callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName
+    }
+
+    if (callTaxi.length) {
+      const driverLatLong = await getDriverLatLong(callTaxi[0]?._id)
+
+      callTaxi[0].driver.latitude = driverLatLong?.latitude
+      callTaxi[0].driver.longitude = driverLatLong?.longitude
     }
 
     res.status(200).json({
@@ -933,15 +939,10 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
     // if status is canceled notify to driver
     if (updated && updated.status === STATUS.CANCELED) {
-      await axios.post(
-        `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
-        callTaxi,
-        {
-          headers: {
-            Authorization: req.headers['authorization']
-          }
-        }
-      );
+      const token = req.headers.authorization!
+
+      await notifyDriverWhenCancel(token, callTaxi)
+      await removeCallTaxiFromRedis(updated._id)
     }
 
     res.status(200).json({

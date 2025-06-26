@@ -112,4 +112,42 @@ export const getCountry = async (id: string, token: string) => {
 
         return false
     }
-} 
+}
+
+export const getDriverLatLong = async (id: string) => {
+    try {
+        const countryData = await axios.get(
+            `${process.env.SOCKET_SERVICE_URL}/v1/api//driver-location-socket/${id}`
+        );
+
+        return countryData?.data?.driverLatLong
+    } catch (error) {
+        console.log(error);
+
+        return false
+    }
+}
+
+export const removeCallTaxiFromRedis = async (id: string) => {
+    try {
+        await axios.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/payment-socket/meter-price/${id}`);
+    } catch (error) {
+        console.log("Error from getMeterPrice: ", error);
+    }
+}
+
+export const notifyDriverWhenCancel = async (token: string, callTaxi: any) => {
+    try {
+        await axios.post(
+            `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`,
+            callTaxi,
+            {
+                headers: {
+                    Authorization: token
+                }
+            }
+        );
+    } catch (error) {
+        console.log("Error from getMeterPrice: ", error);
+    }
+}

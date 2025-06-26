@@ -369,7 +369,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getCallTaxis = getCallTaxis;
 const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     try {
         const id = req.user.id;
         const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${id}`);
@@ -525,6 +525,11 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
             ]);
             callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
             callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
+        }
+        if (callTaxi.length) {
+            const driverLatLong = yield (0, helper_1.getDriverLatLong)((_d = callTaxi[0]) === null || _d === void 0 ? void 0 : _d._id);
+            callTaxi[0].driver.latitude = driverLatLong === null || driverLatLong === void 0 ? void 0 : driverLatLong.latitude;
+            callTaxi[0].driver.longitude = driverLatLong === null || driverLatLong === void 0 ? void 0 : driverLatLong.longitude;
         }
         res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi: callTaxi.length ? callTaxi[0] : {} }));
     }
@@ -798,11 +803,9 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         const updated = yield (0, callTaxi_1.updateCallTaxiService)({ id, updateData });
         // if status is canceled notify to driver
         if (updated && updated.status === callTaxi_2.STATUS.CANCELED) {
-            yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, callTaxi, {
-                headers: {
-                    Authorization: req.headers['authorization']
-                }
-            });
+            const token = req.headers.authorization;
+            yield (0, helper_1.notifyDriverWhenCancel)(token, callTaxi);
+            yield (0, helper_1.removeCallTaxiFromRedis)(updated._id);
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,

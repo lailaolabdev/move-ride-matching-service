@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCountry = exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = void 0;
+exports.notifyDriverWhenCancel = exports.removeCallTaxiFromRedis = exports.getDriverLatLong = exports.getCountry = exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = void 0;
 const axios_1 = __importDefault(require("axios"));
 const config_1 = require("../../config");
 const pipeline = ({ startDate, endDate }) => {
@@ -101,3 +101,37 @@ const getCountry = (id, token) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getCountry = getCountry;
+const getDriverLatLong = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const countryData = yield axios_1.default.get(`${process.env.SOCKET_SERVICE_URL}/v1/api//driver-location-socket/${id}`);
+        return (_a = countryData === null || countryData === void 0 ? void 0 : countryData.data) === null || _a === void 0 ? void 0 : _a.driverLatLong;
+    }
+    catch (error) {
+        console.log(error);
+        return false;
+    }
+});
+exports.getDriverLatLong = getDriverLatLong;
+const removeCallTaxiFromRedis = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield axios_1.default.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/payment-socket/meter-price/${id}`);
+    }
+    catch (error) {
+        console.log("Error from getMeterPrice: ", error);
+    }
+});
+exports.removeCallTaxiFromRedis = removeCallTaxiFromRedis;
+const notifyDriverWhenCancel = (token, callTaxi) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/cancel`, callTaxi, {
+            headers: {
+                Authorization: token
+            }
+        });
+    }
+    catch (error) {
+        console.log("Error from getMeterPrice: ", error);
+    }
+});
+exports.notifyDriverWhenCancel = notifyDriverWhenCancel;
