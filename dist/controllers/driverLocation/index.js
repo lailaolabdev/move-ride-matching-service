@@ -76,10 +76,8 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                         }
                     }
                 ]);
-                if (sumRating.length) {
-                    numberOfRating = (_c = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating) !== null && _c !== void 0 ? _c : 0;
-                    yield rating_1.ratingModel.create({ rating: numberOfRating });
-                }
+                numberOfRating = (_c = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating) !== null && _c !== void 0 ? _c : 0;
+                yield rating_1.ratingModel.create({ userId: driverId, rating: numberOfRating });
             }
             else {
                 numberOfRating = (_d = rating === null || rating === void 0 ? void 0 : rating.rating) !== null && _d !== void 0 ? _d : 0;

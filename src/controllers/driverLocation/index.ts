@@ -75,11 +75,9 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
           }
         ]);
 
-        if (sumRating.length) {
-          numberOfRating = sumRating[0]?.averageRating ?? 0
+        numberOfRating = sumRating[0]?.averageRating ?? 0
 
-          await ratingModel.create({ rating: numberOfRating })
-        }
+        await ratingModel.create({ userId: driverId, rating: numberOfRating })
       } else {
         numberOfRating = rating?.rating ?? 0
       }
