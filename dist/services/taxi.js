@@ -160,6 +160,7 @@ const getVehicleModelsService = () => __awaiter(void 0, void 0, void 0, function
             {
                 $group: {
                     _id: {
+                        taxiType: "$taxiType",
                         vehicleBrand: "$vehicleBrand",
                         vehicleBrandName: "$vehicleBrandName"
                     },
@@ -175,6 +176,7 @@ const getVehicleModelsService = () => __awaiter(void 0, void 0, void 0, function
             {
                 $project: {
                     _id: 0,
+                    taxiType: "$_id.taxiType",
                     vehicleBrand: "$_id.vehicleBrand",
                     vehicleBrandName: "$_id.vehicleBrandName",
                     models: 1

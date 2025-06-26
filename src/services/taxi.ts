@@ -185,6 +185,7 @@ export const getVehicleModelsService = async (): Promise<any | null> => {
             {
                 $group: {
                     _id: {
+                        taxiType: "$taxiType",
                         vehicleBrand: "$vehicleBrand",
                         vehicleBrandName: "$vehicleBrandName"
                     },
@@ -200,6 +201,7 @@ export const getVehicleModelsService = async (): Promise<any | null> => {
             {
                 $project: {
                     _id: 0,
+                    taxiType: "$_id.taxiType",
                     vehicleBrand: "$_id.vehicleBrand",
                     vehicleBrandName: "$_id.vehicleBrandName",
                     models: 1
