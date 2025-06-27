@@ -98,7 +98,7 @@ const getTaxiPricingDistance = (_a) => __awaiter(void 0, [_a], void 0, function*
         return yield taxiTypePricing_1.default.aggregate([
             {
                 $match: {
-                    country: country ? country : "LA",
+                    country: country ? country : "67c6c05bd9ba8fe6164eac3f",
                     minDistance: { $lte: distance },
                     maxDistance: { $gt: distance },
                 },

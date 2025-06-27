@@ -135,7 +135,7 @@ export const getTaxiPricingDistance = async ({
         return await taxiTypePricingModel.aggregate([
             {
                 $match: {
-                    country: country ? country : "LA",
+                    country: country ? country : "67c6c05bd9ba8fe6164eac3f",
                     minDistance: { $lte: distance },
                     maxDistance: { $gt: distance },
                 },
