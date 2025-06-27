@@ -1094,8 +1094,14 @@ const travelHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             filter.driverId = userId;
         if (role === "CUSTOMER")
             filter.passengerId = userId;
-        if (status)
-            filter.status = status;
+        if (status) {
+            if (Array.isArray(status)) {
+                filter.status = { $in: status };
+            }
+            else {
+                filter.status = status;
+            }
+        }
         if (isRequestTaxInvoice)
             filter.isRequestTaxInvoice = isRequestTaxInvoice;
         if (startDate || endDate) {

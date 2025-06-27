@@ -6,7 +6,9 @@ export const createClaimMoney = async (data:
     driverId: string,
     driverRegistrationSource: string,
     taxDeducted: number,
-    income?: number
+    income?: number,
+    country?: string,
+    countryCode?: string,
   }) => {
   try {
     const res = await axios.post(
