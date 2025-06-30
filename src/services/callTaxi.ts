@@ -572,12 +572,10 @@ export const getDriverRideHistoryDetailByIdService = async (req: Request): Promi
     }
 }
 
-export const getHistoryRideService = async (req: Request): Promise<any> => {
+export const getHistoryRideService = async (skip: string, limit: string, filter: any): Promise<any> => {
     try {
-        const passengerId = req.params.id
-
         let rideHistory = await CallTaxi.aggregate([
-            { $match: { passengerId: passengerId } },
+            { $match: filter },
             {
                 $project: {
                     originName: 1,
@@ -591,6 +589,12 @@ export const getHistoryRideService = async (req: Request): Promise<any> => {
                     invoiceRequestStatus: 1,
                     createdAt: 1
                 }
+            },
+            {
+                $skip: parseInt(skip)
+            },
+            {
+                $limit: parseInt(limit)
             },
             {
                 $sort: {

@@ -1184,11 +1184,32 @@ export const getDriverRideHistoryDetailById = async (req: Request, res: Response
 // report ride history
 export const getRideHistory = async (req: Request, res: Response) => {
   try {
-    const travelHistory = await getHistoryRideService(req);
+    const passengerId = req.params.id
+    const { skip = "10", limit = "10", status } = req.query;
+
+    const filter: any = {
+      passengerId
+    };
+
+    if (status) {
+      if (Array.isArray(status)) {
+        filter.status = { $in: status };
+      } else {
+        filter.status = status;
+      }
+    }
+
+    const total = await CallTaxi.countDocuments(filter);
+    const travelHistory = await getHistoryRideService(
+      skip as string,
+      limit as string,
+      filter
+    );
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
+      total,
       travelHistory,
     });
   } catch (error) {

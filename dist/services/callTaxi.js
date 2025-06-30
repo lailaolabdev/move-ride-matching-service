@@ -527,11 +527,10 @@ const getDriverRideHistoryDetailByIdService = (req) => __awaiter(void 0, void 0,
     }
 });
 exports.getDriverRideHistoryDetailByIdService = getDriverRideHistoryDetailByIdService;
-const getHistoryRideService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+const getHistoryRideService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const passengerId = req.params.id;
         let rideHistory = yield callTaxi_1.CallTaxi.aggregate([
-            { $match: { passengerId: passengerId } },
+            { $match: filter },
             {
                 $project: {
                     originName: 1,
@@ -545,6 +544,12 @@ const getHistoryRideService = (req) => __awaiter(void 0, void 0, void 0, functio
                     invoiceRequestStatus: 1,
                     createdAt: 1
                 }
+            },
+            {
+                $skip: parseInt(skip)
+            },
+            {
+                $limit: parseInt(limit)
             },
             {
                 $sort: {

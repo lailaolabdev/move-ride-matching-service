@@ -1006,10 +1006,25 @@ exports.getDriverRideHistoryDetailById = getDriverRideHistoryDetailById;
 // report ride history
 const getRideHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const travelHistory = yield (0, callTaxi_1.getHistoryRideService)(req);
+        const passengerId = req.params.id;
+        const { skip = "10", limit = "10", status } = req.query;
+        const filter = {
+            passengerId
+        };
+        if (status) {
+            if (Array.isArray(status)) {
+                filter.status = { $in: status };
+            }
+            else {
+                filter.status = status;
+            }
+        }
+        const total = yield callTaxi_2.CallTaxi.countDocuments(filter);
+        const travelHistory = yield (0, callTaxi_1.getHistoryRideService)(skip, limit, filter);
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
+            total,
             travelHistory,
         });
     }
