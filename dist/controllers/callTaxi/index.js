@@ -699,7 +699,7 @@ const getDriverCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     try {
         const { id } = req.params;
         const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice } = req.body;
@@ -788,8 +788,9 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                             token: token,
                             driverId,
                             driverRegistrationSource,
-                            taxDeducted: 10,
-                            income: calculatedPrice
+                            income: calculatedPrice,
+                            country: (_g = (_f = (_e = driver === null || driver === void 0 ? void 0 : driver.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.country) === null || _g === void 0 ? void 0 : _g._id,
+                            countryCode: (_k = (_j = (_h = driver === null || driver === void 0 ? void 0 : driver.data) === null || _h === void 0 ? void 0 : _h.user) === null || _j === void 0 ? void 0 : _j.country) === null || _k === void 0 ? void 0 : _k.code
                         });
                         if (createClaim)
                             updateData.claimMoney = createClaim._id;

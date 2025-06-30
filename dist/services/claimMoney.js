@@ -20,8 +20,9 @@ const createClaimMoney = (data) => __awaiter(void 0, void 0, void 0, function* (
         const res = yield axios_1.default.post(`${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money`, {
             driverId: data.driverId,
             driverRegistrationSource: data.driverRegistrationSource,
-            taxDeducted: data.taxDeducted,
-            income: data.income || 0
+            income: data.income || 0,
+            country: data.country,
+            countryCode: data.countryCode,
         }, {
             headers: {
                 Authorization: data.token,

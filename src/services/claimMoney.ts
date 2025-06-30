@@ -5,7 +5,6 @@ export const createClaimMoney = async (data:
     token: string
     driverId: string,
     driverRegistrationSource: string,
-    taxDeducted: number,
     income?: number,
     country?: string,
     countryCode?: string,
@@ -16,8 +15,9 @@ export const createClaimMoney = async (data:
       {
         driverId: data.driverId,
         driverRegistrationSource: data.driverRegistrationSource,
-        taxDeducted: data.taxDeducted,
-        income: data.income || 0
+        income: data.income || 0,
+        country: data.country,
+        countryCode: data.countryCode,
       },
       {
         headers: {

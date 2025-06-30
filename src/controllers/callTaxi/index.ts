@@ -920,8 +920,9 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
               token: token as string,
               driverId,
               driverRegistrationSource,
-              taxDeducted: 10,
-              income: calculatedPrice
+              income: calculatedPrice,
+              country: driver?.data?.user?.country?._id,
+              countryCode: driver?.data?.user?.country?.code
             })
 
             if (createClaim) updateData.claimMoney = createClaim._id

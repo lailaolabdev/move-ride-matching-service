@@ -88,7 +88,8 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
       token: token as string,
       driverId,
       driverRegistrationSource: userData.registrationSource,
-      taxDeducted: 10,
+      country: userData?.country?._id,
+      countryCode: userData?.country?.code
     })
 
     const match = userData?.taxiType.match(/ObjectId\('(.+?)'\)/);

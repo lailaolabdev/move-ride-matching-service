@@ -20,7 +20,7 @@ const rating_1 = require("../../models/rating");
 const callTaxi_1 = require("../../models/callTaxi");
 const claimMoney_1 = require("../../services/claimMoney");
 const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     try {
         const driverId = req.user.id;
         const token = req.headers.authorization;
@@ -88,7 +88,8 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             token: token,
             driverId,
             driverRegistrationSource: userData.registrationSource,
-            taxDeducted: 10,
+            country: (_e = userData === null || userData === void 0 ? void 0 : userData.country) === null || _e === void 0 ? void 0 : _e._id,
+            countryCode: (_f = userData === null || userData === void 0 ? void 0 : userData.country) === null || _f === void 0 ? void 0 : _f.code
         });
         const match = userData === null || userData === void 0 ? void 0 : userData.taxiType.match(/ObjectId\('(.+?)'\)/);
         const taxiTypeId = match ? match[1] : null;
