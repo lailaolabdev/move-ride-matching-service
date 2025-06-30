@@ -18,7 +18,8 @@ export const createDriverRate = async (req: Request, res: Response) => {
       minDistance,
       maxDistance,
       percentage,
-      country
+      country,
+      countryCode
     } = req.body;
 
     const rate = await createDriverRateService({
@@ -27,6 +28,7 @@ export const createDriverRate = async (req: Request, res: Response) => {
       maxDistance,
       percentage,
       country,
+      countryCode,
       createdBy: user.id,
       createdByFullName: user.fullName,
     });
@@ -49,13 +51,14 @@ export const createDriverRate = async (req: Request, res: Response) => {
 // READ All Driver Rates
 export const getAllDriverRates = async (req: Request, res: Response) => {
   try {
-    const { skip, limit, country, taxiType } = req.query;
+    const { skip, limit, country, countryCode, taxiType } = req.query;
     const parseSkip = parseInt(skip as string, 10) || 0;
     const parsedLimit = parseInt(limit as string, 10) || 20;
 
     const filter: any = {};
 
     if (country) filter.country = country;
+    if (countryCode) filter.countryCode = countryCode;
     if (taxiType) filter.taxiType = taxiType;
 
     const driverRates = await getAllDriverRatesService(parseSkip, parsedLimit, filter);
@@ -114,7 +117,8 @@ export const updateDriverRate = async (req: Request, res: Response) => {
       minDistance,
       maxDistance,
       percentage,
-      country
+      country,
+      countryCode
     } = req.body;
 
     const updatedDriverRate = await updateDriverRateService({
@@ -126,6 +130,7 @@ export const updateDriverRate = async (req: Request, res: Response) => {
       country,
       updatedBy: user.id,
       updatedByFullName: user.fullName,
+      countryCode
     });
 
     if (!updatedDriverRate) {

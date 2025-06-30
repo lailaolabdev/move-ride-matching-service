@@ -29,6 +29,7 @@ const pointPromotion_1 = __importDefault(require("./routes/pointPromotion"));
 const rating_1 = __importDefault(require("./routes/rating"));
 const voiceCall_1 = __importDefault(require("./routes/voiceCall"));
 const dashboard_1 = __importDefault(require("./routes/dashboard"));
+const driverRate_1 = __importDefault(require("./routes/driverRate"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8001;
@@ -60,6 +61,7 @@ app.use("/api/v1/new-comer-promotions", newComerPromotion_1.default);
 app.use("/api/v1/point-promotions", pointPromotion_1.default);
 app.use("/api/v1/rating", rating_1.default);
 app.use("/api/v1/voice-call", voiceCall_1.default);
+app.use("/api/v1/driver-rate", driverRate_1.default);
 app.use("/v1/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
 app.use("/api/v1/dashboards", dashboard_1.default);
 // Error handling middleware

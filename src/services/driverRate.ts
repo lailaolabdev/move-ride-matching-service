@@ -9,7 +9,8 @@ export const createDriverRateService = async ({
   percentage,
   createdBy,
   createdByFullName,
-  country
+  country,
+  countryCode
 }: {
   taxiType: string;
   minDistance: number;
@@ -18,6 +19,7 @@ export const createDriverRateService = async ({
   createdBy: string;
   createdByFullName: string;
   country: string;
+  countryCode: string;
 }): Promise<IDriverRate | null> => {
   try {
     const rate = new driverRateModel({
@@ -27,7 +29,8 @@ export const createDriverRateService = async ({
       percentage,
       createdBy,
       createdByFullName,
-      country
+      country,
+      countryCode
     });
 
     const savedRate = await rate.save();
@@ -78,7 +81,8 @@ export const updateDriverRateService = async ({
   percentage,
   updatedBy,
   updatedByFullName,
-  country
+  country,
+  countryCode
 }: {
   id: string;
   taxiType: string;
@@ -88,6 +92,7 @@ export const updateDriverRateService = async ({
   updatedBy: string;
   updatedByFullName: string;
   country: string;
+  countryCode: string;
 }): Promise<IDriverRate | null> => {
   try {
     return await driverRateModel.findByIdAndUpdate(
@@ -100,7 +105,8 @@ export const updateDriverRateService = async ({
           percentage,
           updatedBy,
           updatedByFullName,
-          country
+          country,
+          countryCode
         }
       },
       { new: true }

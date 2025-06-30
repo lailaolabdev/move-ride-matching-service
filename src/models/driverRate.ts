@@ -1,9 +1,16 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IDriverRate extends Document {
+    taxiType: string;
     minDistance: number;
     maxDistance: number;
     percentage: number;
+    createdBy: string;
+    createdByFullName: string;
+    updatedBy: string;
+    updatedByFullName: string;
+    country: string;
+    countryCode: string;
 }
 
 const driverRateSchema = new Schema({
@@ -29,6 +36,9 @@ const driverRateSchema = new Schema({
     updatedBy: String,
     updatedByFullName: String,
     country: String,
+    countryCode: String,
+}, {
+    timestamps: true
 });
 
 export const driverRateModel = mongoose.model<IDriverRate>(

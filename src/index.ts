@@ -25,6 +25,7 @@ import pointPromotionRoute from "./routes/pointPromotion";
 import ratingRoute from "./routes/rating";
 import voiceCallRoute from './routes/voiceCall'
 import dashboardRoute from "./routes/dashboard"
+import driverRateRoute from "./routes/driverRate"
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use("/api/v1/new-comer-promotions", newComerPromotionRoute);
 app.use("/api/v1/point-promotions", pointPromotionRoute);
 app.use("/api/v1/rating", ratingRoute);
 app.use("/api/v1/voice-call", voiceCallRoute);
+app.use("/api/v1/driver-rate", driverRateRoute);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/api/v1/dashboards", dashboardRoute);
 

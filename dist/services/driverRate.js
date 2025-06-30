@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteDriverRateService = exports.updateDriverRateService = exports.getDriverRateByIdService = exports.getAllDriverRatesService = exports.createDriverRateService = void 0;
 const driverRate_1 = require("../models/driverRate");
 // CREATE
-const createDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiType, minDistance, maxDistance, percentage, createdBy, createdByFullName, country }) {
+const createDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiType, minDistance, maxDistance, percentage, createdBy, createdByFullName, country, countryCode }) {
     try {
         const rate = new driverRate_1.driverRateModel({
             taxiType,
@@ -21,7 +21,8 @@ const createDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function
             percentage,
             createdBy,
             createdByFullName,
-            country
+            country,
+            countryCode
         });
         const savedRate = yield rate.save();
         return savedRate;
@@ -59,7 +60,7 @@ const getDriverRateByIdService = (id) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getDriverRateByIdService = getDriverRateByIdService;
 // UPDATE
-const updateDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiType, minDistance, maxDistance, percentage, updatedBy, updatedByFullName, country }) {
+const updateDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiType, minDistance, maxDistance, percentage, updatedBy, updatedByFullName, country, countryCode }) {
     try {
         return yield driverRate_1.driverRateModel.findByIdAndUpdate(id, {
             $set: {
@@ -69,7 +70,8 @@ const updateDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function
                 percentage,
                 updatedBy,
                 updatedByFullName,
-                country
+                country,
+                countryCode
             }
         }, { new: true }).populate("taxiType");
     }

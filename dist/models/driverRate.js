@@ -58,5 +58,8 @@ const driverRateSchema = new mongoose_1.Schema({
     updatedBy: String,
     updatedByFullName: String,
     country: String,
+    countryCode: String,
+}, {
+    timestamps: true
 });
 exports.driverRateModel = mongoose_1.default.model("driverate", driverRateSchema);

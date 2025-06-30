@@ -16,13 +16,14 @@ const index_1 = require("../../config/index");
 const createDriverRate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user;
-        const { taxiType, minDistance, maxDistance, percentage, country } = req.body;
+        const { taxiType, minDistance, maxDistance, percentage, country, countryCode } = req.body;
         const rate = yield (0, driverRate_1.createDriverRateService)({
             taxiType,
             minDistance,
             maxDistance,
             percentage,
             country,
+            countryCode,
             createdBy: user.id,
             createdByFullName: user.fullName,
         });
@@ -45,12 +46,14 @@ exports.createDriverRate = createDriverRate;
 // READ All Driver Rates
 const getAllDriverRates = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, country, taxiType } = req.query;
+        const { skip, limit, country, countryCode, taxiType } = req.query;
         const parseSkip = parseInt(skip, 10) || 0;
         const parsedLimit = parseInt(limit, 10) || 20;
         const filter = {};
         if (country)
             filter.country = country;
+        if (countryCode)
+            filter.countryCode = countryCode;
         if (taxiType)
             filter.taxiType = taxiType;
         const driverRates = yield (0, driverRate_1.getAllDriverRatesService)(parseSkip, parsedLimit, filter);
@@ -102,7 +105,7 @@ const updateDriverRate = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const { id } = req.params;
         const user = req.user;
-        const { taxiType, minDistance, maxDistance, percentage, country } = req.body;
+        const { taxiType, minDistance, maxDistance, percentage, country, countryCode } = req.body;
         const updatedDriverRate = yield (0, driverRate_1.updateDriverRateService)({
             id,
             taxiType,
@@ -112,6 +115,7 @@ const updateDriverRate = (req, res) => __awaiter(void 0, void 0, void 0, functio
             country,
             updatedBy: user.id,
             updatedByFullName: user.fullName,
+            countryCode
         });
         if (!updatedDriverRate) {
             res.status(404).json({
