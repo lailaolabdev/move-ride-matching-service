@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTaxiPricingDistance = exports.deleteTaxiTypePricingService = exports.updateTaxiTypePricingService = exports.getTaxiTypePricingByIdService = exports.getAllTaxiTypePricingService = exports.createTaxiTypePricingService = void 0;
 const taxiTypePricing_1 = __importDefault(require("../models/taxiTypePricing"));
 // CREATE
-const createTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country }) {
+const createTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country, countryCode, }) {
     try {
         const taxiTypePricing = new taxiTypePricing_1.default({
             taxiTypeId,
@@ -23,7 +23,8 @@ const createTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, fun
             maxDistance,
             meterPrice,
             flatFarePrice,
-            country
+            country,
+            countryCode,
         });
         const savedTaxiTypePricing = yield taxiTypePricing.save();
         return savedTaxiTypePricing;
@@ -61,7 +62,7 @@ const getTaxiTypePricingByIdService = (id) => __awaiter(void 0, void 0, void 0, 
 });
 exports.getTaxiTypePricingByIdService = getTaxiTypePricingByIdService;
 // UPDATE
-const updateTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country }) {
+const updateTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country, countryCode, }) {
     try {
         const updatedTaxiTypePricing = yield taxiTypePricing_1.default.findByIdAndUpdate(id, {
             $set: {
@@ -70,7 +71,8 @@ const updateTaxiTypePricingService = (_a) => __awaiter(void 0, [_a], void 0, fun
                 maxDistance,
                 meterPrice,
                 flatFarePrice,
-                country
+                country,
+                countryCode
             },
         }, { new: true });
         return updatedTaxiTypePricing;

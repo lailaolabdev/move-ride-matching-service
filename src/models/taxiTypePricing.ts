@@ -7,7 +7,9 @@ export interface ITaxiTypePricing extends Document {
   maxDistance: number
   price: number
   rideMatchingType: string
-  status: boolean
+  status: boolean,
+  country: string,
+  countryCode: string
 }
 
 const TaxiTypePricingSchema: Schema = new Schema({
@@ -32,10 +34,8 @@ const TaxiTypePricingSchema: Schema = new Schema({
     type: Number,
     default: true
   },
-  country: {
-    type: String,
-    required: true
-  },
+  country: String,
+  countryCode: String,
 });
 
 const taxiTypePricingModel = mongoose.model<ITaxiTypePricing>(

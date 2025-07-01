@@ -8,7 +8,8 @@ export const createTaxiTypePricingService = async ({
     maxDistance,
     meterPrice,
     flatFarePrice,
-    country
+    country,
+    countryCode,
 }: {
     taxiTypeId: string;
     minDistance: number;
@@ -16,6 +17,7 @@ export const createTaxiTypePricingService = async ({
     meterPrice: number;
     flatFarePrice: number;
     country: string;
+    countryCode: string;
 }): Promise<ITaxiTypePricing | null> => {
     try {
         const taxiTypePricing = new taxiTypePricingModel({
@@ -24,7 +26,8 @@ export const createTaxiTypePricingService = async ({
             maxDistance,
             meterPrice,
             flatFarePrice,
-            country
+            country,
+            countryCode,
         });
 
         const savedTaxiTypePricing = await taxiTypePricing.save();
@@ -76,7 +79,8 @@ export const updateTaxiTypePricingService = async ({
     maxDistance,
     meterPrice,
     flatFarePrice,
-    country
+    country,
+    countryCode,
 }: {
     id: string;
     taxiTypeId: string;
@@ -85,6 +89,7 @@ export const updateTaxiTypePricingService = async ({
     meterPrice: number;
     flatFarePrice: number;
     country: string;
+    countryCode: string;
 }): Promise<ITaxiTypePricing | null> => {
     try {
         const updatedTaxiTypePricing =
@@ -97,7 +102,8 @@ export const updateTaxiTypePricingService = async ({
                         maxDistance,
                         meterPrice,
                         flatFarePrice,
-                        country
+                        country,
+                        countryCode
                     },
                 },
                 { new: true }

@@ -15,14 +15,15 @@ const index_1 = require("../../config/index"); // Assuming you have a messages f
 // CREATE Taxi Type
 const createTaxiTypePricing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country } = req.body;
+        const { taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country, countryCode } = req.body;
         const taxiTypePricing = yield (0, taxiTypePricing_1.createTaxiTypePricingService)({
             taxiTypeId,
             minDistance,
             maxDistance,
             meterPrice,
             flatFarePrice,
-            country
+            country,
+            countryCode
         });
         res.status(201).json({
             code: index_1.messages.CREATE_SUCCESSFUL.code,
@@ -98,7 +99,7 @@ exports.getTaxiTypePricingById = getTaxiTypePricingById;
 const updateTaxiTypePricing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country } = req.body;
+        const { taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country, countryCode } = req.body;
         const updatedTaxiTypePricing = yield (0, taxiTypePricing_1.updateTaxiTypePricingService)({
             id,
             taxiTypeId,
@@ -106,7 +107,8 @@ const updateTaxiTypePricing = (req, res) => __awaiter(void 0, void 0, void 0, fu
             maxDistance,
             meterPrice,
             flatFarePrice,
-            country
+            country,
+            countryCode
         });
         if (!updatedTaxiTypePricing) {
             res.status(404).json({

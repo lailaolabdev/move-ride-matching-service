@@ -17,7 +17,8 @@ export const createTaxiTypePricing = async (req: Request, res: Response) => {
             maxDistance,
             meterPrice,
             flatFarePrice,
-            country
+            country,
+            countryCode
         } = req.body;
 
         const taxiTypePricing = await createTaxiTypePricingService({
@@ -26,7 +27,8 @@ export const createTaxiTypePricing = async (req: Request, res: Response) => {
             maxDistance,
             meterPrice,
             flatFarePrice,
-            country
+            country,
+            countryCode
         });
 
         res.status(201).json({
@@ -119,7 +121,8 @@ export const updateTaxiTypePricing = async (req: Request, res: Response) => {
             maxDistance,
             meterPrice,
             flatFarePrice,
-            country
+            country,
+            countryCode
         } = req.body;
 
         const updatedTaxiTypePricing = await updateTaxiTypePricingService({
@@ -129,7 +132,8 @@ export const updateTaxiTypePricing = async (req: Request, res: Response) => {
             maxDistance,
             meterPrice,
             flatFarePrice,
-            country
+            country,
+            countryCode
         });
 
         if (!updatedTaxiTypePricing) {

@@ -56,10 +56,8 @@ const TaxiTypePricingSchema = new mongoose_1.Schema({
         type: Number,
         default: true
     },
-    country: {
-        type: String,
-        required: true
-    },
+    country: String,
+    countryCode: String,
 });
 const taxiTypePricingModel = mongoose_1.default.model('TaxiTypePricing', TaxiTypePricingSchema);
 exports.default = taxiTypePricingModel;
