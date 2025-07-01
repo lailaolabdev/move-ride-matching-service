@@ -20,7 +20,7 @@ const rating_1 = require("../../models/rating");
 const callTaxi_1 = require("../../models/callTaxi");
 const claimMoney_1 = require("../../services/claimMoney");
 const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d;
     try {
         const driverId = req.user.id;
         const token = req.headers.authorization;
@@ -59,7 +59,7 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             // step 2: check is there rating exist
             const rating = yield rating_1.ratingModel.findOne({ userId: driverId });
             // step 3: if rating does not exist create a new one
-            if (!rating) {
+            if (!rating && driverId) {
                 // Sun rating from order that matched driver
                 const sumRating = yield callTaxi_1.CallTaxi.aggregate([
                     {
@@ -76,11 +76,11 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                         }
                     }
                 ]);
-                numberOfRating = (_c = (_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating) !== null && _c !== void 0 ? _c : 0;
+                numberOfRating = ((_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating) || 0;
                 yield rating_1.ratingModel.create({ userId: driverId, rating: numberOfRating });
             }
             else {
-                numberOfRating = (_d = rating === null || rating === void 0 ? void 0 : rating.rating) !== null && _d !== void 0 ? _d : 0;
+                numberOfRating = (rating === null || rating === void 0 ? void 0 : rating.rating) || 0;
             }
         }
         // step 4: Create claiming money
@@ -88,8 +88,8 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             token: token,
             driverId,
             driverRegistrationSource: userData.registrationSource,
-            country: (_e = userData === null || userData === void 0 ? void 0 : userData.country) === null || _e === void 0 ? void 0 : _e._id,
-            countryCode: (_f = userData === null || userData === void 0 ? void 0 : userData.country) === null || _f === void 0 ? void 0 : _f.code
+            country: (_c = userData === null || userData === void 0 ? void 0 : userData.country) === null || _c === void 0 ? void 0 : _c._id,
+            countryCode: (_d = userData === null || userData === void 0 ? void 0 : userData.country) === null || _d === void 0 ? void 0 : _d.code
         });
         const match = userData === null || userData === void 0 ? void 0 : userData.taxiType.match(/ObjectId\('(.+?)'\)/);
         const taxiTypeId = match ? match[1] : null;
@@ -100,7 +100,7 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             latitude,
             isOnline,
             registrationSource: userData === null || userData === void 0 ? void 0 : userData.registrationSource,
-            rating: numberOfRating,
+            rating: numberOfRating || 0,
             taxiType: taxiTypeId
         });
         res.status(200).json({

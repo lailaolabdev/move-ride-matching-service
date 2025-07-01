@@ -57,7 +57,7 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
       const rating = await ratingModel.findOne({ userId: driverId })
 
       // step 3: if rating does not exist create a new one
-      if (!rating) {
+      if (!rating && driverId) {
         // Sun rating from order that matched driver
         const sumRating = await CallTaxi.aggregate([
           {
@@ -75,11 +75,11 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
           }
         ]);
 
-        numberOfRating = sumRating[0]?.averageRating ?? 0
+        numberOfRating = sumRating[0]?.averageRating || 0
 
         await ratingModel.create({ userId: driverId, rating: numberOfRating })
       } else {
-        numberOfRating = rating?.rating ?? 0
+        numberOfRating = rating?.rating || 0
       }
     }
 
@@ -103,7 +103,7 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
       latitude,
       isOnline,
       registrationSource: userData?.registrationSource,
-      rating: numberOfRating,
+      rating: numberOfRating || 0,
       taxiType: taxiTypeId
     });
 
