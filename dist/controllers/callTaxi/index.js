@@ -904,7 +904,7 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             req,
             status,
             driverRegistrationSource: (_r = (_q = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _q === void 0 ? void 0 : _q.user) === null || _r === void 0 ? void 0 : _r.registrationSource,
-            driverFullName: (_t = (_s = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _s === void 0 ? void 0 : _s.user) === null || _t === void 0 ? void 0 : _t.phone,
+            driverFullName: (_t = (_s = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _s === void 0 ? void 0 : _s.user) === null || _t === void 0 ? void 0 : _t.fullName,
             driverPhoneNumber: (_v = (_u = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _u === void 0 ? void 0 : _u.user) === null || _v === void 0 ? void 0 : _v.phone,
         });
         if (!confirmed) {

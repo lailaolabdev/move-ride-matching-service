@@ -1066,7 +1066,7 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
         req,
         status,
         driverRegistrationSource: driverData?.data?.user?.registrationSource,
-        driverFullName: driverData?.data?.user?.phone,
+        driverFullName: driverData?.data?.user?.fullName,
         driverPhoneNumber: driverData?.data?.user?.phone,
       }
     );
