@@ -902,6 +902,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
               income
             })
 
+            console.log("updateClaim: ", updateClaim);
+
             if (updateClaim) updateData.claimMoney = updateClaim._id
           } else {
             const driver = await axios.get(`
@@ -924,6 +926,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
               country: driver?.data?.user?.country?._id,
               countryCode: driver?.data?.user?.country?.code
             })
+
+            console.log("createClaim: ", createClaim);
 
             if (createClaim) updateData.claimMoney = createClaim._id
           }
