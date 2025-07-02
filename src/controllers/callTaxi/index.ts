@@ -1192,7 +1192,7 @@ export const getDriverRideHistoryDetailById = async (req: Request, res: Response
 export const getRideHistory = async (req: Request, res: Response) => {
   try {
     const passengerId = req.params.id
-    const { skip = "10", limit = "10", status } = req.query;
+    const { skip = "0", limit = "100", status } = req.query;
 
     const filter: any = {
       passengerId

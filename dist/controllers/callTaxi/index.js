@@ -1011,7 +1011,7 @@ exports.getDriverRideHistoryDetailById = getDriverRideHistoryDetailById;
 const getRideHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const passengerId = req.params.id;
-        const { skip = "10", limit = "10", status } = req.query;
+        const { skip = "0", limit = "100", status } = req.query;
         const filter = {
             passengerId
         };
