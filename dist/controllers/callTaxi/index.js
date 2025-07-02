@@ -772,6 +772,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                             id: claimMoney._id,
                             income
                         });
+                        console.log("updateClaim: ", updateClaim);
                         if (updateClaim)
                             updateData.claimMoney = updateClaim._id;
                     }
@@ -792,6 +793,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                             country: (_g = (_f = (_e = driver === null || driver === void 0 ? void 0 : driver.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.country) === null || _g === void 0 ? void 0 : _g._id,
                             countryCode: (_k = (_j = (_h = driver === null || driver === void 0 ? void 0 : driver.data) === null || _h === void 0 ? void 0 : _h.user) === null || _j === void 0 ? void 0 : _j.country) === null || _k === void 0 ? void 0 : _k.code
                         });
+                        console.log("createClaim: ", createClaim);
                         if (createClaim)
                             updateData.claimMoney = createClaim._id;
                     }
