@@ -885,6 +885,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       if (status === STATUS.PAID) {
         const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
 
+        console.log({ calculatedPrice, driverRate });
+
         // Calculate price and driver rate
         if (calculatedPrice && driverRate) {
           const claimMoney: any = await getClaimMoney({

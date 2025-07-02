@@ -758,6 +758,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             // calculate driver income
             if (status === callTaxi_2.STATUS.PAID) {
                 const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
+                console.log({ calculatedPrice, driverRate });
                 // Calculate price and driver rate
                 if (calculatedPrice && driverRate) {
                     const claimMoney = yield (0, claimMoney_1.getClaimMoney)({
