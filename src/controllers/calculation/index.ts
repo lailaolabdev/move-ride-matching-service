@@ -73,11 +73,14 @@ export const calculateUserDistanceAndDuration = async (
                 onPeakTimePrice,
                 delayPrice,
                 ...calculate,
-                totalPrice: Math.ceil(
-                    (taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance +
-                    calculate.priceInPolygon +
-                    delayPrice * calculate.delayDuration
-                ),
+                totalPrice: distance > 1
+                    ? Math.ceil(
+                        (taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance +
+                        calculate.priceInPolygon +
+                        delayPrice * calculate.delayDuration)
+                    : Math.ceil((taxiTypePricing[i].flatFarePrice + onPeakTimePrice) +
+                        calculate.priceInPolygon +
+                        delayPrice * calculate.delayDuration)
             });
 
             meter.push({
@@ -87,12 +90,10 @@ export const calculateUserDistanceAndDuration = async (
                 onPeakTimePrice,
                 delayPrice,
                 ...calculate,
-                actualCalculate: Math.ceil(
-                    taxiTypePricing[i].meterPrice * distance
-                ),
-                estimatedCalculate: Math.ceil(
-                    taxiTypePricing[i].meterPrice * distance + 30
-                ),
+                actualCalculate: Math.ceil(taxiTypePricing[i].meterPrice * distance),
+                estimatedCalculate: distance > 1
+                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance + 30)
+                    : Math.ceil(taxiTypePricing[i].meterPrice * distance + 30)
             });
         }
 
