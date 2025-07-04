@@ -119,11 +119,12 @@ export const updateDriverRate = async (req: Request, res: Response) => {
       percentage,
     } = req.body;
 
-
     console.log({
-
+      taxiType,
+      minDistance,
+      maxDistance,
+      percentage,
     });
-
 
     const updatedDriverRate = await updateDriverRateService({
       id,
