@@ -60,7 +60,7 @@ const getDriverRateByIdService = (id) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getDriverRateByIdService = getDriverRateByIdService;
 // UPDATE
-const updateDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiType, minDistance, maxDistance, percentage, updatedBy, updatedByFullName, country, countryCode }) {
+const updateDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiType, minDistance, maxDistance, percentage, updatedBy, updatedByFullName, }) {
     try {
         return yield driverRate_1.driverRateModel.findByIdAndUpdate(id, {
             $set: {
@@ -69,9 +69,7 @@ const updateDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function
                 maxDistance,
                 percentage,
                 updatedBy,
-                updatedByFullName,
-                country,
-                countryCode
+                updatedByFullName
             }
         }, { new: true }).populate("taxiType");
     }

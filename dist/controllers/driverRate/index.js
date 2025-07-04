@@ -105,17 +105,16 @@ const updateDriverRate = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const { id } = req.params;
         const user = req.user;
-        const { taxiType, minDistance, maxDistance, percentage, country, countryCode } = req.body;
+        const { taxiType, minDistance, maxDistance, percentage, } = req.body;
+        console.log({});
         const updatedDriverRate = yield (0, driverRate_1.updateDriverRateService)({
             id,
             taxiType,
             minDistance,
             maxDistance,
             percentage,
-            country,
             updatedBy: user.id,
             updatedByFullName: user.fullName,
-            countryCode
         });
         if (!updatedDriverRate) {
             res.status(404).json({

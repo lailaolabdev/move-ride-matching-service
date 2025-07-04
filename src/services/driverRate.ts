@@ -81,8 +81,6 @@ export const updateDriverRateService = async ({
   percentage,
   updatedBy,
   updatedByFullName,
-  country,
-  countryCode
 }: {
   id: string;
   taxiType: string;
@@ -91,8 +89,6 @@ export const updateDriverRateService = async ({
   percentage: number;
   updatedBy: string;
   updatedByFullName: string;
-  country: string;
-  countryCode: string;
 }): Promise<IDriverRate | null> => {
   try {
     return await driverRateModel.findByIdAndUpdate(
@@ -104,9 +100,7 @@ export const updateDriverRateService = async ({
           maxDistance,
           percentage,
           updatedBy,
-          updatedByFullName,
-          country,
-          countryCode
+          updatedByFullName
         }
       },
       { new: true }

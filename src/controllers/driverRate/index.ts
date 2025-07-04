@@ -117,9 +117,13 @@ export const updateDriverRate = async (req: Request, res: Response) => {
       minDistance,
       maxDistance,
       percentage,
-      country,
-      countryCode
     } = req.body;
+
+
+    console.log({
+
+    });
+
 
     const updatedDriverRate = await updateDriverRateService({
       id,
@@ -127,10 +131,8 @@ export const updateDriverRate = async (req: Request, res: Response) => {
       minDistance,
       maxDistance,
       percentage,
-      country,
       updatedBy: user.id,
       updatedByFullName: user.fullName,
-      countryCode
     });
 
     if (!updatedDriverRate) {
