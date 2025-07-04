@@ -40,6 +40,7 @@ const port = process.env.PORT || 8001;
 const swaggerDocs = (0, swagger_jsdoc_1.default)(swagger_1.default);
 // Middleware
 app.use((0, cors_1.default)());
+app.use(express_1.default.json());
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 // Routes
