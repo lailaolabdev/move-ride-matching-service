@@ -830,7 +830,7 @@ exports.updateCallTaxis = updateCallTaxis;
 const updateClaimMoneyStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        yield callTaxi_2.CallTaxi.findOneAndUpdate({ claimMoney: id }, { $set: { isClaim: true } }, { new: true });
+        yield callTaxi_2.CallTaxi.updateMany({ claimMoney: id }, { $set: { isClaim: true } }, { new: true });
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
