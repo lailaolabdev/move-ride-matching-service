@@ -558,6 +558,7 @@ export const getDriverRideHistoryDetailByIdService = async (req: Request): Promi
                     status: 1,
                     createdAt: 1,
                     billNumber: 1,
+                    currency: 1,
                     "passenger._id": 1,
                     "passenger.fullName": 1,
                     "passenger.profileImage": 1,
