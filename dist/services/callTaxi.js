@@ -546,15 +546,15 @@ const getHistoryRideService = (skip, limit, filter) => __awaiter(void 0, void 0,
                 }
             },
             {
+                $sort: {
+                    createdAt: -1
+                }
+            },
+            {
                 $skip: parseInt(skip)
             },
             {
                 $limit: parseInt(limit)
-            },
-            {
-                $sort: {
-                    createdAt: -1
-                }
             }
         ]);
         return rideHistory.length ? rideHistory : [];

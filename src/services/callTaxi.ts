@@ -591,17 +591,18 @@ export const getHistoryRideService = async (skip: string, limit: string, filter:
                 }
             },
             {
+                $sort: {
+                    createdAt: -1
+                }
+            },
+            {
                 $skip: parseInt(skip)
             },
             {
                 $limit: parseInt(limit)
-            },
-            {
-                $sort: {
-                    createdAt: -1
-                }
             }
         ])
+
         return rideHistory.length ? rideHistory : []
     } catch (error) {
         console.log("Error creating Record: ", error);
