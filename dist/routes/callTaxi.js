@@ -29,6 +29,8 @@ router.get("/ride-history/:id", middlewares_1.checkAuthorizationMiddleware, call
 router.get("/calling-taxi-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverCallTaxis);
 // Update type and status by calling taxi id
 router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateCallTaxis);
+// Update claim money status by claim money id
+router.put("/claim-money/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateClaimMoneyStatus);
 // Driver update order processing status
 router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.driverUpdateStatus);
 router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.callTaxiTotalPrice);

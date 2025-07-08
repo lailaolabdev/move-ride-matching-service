@@ -821,6 +821,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       festivalPromotion,
       totalPrice
     } = req.body;
+
     const token = req.headers.authorization!
 
     const callTaxi = await CallTaxi.findById(id);
@@ -956,6 +957,31 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
       data: updated,
+    });
+  } catch (error) {
+    console.error("Error fetching tax info:", error);
+
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+};
+
+export const updateClaimMoneyStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await CallTaxi.findOneAndUpdate(
+      { claimMoney: id },
+      { $set: { isClaim: true } },
+      { new: true }
+    );
+
+    res.status(200).json({
+      code: messages.SUCCESSFULLY.code,
+      messages: messages.SUCCESSFULLY.message,
     });
   } catch (error) {
     console.error("Error fetching tax info:", error);

@@ -20,7 +20,8 @@ import {
   travelHistory,
   getCommentAndRating,
   getTotalDriverIncome,
-  getDriverPaymentDetail
+  getDriverPaymentDetail,
+  updateClaimMoneyStatus
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -104,6 +105,14 @@ router.put(
   validateParamID,
   checkAuthorizationMiddleware,
   updateCallTaxis
+);
+
+// Update claim money status by claim money id
+router.put(
+  "/claim-money/:id",
+  validateParamID,
+  checkAuthorizationMiddleware,
+  updateClaimMoneyStatus
 );
 
 // Driver update order processing status
