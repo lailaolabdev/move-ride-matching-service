@@ -5,7 +5,6 @@ import {
   getDriverCallTaxis,
   getUserCallTaxis,
   updateCallTaxis,
-  gettotalRide,
   getRideHistory,
   callTaxiTotalPrice,
   createDriverComplain,

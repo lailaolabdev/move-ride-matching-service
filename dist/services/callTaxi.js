@@ -533,6 +533,19 @@ const getHistoryRideService = (skip, limit, filter) => __awaiter(void 0, void 0,
         let rideHistory = yield callTaxi_1.CallTaxi.aggregate([
             { $match: filter },
             {
+                $addFields: {
+                    promotionPercentage: {
+                        $sum: {
+                            $map: {
+                                input: "$festivalPromotion",
+                                as: "promo",
+                                in: "$$promo.promotionPercentage"
+                            }
+                        }
+                    }
+                }
+            },
+            {
                 $project: {
                     originName: 1,
                     origin: 1,
@@ -541,22 +554,16 @@ const getHistoryRideService = (skip, limit, filter) => __awaiter(void 0, void 0,
                     totalDuration: 1,
                     totalDistance: 1,
                     totalPrice: 1,
+                    promotionPrice: 1,
+                    promotionPercentage: 1,
                     status: 1,
                     invoiceRequestStatus: 1,
                     createdAt: 1
                 }
             },
-            {
-                $sort: {
-                    createdAt: -1
-                }
-            },
-            {
-                $skip: parseInt(skip)
-            },
-            {
-                $limit: parseInt(limit)
-            }
+            { $sort: { createdAt: -1 } },
+            { $skip: parseInt(skip) },
+            { $limit: parseInt(limit) }
         ]);
         return rideHistory.length ? rideHistory : [];
     }
