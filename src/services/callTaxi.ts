@@ -414,6 +414,19 @@ export const getRideHistoryDetailByIdService = async (req: Request): Promise<any
                 }
             },
             {
+                $addFields: {
+                    promotionPercentage: {
+                        $sum: {
+                            $map: {
+                                input: "$festivalPromotion",
+                                as: "promo",
+                                in: "$$promo.promotionPercentage"
+                            }
+                        }
+                    }
+                }
+            },
+            {
                 $project: {
                     _id: 1,
                     originName: 1,
@@ -427,7 +440,10 @@ export const getRideHistoryDetailByIdService = async (req: Request): Promise<any
                     "driver.profileImage": 1,
                     "driver.fullName": 1,
                     "driver.licensePlate": 1,
-                    passengerComplain: 1
+                    passengerComplain: 1,
+                    promotionPrice: 1,
+                    promotionPercentage: 1,
+                    currency: 1
                 }
             }
         ]);
