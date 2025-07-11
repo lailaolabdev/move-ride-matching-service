@@ -65,9 +65,11 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
                         calculate.priceInPolygon +
                         delayPrice * calculate.delayDuration) }));
             meter.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { price: taxiTypePricing[i].meterPrice, polygonPrice: (_d = calculate.priceInPolygon) !== null && _d !== void 0 ? _d : 0, onPeakTimePrice,
-                delayPrice }), calculate), { actualCalculate: Math.ceil(taxiTypePricing[i].meterPrice * distance), estimatedCalculate: distance > 1
-                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance + 30)
-                    : Math.ceil(taxiTypePricing[i].meterPrice * distance + 30) }));
+                delayPrice }), calculate), { actualCalculate: distance > 1
+                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance) + Math.ceil(0.05 * taxiTypePricing[i].meterPrice * distance)
+                    : Math.ceil(taxiTypePricing[i].meterPrice), estimatedCalculate: distance > 1
+                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance) + Math.ceil(0.10 * taxiTypePricing[i].meterPrice * distance)
+                    : Math.ceil(taxiTypePricing[i].meterPrice) }));
         }
         res.status(200).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
