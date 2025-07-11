@@ -90,10 +90,12 @@ export const calculateUserDistanceAndDuration = async (
                 onPeakTimePrice,
                 delayPrice,
                 ...calculate,
-                actualCalculate: Math.ceil(taxiTypePricing[i].meterPrice * distance),
+                actualCalculate: distance > 1
+                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance) + Math.ceil(0.05 * taxiTypePricing[i].meterPrice * distance)
+                    : Math.ceil(taxiTypePricing[i].meterPrice),
                 estimatedCalculate: distance > 1
-                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance + 30)
-                    : Math.ceil(taxiTypePricing[i].meterPrice * distance + 30)
+                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance) + Math.ceil(0.10 * taxiTypePricing[i].meterPrice * distance)
+                    : Math.ceil(taxiTypePricing[i].meterPrice)
             });
         }
 
