@@ -225,8 +225,8 @@ const CallTaxiSchema: Schema = new Schema(
           promotionPercentage: Number,
           promotionType: String,
           promotionPeriod: {
-            startDate: Date,
-            endDate: Date,
+            startDate: String,
+            endDate: String,
           },
         }
       ],
