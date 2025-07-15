@@ -169,7 +169,7 @@ router.get(
   getDriverPaymentDetail
 )
 
-router.get(
+router.post(
   "/check/promotion",
   checkAuthorizationMiddleware,
   checkUsingPromotion
