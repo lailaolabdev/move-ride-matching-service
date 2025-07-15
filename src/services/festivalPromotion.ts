@@ -120,3 +120,29 @@ export const deleteFestivalPromotionService = async (
         throw error;
     }
 };
+
+// DELETE Festival Promotion
+export const updateFestivalPromotionByDateService = async ({
+    date,
+    country
+}: {
+    date: string,
+    country: string
+}
+) => {
+    try {
+        const festivalPromotion = await festivalPromotionModel.updateMany(
+            {
+                "period.endDate": { $lt: date },
+                country: country,
+                status: true,
+            },
+            { $set: { status: false } }
+        );
+
+        return festivalPromotion;
+    } catch (error) {
+        console.log("Error deleting festival promotion: ", error);
+        throw error;
+    }
+};

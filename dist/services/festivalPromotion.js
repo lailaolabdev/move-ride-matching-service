@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFestivalPromotionService = exports.updateFestivalPromotionService = exports.getFestivalPromotionByIdService = exports.getAllFestivalPromotionsService = exports.createFestivalPromotionService = void 0;
+exports.updateFestivalPromotionByDateService = exports.deleteFestivalPromotionService = exports.updateFestivalPromotionService = exports.getFestivalPromotionByIdService = exports.getAllFestivalPromotionsService = exports.createFestivalPromotionService = void 0;
 const festivalPromotion_1 = __importDefault(require("../models/festivalPromotion"));
 // CREATE Festival Promotion
 const createFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, discount, usingType, period, country }) {
@@ -92,3 +92,19 @@ const deleteFestivalPromotionService = (id) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.deleteFestivalPromotionService = deleteFestivalPromotionService;
+// DELETE Festival Promotion
+const updateFestivalPromotionByDateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ date, country }) {
+    try {
+        const festivalPromotion = yield festivalPromotion_1.default.updateMany({
+            "period.endDate": { $lt: date },
+            country: country,
+            status: true,
+        }, { $set: { status: false } });
+        return festivalPromotion;
+    }
+    catch (error) {
+        console.log("Error deleting festival promotion: ", error);
+        throw error;
+    }
+});
+exports.updateFestivalPromotionByDateService = updateFestivalPromotionByDateService;

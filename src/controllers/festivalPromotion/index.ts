@@ -5,6 +5,7 @@ import {
     getFestivalPromotionByIdService,
     updateFestivalPromotionService,
     deleteFestivalPromotionService,
+    updateFestivalPromotionByDateService,
 } from "../../services/festivalPromotion";
 import { messages } from "../../config/index";
 import { filterPromotion } from "./helper"; // You may rename this to filterFestivalPromotion if applicable
@@ -164,6 +165,38 @@ export const deleteFestivalPromotion = async (req: Request, res: Response) => {
             code: messages.SUCCESSFULLY.code,
             message: "Festival promotion deleted successfully",
             deletedFestivalPromotion,
+        });
+    } catch (error) {
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// UPDATE Promotion when it less than current date
+export const updateFestivalPromotionByDate = async (req: Request, res: Response) => {
+    try {
+        const { date, country } = req.body
+
+        const updatedFestivalPromotion = await updateFestivalPromotionByDateService({
+            date,
+            country
+        });
+
+        if (!updatedFestivalPromotion) {
+            res.status(404).json({
+                code: messages.NOT_FOUND.code,
+                message: "Festival promotion not found",
+            });
+            return;
+        }
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: "Festival promotion updated successfully",
+            updatedFestivalPromotion,
         });
     } catch (error) {
         res.status(500).json({

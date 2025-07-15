@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFestivalPromotion = exports.updateFestivalPromotion = exports.getFestivalPromotionById = exports.getAllFestivalPromotions = exports.createFestivalPromotion = void 0;
+exports.updateFestivalPromotionByDate = exports.deleteFestivalPromotion = exports.updateFestivalPromotion = exports.getFestivalPromotionById = exports.getAllFestivalPromotions = exports.createFestivalPromotion = void 0;
 const festivalPromotion_1 = require("../../services/festivalPromotion");
 const index_1 = require("../../config/index");
 const helper_1 = require("./helper"); // You may rename this to filterFestivalPromotion if applicable
@@ -150,3 +150,33 @@ const deleteFestivalPromotion = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.deleteFestivalPromotion = deleteFestivalPromotion;
+// UPDATE Promotion when it less than current date
+const updateFestivalPromotionByDate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { date, country } = req.body;
+        const updatedFestivalPromotion = yield (0, festivalPromotion_1.updateFestivalPromotionByDateService)({
+            date,
+            country
+        });
+        if (!updatedFestivalPromotion) {
+            res.status(404).json({
+                code: index_1.messages.NOT_FOUND.code,
+                message: "Festival promotion not found",
+            });
+            return;
+        }
+        res.status(200).json({
+            code: index_1.messages.SUCCESSFULLY.code,
+            message: "Festival promotion updated successfully",
+            updatedFestivalPromotion,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            code: index_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: index_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.updateFestivalPromotionByDate = updateFestivalPromotionByDate;

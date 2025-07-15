@@ -12,4 +12,5 @@ router.get("/", middlewares_1.checkAuthorizationMiddleware, festivalPromotion_1.
 router.get("/:id", festivalPromotion_1.getFestivalPromotionById);
 router.put("/:id", middlewares_1.checkAuthorizationMiddleware, festivalPromotion_1.updateFestivalPromotion);
 router.delete("/:id", middlewares_1.checkAuthorizationMiddleware, festivalPromotion_1.deleteFestivalPromotion);
+router.delete("/update/festival-promotion-status", festivalPromotion_1.updateFestivalPromotionByDate);
 exports.default = router;
