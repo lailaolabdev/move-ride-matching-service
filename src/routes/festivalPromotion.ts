@@ -21,6 +21,6 @@ router.put("/:id", checkAuthorizationMiddleware, updateFestivalPromotion);
 
 router.delete("/:id", checkAuthorizationMiddleware, deleteFestivalPromotion);
 
-router.delete("/update/festival-promotion-status", updateFestivalPromotionByDate);
+router.put("/update/festival-promotion-status", updateFestivalPromotionByDate);
 
 export default router;
