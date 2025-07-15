@@ -1475,3 +1475,33 @@ export const getDriverPaymentDetail = async (req: Request, res: Response) => {
     });
   }
 }
+
+export const checkUsingPromotion = async (req: Request, res: Response) => {
+  try {
+    const passengerId = (req as any).user.id
+    const { promotion, startDate, endDate } = req.body
+
+    const isPromotionUsed = await CallTaxi.exists({
+      passengerId,
+      festivalPromotion: {
+        $elemMatch: {
+          promotion: promotion,
+          "promotionPeriod.startDate": startDate,
+          "promotionPeriod.endDate": endDate
+        }
+      }
+    });
+
+    res.json({
+      ...messages.SUCCESSFULLY,
+      isPromotionUsed,
+    })
+  } catch (error) {
+    console.error("Error fetching tax info:", error);
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+}

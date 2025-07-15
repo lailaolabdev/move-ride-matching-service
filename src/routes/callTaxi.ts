@@ -20,7 +20,8 @@ import {
   getCommentAndRating,
   getTotalDriverIncome,
   getDriverPaymentDetail,
-  updateClaimMoneyStatus
+  updateClaimMoneyStatus,
+  checkUsingPromotion
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -167,5 +168,12 @@ router.get(
   checkAuthorizationMiddleware,
   getDriverPaymentDetail
 )
+
+router.get(
+  "/check/promotion",
+  checkAuthorizationMiddleware,
+  checkUsingPromotion
+);
+
 
 export default router;
