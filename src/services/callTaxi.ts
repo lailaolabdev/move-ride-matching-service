@@ -313,7 +313,7 @@ export const driverUpdateStatusService = async (data:
                 status: data.status,
                 driverRegistrationSource: data.driverRegistrationSource,
                 driverFullName: data.driverFullName,
-                driverPhoneNumber: data.driverFullName
+                driverPhoneNumber: data.driverPhoneNumber
             },
             { new: true }
         )

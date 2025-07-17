@@ -282,7 +282,7 @@ const driverUpdateStatusService = (data) => __awaiter(void 0, void 0, void 0, fu
             status: data.status,
             driverRegistrationSource: data.driverRegistrationSource,
             driverFullName: data.driverFullName,
-            driverPhoneNumber: data.driverFullName
+            driverPhoneNumber: data.driverPhoneNumber
         }, { new: true });
         return confirmed;
     }
