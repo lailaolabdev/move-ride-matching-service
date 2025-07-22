@@ -867,11 +867,15 @@ export const getDriverCommentAndRatingService = async (
 }
 
 // Report driver part
-export const getTotalDriverIncomeService = async (driverId: any): Promise<any> => {
+export const getTotalDriverIncomeService = async (driverId: any, filter: any): Promise<any> => {
     try {
         const totalIncome = await CallTaxi.aggregate([
             {
-                $match: { driverId, status: "Paid" }
+                $match: {
+                    driverId,
+                    status: "Paid",
+                    ...filter
+                }
             },
             {
                 $group: {
@@ -894,7 +898,7 @@ export const getTotalDriverIncomeService = async (driverId: any): Promise<any> =
     }
 }
 
-export const getTotalDriverIncomeServiceThatWasNotClaim = async (driverId: any): Promise<any> => {
+export const getTotalDriverIncomeServiceThatWasNotClaim = async (driverId: any, filter: any): Promise<any> => {
     try {
         const totalIncome = await CallTaxi.aggregate([
             {
@@ -902,6 +906,7 @@ export const getTotalDriverIncomeServiceThatWasNotClaim = async (driverId: any):
                     driverId,
                     status: "Paid",
                     isClaim: false,
+                    ...filter
                 }
             },
             {

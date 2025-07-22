@@ -35,6 +35,7 @@ import vehicleDriverModel from "../../models/vehicleDriver";
 import { Types } from "mongoose";
 import { driverRateCal } from "../calculation";
 import { createClaimMoney, getClaimMoney, updateClaimMoney } from "../../services/claimMoney";
+import { convertToEndDate, convertToStartDate } from "../../utils/timezone";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -1436,9 +1437,28 @@ export const getCommentAndRating = async (req: Request, res: Response) => {
 export const getTotalDriverIncome = async (req: Request, res: Response) => {
   try {
     const driverId = (req as any).user.id;
+    const { startDate, endDate } = req.query;
 
-    const totalIncome = await getTotalDriverIncomeService(driverId)
-    const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId)
+    const filter: any = {}
+
+    if (startDate || endDate) {
+      const createdAtFilter: any = {};
+
+      if (startDate) {
+        const start = convertToStartDate(startDate as string);
+        createdAtFilter.$gte = start;
+      }
+
+      if (endDate) {
+        const end = convertToEndDate(endDate as string);
+        createdAtFilter.$lte = end;
+      }
+
+      filter.createdAt = createdAtFilter;
+    }
+
+    const totalIncome = await getTotalDriverIncomeService(driverId, filter)
+    const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId, filter)
 
     res.json({
       ...messages.SUCCESSFULLY,

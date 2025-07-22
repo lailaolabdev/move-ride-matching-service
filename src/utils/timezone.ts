@@ -38,3 +38,23 @@ export const getBangkokTodayUTC = () => {
 
   return { startOfDayUTC, endOfDayUTC }
 }
+
+export const convertToStartDate = (date: string) => {
+  const bangkokOffset = 7 * 60; // 7 hours in minutes
+  const bangkokStart = new Date(date);
+  bangkokStart.setHours(0, 0, 0, 0);
+
+  const startUTC = new Date(bangkokStart.getTime() - bangkokOffset * 60000);
+
+  return startUTC
+}
+
+export const convertToEndDate = (date: string) => {
+  const bangkokOffset = 7 * 60;
+  const bangkokEnd = new Date(date);
+  bangkokEnd.setHours(23, 59, 59, 999);
+
+  const endUTC = new Date(bangkokEnd.getTime() - bangkokOffset * 60000);
+
+  return endUTC
+}

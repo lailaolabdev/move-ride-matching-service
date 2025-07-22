@@ -812,11 +812,11 @@ const getDriverCommentAndRatingService = (skip, limit, filter) => __awaiter(void
 });
 exports.getDriverCommentAndRatingService = getDriverCommentAndRatingService;
 // Report driver part
-const getTotalDriverIncomeService = (driverId) => __awaiter(void 0, void 0, void 0, function* () {
+const getTotalDriverIncomeService = (driverId, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const totalIncome = yield callTaxi_1.CallTaxi.aggregate([
             {
-                $match: { driverId, status: "Paid" }
+                $match: Object.assign({ driverId, status: "Paid" }, filter)
             },
             {
                 $group: {
@@ -839,15 +839,11 @@ const getTotalDriverIncomeService = (driverId) => __awaiter(void 0, void 0, void
     }
 });
 exports.getTotalDriverIncomeService = getTotalDriverIncomeService;
-const getTotalDriverIncomeServiceThatWasNotClaim = (driverId) => __awaiter(void 0, void 0, void 0, function* () {
+const getTotalDriverIncomeServiceThatWasNotClaim = (driverId, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const totalIncome = yield callTaxi_1.CallTaxi.aggregate([
             {
-                $match: {
-                    driverId,
-                    status: "Paid",
-                    isClaim: false,
-                }
+                $match: Object.assign({ driverId, status: "Paid", isClaim: false }, filter)
             },
             {
                 $group: {

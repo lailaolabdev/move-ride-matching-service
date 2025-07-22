@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBangkokTodayUTC = exports.formatTime = exports.getDayString = exports.getLocalTime = void 0;
+exports.convertToEndDate = exports.convertToStartDate = exports.getBangkokTodayUTC = exports.formatTime = exports.getDayString = exports.getLocalTime = void 0;
 // Function to get current time in UTC+7
 const getLocalTime = (offsetHours = 7) => {
     const now = new Date();
@@ -37,3 +37,19 @@ const getBangkokTodayUTC = () => {
     return { startOfDayUTC, endOfDayUTC };
 };
 exports.getBangkokTodayUTC = getBangkokTodayUTC;
+const convertToStartDate = (date) => {
+    const bangkokOffset = 7 * 60; // 7 hours in minutes
+    const bangkokStart = new Date(date);
+    bangkokStart.setHours(0, 0, 0, 0);
+    const startUTC = new Date(bangkokStart.getTime() - bangkokOffset * 60000);
+    return startUTC;
+};
+exports.convertToStartDate = convertToStartDate;
+const convertToEndDate = (date) => {
+    const bangkokOffset = 7 * 60;
+    const bangkokEnd = new Date(date);
+    bangkokEnd.setHours(23, 59, 59, 999);
+    const endUTC = new Date(bangkokEnd.getTime() - bangkokOffset * 60000);
+    return endUTC;
+};
+exports.convertToEndDate = convertToEndDate;

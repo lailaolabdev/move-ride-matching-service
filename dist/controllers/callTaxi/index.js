@@ -24,6 +24,7 @@ const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
 const mongoose_1 = require("mongoose");
 const calculation_1 = require("../calculation");
 const claimMoney_1 = require("../../services/claimMoney");
+const timezone_1 = require("../../utils/timezone");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -1209,8 +1210,22 @@ exports.getCommentAndRating = getCommentAndRating;
 const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const driverId = req.user.id;
-        const totalIncome = yield (0, callTaxi_1.getTotalDriverIncomeService)(driverId);
-        const totalIncomeThatWasNotClaim = yield (0, callTaxi_1.getTotalDriverIncomeServiceThatWasNotClaim)(driverId);
+        const { startDate, endDate } = req.query;
+        const filter = {};
+        if (startDate || endDate) {
+            const createdAtFilter = {};
+            if (startDate) {
+                const start = (0, timezone_1.convertToStartDate)(startDate);
+                createdAtFilter.$gte = start;
+            }
+            if (endDate) {
+                const end = (0, timezone_1.convertToEndDate)(endDate);
+                createdAtFilter.$lte = end;
+            }
+            filter.createdAt = createdAtFilter;
+        }
+        const totalIncome = yield (0, callTaxi_1.getTotalDriverIncomeService)(driverId, filter);
+        const totalIncomeThatWasNotClaim = yield (0, callTaxi_1.getTotalDriverIncomeServiceThatWasNotClaim)(driverId, filter);
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { totalIncome,
             totalIncomeThatWasNotClaim }));
     }
