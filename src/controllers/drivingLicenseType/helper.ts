@@ -8,5 +8,12 @@ export const filterDrivingLicenseTypeFields = (query: any) => {
         };
     }
 
+    if (query.name) {
+        filter = {
+            ...filter,
+            name: { $regex: query.name, $options: "i" }
+        };
+    }
+
     return filter;
 };
