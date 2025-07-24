@@ -172,6 +172,10 @@ const CallTaxiSchema = new mongoose_1.Schema({
         ],
         default: undefined, // or you can use default: []
     },
+    prePaid: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true,
 });

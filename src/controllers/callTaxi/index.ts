@@ -820,7 +820,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       paymentMethod,
       promotionPrice,
       festivalPromotion,
-      totalPrice
+      totalPrice,
+      prePaid
     } = req.body;
 
     const token = req.headers.authorization!
@@ -880,14 +881,13 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (promotionPrice) updateData.promotionPrice = promotionPrice
     if (festivalPromotion) updateData.festivalPromotion = festivalPromotion
     if (totalPrice) updateData.totalPrice = totalPrice
+    if (prePaid) updateData.prePaid = prePaid
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to 
       // calculate driver income
       if (status === STATUS.PAID) {
         const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
-
-        console.log({ calculatedPrice, driverRate });
 
         // Calculate price and driver rate
         if (calculatedPrice && driverRate) {

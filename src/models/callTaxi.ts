@@ -232,6 +232,10 @@ const CallTaxiSchema: Schema = new Schema(
       ],
       default: undefined, // or you can use default: []
     },
+    prePaid: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,
