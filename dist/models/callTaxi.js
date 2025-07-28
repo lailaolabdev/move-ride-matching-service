@@ -172,7 +172,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
         ],
         default: undefined, // or you can use default: []
     },
-    prePaid: {
+    prepaid: {
         type: Boolean,
         default: false
     }

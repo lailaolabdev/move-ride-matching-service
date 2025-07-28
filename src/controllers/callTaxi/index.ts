@@ -821,7 +821,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       promotionPrice,
       festivalPromotion,
       totalPrice,
-      prePaid
+      prepaid
     } = req.body;
 
     const token = req.headers.authorization!
@@ -837,7 +837,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       return;
     }
 
-    if(status) {
+    if (status) {
       const isValidStatus = Object.values(STATUS).includes(status);
 
       if (!isValidStatus) {
@@ -850,7 +850,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
         return;
       }
     }
- 
+
     // if status from order not equal to "Requesting" and "Accepted"
     // cannot cancel the order
     // Requesting means while passenger is calling for an order 
@@ -883,7 +883,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (promotionPrice) updateData.promotionPrice = promotionPrice
     if (festivalPromotion) updateData.festivalPromotion = festivalPromotion
     if (totalPrice) updateData.totalPrice = totalPrice
-    if (prePaid) updateData.prePaid = prePaid
+    if (prepaid) updateData.prepaid = prepaid
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to 

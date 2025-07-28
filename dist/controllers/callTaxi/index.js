@@ -703,7 +703,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prePaid } = req.body;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid } = req.body;
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
@@ -756,8 +756,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.festivalPromotion = festivalPromotion;
         if (totalPrice)
             updateData.totalPrice = totalPrice;
-        if (prePaid)
-            updateData.prePaid = prePaid;
+        if (prepaid)
+            updateData.prepaid = prepaid;
         if (status) {
             // If status is paid add calculatedPrice and driverRate to 
             // calculate driver income
