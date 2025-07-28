@@ -837,18 +837,20 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       return;
     }
 
-    const isValidStatus = Object.values(STATUS).includes(status);
+    if(status) {
+      const isValidStatus = Object.values(STATUS).includes(status);
 
-    if (!isValidStatus) {
-      res.status(400).json({
-        code: messages.BAD_REQUEST.code,
-        messages: messages.BAD_REQUEST.message,
-        detail: "Cancel status is incorrect",
-      });
+      if (!isValidStatus) {
+        res.status(400).json({
+          code: messages.BAD_REQUEST.code,
+          messages: messages.BAD_REQUEST.message,
+          detail: "Cancel status is incorrect",
+        });
 
-      return;
+        return;
+      }
     }
-
+ 
     // if status from order not equal to "Requesting" and "Accepted"
     // cannot cancel the order
     // Requesting means while passenger is calling for an order 

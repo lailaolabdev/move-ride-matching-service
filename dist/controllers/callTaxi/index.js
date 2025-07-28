@@ -710,14 +710,16 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             res.status(400).json(Object.assign(Object.assign({}, config_1.messages.NOT_FOUND), { detail: `Ride matching with id:${id} not found` }));
             return;
         }
-        const isValidStatus = Object.values(callTaxi_2.STATUS).includes(status);
-        if (!isValidStatus) {
-            res.status(400).json({
-                code: config_1.messages.BAD_REQUEST.code,
-                messages: config_1.messages.BAD_REQUEST.message,
-                detail: "Cancel status is incorrect",
-            });
-            return;
+        if (status) {
+            const isValidStatus = Object.values(callTaxi_2.STATUS).includes(status);
+            if (!isValidStatus) {
+                res.status(400).json({
+                    code: config_1.messages.BAD_REQUEST.code,
+                    messages: config_1.messages.BAD_REQUEST.message,
+                    detail: "Cancel status is incorrect",
+                });
+                return;
+            }
         }
         // if status from order not equal to "Requesting" and "Accepted"
         // cannot cancel the order
