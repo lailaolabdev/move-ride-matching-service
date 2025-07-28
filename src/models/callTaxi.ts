@@ -72,6 +72,7 @@ export interface ICallTaxi extends Document {
   currency: string
   passengerFullName: String,
   passengerPhoneNumber: String,
+  prepaid: String,
 
   createdAt: Date;
   updatedAt: Date;

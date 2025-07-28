@@ -165,6 +165,7 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     "passengerDetails.phone": 1,
                     "passengerDetails.email": 1,
                     "registrationSource": 1,
+                    "prepaid": 1
                 }
             }
         ]);
