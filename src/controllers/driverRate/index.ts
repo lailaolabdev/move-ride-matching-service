@@ -14,7 +14,7 @@ export const createDriverRate = async (req: Request, res: Response) => {
     const user = (req as any).user;
 
     const {
-      taxiType,
+      registrationSource,
       minDistance,
       maxDistance,
       percentage,
@@ -23,7 +23,7 @@ export const createDriverRate = async (req: Request, res: Response) => {
     } = req.body;
 
     const rate = await createDriverRateService({
-      taxiType,
+      registrationSource,
       minDistance,
       maxDistance,
       percentage,
@@ -113,22 +113,15 @@ export const updateDriverRate = async (req: Request, res: Response) => {
     const user = (req as any).user;
 
     const {
-      taxiType,
+      registrationSource,
       minDistance,
       maxDistance,
       percentage,
     } = req.body;
 
-    console.log({
-      taxiType,
-      minDistance,
-      maxDistance,
-      percentage,
-    });
-
     const updatedDriverRate = await updateDriverRateService({
       id,
-      taxiType,
+      registrationSource,
       minDistance,
       maxDistance,
       percentage,

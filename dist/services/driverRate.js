@@ -12,10 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteDriverRateService = exports.updateDriverRateService = exports.getDriverRateByIdService = exports.getAllDriverRatesService = exports.createDriverRateService = void 0;
 const driverRate_1 = require("../models/driverRate");
 // CREATE
-const createDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxiType, minDistance, maxDistance, percentage, createdBy, createdByFullName, country, countryCode }) {
+const createDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ registrationSource, minDistance, maxDistance, percentage, createdBy, createdByFullName, country, countryCode }) {
     try {
         const rate = new driverRate_1.driverRateModel({
-            taxiType,
+            registrationSource,
             minDistance,
             maxDistance,
             percentage,
@@ -38,7 +38,7 @@ const getAllDriverRatesService = (skip, limit, filter) => __awaiter(void 0, void
         const total = yield driverRate_1.driverRateModel.countDocuments(filter);
         const rates = yield driverRate_1.driverRateModel
             .find(filter)
-            .populate("taxiType")
+            .populate("registrationSource")
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
@@ -52,7 +52,7 @@ exports.getAllDriverRatesService = getAllDriverRatesService;
 // READ BY ID
 const getDriverRateByIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield driverRate_1.driverRateModel.findById(id).populate("taxiType");
+        return yield driverRate_1.driverRateModel.findById(id).populate("registrationSource");
     }
     catch (error) {
         throw error;
@@ -60,18 +60,18 @@ const getDriverRateByIdService = (id) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getDriverRateByIdService = getDriverRateByIdService;
 // UPDATE
-const updateDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, taxiType, minDistance, maxDistance, percentage, updatedBy, updatedByFullName, }) {
+const updateDriverRateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, registrationSource, minDistance, maxDistance, percentage, updatedBy, updatedByFullName, }) {
     try {
         return yield driverRate_1.driverRateModel.findByIdAndUpdate(id, {
             $set: {
-                taxiType,
+                registrationSource,
                 minDistance,
                 maxDistance,
                 percentage,
                 updatedBy,
                 updatedByFullName
             }
-        }, { new: true }).populate("taxiType");
+        }, { new: true }).populate("registrationSource");
     }
     catch (error) {
         throw error;

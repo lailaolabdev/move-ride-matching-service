@@ -16,9 +16,9 @@ const index_1 = require("../../config/index");
 const createDriverRate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user;
-        const { taxiType, minDistance, maxDistance, percentage, country, countryCode } = req.body;
+        const { registrationSource, minDistance, maxDistance, percentage, country, countryCode } = req.body;
         const rate = yield (0, driverRate_1.createDriverRateService)({
-            taxiType,
+            registrationSource,
             minDistance,
             maxDistance,
             percentage,
@@ -105,16 +105,10 @@ const updateDriverRate = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const { id } = req.params;
         const user = req.user;
-        const { taxiType, minDistance, maxDistance, percentage, } = req.body;
-        console.log({
-            taxiType,
-            minDistance,
-            maxDistance,
-            percentage,
-        });
+        const { registrationSource, minDistance, maxDistance, percentage, } = req.body;
         const updatedDriverRate = yield (0, driverRate_1.updateDriverRateService)({
             id,
-            taxiType,
+            registrationSource,
             minDistance,
             maxDistance,
             percentage,

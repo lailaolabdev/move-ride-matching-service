@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IDriverRate extends Document {
-    taxiType: string;
+    registrationSource: string;
     minDistance: number;
     maxDistance: number;
     percentage: number;
@@ -14,10 +14,9 @@ export interface IDriverRate extends Document {
 }
 
 const driverRateSchema = new Schema({
-    taxiType: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TaxiType',
-        required: true,
+    registrationSource: {
+        type: String,
+        enum: ["inside", "outside"]
     },
     minDistance: {
         type: Number,

@@ -3,7 +3,7 @@ import { IDriverRate } from "../models/driverRate";
 
 // CREATE
 export const createDriverRateService = async ({
-  taxiType,
+  registrationSource,
   minDistance,
   maxDistance,
   percentage,
@@ -12,7 +12,7 @@ export const createDriverRateService = async ({
   country,
   countryCode
 }: {
-  taxiType: string;
+  registrationSource: string;
   minDistance: number;
   maxDistance: number;
   percentage: number;
@@ -23,7 +23,7 @@ export const createDriverRateService = async ({
 }): Promise<IDriverRate | null> => {
   try {
     const rate = new driverRateModel({
-      taxiType,
+      registrationSource,
       minDistance,
       maxDistance,
       percentage,
@@ -50,7 +50,7 @@ export const getAllDriverRatesService = async (
     const total = await driverRateModel.countDocuments(filter);
     const rates = await driverRateModel
       .find(filter)
-      .populate("taxiType")
+      .populate("registrationSource")
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
@@ -66,7 +66,7 @@ export const getDriverRateByIdService = async (
   id: string
 ): Promise<IDriverRate | null> => {
   try {
-    return await driverRateModel.findById(id).populate("taxiType");
+    return await driverRateModel.findById(id).populate("registrationSource");
   } catch (error) {
     throw error;
   }
@@ -75,7 +75,7 @@ export const getDriverRateByIdService = async (
 // UPDATE
 export const updateDriverRateService = async ({
   id,
-  taxiType,
+  registrationSource,
   minDistance,
   maxDistance,
   percentage,
@@ -83,7 +83,7 @@ export const updateDriverRateService = async ({
   updatedByFullName,
 }: {
   id: string;
-  taxiType: string;
+  registrationSource: string;
   minDistance: number;
   maxDistance: number;
   percentage: number;
@@ -95,7 +95,7 @@ export const updateDriverRateService = async ({
       id,
       {
         $set: {
-          taxiType,
+          registrationSource,
           minDistance,
           maxDistance,
           percentage,
@@ -104,7 +104,7 @@ export const updateDriverRateService = async ({
         }
       },
       { new: true }
-    ).populate("taxiType");
+    ).populate("registrationSource");
   } catch (error) {
     throw error;
   }

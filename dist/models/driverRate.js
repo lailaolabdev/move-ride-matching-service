@@ -36,10 +36,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.driverRateModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const driverRateSchema = new mongoose_1.Schema({
-    taxiType: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: 'TaxiType',
-        required: true,
+    registrationSource: {
+        type: String,
+        enum: ["inside", "outside"]
     },
     minDistance: {
         type: Number,

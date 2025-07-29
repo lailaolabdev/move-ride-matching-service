@@ -8,7 +8,7 @@
  *         id:
  *           type: string
  *           example: "6811c9fa4075cef8167dba86"
- *         taxiType:
+ *         registrationSource:
  *           type: string
  *           example: "60f8f3f995d3d344dcf8a123"
  *         minDistance:
