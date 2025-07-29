@@ -904,11 +904,13 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
           if (claimMoney) {
             const income = claimMoney.income + calculatedPrice
+            const total = claimMoney.total + callTaxi.totalPrice
 
             const updateClaim = await updateClaimMoney({
               token,
               id: claimMoney._id,
-              income
+              income,
+              total
             })
 
             console.log("updateClaim: ", updateClaim);

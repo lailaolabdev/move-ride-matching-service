@@ -56,7 +56,8 @@ const updateClaimMoney = (data) => __awaiter(void 0, void 0, void 0, function* (
     var _a;
     try {
         const res = yield axios_1.default.put(`${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money/${data.id}`, {
-            income: data.income
+            income: data.income,
+            total: data.total
         }, {
             headers: {
                 Authorization: data.token,

@@ -62,13 +62,15 @@ export const updateClaimMoney = async (data:
   {
     token: string
     id: string,
-    income: number
+    income: number,
+    total: number
   }) => {
   try {
     const res = await axios.put(
       `${process.env.PAYMENT_SERVICE_URL}/v1/api/claim-money/${data.id}`,
       {
-        income: data.income
+        income: data.income,
+        total: data.total
       },
       {
         headers: {
