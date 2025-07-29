@@ -2,7 +2,7 @@ import Redis from "ioredis";
 
 // Initialize Redis client with options
 const options = {
-  port: 6380,
+  port: 6379,
   host: process.env.REDIS_HOST,
   family: 4, // IPv4
   db: 0,
