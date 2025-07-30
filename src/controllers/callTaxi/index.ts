@@ -1134,21 +1134,19 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 
       // And then save an order to redis 
       // for calculating meter pricing
-      if (
-        confirmed.requestType === REQUEST_TYPE.METERED_FARE ||
-        confirmed.status === STATUS.DEPARTURE
-      ) {
-
-        console.log({
-          status: STATUS.DEPARTURE,
-          confirmed
-        });
-
+      if (confirmed.requestType === REQUEST_TYPE.METERED_FARE) {
         await axios.post(
           `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`,
           confirmed
         );
       }
+    }
+
+    if (confirmed.status === STATUS.DEPARTURE) {
+      await axios.post(
+        `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`,
+        confirmed
+      );
     }
 
     res.status(200).json({
