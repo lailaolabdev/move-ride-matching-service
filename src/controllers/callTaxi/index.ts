@@ -1138,6 +1138,12 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
         confirmed.requestType === REQUEST_TYPE.METERED_FARE ||
         confirmed.status === STATUS.DEPARTURE
       ) {
+
+        console.log({
+          status: STATUS.DEPARTURE,
+          confirmed
+        });
+
         await axios.post(
           `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`,
           confirmed

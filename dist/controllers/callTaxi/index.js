@@ -957,6 +957,10 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             // for calculating meter pricing
             if (confirmed.requestType === callTaxi_2.REQUEST_TYPE.METERED_FARE ||
                 confirmed.status === callTaxi_2.STATUS.DEPARTURE) {
+                console.log({
+                    status: callTaxi_2.STATUS.DEPARTURE,
+                    confirmed
+                });
                 yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, confirmed);
             }
         }
