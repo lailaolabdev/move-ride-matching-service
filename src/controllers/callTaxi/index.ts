@@ -543,7 +543,9 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           "driver._id": 1,
           "driver.fullName": 1,
           "driver.profileImage": 1,
-          "driver.licensePlate": 1
+          "driver.licensePlate": 1,
+          createdAt: 1,
+          updatedAt: 1
         }
       }
     ])

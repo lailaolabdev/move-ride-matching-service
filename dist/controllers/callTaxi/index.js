@@ -461,7 +461,9 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     "driver._id": 1,
                     "driver.fullName": 1,
                     "driver.profileImage": 1,
-                    "driver.licensePlate": 1
+                    "driver.licensePlate": 1,
+                    createdAt: 1,
+                    updatedAt: 1
                 }
             }
         ]);
