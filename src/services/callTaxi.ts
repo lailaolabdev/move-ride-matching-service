@@ -316,7 +316,7 @@ export const driverUpdateStatusService = async (data:
                 driverPhoneNumber: data.driverPhoneNumber
             },
             { new: true }
-        )
+        ).lean();
 
         return confirmed
     } catch (error) {

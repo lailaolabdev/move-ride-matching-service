@@ -25,6 +25,7 @@ const mongoose_1 = require("mongoose");
 const calculation_1 = require("../calculation");
 const claimMoney_1 = require("../../services/claimMoney");
 const timezone_1 = require("../../utils/timezone");
+const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -958,11 +959,16 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             // And then save an order to redis 
             // for calculating meter pricing
             if (confirmed.requestType === callTaxi_2.REQUEST_TYPE.METERED_FARE) {
-                yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, confirmed);
+                yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, { confirmed });
             }
         }
-        if (confirmed.status === callTaxi_2.STATUS.DEPARTURE) {
-            yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, confirmed);
+        if (confirmed.requestType === callTaxi_2.REQUEST_TYPE.METERED_FARE &&
+            confirmed.status === callTaxi_2.STATUS.DEPARTURE) {
+            const taxiTypePricing = yield taxiTypePricing_1.default.find({
+                taxiTypeId: new mongoose_1.Types.ObjectId(confirmed.carTypeId),
+                country: confirmed.country,
+            });
+            yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, { confirmed, taxiTypePricing });
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,

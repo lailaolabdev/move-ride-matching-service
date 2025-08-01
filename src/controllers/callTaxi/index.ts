@@ -36,6 +36,7 @@ import { Types } from "mongoose";
 import { driverRateCal } from "../calculation";
 import { createClaimMoney, getClaimMoney, updateClaimMoney } from "../../services/claimMoney";
 import { convertToEndDate, convertToStartDate } from "../../utils/timezone";
+import taxiTypePricingModel from "../../models/taxiTypePricing";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -1103,7 +1104,7 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     }
 
     // Confirmed order
-    const confirmed = await driverUpdateStatusService(
+    const confirmed: any = await driverUpdateStatusService(
       {
         req,
         status,
@@ -1139,15 +1140,23 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
       if (confirmed.requestType === REQUEST_TYPE.METERED_FARE) {
         await axios.post(
           `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`,
-          confirmed
+          { confirmed }
         );
       }
     }
 
-    if (confirmed.status === STATUS.DEPARTURE) {
+    if (
+      confirmed.requestType === REQUEST_TYPE.METERED_FARE &&
+      confirmed.status === STATUS.DEPARTURE
+    ) {
+      const taxiTypePricing: any = await taxiTypePricingModel.find({
+        taxiTypeId: new Types.ObjectId(confirmed.carTypeId),
+        country: confirmed.country,
+      })
+
       await axios.post(
         `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`,
-        confirmed
+        { confirmed, taxiTypePricing }
       );
     }
 

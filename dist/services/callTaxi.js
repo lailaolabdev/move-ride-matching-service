@@ -283,7 +283,7 @@ const driverUpdateStatusService = (data) => __awaiter(void 0, void 0, void 0, fu
             driverRegistrationSource: data.driverRegistrationSource,
             driverFullName: data.driverFullName,
             driverPhoneNumber: data.driverPhoneNumber
-        }, { new: true });
+        }, { new: true }).lean();
         return confirmed;
     }
     catch (error) {
