@@ -28,7 +28,15 @@ import {
 } from "../../services/callTaxi";
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
-import { getCountry, getDriver, getDriverLatLong, getPassenger, notifyDriverWhenCancel, pipeline, removeCallTaxiFromRedis } from "./helper";
+import {
+  getCountry,
+  getDriver,
+  getDriverLatLong,
+  getPassenger,
+  notifyDriverWhenCancel,
+  pipeline,
+  removeCallTaxiFromRedis,
+} from "./helper";
 import taxiModel from "../../models/taxi";
 import { ratingModel } from "../../models/rating";
 import vehicleDriverModel from "../../models/vehicleDriver";
@@ -43,16 +51,16 @@ export const createCallTaxi = async (req: Request, res: Response) => {
     const passengerId = (req as any).user.id;
 
     // If production deployed uncomment this
-    const isCallTaxiExist = await getCallTaxisService(req)
+    const isCallTaxiExist = await getCallTaxisService(req);
 
     if (isCallTaxiExist) {
       res.status(400).json({
         code: messages.BAD_REQUEST.code,
         message: messages.BAD_REQUEST.message,
-        detail: "Yor are in a processing"
+        detail: "Yor are in a processing",
       });
 
-      return
+      return;
     }
 
     // Fetch user data
@@ -68,10 +76,7 @@ export const createCallTaxi = async (req: Request, res: Response) => {
     }
 
     // Find country id
-    const country: any = await getCountry(
-      req.body.country,
-      req.headers.authorization!
-    )
+    const country: any = await getCountry(req.body.country, req.headers.authorization!);
 
     if (!country) {
       res.status(400).json({
@@ -81,16 +86,16 @@ export const createCallTaxi = async (req: Request, res: Response) => {
 
       return;
     } else {
-      req.body.currency = country?.currency
-      req.body.country = country?._id
-      req.body.countryCode = country?.code
+      req.body.currency = country?.currency;
+      req.body.country = country?._id;
+      req.body.countryCode = country?.code;
     }
 
     // Create call taxi
     const callTaxi: any = await createCallTaxiService({
       req,
       passengerFullName: passenger?.fullName,
-      passengerPhoneNumber: passenger?.phone
+      passengerPhoneNumber: passenger?.phone,
     });
 
     if (!callTaxi) {
@@ -116,7 +121,7 @@ export const createCallTaxi = async (req: Request, res: Response) => {
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
       message: messages.CREATE_SUCCESSFUL.message,
-      callTaxi: data
+      callTaxi: data,
     });
   } catch (error) {
     console.log("error: ", error);
@@ -135,7 +140,7 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
 
     const callTaxi = await CallTaxi.aggregate([
       {
-        $match: { _id: new Types.ObjectId(id) }
+        $match: { _id: new Types.ObjectId(id) },
       },
 
       {
@@ -166,34 +171,34 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
 
       {
         $project: {
-          "_id": 1,
-          "passengerId": 1,
-          "carTypeId": 1,
-          "origin": 1,
-          "destination": 1,
-          "originName": 1,
-          "destinationName": 1,
-          "requestType": 1,
-          "distanceInPolygon": 1,
-          "durationInPolygon": 1,
-          "normalDuration": 1,
-          "delayDuration": 1,
-          "delayDistance": 1,
-          "totalDuration": 1,
-          "totalDistance": 1,
-          "totalPrice": 1,
-          "status": 1,
-          "price": 1,
-          "polygonPrice": 1,
-          "onPeakTimePrice": 1,
-          "delayPrice": 1,
-          "createdAt": 1,
-          "updatedAt": 1,
-          "driverId": 1,
-          "country": 1,
-          "countryCode": 1,
-          "driverComplain": 1,
-          "passengerComplain": 1,
+          _id: 1,
+          passengerId: 1,
+          carTypeId: 1,
+          origin: 1,
+          destination: 1,
+          originName: 1,
+          destinationName: 1,
+          requestType: 1,
+          distanceInPolygon: 1,
+          durationInPolygon: 1,
+          normalDuration: 1,
+          delayDuration: 1,
+          delayDistance: 1,
+          totalDuration: 1,
+          totalDistance: 1,
+          totalPrice: 1,
+          status: 1,
+          price: 1,
+          polygonPrice: 1,
+          onPeakTimePrice: 1,
+          delayPrice: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          driverId: 1,
+          country: 1,
+          countryCode: 1,
+          driverComplain: 1,
+          passengerComplain: 1,
           "driverDetails._id": 1,
           "driverDetails.profileImage": 1,
           "driverDetails.fullName": 1,
@@ -204,19 +209,19 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
           "passengerDetails.fullName": 1,
           "passengerDetails.phone": 1,
           "passengerDetails.email": 1,
-          "registrationSource": 1,
-          "prepaid": 1,
-          "promotionPrice": 1,
-          "festivalPromotion": 1,
-        }
-      }
+          registrationSource: 1,
+          prepaid: 1,
+          promotionPrice: 1,
+          festivalPromotion: 1,
+        },
+      },
     ]);
 
     if (callTaxi[0]?.driverDetails) {
       const vehicleDriver = await vehicleDriverModel.aggregate([
         {
           $match: {
-            driver: callTaxi[0]?.driverId
+            driver: callTaxi[0]?.driverId,
           },
         },
         {
@@ -225,66 +230,66 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
               $cond: {
                 if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
                 then: { $toObjectId: "$vehicleModel" },
-                else: "$vehicleModel"
-              }
+                else: "$vehicleModel",
+              },
             },
             vehicleBrandObjectId: {
               $cond: {
                 if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
                 then: { $toObjectId: "$vehicleBrand" },
-                else: "$vehicleBrand"
-              }
-            }
-          }
+                else: "$vehicleBrand",
+              },
+            },
+          },
         },
         {
           $lookup: {
-            from: 'vehiclemodels',
-            localField: 'vehicleModelObjectId',
-            foreignField: '_id',
-            as: 'vehicleModel'
-          }
+            from: "vehiclemodels",
+            localField: "vehicleModelObjectId",
+            foreignField: "_id",
+            as: "vehicleModel",
+          },
         },
         {
           $unwind: {
-            path: '$vehicleModel',
-            preserveNullAndEmptyArrays: true
-          }
+            path: "$vehicleModel",
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {
-            from: 'vehiclebrands',
-            localField: 'vehicleBrandObjectId',
-            foreignField: '_id',
-            as: 'vehicleBrand'
-          }
+            from: "vehiclebrands",
+            localField: "vehicleBrandObjectId",
+            foreignField: "_id",
+            as: "vehicleBrand",
+          },
         },
         {
           $unwind: {
-            path: '$vehicleBrand',
-            preserveNullAndEmptyArrays: true
-          }
+            path: "$vehicleBrand",
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $project: {
             _id: 0,
             licensePlate: 1,
-            vehicleModelName: '$vehicleModel.name',
-            vehicleBrandName: '$vehicleBrand.name'
-          }
-        }
+            vehicleModelName: "$vehicleModel.name",
+            vehicleBrandName: "$vehicleBrand.name",
+          },
+        },
       ]);
 
-      callTaxi[0].driverDetails.licensePlate = vehicleDriver[0].licensePlate
-      callTaxi[0].driverDetails.vehicleModelName = vehicleDriver[0].vehicleModelName
-      callTaxi[0].driverDetails.vehicleBrandName = vehicleDriver[0].vehicleBrandName
+      callTaxi[0].driverDetails.licensePlate = vehicleDriver[0].licensePlate;
+      callTaxi[0].driverDetails.vehicleModelName = vehicleDriver[0].vehicleModelName;
+      callTaxi[0].driverDetails.vehicleBrandName = vehicleDriver[0].vehicleBrandName;
 
       res.status(200).json({
         ...messages.SUCCESSFULLY,
         ...callTaxi[0],
       });
 
-      return
+      return;
     }
 
     res.status(200).json({
@@ -316,12 +321,12 @@ export const getCallTaxis = async (req: Request, res: Response) => {
       maxTotalDistance,
       search,
       claimMoney,
-      country
+      country,
     }: any = req.query;
 
     const match: any = {};
 
-    if (claimMoney) match.claimMoney = claimMoney
+    if (claimMoney) match.claimMoney = claimMoney;
 
     // find start and date
     if (startDate && endDate) {
@@ -353,7 +358,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
     const parseSkip = parseInt(skip as string, 10);
 
     console.log("match: ", match);
-    const total = await CallTaxi.countDocuments(match)
+    const total = await CallTaxi.countDocuments(match);
     const callTaxi = await CallTaxi.aggregate([
       { $match: match },
 
@@ -387,25 +392,25 @@ export const getCallTaxis = async (req: Request, res: Response) => {
       // Search filter
       ...(search
         ? [
-          {
-            $match: {
-              $or: [
-                {
-                  "passengerDetails.fullName": {
-                    $regex: search.toString(),
-                    $options: "i",
+            {
+              $match: {
+                $or: [
+                  {
+                    "passengerDetails.fullName": {
+                      $regex: search.toString(),
+                      $options: "i",
+                    },
                   },
-                },
-                {
-                  "driverDetails.fullName": {
-                    $regex: search.toString(),
-                    $options: "i",
+                  {
+                    "driverDetails.fullName": {
+                      $regex: search.toString(),
+                      $options: "i",
+                    },
                   },
-                },
-              ],
+                ],
+              },
             },
-          },
-        ]
+          ]
         : []),
 
       { $sort: { createdAt: -1 } },
@@ -429,7 +434,8 @@ export const getCallTaxis = async (req: Request, res: Response) => {
           status: 1,
           createdAt: 1,
           registrationSource: 1,
-          driverIncome: 1
+          driverIncome: 1,
+          currency: 1,
         },
       },
     ]);
@@ -455,14 +461,14 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
     const id = (req as any).user.id;
 
     const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${id}`);
-    const userData = user?.data?.user
+    const userData = user?.data?.user;
 
     if (!userData) {
       res.status(404).json({
         ...messages.NOT_FOUND,
-        detail: "User not found"
-      })
-      return
+        detail: "User not found",
+      });
+      return;
     }
 
     let filter: any = {
@@ -473,18 +479,18 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           STATUS.DRIVER_ARRIVED,
           STATUS.PICKED_UP,
           STATUS.DEPARTURE,
-          STATUS.SEND_SUCCESS
-        ]
-      }
-    }
+          STATUS.SEND_SUCCESS,
+        ],
+      },
+    };
 
-    if (userData.role === "CUSTOMER") filter.passengerId = userData._id
-    if (userData.role === "DRIVER") filter.driverId = userData._id
+    if (userData.role === "CUSTOMER") filter.passengerId = userData._id;
+    if (userData.role === "DRIVER") filter.driverId = userData._id;
 
     // if access by customer role we will query driver's vehicle data
     const callTaxi = await CallTaxi.aggregate([
       {
-        $match: filter
+        $match: filter,
       },
       {
         $lookup: {
@@ -493,9 +499,9 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           pipeline: [
             {
               $match: {
-                $expr: { $eq: ["$_id", "$$driverId"] }
-              }
-            }
+                $expr: { $eq: ["$_id", "$$driverId"] },
+              },
+            },
           ],
           as: "driver",
         },
@@ -503,8 +509,8 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
       {
         $unwind: {
           path: "$driver",
-          preserveNullAndEmptyArrays: true
-        }
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $lookup: {
@@ -513,9 +519,9 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           pipeline: [
             {
               $match: {
-                $expr: { $eq: ["$_id", "$$passengerId"] }
-              }
-            }
+                $expr: { $eq: ["$_id", "$$passengerId"] },
+              },
+            },
           ],
           as: "passenger",
         },
@@ -523,8 +529,8 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
       {
         $unwind: {
           path: "$passenger",
-          preserveNullAndEmptyArrays: true
-        }
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $project: {
@@ -546,16 +552,16 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           "driver.profileImage": 1,
           "driver.licensePlate": 1,
           createdAt: 1,
-          updatedAt: 1
-        }
-      }
-    ])
+          updatedAt: 1,
+        },
+      },
+    ]);
 
     if (callTaxi.length && filter.passengerId) {
       const aggregateVehicleDriver = await vehicleDriverModel.aggregate([
         {
           $match: {
-            driver: callTaxi[0]?.driver?._id.toString()
+            driver: callTaxi[0]?.driver?._id.toString(),
           },
         },
         {
@@ -564,71 +570,71 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
               $cond: {
                 if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
                 then: { $toObjectId: "$vehicleModel" },
-                else: "$vehicleModel"
-              }
+                else: "$vehicleModel",
+              },
             },
             vehicleBrandObjectId: {
               $cond: {
                 if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
                 then: { $toObjectId: "$vehicleBrand" },
-                else: "$vehicleBrand"
-              }
-            }
-          }
+                else: "$vehicleBrand",
+              },
+            },
+          },
         },
         {
           $lookup: {
-            from: 'vehiclemodels',
-            localField: 'vehicleModelObjectId',
-            foreignField: '_id',
-            as: 'vehicleModel'
-          }
+            from: "vehiclemodels",
+            localField: "vehicleModelObjectId",
+            foreignField: "_id",
+            as: "vehicleModel",
+          },
         },
         {
           $unwind: {
-            path: '$vehicleModel',
-            preserveNullAndEmptyArrays: true
-          }
+            path: "$vehicleModel",
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {
-            from: 'vehiclebrands',
-            localField: 'vehicleBrandObjectId',
-            foreignField: '_id',
-            as: 'vehicleBrand'
-          }
+            from: "vehiclebrands",
+            localField: "vehicleBrandObjectId",
+            foreignField: "_id",
+            as: "vehicleBrand",
+          },
         },
         {
           $unwind: {
-            path: '$vehicleBrand',
-            preserveNullAndEmptyArrays: true
-          }
+            path: "$vehicleBrand",
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $project: {
             _id: 0,
             licensePlate: 1,
-            vehicleModelName: '$vehicleModel.name',
-            vehicleBrandName: '$vehicleBrand.name'
-          }
-        }
+            vehicleModelName: "$vehicleModel.name",
+            vehicleBrandName: "$vehicleBrand.name",
+          },
+        },
       ]);
 
-      callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName
-      callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName
+      callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
+      callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
     }
 
     if (callTaxi.length) {
-      const driverLatLong = await getDriverLatLong(callTaxi[0]?._id)
+      const driverLatLong = await getDriverLatLong(callTaxi[0]?._id);
 
-      callTaxi[0].driver.latitude = driverLatLong?.latitude
-      callTaxi[0].driver.longitude = driverLatLong?.longitude
+      callTaxi[0].driver.latitude = driverLatLong?.latitude;
+      callTaxi[0].driver.longitude = driverLatLong?.longitude;
     }
 
     res.status(200).json({
       ...messages.SUCCESSFULLY,
-      callTaxi: callTaxi.length ? callTaxi[0] : {}
-    })
+      callTaxi: callTaxi.length ? callTaxi[0] : {},
+    });
   } catch (error) {
     console.log("error: ", error);
 
@@ -638,7 +644,7 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
       detail: (error as Error).message,
     });
   }
-}
+};
 
 export const getUserCallTaxis = async (req: Request, res: Response) => {
   try {
@@ -671,32 +677,29 @@ export const createDriverComplain = async (req: Request, res: Response) => {
         {
           $match: {
             passengerId: created?.passengerId,
-            "driverComplain.rating": { $exists: true, $ne: null }
-          }
+            "driverComplain.rating": { $exists: true, $ne: null },
+          },
         },
         {
           $group: {
             _id: "$driverId",
             averageRating: { $avg: "$driverComplain.rating" },
-            totalRatings: { $sum: 1 }
-          }
-        }
+            totalRatings: { $sum: 1 },
+          },
+        },
       ]);
 
       if (sumRating.length) {
-        const id = new Types.ObjectId(sumRating[0]?._id)
-        const averageRating = sumRating[0]?.averageRating
+        const id = new Types.ObjectId(sumRating[0]?._id);
+        const averageRating = sumRating[0]?.averageRating;
 
-        const updatedPassengerRating = await ratingModel.findOneAndUpdate(
-          { userId: id },
-          { rating: averageRating }
-        )
+        const updatedPassengerRating = await ratingModel.findOneAndUpdate({ userId: id }, { rating: averageRating });
 
         if (!updatedPassengerRating) {
           await ratingModel.create({
             userId: id,
-            rating: averageRating ?? 0
-          })
+            rating: averageRating ?? 0,
+          });
         }
       }
     }
@@ -726,32 +729,29 @@ export const createPassengerComplain = async (req: Request, res: Response) => {
         {
           $match: {
             driverId: created?.driverId,
-            "passengerComplain.rating": { $exists: true, $ne: null }
-          }
+            "passengerComplain.rating": { $exists: true, $ne: null },
+          },
         },
         {
           $group: {
             _id: "$passengerId",
             averageRating: { $avg: "$passengerComplain.rating" },
-            totalRatings: { $sum: 1 }
-          }
-        }
+            totalRatings: { $sum: 1 },
+          },
+        },
       ]);
 
       if (sumRating.length) {
-        const id = new Types.ObjectId(sumRating[0]?._id)
-        const averageRating = sumRating[0]?.averageRating
+        const id = new Types.ObjectId(sumRating[0]?._id);
+        const averageRating = sumRating[0]?.averageRating;
 
-        const updatedPassengerRating = await ratingModel.findOneAndUpdate(
-          { userId: id },
-          { rating: averageRating }
-        )
+        const updatedPassengerRating = await ratingModel.findOneAndUpdate({ userId: id }, { rating: averageRating });
 
         if (!updatedPassengerRating) {
           await ratingModel.create({
             userId: id,
-            rating: averageRating ?? 0
-          })
+            rating: averageRating ?? 0,
+          });
         }
       }
     }
@@ -827,10 +827,10 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       promotionPrice,
       festivalPromotion,
       totalPrice,
-      prepaid
+      prepaid,
     } = req.body;
 
-    const token = req.headers.authorization!
+    const token = req.headers.authorization!;
 
     const callTaxi = await CallTaxi.findById(id);
 
@@ -859,7 +859,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
     // if status from order not equal to "Requesting" and "Accepted"
     // cannot cancel the order
-    // Requesting means while passenger is calling for an order 
+    // Requesting means while passenger is calling for an order
     // Accepted means driver is going to pick passenger
     if (status && status === STATUS.CANCELED) {
       if (
@@ -879,23 +879,23 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     }
 
     // Update call taxi part
-    const updateData: any = {}
+    const updateData: any = {};
 
-    if (type) updateData.type = type
-    if (actualUsedTime) updateData.actualUsedTime = actualUsedTime
-    if (claimMoney) updateData.claimMoney = claimMoney
-    if (point) updateData.point = point
-    if (paymentMethod) updateData.paymentMethod = paymentMethod
-    if (promotionPrice) updateData.promotionPrice = promotionPrice
-    if (festivalPromotion) updateData.festivalPromotion = festivalPromotion
-    if (totalPrice) updateData.totalPrice = totalPrice
-    if (prepaid) updateData.prepaid = prepaid
+    if (type) updateData.type = type;
+    if (actualUsedTime) updateData.actualUsedTime = actualUsedTime;
+    if (claimMoney) updateData.claimMoney = claimMoney;
+    if (point) updateData.point = point;
+    if (paymentMethod) updateData.paymentMethod = paymentMethod;
+    if (promotionPrice) updateData.promotionPrice = promotionPrice;
+    if (festivalPromotion) updateData.festivalPromotion = festivalPromotion;
+    if (totalPrice) updateData.totalPrice = totalPrice;
+    if (prepaid) updateData.prepaid = prepaid;
 
     if (status) {
-      // If status is paid add calculatedPrice and driverRate to 
+      // If status is paid add calculatedPrice and driverRate to
       // calculate driver income
       if (status === STATUS.PAID) {
-        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
+        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi);
 
         // Calculate price and driver rate
         if (calculatedPrice && driverRate) {
@@ -903,34 +903,35 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
             token,
             driverId: callTaxi.driverId!,
             status: "WAITING_TO_CHECK",
-          })
+          });
 
           if (claimMoney) {
-            const income = claimMoney.income + calculatedPrice
-            const total = claimMoney.total + callTaxi.totalPrice
+            const income = claimMoney.income + calculatedPrice;
+            const total = claimMoney.total + callTaxi.totalPrice;
 
             const updateClaim = await updateClaimMoney({
               token,
               id: claimMoney._id,
               income,
-              total
-            })
+              total,
+            });
 
             console.log("updateClaim: ", updateClaim);
 
-            if (updateClaim) updateData.claimMoney = updateClaim._id
+            if (updateClaim) updateData.claimMoney = updateClaim._id;
           } else {
-            const driver = await axios.get(`
+            const driver = await axios.get(
+              `
                    ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi?.driverId}`,
               {
                 headers: {
-                  Authorization: `${req.headers["authorization"]}`
-                }
+                  Authorization: `${req.headers["authorization"]}`,
+                },
               }
             );
 
-            const driverId = driver?.data?.user?._id
-            const driverRegistrationSource = driver?.data?.user?.registrationSource
+            const driverId = driver?.data?.user?._id;
+            const driverRegistrationSource = driver?.data?.user?.registrationSource;
 
             const createClaim = await createClaimMoney({
               token: token as string,
@@ -938,30 +939,30 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
               driverRegistrationSource,
               income: calculatedPrice,
               country: driver?.data?.user?.country?._id,
-              countryCode: driver?.data?.user?.country?.code
-            })
+              countryCode: driver?.data?.user?.country?.code,
+            });
 
             console.log("createClaim: ", createClaim);
 
-            if (createClaim) updateData.claimMoney = createClaim._id
+            if (createClaim) updateData.claimMoney = createClaim._id;
           }
 
-          updateData.driverIncome = calculatedPrice
-          updateData.driverRate = driverRate
+          updateData.driverIncome = calculatedPrice;
+          updateData.driverRate = driverRate;
         }
       }
 
-      updateData.status = status
+      updateData.status = status;
     }
 
     const updated: any = await updateCallTaxiService({ id, updateData });
 
     // if status is canceled notify to driver
     if (updated && updated.status === STATUS.CANCELED) {
-      const token = req.headers.authorization!
+      const token = req.headers.authorization!;
 
-      await notifyDriverWhenCancel(token, callTaxi)
-      await removeCallTaxiFromRedis(updated._id)
+      await notifyDriverWhenCancel(token, callTaxi);
+      await removeCallTaxiFromRedis(updated._id);
     }
 
     res.status(200).json({
@@ -984,11 +985,7 @@ export const updateClaimMoneyStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    await CallTaxi.updateMany(
-      { claimMoney: id },
-      { $set: { isClaim: true } },
-      { new: true }
-    );
+    await CallTaxi.updateMany({ claimMoney: id }, { $set: { isClaim: true } }, { new: true });
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
@@ -1034,7 +1031,7 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     }
 
     const taxi = await taxiModel.findById(driverData?.data?.user?.taxi);
-    const rating = await ratingModel.findOne({ userId: driverData?.data?.user?._id })
+    const rating = await ratingModel.findOne({ userId: driverData?.data?.user?._id });
 
     const driver = {
       id: driverData?.data?.user?._id,
@@ -1072,20 +1069,15 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
 
     if (!callTaxi.driverId) {
       // driver confirm ride request
-      if (callTaxi.status === STATUS.REQUESTING)
-        status = STATUS.DRIVER_RECEIVED;
+      if (callTaxi.status === STATUS.REQUESTING) status = STATUS.DRIVER_RECEIVED;
     }
 
     if (callTaxi && callTaxi.driverId === user.id) {
       // driver arrived to passenger
-      if (callTaxi.status === STATUS.DRIVER_RECEIVED)
-        status = STATUS.DRIVER_ARRIVED;
-      else if (callTaxi.status === STATUS.DRIVER_ARRIVED)
-        status = STATUS.PICKED_UP;
-      else if (callTaxi.status === STATUS.PICKED_UP)
-        status = STATUS.DEPARTURE;
-      else if (callTaxi.status === STATUS.DEPARTURE)
-        status = STATUS.SEND_SUCCESS;
+      if (callTaxi.status === STATUS.DRIVER_RECEIVED) status = STATUS.DRIVER_ARRIVED;
+      else if (callTaxi.status === STATUS.DRIVER_ARRIVED) status = STATUS.PICKED_UP;
+      else if (callTaxi.status === STATUS.PICKED_UP) status = STATUS.DEPARTURE;
+      else if (callTaxi.status === STATUS.DEPARTURE) status = STATUS.SEND_SUCCESS;
       else if (callTaxi.status === STATUS.SEND_SUCCESS) {
         res.status(200).json({
           code: messages.SUCCESSFULLY.code,
@@ -1104,15 +1096,13 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     }
 
     // Confirmed order
-    const confirmed: any = await driverUpdateStatusService(
-      {
-        req,
-        status,
-        driverRegistrationSource: driverData?.data?.user?.registrationSource,
-        driverFullName: driverData?.data?.user?.fullName,
-        driverPhoneNumber: driverData?.data?.user?.phone,
-      }
-    );
+    const confirmed: any = await driverUpdateStatusService({
+      req,
+      status,
+      driverRegistrationSource: driverData?.data?.user?.registrationSource,
+      driverFullName: driverData?.data?.user?.fullName,
+      driverPhoneNumber: driverData?.data?.user?.phone,
+    });
 
     if (!confirmed) {
       res.status(404).json({
@@ -1124,40 +1114,33 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
     }
 
     if (status === STATUS.DRIVER_RECEIVED) {
-      // Delete ride matching order 
+      // Delete ride matching order
       // from other when once accepted
-      await axios.delete(
-        `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed?._id}`,
-        {
-          headers: {
-            Authorization: req.headers.authorization,
-          },
-        }
-      );
+      await axios.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed?._id}`, {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      });
 
-      // And then save an order to redis 
+      // And then save an order to redis
       // for calculating meter pricing
       if (confirmed.requestType === REQUEST_TYPE.METERED_FARE) {
-        await axios.post(
-          `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`,
-          { confirmed }
-        );
+        await axios.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, {
+          confirmed,
+        });
       }
     }
 
-    if (
-      confirmed.requestType === REQUEST_TYPE.METERED_FARE &&
-      confirmed.status === STATUS.DEPARTURE
-    ) {
+    if (confirmed.requestType === REQUEST_TYPE.METERED_FARE && confirmed.status === STATUS.DEPARTURE) {
       const taxiTypePricing: any = await taxiTypePricingModel.find({
         taxiTypeId: new Types.ObjectId(confirmed.carTypeId),
         country: confirmed.country,
-      })
+      });
 
-      await axios.post(
-        `${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`,
-        { confirmed, taxiTypePricing }
-      );
+      await axios.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, {
+        confirmed,
+        taxiTypePricing,
+      });
     }
 
     res.status(200).json({
@@ -1209,7 +1192,7 @@ export const getRideHistoryDetailById = async (req: Request, res: Response) => {
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
-      rideHistoryDetail
+      rideHistoryDetail,
     });
   } catch (error) {
     console.error("Error fetching total ride:", error);
@@ -1219,7 +1202,7 @@ export const getRideHistoryDetailById = async (req: Request, res: Response) => {
       detail: (error as Error).message,
     });
   }
-}
+};
 
 export const getDriverRideHistoryDetailById = async (req: Request, res: Response) => {
   try {
@@ -1228,7 +1211,7 @@ export const getDriverRideHistoryDetailById = async (req: Request, res: Response
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
-      riderRideHistoryDetail
+      riderRideHistoryDetail,
     });
   } catch (error) {
     console.error("Error fetching total ride:", error);
@@ -1238,16 +1221,16 @@ export const getDriverRideHistoryDetailById = async (req: Request, res: Response
       detail: (error as Error).message,
     });
   }
-}
+};
 
 // report ride history
 export const getRideHistory = async (req: Request, res: Response) => {
   try {
-    const passengerId = req.params.id
+    const passengerId = req.params.id;
     const { skip = "0", limit = "100", status } = req.query;
 
     const filter: any = {
-      passengerId
+      passengerId,
     };
 
     if (status) {
@@ -1259,11 +1242,7 @@ export const getRideHistory = async (req: Request, res: Response) => {
     }
 
     const total = await CallTaxi.countDocuments(filter);
-    const travelHistory = await getHistoryRideService(
-      skip as string,
-      limit as string,
-      filter
-    );
+    const travelHistory = await getHistoryRideService(skip as string, limit as string, filter);
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
@@ -1317,27 +1296,27 @@ export const callTaxiTotalPrice = async (req: Request, res: Response) => {
 // Get the last calling
 export const reportPassenger = async (req: Request, res: Response) => {
   try {
-    const passengerId = req.params.id
-    const { status } = req.query
+    const passengerId = req.params.id;
+    const { status } = req.query;
 
     const filter: any = {
       passengerId,
-    }
+    };
 
-    if (status) filter.status = status
+    if (status) filter.status = status;
 
-    const numberOfCallingTaxi = await getNumberOfCallingTaxiService(filter)
-    const totalDistance = await getTotalDistanceService(filter)
-    const getTheLastRide = await getTheLastRideService(filter)
+    const numberOfCallingTaxi = await getNumberOfCallingTaxiService(filter);
+    const totalDistance = await getTotalDistanceService(filter);
+    const getTheLastRide = await getTheLastRideService(filter);
 
     res.json({
       ...messages.SUCCESSFULLY,
       reportPassenger: {
         numberOfCallingTaxi,
         totalDistance,
-        getTheLastRide
-      }
-    })
+        getTheLastRide,
+      },
+    });
   } catch (error) {
     console.error("Error fetching tax info:", error);
     res.status(500).json({
@@ -1346,30 +1325,22 @@ export const reportPassenger = async (req: Request, res: Response) => {
       detail: (error as Error).message,
     });
   }
-}
+};
 
 export const travelHistory = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.id
-    const {
-      page = "1",
-      limit = "10",
-      status,
-      startDate,
-      endDate,
-      isRequestTaxInvoice,
-      role = "CUSTOMER"
-    } = req.query
+    const userId = req.params.id;
+    const { page = "1", limit = "10", status, startDate, endDate, isRequestTaxInvoice, role = "CUSTOMER" } = req.query;
 
-    const pageToNumber = parseInt(page as string, 10)
-    const limitToNumber = parseInt(limit as string, 10)
+    const pageToNumber = parseInt(page as string, 10);
+    const limitToNumber = parseInt(limit as string, 10);
 
     const skip = (pageToNumber - 1) * limitToNumber;
 
-    const filter: any = {}
+    const filter: any = {};
 
-    if (role === "DRIVER") filter.driverId = userId
-    if (role === "CUSTOMER") filter.passengerId = userId
+    if (role === "DRIVER") filter.driverId = userId;
+    if (role === "CUSTOMER") filter.passengerId = userId;
     if (status) {
       if (Array.isArray(status)) {
         filter.status = { $in: status };
@@ -1377,7 +1348,7 @@ export const travelHistory = async (req: Request, res: Response) => {
         filter.status = status;
       }
     }
-    if (isRequestTaxInvoice) filter.isRequestTaxInvoice = isRequestTaxInvoice
+    if (isRequestTaxInvoice) filter.isRequestTaxInvoice = isRequestTaxInvoice;
     if (startDate || endDate) {
       const createdAtFilter: any = {};
 
@@ -1404,12 +1375,12 @@ export const travelHistory = async (req: Request, res: Response) => {
       filter.createdAt = createdAtFilter;
     }
 
-    const travelHistory = await travelHistoryService(skip, limitToNumber, filter)
+    const travelHistory = await travelHistoryService(skip, limitToNumber, filter);
 
     res.json({
       ...messages.SUCCESSFULLY,
-      travelHistory
-    })
+      travelHistory,
+    });
   } catch (error) {
     console.error("Error fetching tax info:", error);
     res.status(500).json({
@@ -1418,36 +1389,31 @@ export const travelHistory = async (req: Request, res: Response) => {
       detail: (error as Error).message,
     });
   }
-}
+};
 
 export const getCommentAndRating = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.id
-    const {
-      skip = "1",
-      limit = "10",
-      status,
-      role = 'CUSTOMER'
-    } = req.query
+    const userId = req.params.id;
+    const { skip = "1", limit = "10", status, role = "CUSTOMER" } = req.query;
 
-    const skipToNumber = parseInt(skip as string, 10)
-    const limitToNumber = parseInt(limit as string, 10)
+    const skipToNumber = parseInt(skip as string, 10);
+    const limitToNumber = parseInt(limit as string, 10);
 
+    const filter: any = {};
 
-    const filter: any = {}
+    if (status) filter.status = status;
+    if (role === "DRIVER") filter.driverId = userId;
+    if (role === "CUSTOMER") filter.passengerId = userId;
 
-    if (status) filter.status = status
-    if (role === "DRIVER") filter.driverId = userId
-    if (role === "CUSTOMER") filter.passengerId = userId
-
-    const travelHistory = role === "DRIVER"
-      ? await getDriverCommentAndRatingService(skipToNumber, limitToNumber, filter)
-      : await getPassengerCommentAndRatingService(skipToNumber, limitToNumber, filter)
+    const travelHistory =
+      role === "DRIVER"
+        ? await getDriverCommentAndRatingService(skipToNumber, limitToNumber, filter)
+        : await getPassengerCommentAndRatingService(skipToNumber, limitToNumber, filter);
 
     res.json({
       ...messages.SUCCESSFULLY,
-      travelHistory
-    })
+      travelHistory,
+    });
   } catch (error) {
     console.error("Error fetching tax info:", error);
     res.status(500).json({
@@ -1456,7 +1422,7 @@ export const getCommentAndRating = async (req: Request, res: Response) => {
       detail: (error as Error).message,
     });
   }
-}
+};
 
 // Report driver part
 export const getTotalDriverIncome = async (req: Request, res: Response) => {
@@ -1464,7 +1430,7 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
     const driverId = (req as any).user.id;
     const { startDate, endDate } = req.query;
 
-    const filter: any = {}
+    const filter: any = {};
 
     if (startDate || endDate) {
       const createdAtFilter: any = {};
@@ -1482,14 +1448,14 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
       filter.createdAt = createdAtFilter;
     }
 
-    const totalIncome = await getTotalDriverIncomeService(driverId, filter)
-    const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId, filter)
+    const totalIncome = await getTotalDriverIncomeService(driverId, filter);
+    const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId, filter);
 
     res.json({
       ...messages.SUCCESSFULLY,
       totalIncome,
-      totalIncomeThatWasNotClaim
-    })
+      totalIncomeThatWasNotClaim,
+    });
   } catch (error) {
     console.error("Error fetching tax info:", error);
     res.status(500).json({
@@ -1498,19 +1464,19 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
       detail: (error as Error).message,
     });
   }
-}
+};
 
 // Report payment detail in travel history page
 export const getDriverPaymentDetail = async (req: Request, res: Response) => {
   try {
-    const callTaxiId = req.params.id
+    const callTaxiId = req.params.id;
 
-    const driverPaymentDetail = await getDriverPaymentDetailService(callTaxiId)
+    const driverPaymentDetail = await getDriverPaymentDetailService(callTaxiId);
 
     res.json({
       ...messages.SUCCESSFULLY,
       driverPaymentDetail,
-    })
+    });
   } catch (error) {
     console.error("Error fetching tax info:", error);
     res.status(500).json({
@@ -1519,12 +1485,12 @@ export const getDriverPaymentDetail = async (req: Request, res: Response) => {
       detail: (error as Error).message,
     });
   }
-}
+};
 
 export const checkUsingPromotion = async (req: Request, res: Response) => {
   try {
-    const passengerId = (req as any).user.id
-    const { promotion, startDate, endDate } = req.body
+    const passengerId = (req as any).user.id;
+    const { promotion, startDate, endDate } = req.body;
 
     const isPromotionUsed = await CallTaxi.exists({
       passengerId,
@@ -1532,15 +1498,15 @@ export const checkUsingPromotion = async (req: Request, res: Response) => {
         $elemMatch: {
           promotion: promotion,
           "promotionPeriod.startDate": startDate,
-          "promotionPeriod.endDate": endDate
-        }
-      }
+          "promotionPeriod.endDate": endDate,
+        },
+      },
     });
 
     res.json({
       ...messages.SUCCESSFULLY,
       isPromotionUsed,
-    })
+    });
   } catch (error) {
     console.error("Error fetching tax info:", error);
     res.status(500).json({
@@ -1549,4 +1515,4 @@ export const checkUsingPromotion = async (req: Request, res: Response) => {
       detail: (error as Error).message,
     });
   }
-}
+};
