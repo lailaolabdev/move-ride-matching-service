@@ -36,7 +36,7 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
             res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
                 message: config_1.messages.BAD_REQUEST.message,
-                detail: "Yor are in a processing"
+                detail: "Yor are in a processing",
             });
             return;
         }
@@ -64,7 +64,7 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const callTaxi = yield (0, callTaxi_1.createCallTaxiService)({
             req,
             passengerFullName: passenger === null || passenger === void 0 ? void 0 : passenger.fullName,
-            passengerPhoneNumber: passenger === null || passenger === void 0 ? void 0 : passenger.phone
+            passengerPhoneNumber: passenger === null || passenger === void 0 ? void 0 : passenger.phone,
         });
         if (!callTaxi) {
             res.status(400).json({
@@ -80,7 +80,7 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: config_1.messages.CREATE_SUCCESSFUL.message,
-            callTaxi: data
+            callTaxi: data,
         });
     }
     catch (error) {
@@ -99,7 +99,7 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
         const { id } = req.params;
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
             {
-                $match: { _id: new mongoose_1.Types.ObjectId(id) }
+                $match: { _id: new mongoose_1.Types.ObjectId(id) },
             },
             {
                 $lookup: {
@@ -127,34 +127,34 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
             { $unwind: { path: "$driverDetails", preserveNullAndEmptyArrays: true } },
             {
                 $project: {
-                    "_id": 1,
-                    "passengerId": 1,
-                    "carTypeId": 1,
-                    "origin": 1,
-                    "destination": 1,
-                    "originName": 1,
-                    "destinationName": 1,
-                    "requestType": 1,
-                    "distanceInPolygon": 1,
-                    "durationInPolygon": 1,
-                    "normalDuration": 1,
-                    "delayDuration": 1,
-                    "delayDistance": 1,
-                    "totalDuration": 1,
-                    "totalDistance": 1,
-                    "totalPrice": 1,
-                    "status": 1,
-                    "price": 1,
-                    "polygonPrice": 1,
-                    "onPeakTimePrice": 1,
-                    "delayPrice": 1,
-                    "createdAt": 1,
-                    "updatedAt": 1,
-                    "driverId": 1,
-                    "country": 1,
-                    "countryCode": 1,
-                    "driverComplain": 1,
-                    "passengerComplain": 1,
+                    _id: 1,
+                    passengerId: 1,
+                    carTypeId: 1,
+                    origin: 1,
+                    destination: 1,
+                    originName: 1,
+                    destinationName: 1,
+                    requestType: 1,
+                    distanceInPolygon: 1,
+                    durationInPolygon: 1,
+                    normalDuration: 1,
+                    delayDuration: 1,
+                    delayDistance: 1,
+                    totalDuration: 1,
+                    totalDistance: 1,
+                    totalPrice: 1,
+                    status: 1,
+                    price: 1,
+                    polygonPrice: 1,
+                    onPeakTimePrice: 1,
+                    delayPrice: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    driverId: 1,
+                    country: 1,
+                    countryCode: 1,
+                    driverComplain: 1,
+                    passengerComplain: 1,
                     "driverDetails._id": 1,
                     "driverDetails.profileImage": 1,
                     "driverDetails.fullName": 1,
@@ -165,18 +165,18 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     "passengerDetails.fullName": 1,
                     "passengerDetails.phone": 1,
                     "passengerDetails.email": 1,
-                    "registrationSource": 1,
-                    "prepaid": 1,
-                    "promotionPrice": 1,
-                    "festivalPromotion": 1,
-                }
-            }
+                    registrationSource: 1,
+                    prepaid: 1,
+                    promotionPrice: 1,
+                    festivalPromotion: 1,
+                },
+            },
         ]);
         if ((_a = callTaxi[0]) === null || _a === void 0 ? void 0 : _a.driverDetails) {
             const vehicleDriver = yield vehicleDriver_1.default.aggregate([
                 {
                     $match: {
-                        driver: (_b = callTaxi[0]) === null || _b === void 0 ? void 0 : _b.driverId
+                        driver: (_b = callTaxi[0]) === null || _b === void 0 ? void 0 : _b.driverId,
                     },
                 },
                 {
@@ -185,54 +185,54 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                             $cond: {
                                 if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
                                 then: { $toObjectId: "$vehicleModel" },
-                                else: "$vehicleModel"
-                            }
+                                else: "$vehicleModel",
+                            },
                         },
                         vehicleBrandObjectId: {
                             $cond: {
                                 if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
                                 then: { $toObjectId: "$vehicleBrand" },
-                                else: "$vehicleBrand"
-                            }
-                        }
-                    }
+                                else: "$vehicleBrand",
+                            },
+                        },
+                    },
                 },
                 {
                     $lookup: {
-                        from: 'vehiclemodels',
-                        localField: 'vehicleModelObjectId',
-                        foreignField: '_id',
-                        as: 'vehicleModel'
-                    }
+                        from: "vehiclemodels",
+                        localField: "vehicleModelObjectId",
+                        foreignField: "_id",
+                        as: "vehicleModel",
+                    },
                 },
                 {
                     $unwind: {
-                        path: '$vehicleModel',
-                        preserveNullAndEmptyArrays: true
-                    }
+                        path: "$vehicleModel",
+                        preserveNullAndEmptyArrays: true,
+                    },
                 },
                 {
                     $lookup: {
-                        from: 'vehiclebrands',
-                        localField: 'vehicleBrandObjectId',
-                        foreignField: '_id',
-                        as: 'vehicleBrand'
-                    }
+                        from: "vehiclebrands",
+                        localField: "vehicleBrandObjectId",
+                        foreignField: "_id",
+                        as: "vehicleBrand",
+                    },
                 },
                 {
                     $unwind: {
-                        path: '$vehicleBrand',
-                        preserveNullAndEmptyArrays: true
-                    }
+                        path: "$vehicleBrand",
+                        preserveNullAndEmptyArrays: true,
+                    },
                 },
                 {
                     $project: {
                         _id: 0,
                         licensePlate: 1,
-                        vehicleModelName: '$vehicleModel.name',
-                        vehicleBrandName: '$vehicleBrand.name'
-                    }
-                }
+                        vehicleModelName: "$vehicleModel.name",
+                        vehicleBrandName: "$vehicleBrand.name",
+                    },
+                },
             ]);
             callTaxi[0].driverDetails.licensePlate = vehicleDriver[0].licensePlate;
             callTaxi[0].driverDetails.vehicleModelName = vehicleDriver[0].vehicleModelName;
@@ -255,7 +255,7 @@ exports.getCallTaxiById = getCallTaxiById;
 // Get all calling taxi
 const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, claimMoney, country } = req.query;
+        const { skip = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, claimMoney, country, } = req.query;
         const match = {};
         if (claimMoney)
             match.claimMoney = claimMoney;
@@ -356,7 +356,8 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                     status: 1,
                     createdAt: 1,
                     registrationSource: 1,
-                    driverIncome: 1
+                    driverIncome: 1,
+                    currency: 1,
                 },
             },
         ]);
@@ -391,9 +392,9 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     callTaxi_2.STATUS.DRIVER_ARRIVED,
                     callTaxi_2.STATUS.PICKED_UP,
                     callTaxi_2.STATUS.DEPARTURE,
-                    callTaxi_2.STATUS.SEND_SUCCESS
-                ]
-            }
+                    callTaxi_2.STATUS.SEND_SUCCESS,
+                ],
+            },
         };
         if (userData.role === "CUSTOMER")
             filter.passengerId = userData._id;
@@ -402,7 +403,7 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
         // if access by customer role we will query driver's vehicle data
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
             {
-                $match: filter
+                $match: filter,
             },
             {
                 $lookup: {
@@ -411,9 +412,9 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     pipeline: [
                         {
                             $match: {
-                                $expr: { $eq: ["$_id", "$$driverId"] }
-                            }
-                        }
+                                $expr: { $eq: ["$_id", "$$driverId"] },
+                            },
+                        },
                     ],
                     as: "driver",
                 },
@@ -421,8 +422,8 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
             {
                 $unwind: {
                     path: "$driver",
-                    preserveNullAndEmptyArrays: true
-                }
+                    preserveNullAndEmptyArrays: true,
+                },
             },
             {
                 $lookup: {
@@ -431,9 +432,9 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     pipeline: [
                         {
                             $match: {
-                                $expr: { $eq: ["$_id", "$$passengerId"] }
-                            }
-                        }
+                                $expr: { $eq: ["$_id", "$$passengerId"] },
+                            },
+                        },
                     ],
                     as: "passenger",
                 },
@@ -441,8 +442,8 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
             {
                 $unwind: {
                     path: "$passenger",
-                    preserveNullAndEmptyArrays: true
-                }
+                    preserveNullAndEmptyArrays: true,
+                },
             },
             {
                 $project: {
@@ -464,15 +465,15 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     "driver.profileImage": 1,
                     "driver.licensePlate": 1,
                     createdAt: 1,
-                    updatedAt: 1
-                }
-            }
+                    updatedAt: 1,
+                },
+            },
         ]);
         if (callTaxi.length && filter.passengerId) {
             const aggregateVehicleDriver = yield vehicleDriver_1.default.aggregate([
                 {
                     $match: {
-                        driver: (_c = (_b = callTaxi[0]) === null || _b === void 0 ? void 0 : _b.driver) === null || _c === void 0 ? void 0 : _c._id.toString()
+                        driver: (_c = (_b = callTaxi[0]) === null || _b === void 0 ? void 0 : _b.driver) === null || _c === void 0 ? void 0 : _c._id.toString(),
                     },
                 },
                 {
@@ -481,54 +482,54 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                             $cond: {
                                 if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
                                 then: { $toObjectId: "$vehicleModel" },
-                                else: "$vehicleModel"
-                            }
+                                else: "$vehicleModel",
+                            },
                         },
                         vehicleBrandObjectId: {
                             $cond: {
                                 if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
                                 then: { $toObjectId: "$vehicleBrand" },
-                                else: "$vehicleBrand"
-                            }
-                        }
-                    }
+                                else: "$vehicleBrand",
+                            },
+                        },
+                    },
                 },
                 {
                     $lookup: {
-                        from: 'vehiclemodels',
-                        localField: 'vehicleModelObjectId',
-                        foreignField: '_id',
-                        as: 'vehicleModel'
-                    }
+                        from: "vehiclemodels",
+                        localField: "vehicleModelObjectId",
+                        foreignField: "_id",
+                        as: "vehicleModel",
+                    },
                 },
                 {
                     $unwind: {
-                        path: '$vehicleModel',
-                        preserveNullAndEmptyArrays: true
-                    }
+                        path: "$vehicleModel",
+                        preserveNullAndEmptyArrays: true,
+                    },
                 },
                 {
                     $lookup: {
-                        from: 'vehiclebrands',
-                        localField: 'vehicleBrandObjectId',
-                        foreignField: '_id',
-                        as: 'vehicleBrand'
-                    }
+                        from: "vehiclebrands",
+                        localField: "vehicleBrandObjectId",
+                        foreignField: "_id",
+                        as: "vehicleBrand",
+                    },
                 },
                 {
                     $unwind: {
-                        path: '$vehicleBrand',
-                        preserveNullAndEmptyArrays: true
-                    }
+                        path: "$vehicleBrand",
+                        preserveNullAndEmptyArrays: true,
+                    },
                 },
                 {
                     $project: {
                         _id: 0,
                         licensePlate: 1,
-                        vehicleModelName: '$vehicleModel.name',
-                        vehicleBrandName: '$vehicleBrand.name'
-                    }
-                }
+                        vehicleModelName: "$vehicleModel.name",
+                        vehicleBrandName: "$vehicleBrand.name",
+                    },
+                },
             ]);
             callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
             callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
@@ -579,16 +580,16 @@ const createDriverComplain = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 {
                     $match: {
                         passengerId: created === null || created === void 0 ? void 0 : created.passengerId,
-                        "driverComplain.rating": { $exists: true, $ne: null }
-                    }
+                        "driverComplain.rating": { $exists: true, $ne: null },
+                    },
                 },
                 {
                     $group: {
                         _id: "$driverId",
                         averageRating: { $avg: "$driverComplain.rating" },
-                        totalRatings: { $sum: 1 }
-                    }
-                }
+                        totalRatings: { $sum: 1 },
+                    },
+                },
             ]);
             if (sumRating.length) {
                 const id = new mongoose_1.Types.ObjectId((_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id);
@@ -597,7 +598,7 @@ const createDriverComplain = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 if (!updatedPassengerRating) {
                     yield rating_1.ratingModel.create({
                         userId: id,
-                        rating: averageRating !== null && averageRating !== void 0 ? averageRating : 0
+                        rating: averageRating !== null && averageRating !== void 0 ? averageRating : 0,
                     });
                 }
             }
@@ -627,16 +628,16 @@ const createPassengerComplain = (req, res) => __awaiter(void 0, void 0, void 0, 
                 {
                     $match: {
                         driverId: created === null || created === void 0 ? void 0 : created.driverId,
-                        "passengerComplain.rating": { $exists: true, $ne: null }
-                    }
+                        "passengerComplain.rating": { $exists: true, $ne: null },
+                    },
                 },
                 {
                     $group: {
                         _id: "$passengerId",
                         averageRating: { $avg: "$passengerComplain.rating" },
-                        totalRatings: { $sum: 1 }
-                    }
-                }
+                        totalRatings: { $sum: 1 },
+                    },
+                },
             ]);
             if (sumRating.length) {
                 const id = new mongoose_1.Types.ObjectId((_a = sumRating[0]) === null || _a === void 0 ? void 0 : _a._id);
@@ -645,7 +646,7 @@ const createPassengerComplain = (req, res) => __awaiter(void 0, void 0, void 0, 
                 if (!updatedPassengerRating) {
                     yield rating_1.ratingModel.create({
                         userId: id,
-                        rating: averageRating !== null && averageRating !== void 0 ? averageRating : 0
+                        rating: averageRating !== null && averageRating !== void 0 ? averageRating : 0,
                     });
                 }
             }
@@ -709,7 +710,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid } = req.body;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, } = req.body;
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
@@ -729,7 +730,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         }
         // if status from order not equal to "Requesting" and "Accepted"
         // cannot cancel the order
-        // Requesting means while passenger is calling for an order 
+        // Requesting means while passenger is calling for an order
         // Accepted means driver is going to pick passenger
         if (status && status === callTaxi_2.STATUS.CANCELED) {
             if (callTaxi.status === callTaxi_2.STATUS.DEPARTURE &&
@@ -765,7 +766,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         if (prepaid)
             updateData.prepaid = prepaid;
         if (status) {
-            // If status is paid add calculatedPrice and driverRate to 
+            // If status is paid add calculatedPrice and driverRate to
             // calculate driver income
             if (status === callTaxi_2.STATUS.PAID) {
                 const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
@@ -783,9 +784,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                             token,
                             id: claimMoney._id,
                             income,
-                            total
+                            total,
                         });
-                        console.log("updateClaim: ", updateClaim);
                         if (updateClaim)
                             updateData.claimMoney = updateClaim._id;
                     }
@@ -793,8 +793,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                         const driver = yield axios_1.default.get(`
                    ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId}`, {
                             headers: {
-                                Authorization: `${req.headers["authorization"]}`
-                            }
+                                Authorization: `${req.headers["authorization"]}`,
+                            },
                         });
                         const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
                         const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
@@ -804,9 +804,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                             driverRegistrationSource,
                             income: calculatedPrice,
                             country: (_g = (_f = (_e = driver === null || driver === void 0 ? void 0 : driver.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.country) === null || _g === void 0 ? void 0 : _g._id,
-                            countryCode: (_k = (_j = (_h = driver === null || driver === void 0 ? void 0 : driver.data) === null || _h === void 0 ? void 0 : _h.user) === null || _j === void 0 ? void 0 : _j.country) === null || _k === void 0 ? void 0 : _k.code
+                            countryCode: (_k = (_j = (_h = driver === null || driver === void 0 ? void 0 : driver.data) === null || _h === void 0 ? void 0 : _h.user) === null || _j === void 0 ? void 0 : _j.country) === null || _k === void 0 ? void 0 : _k.code,
                         });
-                        console.log("createClaim: ", createClaim);
                         if (createClaim)
                             updateData.claimMoney = createClaim._id;
                     }
@@ -949,26 +948,30 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             return;
         }
         if (status === callTaxi_2.STATUS.DRIVER_RECEIVED) {
-            // Delete ride matching order 
+            // Delete ride matching order
             // from other when once accepted
             yield axios_1.default.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/remove/${confirmed === null || confirmed === void 0 ? void 0 : confirmed._id}`, {
                 headers: {
                     Authorization: req.headers.authorization,
                 },
             });
-            // And then save an order to redis 
+            // And then save an order to redis
             // for calculating meter pricing
             if (confirmed.requestType === callTaxi_2.REQUEST_TYPE.METERED_FARE) {
-                yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, { confirmed });
+                yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, {
+                    confirmed,
+                });
             }
         }
-        if (confirmed.requestType === callTaxi_2.REQUEST_TYPE.METERED_FARE &&
-            confirmed.status === callTaxi_2.STATUS.DEPARTURE) {
+        if (confirmed.requestType === callTaxi_2.REQUEST_TYPE.METERED_FARE && confirmed.status === callTaxi_2.STATUS.DEPARTURE) {
             const taxiTypePricing = yield taxiTypePricing_1.default.find({
                 taxiTypeId: new mongoose_1.Types.ObjectId(confirmed.carTypeId),
                 country: confirmed.country,
             });
-            yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, { confirmed, taxiTypePricing });
+            yield axios_1.default.post(`${process.env.SOCKET_SERVICE_URL}/v1/api/ride-request-socket/save-order-to-redis`, {
+                confirmed,
+                taxiTypePricing,
+            });
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
@@ -1014,7 +1017,7 @@ const getRideHistoryDetailById = (req, res) => __awaiter(void 0, void 0, void 0,
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            rideHistoryDetail
+            rideHistoryDetail,
         });
     }
     catch (error) {
@@ -1033,7 +1036,7 @@ const getDriverRideHistoryDetailById = (req, res) => __awaiter(void 0, void 0, v
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
-            riderRideHistoryDetail
+            riderRideHistoryDetail,
         });
     }
     catch (error) {
@@ -1052,7 +1055,7 @@ const getRideHistory = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const passengerId = req.params.id;
         const { skip = "0", limit = "100", status } = req.query;
         const filter = {
-            passengerId
+            passengerId,
         };
         if (status) {
             if (Array.isArray(status)) {
@@ -1127,7 +1130,7 @@ const reportPassenger = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { reportPassenger: {
                 numberOfCallingTaxi,
                 totalDistance,
-                getTheLastRide
+                getTheLastRide,
             } }));
     }
     catch (error) {
@@ -1200,7 +1203,7 @@ exports.travelHistory = travelHistory;
 const getCommentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.params.id;
-        const { skip = "1", limit = "10", status, role = 'CUSTOMER' } = req.query;
+        const { skip = "1", limit = "10", status, role = "CUSTOMER" } = req.query;
         const skipToNumber = parseInt(skip, 10);
         const limitToNumber = parseInt(limit, 10);
         const filter = {};
@@ -1285,9 +1288,9 @@ const checkUsingPromotion = (req, res) => __awaiter(void 0, void 0, void 0, func
                 $elemMatch: {
                     promotion: promotion,
                     "promotionPeriod.startDate": startDate,
-                    "promotionPeriod.endDate": endDate
-                }
-            }
+                    "promotionPeriod.endDate": endDate,
+                },
+            },
         });
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { isPromotionUsed }));
     }

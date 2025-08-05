@@ -1,0 +1,145 @@
+import { Request, Response } from "express";
+import {
+    createDriverCashService,
+    deleteDriverCashService,
+    getAllDriverCashService,
+    getDriverCashByIdService,
+    updateDriverCashService,
+} from "../../services/driverCash";
+import { messages } from "../../config";
+import { validateDriverCashBody } from "./helper";
+
+// CREATE Driver Cash
+export const createDriverCash = async (req: Request, res: Response) => {
+    try {
+        const driverId = (req as any).user.id;
+        const body = validateDriverCashBody(req.body);
+
+        const driverCash = await createDriverCashService(driverId, body);
+
+        res.status(201).json({
+            code: messages.CREATE_SUCCESSFUL.code,
+            message: "Driver cash created successfully",
+            driverCash,
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// GET ALL Driver Cash
+export const getAllDriverCash = async (req: Request, res: Response) => {
+    try {
+        const { skip = 0, limit = 10, driver } = req.query;
+
+        const parsedSkip = parseInt(skip as string, 10);
+        const parsedLimit = parseInt(limit as string, 10);
+
+        const filter: any = {};
+        if (driver) filter.driver = driver;
+
+        const driverCashList = await getAllDriverCashService(parsedSkip, parsedLimit, filter);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: "Driver cash list fetched successfully",
+            driverCashList,
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// GET Driver Cash by ID
+export const getDriverCashById = async (req: Request, res: Response) => {
+    try {
+        const driverCash = await getDriverCashByIdService(req.params.id);
+
+        if (!driverCash) {
+            return res.status(404).json({
+                code: messages.NOT_FOUND.code,
+                message: "Driver cash not found",
+            });
+        }
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: "Driver cash fetched successfully",
+            driverCash,
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// UPDATE Driver Cash
+export const updateDriverCash = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const body = validateDriverCashBody(req.body);
+
+        const updatedDriverCash = await updateDriverCashService(id, body);
+
+        if (!updatedDriverCash) {
+            return res.status(404).json({
+                code: messages.NOT_FOUND.code,
+                message: "Driver cash not found",
+            });
+        }
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: "Driver cash updated successfully",
+            updatedDriverCash,
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// DELETE Driver Cash
+export const deleteDriverCash = async (req: Request, res: Response) => {
+    try {
+        const deletedDriverCash = await deleteDriverCashService(req.params.id);
+
+        if (!deletedDriverCash) {
+            return res.status(404).json({
+                code: messages.NOT_FOUND.code,
+                message: "Driver cash not found",
+            });
+        }
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: "Driver cash deleted successfully",
+            deletedDriverCash,
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};

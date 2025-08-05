@@ -392,25 +392,25 @@ export const getCallTaxis = async (req: Request, res: Response) => {
       // Search filter
       ...(search
         ? [
-            {
-              $match: {
-                $or: [
-                  {
-                    "passengerDetails.fullName": {
-                      $regex: search.toString(),
-                      $options: "i",
-                    },
+          {
+            $match: {
+              $or: [
+                {
+                  "passengerDetails.fullName": {
+                    $regex: search.toString(),
+                    $options: "i",
                   },
-                  {
-                    "driverDetails.fullName": {
-                      $regex: search.toString(),
-                      $options: "i",
-                    },
+                },
+                {
+                  "driverDetails.fullName": {
+                    $regex: search.toString(),
+                    $options: "i",
                   },
-                ],
-              },
+                },
+              ],
             },
-          ]
+          },
+        ]
         : []),
 
       { $sort: { createdAt: -1 } },
@@ -916,8 +916,6 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
               total,
             });
 
-            console.log("updateClaim: ", updateClaim);
-
             if (updateClaim) updateData.claimMoney = updateClaim._id;
           } else {
             const driver = await axios.get(
@@ -941,8 +939,6 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
               country: driver?.data?.user?.country?._id,
               countryCode: driver?.data?.user?.country?.code,
             });
-
-            console.log("createClaim: ", createClaim);
 
             if (createClaim) updateData.claimMoney = createClaim._id;
           }

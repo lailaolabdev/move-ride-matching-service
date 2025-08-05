@@ -31,6 +31,7 @@ const voiceCall_1 = __importDefault(require("./routes/voiceCall"));
 const dashboard_1 = __importDefault(require("./routes/dashboard"));
 const driverRate_1 = __importDefault(require("./routes/driverRate"));
 const delayPrice_1 = __importDefault(require("./routes/delayPrice"));
+const driverCash_1 = __importDefault(require("./routes/driverCash"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8001;
@@ -65,6 +66,7 @@ app.use("/api/v1/rating", rating_1.default);
 app.use("/api/v1/voice-call", voiceCall_1.default);
 app.use("/api/v1/driver-rate", driverRate_1.default);
 app.use("/api/v1/delay-price", delayPrice_1.default);
+app.use("/api/v1/driver-cash", driverCash_1.default);
 app.use("/v1/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
 app.use("/api/v1/dashboards", dashboard_1.default);
 // Error handling middleware

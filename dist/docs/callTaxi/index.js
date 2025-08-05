@@ -97,6 +97,9 @@
  *                       createdAt:
  *                         type: string
  *                         format: date-time
+ *                       currency:
+ *                         type: string
+ *                         example: "LAK"
  *       500:
  *         description: Internal server error
  */
@@ -418,7 +421,7 @@
  *     responses:
  *       200:
  *         description: Ride history retrieved successfully.
-  *         content:
+ *         content:
  *           application/json:
  *             schema:
  *               type: object

@@ -27,6 +27,7 @@ import voiceCallRoute from './routes/voiceCall'
 import dashboardRoute from "./routes/dashboard"
 import driverRateRoute from "./routes/driverRate"
 import delayPriceRoute from "./routes/delayPrice"
+import driverCash from "./routes/driverCash"
 
 dotenv.config();
 
@@ -67,6 +68,7 @@ app.use("/api/v1/rating", ratingRoute);
 app.use("/api/v1/voice-call", voiceCallRoute);
 app.use("/api/v1/driver-rate", driverRateRoute);
 app.use("/api/v1/delay-price", delayPriceRoute);
+app.use("/api/v1/driver-cash", driverCash);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/api/v1/dashboards", dashboardRoute);
 
