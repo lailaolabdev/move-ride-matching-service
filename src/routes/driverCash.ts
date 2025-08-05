@@ -2,6 +2,7 @@
 import express from 'express';
 import { checkAuthorizationMiddleware } from '../middlewares';
 import {
+    adjustDriverCash,
     createDriverCash,
     deleteDriverCash,
     getAllDriverCash,
@@ -16,5 +17,6 @@ router.get("/", checkAuthorizationMiddleware, getAllDriverCash);
 router.get("/:id", checkAuthorizationMiddleware, getDriverCashById);
 router.put("/:id", checkAuthorizationMiddleware, updateDriverCash);
 router.delete("/:id", checkAuthorizationMiddleware, deleteDriverCash);
+router.post("/adjust-driver-cash", checkAuthorizationMiddleware, adjustDriverCash);
 
 export default router;

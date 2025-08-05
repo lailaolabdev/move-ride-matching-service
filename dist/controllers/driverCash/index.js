@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDriverCash = exports.updateDriverCash = exports.getDriverCashById = exports.getAllDriverCash = exports.createDriverCash = void 0;
+exports.adjustDriverCash = exports.deleteDriverCash = exports.updateDriverCash = exports.getDriverCashById = exports.getAllDriverCash = exports.createDriverCash = void 0;
 const driverCash_1 = require("../../services/driverCash");
 const config_1 = require("../../config");
 const helper_1 = require("./helper");
@@ -92,7 +92,7 @@ const updateDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const { id } = req.params;
         const body = (0, helper_1.validateDriverCashBody)(req.body);
-        const updatedDriverCash = yield (0, driverCash_1.updateDriverCashService)(id, body);
+        const updatedDriverCash = yield (0, driverCash_1.updateDriverCashServiceById)(id, body);
         if (!updatedDriverCash) {
             return res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
@@ -141,3 +141,29 @@ const deleteDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.deleteDriverCash = deleteDriverCash;
+// Adjust Driver Cash
+// This endpoint adjusts the driver's cash balance based on the provided body
+// If the driver cash does not exist, it creates a new entry
+const adjustDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const driverId = req.user.id;
+        const body = (0, helper_1.validateDriverCashBody)(req.body);
+        let updatedDriverCash = yield (0, driverCash_1.updateDriverCashServiceByDriverId)(driverId, body);
+        if (!updatedDriverCash)
+            updatedDriverCash = yield (0, driverCash_1.createDriverCashService)(driverId, body);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            message: "Driver cash updated successfully",
+            updatedDriverCash,
+        });
+    }
+    catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.adjustDriverCash = adjustDriverCash;

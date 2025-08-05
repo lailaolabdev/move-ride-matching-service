@@ -46,10 +46,26 @@ export const getDriverCashByIdService = async (id: string): Promise<IDriverCash 
 };
 
 // Update
-export const updateDriverCashService = async (driverId: String, body: any): Promise<IDriverCash | null> => {
+export const updateDriverCashServiceById = async (id: String, body: any): Promise<IDriverCash | null> => {
     try {
         const updatedDriverCash = await driverCashModel.findByIdAndUpdate(
-            driverId,
+            id,
+            { $set: body },
+            { new: true }
+        );
+
+        return updatedDriverCash;
+    } catch (error) {
+        console.error("Error updating driver cash: ", error);
+        throw error;
+    }
+};
+
+// Update
+export const updateDriverCashServiceByDriverId = async (driverId: String, body: any): Promise<IDriverCash | null> => {
+    try {
+        const updatedDriverCash = await driverCashModel.findOneAndUpdate(
+            { driver: driverId },
             { $set: body },
             { new: true }
         );

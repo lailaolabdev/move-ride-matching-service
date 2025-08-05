@@ -12,4 +12,5 @@ router.get("/", middlewares_1.checkAuthorizationMiddleware, driverCash_1.getAllD
 router.get("/:id", middlewares_1.checkAuthorizationMiddleware, driverCash_1.getDriverCashById);
 router.put("/:id", middlewares_1.checkAuthorizationMiddleware, driverCash_1.updateDriverCash);
 router.delete("/:id", middlewares_1.checkAuthorizationMiddleware, driverCash_1.deleteDriverCash);
+router.post("/adjust-driver-cash", middlewares_1.checkAuthorizationMiddleware, driverCash_1.adjustDriverCash);
 exports.default = router;

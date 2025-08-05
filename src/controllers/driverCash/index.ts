@@ -4,10 +4,12 @@ import {
     deleteDriverCashService,
     getAllDriverCashService,
     getDriverCashByIdService,
-    updateDriverCashService,
+    updateDriverCashServiceById,
+    updateDriverCashServiceByDriverId,
 } from "../../services/driverCash";
 import { messages } from "../../config";
 import { validateDriverCashBody } from "./helper";
+import driverCashModel, { IDriverCash } from "../../models/driverCash";
 
 // CREATE Driver Cash
 export const createDriverCash = async (req: Request, res: Response) => {
@@ -93,7 +95,7 @@ export const updateDriverCash = async (req: Request, res: Response) => {
         const { id } = req.params;
         const body = validateDriverCashBody(req.body);
 
-        const updatedDriverCash = await updateDriverCashService(id, body);
+        const updatedDriverCash = await updateDriverCashServiceById(id, body);
 
         if (!updatedDriverCash) {
             return res.status(404).json({
@@ -133,6 +135,33 @@ export const deleteDriverCash = async (req: Request, res: Response) => {
             code: messages.SUCCESSFULLY.code,
             message: "Driver cash deleted successfully",
             deletedDriverCash,
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
+// Adjust Driver Cash
+// This endpoint adjusts the driver's cash balance based on the provided body
+// If the driver cash does not exist, it creates a new entry
+export const adjustDriverCash = async (req: Request, res: Response) => {
+    try {
+        const driverId = (req as any).user.id;
+        const body = validateDriverCashBody(req.body);
+
+        let updatedDriverCash: IDriverCash | null = await updateDriverCashServiceByDriverId(driverId, body);
+
+        if (!updatedDriverCash) updatedDriverCash = await createDriverCashService(driverId, body);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: "Driver cash updated successfully",
+            updatedDriverCash,
         });
     } catch (error) {
         console.error("Error: ", error);

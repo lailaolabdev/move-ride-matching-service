@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDriverCashService = exports.updateDriverCashService = exports.getDriverCashByIdService = exports.getAllDriverCashService = exports.createDriverCashService = void 0;
+exports.deleteDriverCashService = exports.updateDriverCashServiceByDriverId = exports.updateDriverCashServiceById = exports.getDriverCashByIdService = exports.getAllDriverCashService = exports.createDriverCashService = void 0;
 const driverCash_1 = __importDefault(require("../models/driverCash"));
 // Create
 const createDriverCashService = (driverId, body) => __awaiter(void 0, void 0, void 0, function* () {
@@ -54,9 +54,9 @@ const getDriverCashByIdService = (id) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getDriverCashByIdService = getDriverCashByIdService;
 // Update
-const updateDriverCashService = (driverId, body) => __awaiter(void 0, void 0, void 0, function* () {
+const updateDriverCashServiceById = (id, body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const updatedDriverCash = yield driverCash_1.default.findByIdAndUpdate(driverId, { $set: body }, { new: true });
+        const updatedDriverCash = yield driverCash_1.default.findByIdAndUpdate(id, { $set: body }, { new: true });
         return updatedDriverCash;
     }
     catch (error) {
@@ -64,7 +64,19 @@ const updateDriverCashService = (driverId, body) => __awaiter(void 0, void 0, vo
         throw error;
     }
 });
-exports.updateDriverCashService = updateDriverCashService;
+exports.updateDriverCashServiceById = updateDriverCashServiceById;
+// Update
+const updateDriverCashServiceByDriverId = (driverId, body) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const updatedDriverCash = yield driverCash_1.default.findOneAndUpdate({ driver: driverId }, { $set: body }, { new: true });
+        return updatedDriverCash;
+    }
+    catch (error) {
+        console.error("Error updating driver cash: ", error);
+        throw error;
+    }
+});
+exports.updateDriverCashServiceByDriverId = updateDriverCashServiceByDriverId;
 // Delete
 const deleteDriverCashService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
