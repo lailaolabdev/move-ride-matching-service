@@ -45,6 +45,16 @@ export const getDriverCashByIdService = async (id: string): Promise<IDriverCash 
     }
 };
 
+// Get by ID
+export const getDriverCashByDriverId = async (id: string): Promise<IDriverCash | null> => {
+    try {
+        return await driverCashModel.findOne({ driver: id });
+    } catch (error) {
+        console.error("Error retrieving driver cash by driver ID: ", error);
+        throw error;
+    }
+};
+
 // Update
 export const updateDriverCashServiceById = async (id: String, body: any): Promise<IDriverCash | null> => {
     try {

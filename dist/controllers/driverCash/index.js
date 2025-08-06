@@ -148,13 +148,19 @@ const adjustDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const driverId = req.user.id;
         const body = (0, helper_1.validateDriverCashBody)(req.body);
-        let updatedDriverCash = yield (0, driverCash_1.updateDriverCashServiceByDriverId)(driverId, body);
-        if (!updatedDriverCash)
-            updatedDriverCash = yield (0, driverCash_1.createDriverCashService)(driverId, body);
+        const driverCashExists = yield (0, driverCash_1.getDriverCashByDriverId)(driverId);
+        let driverCash;
+        if (driverCashExists) {
+            body.amount = (driverCashExists.amount || 0) + (body.amount || 0);
+            driverCash = yield (0, driverCash_1.updateDriverCashServiceByDriverId)(driverId, body);
+        }
+        else {
+            driverCash = yield (0, driverCash_1.createDriverCashService)(driverId, body);
+        }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             message: "Driver cash updated successfully",
-            updatedDriverCash,
+            driverCash,
         });
     }
     catch (error) {

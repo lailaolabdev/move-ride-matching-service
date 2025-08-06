@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDriverCashService = exports.updateDriverCashServiceByDriverId = exports.updateDriverCashServiceById = exports.getDriverCashByIdService = exports.getAllDriverCashService = exports.createDriverCashService = void 0;
+exports.deleteDriverCashService = exports.updateDriverCashServiceByDriverId = exports.updateDriverCashServiceById = exports.getDriverCashByDriverId = exports.getDriverCashByIdService = exports.getAllDriverCashService = exports.createDriverCashService = void 0;
 const driverCash_1 = __importDefault(require("../models/driverCash"));
 // Create
 const createDriverCashService = (driverId, body) => __awaiter(void 0, void 0, void 0, function* () {
@@ -53,6 +53,17 @@ const getDriverCashByIdService = (id) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getDriverCashByIdService = getDriverCashByIdService;
+// Get by ID
+const getDriverCashByDriverId = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return yield driverCash_1.default.findOne({ driver: id });
+    }
+    catch (error) {
+        console.error("Error retrieving driver cash by driver ID: ", error);
+        throw error;
+    }
+});
+exports.getDriverCashByDriverId = getDriverCashByDriverId;
 // Update
 const updateDriverCashServiceById = (id, body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
