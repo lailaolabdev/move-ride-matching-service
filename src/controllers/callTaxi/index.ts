@@ -981,7 +981,7 @@ export const updateClaimMoneyStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    await CallTaxi.updateMany({ claimMoney: id }, { $set: { isClaim: true } }, { new: true });
+    await CallTaxi.updateMany({ claimMoney: id }, { $set: { isClaim: true } },);
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
