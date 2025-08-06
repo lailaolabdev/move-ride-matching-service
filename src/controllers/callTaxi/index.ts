@@ -45,7 +45,7 @@ import { driverRateCal } from "../calculation";
 import { createClaimMoney, getClaimMoney, updateClaimMoney } from "../../services/claimMoney";
 import { convertToEndDate, convertToStartDate } from "../../utils/timezone";
 import taxiTypePricingModel from "../../models/taxiTypePricing";
-import { getDriverCashByDriverId } from "../../services/driverCash";
+import { getDriverCashByDriverIdService } from "../../services/driverCash";
 import { IDriverCash } from "../../models/driverCash";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
@@ -1448,7 +1448,7 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
 
     const totalIncome = await getTotalDriverIncomeService(driverId, filter);
     const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId, filter);
-    const totalDriverCash: IDriverCash | null = await getDriverCashByDriverId(driverId)
+    const totalDriverCash: IDriverCash | null = await getDriverCashByDriverIdService(driverId)
 
     res.json({
       ...messages.SUCCESSFULLY,

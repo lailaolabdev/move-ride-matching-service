@@ -46,7 +46,7 @@ export const getDriverCashByIdService = async (id: string): Promise<IDriverCash 
 };
 
 // Get by ID
-export const getDriverCashByDriverId = async (id: string): Promise<IDriverCash | null> => {
+export const getDriverCashByDriverIdService = async (id: string): Promise<IDriverCash | null> => {
     try {
         return await driverCashModel.findOne({ driver: id });
     } catch (error) {

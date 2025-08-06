@@ -6,6 +6,7 @@ import {
     createDriverCash,
     deleteDriverCash,
     getAllDriverCash,
+    getDriverCashByDriverId,
     getDriverCashById,
     updateDriverCash
 } from '../controllers/driverCash';
@@ -15,6 +16,7 @@ const router = express.Router();
 router.post("/", checkAuthorizationMiddleware, createDriverCash);
 router.get("/", checkAuthorizationMiddleware, getAllDriverCash);
 router.get("/:id", checkAuthorizationMiddleware, getDriverCashById);
+router.get("/:id/driver-cash", checkAuthorizationMiddleware, getDriverCashByDriverId);
 router.put("/:id", checkAuthorizationMiddleware, updateDriverCash);
 router.delete("/:id", checkAuthorizationMiddleware, deleteDriverCash);
 router.post("/adjust-driver-cash", checkAuthorizationMiddleware, adjustDriverCash);

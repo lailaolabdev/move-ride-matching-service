@@ -6,7 +6,7 @@ import {
     getDriverCashByIdService,
     updateDriverCashServiceById,
     updateDriverCashServiceByDriverId,
-    getDriverCashByDriverId,
+    getDriverCashByDriverIdService,
 } from "../../services/driverCash";
 import { messages } from "../../config";
 import { validateDriverCashBody } from "./helper";
@@ -90,6 +90,27 @@ export const getDriverCashById = async (req: Request, res: Response) => {
     }
 };
 
+export const getDriverCashByDriverId = async (req: Request, res: Response) => {
+    try {
+        const driverId = (req as any).user.id;
+
+        const driverCash: IDriverCash | null = await getDriverCashByDriverIdService(driverId);
+
+        res.status(200).json({
+            code: messages.SUCCESSFULLY.code,
+            message: "Driver cash updated successfully",
+            driverCash,
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: messages.INTERNAL_SERVER_ERROR.code,
+            message: messages.INTERNAL_SERVER_ERROR.message,
+            detail: (error as Error).message,
+        });
+    }
+};
+
 // UPDATE Driver Cash
 export const updateDriverCash = async (req: Request, res: Response) => {
     try {
@@ -155,7 +176,7 @@ export const adjustDriverCash = async (req: Request, res: Response) => {
         const driverId = (req as any).user.id;
         const body = validateDriverCashBody(req.body);
 
-        const driverCashExists: IDriverCash | null = await getDriverCashByDriverId(driverId);
+        const driverCashExists: IDriverCash | null = await getDriverCashByDriverIdService(driverId);
 
         let driverCash: IDriverCash | null;
 
