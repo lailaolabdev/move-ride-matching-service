@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adjustDriverCash = exports.deleteDriverCash = exports.updateDriverCash = exports.getDriverCashById = exports.getAllDriverCash = exports.createDriverCash = void 0;
+exports.adjustDriverCash = exports.deleteDriverCash = exports.updateDriverCash = exports.getDriverCashByDriverId = exports.getDriverCashById = exports.getAllDriverCash = exports.createDriverCash = void 0;
 const driverCash_1 = require("../../services/driverCash");
 const config_1 = require("../../config");
 const helper_1 = require("./helper");
@@ -87,6 +87,26 @@ const getDriverCashById = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getDriverCashById = getDriverCashById;
+const getDriverCashByDriverId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const driverId = req.user.id;
+        const driverCash = yield (0, driverCash_1.getDriverCashByDriverIdService)(driverId);
+        res.status(200).json({
+            code: config_1.messages.SUCCESSFULLY.code,
+            message: "Driver cash updated successfully",
+            driverCash,
+        });
+    }
+    catch (error) {
+        console.error("Error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getDriverCashByDriverId = getDriverCashByDriverId;
 // UPDATE Driver Cash
 const updateDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -148,7 +168,7 @@ const adjustDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const driverId = req.user.id;
         const body = (0, helper_1.validateDriverCashBody)(req.body);
-        const driverCashExists = yield (0, driverCash_1.getDriverCashByDriverId)(driverId);
+        const driverCashExists = yield (0, driverCash_1.getDriverCashByDriverIdService)(driverId);
         let driverCash;
         if (driverCashExists) {
             body.amount = (driverCashExists.amount || 0) + (body.amount || 0);

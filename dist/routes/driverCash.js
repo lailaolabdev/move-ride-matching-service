@@ -10,6 +10,7 @@ const router = express_1.default.Router();
 router.post("/", middlewares_1.checkAuthorizationMiddleware, driverCash_1.createDriverCash);
 router.get("/", middlewares_1.checkAuthorizationMiddleware, driverCash_1.getAllDriverCash);
 router.get("/:id", middlewares_1.checkAuthorizationMiddleware, driverCash_1.getDriverCashById);
+router.get("/by-driver-id/:id", middlewares_1.checkAuthorizationMiddleware, driverCash_1.getDriverCashByDriverId);
 router.put("/:id", middlewares_1.checkAuthorizationMiddleware, driverCash_1.updateDriverCash);
 router.delete("/:id", middlewares_1.checkAuthorizationMiddleware, driverCash_1.deleteDriverCash);
 router.post("/adjust-driver-cash", middlewares_1.checkAuthorizationMiddleware, driverCash_1.adjustDriverCash);

@@ -1250,7 +1250,7 @@ const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, fun
         }
         const totalIncome = yield (0, callTaxi_1.getTotalDriverIncomeService)(driverId, filter);
         const totalIncomeThatWasNotClaim = yield (0, callTaxi_1.getTotalDriverIncomeServiceThatWasNotClaim)(driverId, filter);
-        const totalDriverCash = yield (0, driverCash_1.getDriverCashByDriverId)(driverId);
+        const totalDriverCash = yield (0, driverCash_1.getDriverCashByDriverIdService)(driverId);
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { totalIncome,
             totalIncomeThatWasNotClaim, totalDriverCash: {
                 amount: (_a = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.amount) !== null && _a !== void 0 ? _a : 0,
