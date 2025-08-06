@@ -15,8 +15,8 @@ const router = express.Router();
 
 router.post("/", checkAuthorizationMiddleware, createDriverCash);
 router.get("/", checkAuthorizationMiddleware, getAllDriverCash);
+router.get("/by-driver-id", checkAuthorizationMiddleware, getDriverCashByDriverId);
 router.get("/:id", checkAuthorizationMiddleware, getDriverCashById);
-router.get("/by-driver-id/:id", checkAuthorizationMiddleware, getDriverCashByDriverId);
 router.put("/:id", checkAuthorizationMiddleware, updateDriverCash);
 router.delete("/:id", checkAuthorizationMiddleware, deleteDriverCash);
 router.post("/adjust-driver-cash", checkAuthorizationMiddleware, adjustDriverCash);
