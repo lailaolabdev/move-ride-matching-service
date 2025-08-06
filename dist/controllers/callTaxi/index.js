@@ -26,6 +26,7 @@ const calculation_1 = require("../calculation");
 const claimMoney_1 = require("../../services/claimMoney");
 const timezone_1 = require("../../utils/timezone");
 const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
+const driverCash_1 = require("../../services/driverCash");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -1230,6 +1231,7 @@ const getCommentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.getCommentAndRating = getCommentAndRating;
 // Report driver part
 const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         const driverId = req.user.id;
         const { startDate, endDate } = req.query;
@@ -1248,8 +1250,12 @@ const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, fun
         }
         const totalIncome = yield (0, callTaxi_1.getTotalDriverIncomeService)(driverId, filter);
         const totalIncomeThatWasNotClaim = yield (0, callTaxi_1.getTotalDriverIncomeServiceThatWasNotClaim)(driverId, filter);
+        const totalDriverCash = yield (0, driverCash_1.getDriverCashByDriverId)(driverId);
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { totalIncome,
-            totalIncomeThatWasNotClaim }));
+            totalIncomeThatWasNotClaim, totalDriverCash: {
+                amount: (_a = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.amount) !== null && _a !== void 0 ? _a : 0,
+                limit: (_b = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.limit) !== null && _b !== void 0 ? _b : 0,
+            } }));
     }
     catch (error) {
         console.error("Error fetching tax info:", error);

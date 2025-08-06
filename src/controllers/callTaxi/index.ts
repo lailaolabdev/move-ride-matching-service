@@ -45,6 +45,8 @@ import { driverRateCal } from "../calculation";
 import { createClaimMoney, getClaimMoney, updateClaimMoney } from "../../services/claimMoney";
 import { convertToEndDate, convertToStartDate } from "../../utils/timezone";
 import taxiTypePricingModel from "../../models/taxiTypePricing";
+import { getDriverCashByDriverId } from "../../services/driverCash";
+import { IDriverCash } from "../../models/driverCash";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -1446,11 +1448,16 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
 
     const totalIncome = await getTotalDriverIncomeService(driverId, filter);
     const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId, filter);
+    const totalDriverCash: IDriverCash | null = await getDriverCashByDriverId(driverId)
 
     res.json({
       ...messages.SUCCESSFULLY,
       totalIncome,
       totalIncomeThatWasNotClaim,
+      totalDriverCash: {
+        amount: totalDriverCash?.amount ?? 0,
+        limit: totalDriverCash?.limit ?? 0,
+      }
     });
   } catch (error) {
     console.error("Error fetching tax info:", error);
