@@ -11,11 +11,9 @@ import { messages } from "../../config/index";
 // CREATE Cash Limit
 export const createCashLimit = async (req: Request, res: Response) => {
   try {
-    const { price, limit, amount, country, countryCode } = req.body;
+    const { amount, country, countryCode } = req.body;
 
-    const newCatchLimit = await createCashLimitService({
-      price,
-      limit,
+    const newCashLimit = await createCashLimitService({
       amount,
       country,
       countryCode
@@ -24,7 +22,7 @@ export const createCashLimit = async (req: Request, res: Response) => {
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
       message: "Cash limit created successfully",
-      data: newCatchLimit
+      data: newCashLimit
     });
   } catch (error) {
     console.error("Error creating cash limit:", error);
@@ -39,16 +37,15 @@ export const createCashLimit = async (req: Request, res: Response) => {
 // GET ALL Cash Limits
 export const getAllCashLimits = async (req: Request, res: Response) => {
   try {
-    const { skip, limit, country, countryCode } = req.query;
+    const { skip, country, countryCode } = req.query;
 
     const parsedSkip = parseInt(skip as string, 10) || 0;
-    const parsedLimit = parseInt(limit as string, 10) || 20;
 
     const filter: any = {};
     if (country) filter.country = country;
     if (countryCode) filter.countryCode = countryCode;
 
-    const result = await getAllCashLimitsService(parsedSkip, parsedLimit, filter);
+    const result = await getAllCashLimitsService(parsedSkip, filter);
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
@@ -97,12 +94,10 @@ export const getCashLimitById = async (req: Request, res: Response) => {
 export const updateCashLimit = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { price, limit, amount, country, countryCode } = req.body;
+    const { amount, country, countryCode } = req.body;
 
     const updated = await updateCashLimitService({
       id,
-      price,
-      limit,
       amount,
       country,
       countryCode

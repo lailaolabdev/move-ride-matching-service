@@ -3,22 +3,16 @@ import { ICashLimit } from "../models/cashLimit";
 
 // CREATE
 export const createCashLimitService = async ({
-  price,
-  limit,
   amount,
   country,
   countryCode
 }: {
-  price: number;
-  limit: number;
   amount?: number;
   country: string;
   countryCode: string;
 }): Promise<ICashLimit> => {
   try {
     const data = new cashLimitModel({
-      price,
-      limit,
       amount: amount || 0,
       country,
       countryCode
@@ -32,7 +26,6 @@ export const createCashLimitService = async ({
 // READ ALL
 export const getAllCashLimitsService = async (
   skip = 0,
-  limit = 10,
   filter: any = {}
 ): Promise<{ total: number; data: ICashLimit[] }> => {
   try {
@@ -40,7 +33,6 @@ export const getAllCashLimitsService = async (
     const data = await cashLimitModel
       .find(filter)
       .skip(skip)
-      .limit(limit)
       .sort({ createdAt: -1 });
 
     return { total, data };
@@ -63,23 +55,17 @@ export const getCashLimitByIdService = async (
 // UPDATE
 export const updateCashLimitService = async ({
   id,
-  price,
-  limit,
   amount,
   country,
   countryCode
 }: {
   id: string;
-  price?: number;
-  limit?: number;
   amount?: number;
   country?: string;
   countryCode?: string;
 }): Promise<ICashLimit | null> => {
   try {
     const updateData: Partial<ICashLimit> = {
-      ...(price !== undefined && { price }),
-      ...(limit !== undefined && { limit }),
       ...(amount !== undefined && { amount }),
       ...(country !== undefined && { country }),
       ...(countryCode !== undefined && { countryCode })
