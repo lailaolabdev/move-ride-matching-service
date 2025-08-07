@@ -4,7 +4,7 @@ import {
   getAllCashLimitsService,
   getCashLimitByIdService,
   updateCashLimitService,
-  deleteCashLimitService
+  deleteCashLimitService,
 } from "../../services/cashLimit";
 import { messages } from "../../config/index";
 
@@ -16,20 +16,20 @@ export const createCashLimit = async (req: Request, res: Response) => {
     const newCashLimit = await createCashLimitService({
       amount,
       country,
-      countryCode
+      countryCode,
     });
 
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
       message: "Cash limit created successfully",
-      data: newCashLimit
+      data: newCashLimit,
     });
   } catch (error) {
     console.error("Error creating cash limit:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message
+      detail: (error as Error).message,
     });
   }
 };
@@ -51,14 +51,14 @@ export const getAllCashLimits = async (req: Request, res: Response) => {
       code: messages.SUCCESSFULLY.code,
       message: "Cash limits fetched successfully",
       total: result.total,
-      data: result.data
+      data: result.data,
     });
   } catch (error) {
     console.error("Error fetching cash limits:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message
+      detail: (error as Error).message,
     });
   }
 };
@@ -71,21 +71,21 @@ export const getCashLimitById = async (req: Request, res: Response) => {
     if (!cashLimit) {
       return res.status(404).json({
         code: messages.NOT_FOUND.code,
-        message: "Cash limit not found"
+        message: "Cash limit not found",
       });
     }
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       message: "Cash limit fetched successfully",
-      data: cashLimit
+      data: cashLimit,
     });
   } catch (error) {
     console.error("Error fetching cash limit by ID:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message
+      detail: (error as Error).message,
     });
   }
 };
@@ -100,27 +100,27 @@ export const updateCashLimit = async (req: Request, res: Response) => {
       id,
       amount,
       country,
-      countryCode
+      countryCode,
     });
 
     if (!updated) {
       return res.status(404).json({
         code: messages.NOT_FOUND.code,
-        message: "Cash limit not found"
+        message: "Cash limit not found",
       });
     }
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       message: "Cash limit updated successfully",
-      data: updated
+      data: updated,
     });
   } catch (error) {
     console.error("Error updating cash limit:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message
+      detail: (error as Error).message,
     });
   }
 };
@@ -133,21 +133,21 @@ export const deleteCashLimit = async (req: Request, res: Response) => {
     if (!deleted) {
       return res.status(404).json({
         code: messages.NOT_FOUND.code,
-        message: "Cash limit not found"
+        message: "Cash limit not found",
       });
     }
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       message: "Cash limit deleted successfully",
-      data: deleted
+      data: deleted,
     });
   } catch (error) {
     console.error("Error deleting cash limit:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
-      detail: (error as Error).message
+      detail: (error as Error).message,
     });
   }
 };
