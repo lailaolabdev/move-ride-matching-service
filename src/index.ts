@@ -29,6 +29,7 @@ import driverRateRoute from "./routes/driverRate";
 import delayPriceRoute from "./routes/delayPrice";
 import driverCash from "./routes/driverCash";
 import cashLimit from "./routes/cashLimit";
+import aroundLimit from "./routes/aroundLimit";
 
 dotenv.config();
 
@@ -71,6 +72,7 @@ app.use("/api/v1/driver-rate", driverRateRoute);
 app.use("/api/v1/delay-price", delayPriceRoute);
 app.use("/api/v1/driver-cash", driverCash);
 app.use("/api/v1/cash-limits", cashLimit);
+app.use("/api/v1/around-limits", aroundLimit);
 app.use("/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/api/v1/dashboards", dashboardRoute);
 
