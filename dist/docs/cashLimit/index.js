@@ -33,7 +33,7 @@
  *   post:
  *     summary: Create a new cash limit
  *     tags:
- *       - CashLimit
+ *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -65,7 +65,7 @@
  *   get:
  *     summary: Get all cash limits
  *     tags:
- *       - CashLimit
+ *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -110,7 +110,7 @@
  *   get:
  *     summary: Get a cash limit by ID
  *     tags:
- *       - CashLimit
+ *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -145,7 +145,7 @@
  *   put:
  *     summary: Update a cash limit
  *     tags:
- *       - CashLimit
+ *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -183,7 +183,7 @@
  *   delete:
  *     summary: Delete a cash limit
  *     tags:
- *       - CashLimit
+ *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
  *     security:
  *       - BearerAuth: []
  *     parameters:
