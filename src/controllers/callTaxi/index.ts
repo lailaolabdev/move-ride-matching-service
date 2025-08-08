@@ -546,6 +546,7 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           status: 1,
           totalDistance: 1,
           totalDuration: 1,
+          prepaid: 1,
           "passenger._id": 1,
           "passenger.fullName": 1,
           "passenger.profileImage": 1,
@@ -629,6 +630,170 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
     if (callTaxi.length) {
       const driverLatLong = await getDriverLatLong(callTaxi[0]?._id);
 
+      callTaxi[0].driver.latitude = driverLatLong?.latitude;
+      callTaxi[0].driver.longitude = driverLatLong?.longitude;
+    }
+
+    res.status(200).json({
+      ...messages.SUCCESSFULLY,
+      callTaxi: callTaxi.length ? callTaxi[0] : {},
+    });
+  } catch (error) {
+    console.log("error: ", error);
+
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+};
+
+export const socketCheckStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+
+    const callTaxi = await CallTaxi.aggregate([
+      {
+        $match: {
+          _id: new Types.ObjectId(id),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          let: { driverId: { $toObjectId: "$driverId" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$driverId"] },
+              },
+            },
+          ],
+          as: "driver",
+        },
+      },
+      {
+        $unwind: {
+          path: "$driver",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          let: { passengerId: { $toObjectId: "$passengerId" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$passengerId"] },
+              },
+            },
+          ],
+          as: "passenger",
+        },
+      },
+      {
+        $unwind: {
+          path: "$passenger",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          requestType: 1,
+          origin: 1,
+          destination: 1,
+          originName: 1,
+          destinationName: 1,
+          totalPrice: 1,
+          status: 1,
+          totalDistance: 1,
+          totalDuration: 1,
+          promotionPrice: 1,
+          festivalPromotion: 1,
+          currency: 1,
+          "passenger._id": 1,
+          "passenger.fullName": 1,
+          "passenger.profileImage": 1,
+          "driver._id": 1,
+          "driver.fullName": 1,
+          "driver.profileImage": 1,
+          "driver.licensePlate": 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    ]);
+
+    if (callTaxi.length) {
+      const aggregateVehicleDriver = await vehicleDriverModel.aggregate([
+        {
+          $match: {
+            driver: callTaxi[0]?.driver?._id.toString(),
+          },
+        },
+        {
+          $addFields: {
+            vehicleModelObjectId: {
+              $cond: {
+                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                then: { $toObjectId: "$vehicleModel" },
+                else: "$vehicleModel",
+              },
+            },
+            vehicleBrandObjectId: {
+              $cond: {
+                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                then: { $toObjectId: "$vehicleBrand" },
+                else: "$vehicleBrand",
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "vehiclemodels",
+            localField: "vehicleModelObjectId",
+            foreignField: "_id",
+            as: "vehicleModel",
+          },
+        },
+        {
+          $unwind: {
+            path: "$vehicleModel",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "vehiclebrands",
+            localField: "vehicleBrandObjectId",
+            foreignField: "_id",
+            as: "vehicleBrand",
+          },
+        },
+        {
+          $unwind: {
+            path: "$vehicleBrand",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            licensePlate: 1,
+            vehicleModelName: "$vehicleModel.name",
+            vehicleBrandName: "$vehicleBrand.name",
+          },
+        },
+      ]);
+
+      callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
+      callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
+
+      const driverLatLong = await getDriverLatLong(callTaxi[0]?._id);
       callTaxi[0].driver.latitude = driverLatLong?.latitude;
       callTaxi[0].driver.longitude = driverLatLong?.longitude;
     }

@@ -21,7 +21,8 @@ import {
   getTotalDriverIncome,
   getDriverPaymentDetail,
   updateClaimMoneyStatus,
-  checkUsingPromotion
+  checkUsingPromotion,
+  socketCheckStatus
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -49,6 +50,12 @@ router.get(
   checkAuthorizationMiddleware,
   checkCallTaxiStatus
 );
+
+router.get(
+  "/socket/check/status/:id",
+  socketCheckStatus
+);
+
 
 router.get(
   "/user-history",

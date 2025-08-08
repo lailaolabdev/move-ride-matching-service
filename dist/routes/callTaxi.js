@@ -13,6 +13,7 @@ router.post("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createCa
 router.get("/:id", callTaxi_1.getCallTaxiById);
 router.get("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getCallTaxis);
 router.get("/check/status", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.checkCallTaxiStatus);
+router.get("/socket/check/status/:id", callTaxi_1.socketCheckStatus);
 router.get("/user-history", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getUserCallTaxis);
 // driver complain passenger by call taxi id
 router.put("/driver-complain/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createDriverComplain);
