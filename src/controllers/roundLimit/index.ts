@@ -1,31 +1,31 @@
 import { Request, Response } from "express";
 import {
-  createAroundLimitService,
-  getAllAroundLimitsService,
-  getAroundLimitByIdService,
-  updateAroundLimitService,
-  deleteAroundLimitService,
-} from "../../services/aroundLimit";
+  createRoundLimitService,
+  getAllRoundLimitsService,
+  getRoundLimitByIdService,
+  updateRoundLimitService,
+  deleteRoundLimitService,
+} from "../../services/roundLimit";
 import { messages } from "../../config/index";
 
-// CREATE Around Limit
-export const createAroundLimit = async (req: Request, res: Response) => {
+// CREATE Round Limit
+export const createRoundLimit = async (req: Request, res: Response) => {
   try {
-    const { around, country, countryCode } = req.body;
+    const { round, country, countryCode } = req.body;
 
-    const newAroundLimit = await createAroundLimitService({
-      around,
+    const newRoundLimit = await createRoundLimitService({
+      round,
       country,
       countryCode,
     });
 
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
-      message: "Around limit created successfully",
-      data: newAroundLimit,
+      message: "Round limit created successfully",
+      data: newRoundLimit,
     });
   } catch (error) {
-    console.error("Error creating around limit:", error);
+    console.error("Error creating round limit:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
@@ -34,8 +34,8 @@ export const createAroundLimit = async (req: Request, res: Response) => {
   }
 };
 
-// GET ALL Around Limits
-export const getAllAroundLimits = async (req: Request, res: Response) => {
+// GET ALL Round Limits
+export const getAllRoundLimits = async (req: Request, res: Response) => {
   try {
     const { skip, country, countryCode } = req.query;
 
@@ -45,16 +45,16 @@ export const getAllAroundLimits = async (req: Request, res: Response) => {
     if (country) filter.country = country;
     if (countryCode) filter.countryCode = countryCode;
 
-    const result = await getAllAroundLimitsService(parsedSkip, filter);
+    const result = await getAllRoundLimitsService(parsedSkip, filter);
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
-      message: "Around limits fetched successfully",
+      message: "Round limits fetched successfully",
       total: result.total,
       data: result.data,
     });
   } catch (error) {
-    console.error("Error fetching around limits:", error);
+    console.error("Error fetching round limits:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
@@ -63,25 +63,25 @@ export const getAllAroundLimits = async (req: Request, res: Response) => {
   }
 };
 
-// GET Around Limit by ID
-export const getAroundLimitById = async (req: Request, res: Response) => {
+// GET Round Limit by ID
+export const getRoundLimitById = async (req: Request, res: Response) => {
   try {
-    const aroundLimit = await getAroundLimitByIdService(req.params.id);
+    const roundLimit = await getRoundLimitByIdService(req.params.id);
 
-    if (!aroundLimit) {
+    if (!roundLimit) {
       return res.status(404).json({
         code: messages.NOT_FOUND.code,
-        message: "Around limit not found",
+        message: "Round limit not found",
       });
     }
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
-      message: "Around limit fetched successfully",
-      data: aroundLimit,
+      message: "Round limit fetched successfully",
+      data: roundLimit,
     });
   } catch (error) {
-    console.error("Error fetching around limit by ID:", error);
+    console.error("Error fetching round limit by ID:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
@@ -90,15 +90,15 @@ export const getAroundLimitById = async (req: Request, res: Response) => {
   }
 };
 
-// UPDATE Around Limit
-export const updateAroundLimit = async (req: Request, res: Response) => {
+// UPDATE Round Limit
+export const updateRoundLimit = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { around, country, countryCode } = req.body;
+    const { round, country, countryCode } = req.body;
 
-    const updated = await updateAroundLimitService({
+    const updated = await updateRoundLimitService({
       id,
-      around,
+      round,
       country,
       countryCode,
     });
@@ -106,17 +106,17 @@ export const updateAroundLimit = async (req: Request, res: Response) => {
     if (!updated) {
       return res.status(404).json({
         code: messages.NOT_FOUND.code,
-        message: "Around limit not found",
+        message: "Round limit not found",
       });
     }
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
-      message: "Around limit updated successfully",
+      message: "Round limit updated successfully",
       data: updated,
     });
   } catch (error) {
-    console.error("Error updating around limit:", error);
+    console.error("Error updating round limit:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
@@ -125,25 +125,25 @@ export const updateAroundLimit = async (req: Request, res: Response) => {
   }
 };
 
-// DELETE Around Limit
-export const deleteAroundLimit = async (req: Request, res: Response) => {
+// DELETE Round Limit
+export const deleteRoundLimit = async (req: Request, res: Response) => {
   try {
-    const deleted = await deleteAroundLimitService(req.params.id);
+    const deleted = await deleteRoundLimitService(req.params.id);
 
     if (!deleted) {
       return res.status(404).json({
         code: messages.NOT_FOUND.code,
-        message: "Around limit not found",
+        message: "Round limit not found",
       });
     }
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
-      message: "Around limit deleted successfully",
+      message: "Round limit deleted successfully",
       data: deleted,
     });
   } catch (error) {
-    console.error("Error deleting around limit:", error);
+    console.error("Error deleting round limit:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,

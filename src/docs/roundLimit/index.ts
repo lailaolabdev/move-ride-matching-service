@@ -2,13 +2,13 @@
  * @swagger
  * components:
  *   schemas:
- *     CashLimit:
+ *     RoundLimit:
  *       type: object
  *       properties:
  *         id:
  *           type: string
  *           example: "64f0875c264fa20a3037b18a"
- *         amount:
+ *         round:
  *           type: number
  *           example: 1000
  *         country:
@@ -29,11 +29,11 @@
 
 /**
  * @swagger
- * /api/v1/cash-limits:
+ * /api/v1/round-limits:
  *   post:
- *     summary: Create a new cash limit
+ *     summary: Create a new round limit
  *     tags:
- *       - CashLimit
+ *       - RoundLimit
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -41,10 +41,10 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CashLimit'
+ *             $ref: '#/components/schemas/RoundLimit'
  *     responses:
  *       201:
- *         description: Cash limit created successfully
+ *         description: Round limit created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -55,18 +55,18 @@
  *                   example: "CREATE_SUCCESSFUL"
  *                 message:
  *                   type: string
- *                   example: "Cash limit created successfully"
- *                 cashLimit:
- *                   $ref: '#/components/schemas/CashLimit'
+ *                   example: "Round limit created successfully"
+ *                 roundLimit:
+ *                   $ref: '#/components/schemas/RoundLimit'
  */
 
 /**
  * @swagger
- * /api/v1/cash-limits:
+ * /api/v1/round-limits:
  *   get:
- *     summary: Get all cash limits
+ *     summary: Get all round limits
  *     tags:
- *       - CashLimit
+ *       - RoundLimit
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -82,7 +82,7 @@
  *           example: 10
  *     responses:
  *       200:
- *         description: List of cash limits
+ *         description: List of round limits
  *         content:
  *           application/json:
  *             schema:
@@ -93,8 +93,8 @@
  *                   example: "SUCCESSFULLY"
  *                 message:
  *                   type: string
- *                   example: "Cash limits fetched successfully"
- *                 cashLimits:
+ *                   example: "Round limits fetched successfully"
+ *                 roundLimits:
  *                   type: object
  *                   properties:
  *                     total:
@@ -103,16 +103,16 @@
  *                     records:
  *                       type: array
  *                       items:
- *                         $ref: '#/components/schemas/CashLimit'
+ *                         $ref: '#/components/schemas/RoundLimit'
  */
 
 /**
  * @swagger
- * /api/v1/cash-limits/{id}:
+ * /api/v1/round-limits/{id}:
  *   get:
- *     summary: Get a cash limit by ID
+ *     summary: Get a round limit by ID
  *     tags:
- *       - CashLimit
+ *       - RoundLimit
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -121,10 +121,10 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the cash limit
+ *         description: The ID of the round limit
  *     responses:
  *       200:
- *         description: Cash limit found
+ *         description: Round limit found
  *         content:
  *           application/json:
  *             schema:
@@ -135,20 +135,20 @@
  *                   example: "SUCCESSFULLY"
  *                 message:
  *                   type: string
- *                   example: "Cash limit fetched successfully"
- *                 cashLimit:
- *                   $ref: '#/components/schemas/CashLimit'
+ *                   example: "Round limit fetched successfully"
+ *                 roundLimit:
+ *                   $ref: '#/components/schemas/RoundLimit'
  *       404:
- *         description: Cash limit not found
+ *         description: Round limit not found
  */
 
 /**
  * @swagger
- * /api/v1/cash-limits/{id}:
+ * /api/v1/round-limits/{id}:
  *   put:
- *     summary: Update a cash limit
+ *     summary: Update a round limit
  *     tags:
- *       - CashLimit
+ *       - RoundLimit
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -162,10 +162,10 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CashLimit'
+ *             $ref: '#/components/schemas/RoundLimit'
  *     responses:
  *       200:
- *         description: Cash limit updated successfully
+ *         description: Round limit updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -176,18 +176,18 @@
  *                   example: "SUCCESSFULLY"
  *                 message:
  *                   type: string
- *                   example: "Cash limit updated successfully"
- *                 updatedCashLimit:
- *                   $ref: '#/components/schemas/CashLimit'
+ *                   example: "Round limit updated successfully"
+ *                 updatedRoundLimit:
+ *                   $ref: '#/components/schemas/RoundLimit'
  */
 
 /**
  * @swagger
- * /api/v1/cash-limits/{id}:
+ * /api/v1/round-limits/{id}:
  *   delete:
- *     summary: Delete a cash limit
+ *     summary: Delete a round limit
  *     tags:
- *       - CashLimit
+ *       - RoundLimit
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -198,7 +198,7 @@
  *           type: string
  *     responses:
  *       200:
- *         description: Cash limit deleted successfully
+ *         description: Round limit deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -209,9 +209,9 @@
  *                   example: "DELETE_SUCCESSFUL"
  *                 message:
  *                   type: string
- *                   example: "Cash limit deleted successfully"
- *                 deletedCashLimit:
- *                   $ref: '#/components/schemas/CashLimit'
+ *                   example: "Round limit deleted successfully"
+ *                 deletedRoundLimit:
+ *                   $ref: '#/components/schemas/RoundLimit'
  *       404:
- *         description: Cash limit not found
+ *         description: Round limit not found
  */
