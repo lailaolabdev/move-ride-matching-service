@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkUsingPromotion = exports.getDriverPaymentDetail = exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateClaimMoneyStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
+exports.checkUsingPromotion = exports.getDriverPaymentDetail = exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateClaimMoneyStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.socketCheckStatus = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -457,6 +457,7 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     status: 1,
                     totalDistance: 1,
                     totalDuration: 1,
+                    prepaid: 1,
                     "passenger._id": 1,
                     "passenger.fullName": 1,
                     "passenger.profileImage": 1,
@@ -551,6 +552,163 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.checkCallTaxiStatus = checkCallTaxiStatus;
+const socketCheckStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
+    try {
+        const { id } = req.params;
+        const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
+            {
+                $match: {
+                    _id: new mongoose_1.Types.ObjectId(id),
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { driverId: { $toObjectId: "$driverId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$driverId"] },
+                            },
+                        },
+                    ],
+                    as: "driver",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$driver",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { passengerId: { $toObjectId: "$passengerId" } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$passengerId"] },
+                            },
+                        },
+                    ],
+                    as: "passenger",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$passenger",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    requestType: 1,
+                    origin: 1,
+                    destination: 1,
+                    originName: 1,
+                    destinationName: 1,
+                    totalPrice: 1,
+                    status: 1,
+                    totalDistance: 1,
+                    totalDuration: 1,
+                    promotionPrice: 1,
+                    festivalPromotion: 1,
+                    currency: 1,
+                    "passenger._id": 1,
+                    "passenger.fullName": 1,
+                    "passenger.profileImage": 1,
+                    "driver._id": 1,
+                    "driver.fullName": 1,
+                    "driver.profileImage": 1,
+                    "driver.licensePlate": 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                },
+            },
+        ]);
+        if (callTaxi.length) {
+            const aggregateVehicleDriver = yield vehicleDriver_1.default.aggregate([
+                {
+                    $match: {
+                        driver: (_b = (_a = callTaxi[0]) === null || _a === void 0 ? void 0 : _a.driver) === null || _b === void 0 ? void 0 : _b._id.toString(),
+                    },
+                },
+                {
+                    $addFields: {
+                        vehicleModelObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleModel" }, "string"] },
+                                then: { $toObjectId: "$vehicleModel" },
+                                else: "$vehicleModel",
+                            },
+                        },
+                        vehicleBrandObjectId: {
+                            $cond: {
+                                if: { $eq: [{ $type: "$vehicleBrand" }, "string"] },
+                                then: { $toObjectId: "$vehicleBrand" },
+                                else: "$vehicleBrand",
+                            },
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "vehiclemodels",
+                        localField: "vehicleModelObjectId",
+                        foreignField: "_id",
+                        as: "vehicleModel",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$vehicleModel",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "vehiclebrands",
+                        localField: "vehicleBrandObjectId",
+                        foreignField: "_id",
+                        as: "vehicleBrand",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$vehicleBrand",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        licensePlate: 1,
+                        vehicleModelName: "$vehicleModel.name",
+                        vehicleBrandName: "$vehicleBrand.name",
+                    },
+                },
+            ]);
+            callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
+            callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
+            const driverLatLong = yield (0, helper_1.getDriverLatLong)((_c = callTaxi[0]) === null || _c === void 0 ? void 0 : _c._id);
+            callTaxi[0].driver.latitude = driverLatLong === null || driverLatLong === void 0 ? void 0 : driverLatLong.latitude;
+            callTaxi[0].driver.longitude = driverLatLong === null || driverLatLong === void 0 ? void 0 : driverLatLong.longitude;
+        }
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { callTaxi: callTaxi.length ? callTaxi[0] : {} }));
+    }
+    catch (error) {
+        console.log("error: ", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.socketCheckStatus = socketCheckStatus;
 const getUserCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const callTaxis = yield (0, callTaxi_1.getUserCallTaxisService)(req);
