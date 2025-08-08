@@ -2,21 +2,21 @@
  * @swagger
  * components:
  *   schemas:
- *     CashLimit:
+ *     AroundLimit:
  *       type: object
  *       properties:
  *         id:
  *           type: string
  *           example: "64f0875c264fa20a3037b18a"
- *         amount:
+ *         around:
  *           type: number
  *           example: 1000
  *         country:
  *           type: string
- *           example: "67c6c05bd9ba8fe6164eac3f"
+ *           example: "Thailand"
  *         countryCode:
  *           type: string
- *           example: "LA"
+ *           example: "TH"
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -29,11 +29,11 @@
 
 /**
  * @swagger
- * /api/v1/cash-limits:
+ * /api/v1/around-limits:
  *   post:
- *     summary: Create a new cash limit
+ *     summary: Create a new around limit
  *     tags:
- *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
+ *       - AroundLimit
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -41,10 +41,10 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CashLimit'
+ *             $ref: '#/components/schemas/AroundLimit'
  *     responses:
  *       201:
- *         description: Cash limit created successfully
+ *         description: Around limit created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -55,18 +55,18 @@
  *                   example: "CREATE_SUCCESSFUL"
  *                 message:
  *                   type: string
- *                   example: "Cash limit created successfully"
- *                 cashLimit:
- *                   $ref: '#/components/schemas/CashLimit'
+ *                   example: "Around limit created successfully"
+ *                 aroundLimit:
+ *                   $ref: '#/components/schemas/AroundLimit'
  */
 
 /**
  * @swagger
- * /api/v1/cash-limits:
+ * /api/v1/around-limits:
  *   get:
- *     summary: Get all cash limits
+ *     summary: Get all around limits
  *     tags:
- *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
+ *       - AroundLimit
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -82,7 +82,7 @@
  *           example: 10
  *     responses:
  *       200:
- *         description: List of cash limits
+ *         description: List of around limits
  *         content:
  *           application/json:
  *             schema:
@@ -93,8 +93,8 @@
  *                   example: "SUCCESSFULLY"
  *                 message:
  *                   type: string
- *                   example: "Cash limits fetched successfully"
- *                 cashLimits:
+ *                   example: "Around limits fetched successfully"
+ *                 aroundLimits:
  *                   type: object
  *                   properties:
  *                     total:
@@ -103,16 +103,16 @@
  *                     records:
  *                       type: array
  *                       items:
- *                         $ref: '#/components/schemas/CashLimit'
+ *                         $ref: '#/components/schemas/AroundLimit'
  */
 
 /**
  * @swagger
- * /api/v1/cash-limits/{id}:
+ * /api/v1/around-limits/{id}:
  *   get:
- *     summary: Get a cash limit by ID
+ *     summary: Get a around limit by ID
  *     tags:
- *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
+ *       - AroundLimit
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -121,10 +121,10 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the cash limit
+ *         description: The ID of the around limit
  *     responses:
  *       200:
- *         description: Cash limit found
+ *         description: Around limit found
  *         content:
  *           application/json:
  *             schema:
@@ -135,20 +135,20 @@
  *                   example: "SUCCESSFULLY"
  *                 message:
  *                   type: string
- *                   example: "Cash limit fetched successfully"
+ *                   example: "Around limit fetched successfully"
  *                 cashLimit:
- *                   $ref: '#/components/schemas/CashLimit'
+ *                   $ref: '#/components/schemas/AroundLimit'
  *       404:
- *         description: Cash limit not found
+ *         description: Around limit not found
  */
 
 /**
  * @swagger
- * /api/v1/cash-limits/{id}:
+ * /api/v1/around-limits/{id}:
  *   put:
- *     summary: Update a cash limit
+ *     summary: Update a around limit
  *     tags:
- *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
+ *       - AroundLimit
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -162,10 +162,10 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CashLimit'
+ *             $ref: '#/components/schemas/AroundLimit'
  *     responses:
  *       200:
- *         description: Cash limit updated successfully
+ *         description: Around limit updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -176,18 +176,18 @@
  *                   example: "SUCCESSFULLY"
  *                 message:
  *                   type: string
- *                   example: "Cash limit updated successfully"
+ *                   example: "Around limit updated successfully"
  *                 updatedCashLimit:
- *                   $ref: '#/components/schemas/CashLimit'
+ *                   $ref: '#/components/schemas/AroundLimit'
  */
 
 /**
  * @swagger
- * /api/v1/cash-limits/{id}:
+ * /api/v1/around-limits/{id}:
  *   delete:
- *     summary: Delete a cash limit
+ *     summary: Delete a around limit
  *     tags:
- *       - CashLimit (ຈຳກັດເງິນສົດຂອງຄົນຂັບ)
+ *       - AroundLimit
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -198,7 +198,7 @@
  *           type: string
  *     responses:
  *       200:
- *         description: Cash limit deleted successfully
+ *         description: Around limit deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -209,9 +209,9 @@
  *                   example: "DELETE_SUCCESSFUL"
  *                 message:
  *                   type: string
- *                   example: "Cash limit deleted successfully"
+ *                   example: "Around limit deleted successfully"
  *                 deletedCashLimit:
- *                   $ref: '#/components/schemas/CashLimit'
+ *                   $ref: '#/components/schemas/AroundLimit'
  *       404:
- *         description: Cash limit not found
+ *         description: Around limit not found
  */
