@@ -58,8 +58,12 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 To: receiver
             };
             if (CallStatus === 'ringing') {
-                const noti = yield axios_1.default.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, body);
-                console.log(noti.data);
+                try {
+                    yield axios_1.default.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, body);
+                }
+                catch (error) {
+                    console.log("Error sending notification: ", error);
+                }
             }
         }
         else {

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { messages } from '../../config';
 import { jwt, twiml } from 'twilio';
 import axios from 'axios';
+import { log } from 'console';
 
 const AccessToken = jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
@@ -75,9 +76,11 @@ export const voiceCall = async (req: Request, res: Response) => {
       };
 
       if (CallStatus === 'ringing') {
-        const noti = await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, body)
-
-        console.log(noti.data);
+        try {
+          await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, body)
+        } catch (error) {
+          console.log("Error sending notification: ", error);
+        }
       }
     } else {
       newtwiml.say("Thanks for calling!");
