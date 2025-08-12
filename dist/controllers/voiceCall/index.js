@@ -62,13 +62,29 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const caller = From.toString().replace("client:", "");
             const receiver = To.toString().replace("client:", "");
             console.log(`Voice Webhook - Connecting call from ${caller} to ${receiver}, Direction: ${Direction}`);
-            const dial = twimlResponse.dial({
-                callerId: caller,
-                timeout: 30, // Ring for 30 seconds
-                action: `https://45x8kscv6e.execute-api.ap-southeast-1.amazonaws.com/notification-service/api/v1/voice-call/status`, // Called when dial completes
-                method: "POST",
-            });
-            dial.client(receiver);
+            // const dial = twimlResponse.dial({
+            //   callerId: caller,
+            //   timeout: 30, // Ring for 30 seconds
+            //   action: `https://45x8kscv6e.execute-api.ap-southeast-1.amazonaws.com/notification-service/api/v1/voice-call/status`, // Called when dial completes
+            //   method: "POST",
+            // });
+            // dial.client(receiver);
+            switch (CallStatus) {
+                case "initiated":
+                    console.log(`Call ${CallSid} initiated from ${caller} to ${receiver}`);
+                    // Don't send notification yet, wait for ringing
+                    break;
+                case "ringing":
+                    console.log(`Call ${CallSid} is ringing`);
+                    yield sendCallNotification({
+                        recipient: receiver,
+                        caller: caller,
+                        callSid: CallSid,
+                        status: "ringing",
+                        type: "incoming_call",
+                    });
+                    break;
+            }
             // Only send initial notification, status updates will be handled by status webhook
             console.log(`Voice Webhook - Initiating call to ${receiver}`);
         }
