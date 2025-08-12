@@ -355,11 +355,7 @@ export const voiceCall = async (req: Request, res: Response) => {
         method: "POST",
       });
 
-      dial.client(receiver, {
-        statusCallbackEvent: ["initiated", "ringing", "answered", "completed"],
-        statusCallback: `https://45x8kscv6e.execute-api.ap-southeast-1.amazonaws.com/notification-service/api/v1/voice-call/status`,
-        statusCallbackMethod: "POST",
-      });
+      dial.client(receiver);
 
       // Only send initial notification, status updates will be handled by status webhook
       console.log(`Voice Webhook - Initiating call to ${receiver}`);
