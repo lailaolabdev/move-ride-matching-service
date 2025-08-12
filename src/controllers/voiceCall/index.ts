@@ -547,7 +547,7 @@ export const handleCallStatus = async (req: Request, res: Response) => {
 
     res.status(200).send("OK");
   } catch (error) {
-    console.error("Status webhook error:", error);
+    console.error("Status webhook error:");
     res.status(500).json({
       error: "Failed to process call status",
       detail: (error as Error).message,
@@ -587,7 +587,8 @@ const sendCallNotification = async (data: {
     console.log("Notification sent:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Notification error:", error);
+    console.log("error sending notification:");
+    // console.error("Notification error:", error);
     // Don't throw error to avoid breaking the call flow
   }
 };

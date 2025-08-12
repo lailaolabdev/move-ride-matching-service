@@ -230,7 +230,7 @@ const handleCallStatus = (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(200).send("OK");
     }
     catch (error) {
-        console.error("Status webhook error:", error);
+        console.error("Status webhook error:");
         res.status(500).json({
             error: "Failed to process call status",
             detail: error.message,
@@ -258,7 +258,8 @@ const sendCallNotification = (data) => __awaiter(void 0, void 0, void 0, functio
         return response.data;
     }
     catch (error) {
-        console.error("Notification error:", error);
+        console.log("error sending notification:");
+        // console.error("Notification error:", error);
         // Don't throw error to avoid breaking the call flow
     }
 });
