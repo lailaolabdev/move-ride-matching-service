@@ -13,7 +13,7 @@ export const registerVoiceCallToken = async (req: Request, res: Response) => {
 
     const voiceGrant = new VoiceGrant({
       outgoingApplicationSid: process.env.TWIML_APP_SID,
-      incomingAllow: true
+      incomingAllow: true,
     });
 
     const token = new AccessToken(
@@ -25,9 +25,12 @@ export const registerVoiceCallToken = async (req: Request, res: Response) => {
 
     token.addGrant(voiceGrant);
 
+    console.log("Generated Token: ", token.toJwt());
+    console.log("Identity: ", identity);
+
     res.status(201).json({
       ...messages.CREATE_SUCCESSFUL,
-      token: token.toJwt()
+      token: token.toJwt(),
     });
   } catch (error) {
     console.log("Error: ", error);
@@ -44,24 +47,14 @@ export const voiceCall = async (req: Request, res: Response) => {
   try {
     const newtwiml = new twiml.VoiceResponse();
 
-    const {
-      ApplicationSid,
-      ApiVersion,
-      Called,
-      Caller,
-      CallStatus,
-      From,
-      To,
-      CallSid,
-      Direction,
-      AccountSid
-    } = req.body;
+    const { ApplicationSid, ApiVersion, Called, Caller, CallStatus, From, To, CallSid, Direction, AccountSid } =
+      req.body;
 
     console.log("body: ", req.body);
 
     if (To) {
-      const caller = From.toString().replace("client:", "")
-      const receiver = To.toString().replace("client:", "")
+      const caller = From.toString().replace("client:", "");
+      const receiver = To.toString().replace("client:", "");
 
       const dial = newtwiml.dial();
       dial.client(receiver);
@@ -72,7 +65,7 @@ export const voiceCall = async (req: Request, res: Response) => {
         body: `Call from ${caller}`,
         CallSid,
         From: caller,
-        To: receiver
+        To: receiver,
       };
 
       if (CallStatus === 'ringing') {
@@ -98,4 +91,3 @@ export const voiceCall = async (req: Request, res: Response) => {
     });
   }
 };
-
