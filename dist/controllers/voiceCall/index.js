@@ -64,7 +64,7 @@ const voiceCall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     yield axios_1.default.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, body);
                 }
                 catch (error) {
-                    console.log("Error sending notification: ", error);
+                    console.log("Error sending notification: ");
                 }
             }
         }

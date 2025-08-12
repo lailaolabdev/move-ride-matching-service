@@ -71,7 +71,7 @@ export const voiceCall = async (req: Request, res: Response) => {
         try {
           await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`, body);
         } catch (error) {
-          console.log("Error sending notification: ", error);
+          console.log("Error sending notification: ");
         }
       }
     } else {
