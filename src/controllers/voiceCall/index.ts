@@ -412,118 +412,100 @@ export const handleCallStatus = async (req: Request, res: Response) => {
     const caller = From ? From.toString().replace("client:", "") : "";
     const receiver = To ? To.toString().replace("client:", "") : "";
 
-    // // Handle different call statuses with proper logic
-    // switch (CallStatus) {
-    //   case "initiated":
-    //     console.log(`Call ${CallSid} initiated from ${caller} to ${receiver}`);
-    //     // Don't send notification yet, wait for ringing
-    //     break;
+    // Handle different call statuses with proper logic
+    switch (CallStatus) {
+      case "initiated":
+        console.log(`Call ${CallSid} initiated from ${caller} to ${receiver}`);
+        // Don't send notification yet, wait for ringing
+        break;
 
-    //   case "ringing":
-    //     console.log(`Call ${CallSid} is ringing`);
-    //     await sendCallNotification({
-    //       recipient: receiver,
-    //       caller: caller,
-    //       callSid: CallSid,
-    //       status: "ringing",
-    //       type: "incoming_call",
-    //     });
-    //     break;
+      case "ringing":
+        console.log(`Call ${CallSid} is ringing`);
+        await sendCallNotification({
+          recipient: receiver,
+          caller: caller,
+          callSid: CallSid,
+          status: "ringing",
+          type: "incoming_call",
+        });
+        break;
 
-    //   case "in-progress":
-    //     console.log(`Call ${CallSid} answered and in progress`);
-    //     await sendCallNotification({
-    //       recipient: receiver,
-    //       caller: caller,
-    //       callSid: CallSid,
-    //       status: "answered",
-    //       type: "call_answered",
-    //     });
-    //     break;
+      case "in-progress":
+        console.log(`Call ${CallSid} answered and in progress`);
+        await sendCallNotification({
+          recipient: receiver,
+          caller: caller,
+          callSid: CallSid,
+          status: "answered",
+          type: "call_answered",
+        });
+        break;
 
-    //   case "completed":
-    //     const duration = CallDuration ? parseInt(CallDuration) : 0;
-    //     console.log(`Call ${CallSid} completed with duration: ${duration}s`);
+      case "completed":
+        const duration = CallDuration ? parseInt(CallDuration) : 0;
+        console.log(`Call ${CallSid} completed with duration: ${duration}s`);
 
-    //     // Determine if it was answered or missed based on duration
-    //     const wasAnswered = duration > 0;
-    //     const finalStatus = wasAnswered ? "completed" : "missed";
+        // Determine if it was answered or missed based on duration
+        const wasAnswered = duration > 0;
+        const finalStatus = wasAnswered ? "completed" : "missed";
 
-    //     await sendCallNotification({
-    //       recipient: wasAnswered ? receiver : caller, // Notify missed call to caller
-    //       caller: caller,
-    //       callSid: CallSid,
-    //       status: finalStatus,
-    //       duration: duration,
-    //       type: "call_ended",
-    //     });
+        await sendCallNotification({
+          recipient: wasAnswered ? receiver : caller, // Notify missed call to caller
+          caller: caller,
+          callSid: CallSid,
+          status: finalStatus,
+          duration: duration,
+          type: "call_ended",
+        });
+        break;
 
-    //     await logCallRecord({
-    //       callSid: CallSid,
-    //       from: caller,
-    //       to: receiver,
-    //       status: finalStatus,
-    //       duration: duration,
-    //       timestamp: new Date(),
-    //     });
-    //     break;
+      case "busy":
+        console.log(`Call ${CallSid} - line busy`);
+        await sendCallNotification({
+          recipient: caller,
+          caller: receiver,
+          callSid: CallSid,
+          status: "busy",
+          type: "call_failed",
+        });
+        break;
 
-    //   case "busy":
-    //     console.log(`Call ${CallSid} - line busy`);
-    //     await sendCallNotification({
-    //       recipient: caller,
-    //       caller: receiver,
-    //       callSid: CallSid,
-    //       status: "busy",
-    //       type: "call_failed",
-    //     });
-    //     break;
+      case "no-answer":
+        console.log(`Call ${CallSid} - no answer (missed call)`);
+        await sendCallNotification({
+          recipient: caller,
+          caller: receiver,
+          callSid: CallSid,
+          status: "missed",
+          type: "call_missed",
+        });
+        break;
 
-    //   case "no-answer":
-    //     console.log(`Call ${CallSid} - no answer (missed call)`);
-    //     await sendCallNotification({
-    //       recipient: caller,
-    //       caller: receiver,
-    //       callSid: CallSid,
-    //       status: "missed",
-    //       type: "call_missed",
-    //     });
+      case "failed":
+        console.error(`Call ${CallSid} failed`);
+        await sendCallNotification({
+          recipient: caller,
+          caller: receiver,
+          callSid: CallSid,
+          status: "failed",
+          type: "call_failed",
+        });
+        break;
 
-    //     await logCallRecord({
-    //       callSid: CallSid,
-    //       from: caller,
-    //       to: receiver,
-    //       status: "missed",
-    //       duration: 0,
-    //       timestamp: new Date(),
-    //     });
-    //     break;
+      case "canceled":
+        console.log(`Call ${CallSid} was canceled`);
+        await sendCallNotification({
+          recipient: receiver,
+          caller: caller,
+          callSid: CallSid,
+          status: "canceled",
+          type: "call_canceled",
+        });
+        break;
 
-    //   case "failed":
-    //     console.error(`Call ${CallSid} failed`);
-    //     await sendCallNotification({
-    //       recipient: caller,
-    //       caller: receiver,
-    //       callSid: CallSid,
-    //       status: "failed",
-    //       type: "call_failed",
-    //     });
-    //     break;
-
-    //   case "canceled":
-    //     console.log(`Call ${CallSid} was canceled`);
-    //     await sendCallNotification({
-    //       recipient: receiver,
-    //       caller: caller,
-    //       callSid: CallSid,
-    //       status: "canceled",
-    //       type: "call_canceled",
-    //     });
-    //     break;
-
-    //   // default:
-    //     console.log(`Status Webhook - Unhandled status: ${CallStatus} for CallSid: ${CallSid}`);
-    // }
+        // default:
+        console.log(`Status Webhook - Unhandled status: ${CallStatus} for CallSid: ${CallSid}`);
+    }
 
     // Also handle DialCallStatus if present (for dial verb status)
     if (DialCallStatus && DialCallStatus !== CallStatus) {
@@ -577,6 +559,8 @@ const sendCallNotification = async (data: {
       timestamp: new Date().toISOString(),
     };
 
+    console.log("Sending notification:", notificationBody);
+
     const response = await axios.post(
       `${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications/voice-call`,
       notificationBody
@@ -587,26 +571,6 @@ const sendCallNotification = async (data: {
   } catch (error) {
     console.error("Notification error:", error);
     // Don't throw error to avoid breaking the call flow
-  }
-};
-
-// Helper function to log call records
-const logCallRecord = async (callData: {
-  callSid: string;
-  from: string;
-  to: string;
-  status: string;
-  duration: number;
-  timestamp: Date;
-}) => {
-  try {
-    // Replace with your database logging logic
-    console.log("Call record logged:", callData);
-
-    // Example: Save to database
-    // await CallRecord.create(callData);
-  } catch (error) {
-    console.error("Call logging error:", error);
   }
 };
 
