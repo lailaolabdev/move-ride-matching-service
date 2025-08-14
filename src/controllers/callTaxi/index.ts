@@ -43,6 +43,7 @@ import vehicleDriverModel from "../../models/vehicleDriver";
 import { Types } from "mongoose";
 import { driverRateCal } from "../calculation";
 import { createClaimMoney, getClaimMoney, updateClaimMoney } from "../../services/claimMoney";
+import { getClaimPaymentService } from "../../services/callTaxi";
 import { convertToEndDate, convertToStartDate } from "../../utils/timezone";
 import taxiTypePricingModel from "../../models/taxiTypePricing";
 import { getDriverCashByDriverIdService } from "../../services/driverCash";
@@ -1678,6 +1679,38 @@ export const checkUsingPromotion = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching tax info:", error);
     res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+};
+
+export const getClaimPayment = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    const claimMoneyId = req.params.id || req.query.claimMoneyId;
+
+    const claimPayment = await getClaimPaymentService(req);
+
+    console.log(user.id);
+
+    let claimMoney = await CallTaxi.find({
+        claimMoney: claimMoneyId,
+        driverId: user.id,
+        status: "Paid"
+      })
+      .select(
+        "_id origin originName destination destinationName requestType totalPrice billNumber driverIncome createdAt updatedAt"
+      )
+
+    res.json({
+      ...messages.SUCCESSFULLY,
+      claimMoney,
+    });
+  } catch (error) {
+    console.error("Error fetching claim payment: ", error);
+    return res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,
       detail: (error as Error).message,

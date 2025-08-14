@@ -5,6 +5,7 @@ import { roundCoord } from "../controllers/callTaxi/helper";
 import mongoose, { Types } from "mongoose"
 import vehicleDriverModel from "../models/vehicleDriver";
 import { generateBillNumber } from "../utils/generateBillNumber";
+import { callTaxiTotalPrice } from "../controllers/callTaxi";
 
 export const createCallTaxiService = async ({
     req,
@@ -955,3 +956,37 @@ export const getDriverPaymentDetailService = async (callTaxiId: any): Promise<an
         throw error;
     }
 }
+
+export const getClaimPaymentService = async (req: Request): Promise<any> => {
+    try {
+        const userId = (req as any).user.id;
+        const claimPayments = await CallTaxi.aggregate([
+            {
+                $match: {
+                    claimMoney: userId,
+                    status: "Paid"
+                }
+            },
+            {
+                $project: {
+                    billNumber: 1,
+                    requestType: 1,
+                    paymentMethod: 1,
+                    point: 1,
+                    totalPrice: 1,
+                    origin: 1,
+                    originName: 1,
+                    destination: 1,
+                    destinationName: 1,
+                    driverIncome: 1,
+                    createdAt: 1,
+                    updatedAt: 1
+                }
+            }
+        ]);
+        return claimPayments.length ? claimPayments[0] : null;
+    } catch (error) {
+        console.error("Error fetching claim payment: ", error);
+        throw error;
+    }
+};
