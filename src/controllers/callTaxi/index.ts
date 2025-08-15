@@ -1593,6 +1593,17 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
     const driverId = (req as any).user.id;
     const { startDate, endDate } = req.query;
 
+    const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${driverId}`);
+    const userData = user?.data?.user
+
+    if (!userData || userData?.role !== "DRIVER") {
+      return res.status(404).json({
+        code: messages.NOT_FOUND.code,
+        message: messages.NOT_FOUND.message,
+        detail: `Driver with id: ${driverId} not found`,
+      });
+    }
+
     const filter: any = {};
 
     if (startDate || endDate) {
@@ -1622,7 +1633,8 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
       totalDriverCash: {
         amount: totalDriverCash?.amount ?? 0,
         limit: totalDriverCash?.limit ?? 0,
-      }
+      },
+      currency: userData?.country?.currency,
     });
   } catch (error) {
     console.error("Error fetching tax info:", error);
