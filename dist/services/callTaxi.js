@@ -280,7 +280,7 @@ const driverUpdateStatusService = (data) => __awaiter(void 0, void 0, void 0, fu
         const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, {
             driverId,
             status: data.status,
-            driverRegistrationSource: data.driverRegistrationSource,
+            registrationSource: data.driverRegistrationSource,
             driverFullName: data.driverFullName,
             driverPhoneNumber: data.driverPhoneNumber
         }, { new: true }).lean();
