@@ -1389,10 +1389,19 @@ const getCommentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.getCommentAndRating = getCommentAndRating;
 // Report driver part
 const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c, _d;
     try {
         const driverId = req.user.id;
         const { startDate, endDate } = req.query;
+        const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${driverId}`);
+        const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
+        if (!userData || (userData === null || userData === void 0 ? void 0 : userData.role) !== "DRIVER") {
+            return res.status(404).json({
+                code: config_1.messages.NOT_FOUND.code,
+                message: config_1.messages.NOT_FOUND.message,
+                detail: `Driver with id: ${driverId} not found`,
+            });
+        }
         const filter = {};
         if (startDate || endDate) {
             const createdAtFilter = {};
@@ -1411,9 +1420,9 @@ const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, fun
         const totalDriverCash = yield (0, driverCash_1.getDriverCashByDriverIdService)(driverId);
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { totalIncome,
             totalIncomeThatWasNotClaim, totalDriverCash: {
-                amount: (_a = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.amount) !== null && _a !== void 0 ? _a : 0,
-                limit: (_b = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.limit) !== null && _b !== void 0 ? _b : 0,
-            } }));
+                amount: (_b = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.amount) !== null && _b !== void 0 ? _b : 0,
+                limit: (_c = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.limit) !== null && _c !== void 0 ? _c : 0,
+            }, currency: (_d = userData === null || userData === void 0 ? void 0 : userData.country) === null || _d === void 0 ? void 0 : _d.currency }));
     }
     catch (error) {
         console.error("Error fetching tax info:", error);
