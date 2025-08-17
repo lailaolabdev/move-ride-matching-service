@@ -3,7 +3,6 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IDriverCash extends Document {
     driver: string,
     amount: number,
-    limit: number,
 }
 
 const DriverCashSchema: Schema = new Schema({
@@ -12,11 +11,6 @@ const DriverCashSchema: Schema = new Schema({
         required: true
     },
     amount: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-    limit: {
         type: Number,
         required: true,
         default: 0

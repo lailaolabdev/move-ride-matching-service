@@ -46,7 +46,10 @@ import { createClaimMoney, getClaimMoney, updateClaimMoney } from "../../service
 import { convertToEndDate, convertToStartDate } from "../../utils/timezone";
 import taxiTypePricingModel from "../../models/taxiTypePricing";
 import { getDriverCashByDriverIdService } from "../../services/driverCash";
-import { IDriverCash } from "../../models/driverCash";
+import driverCashModel, { IDriverCash } from "../../models/driverCash";
+import { ParamsDictionary } from "express-serve-static-core";
+import { ParsedQs } from "qs";
+import { cashLimitModel } from "../../models/cashLimit";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -1193,6 +1196,19 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
       return;
     }
 
+    // Check is driver cash was limited or not
+    const cashLimit = await cashLimitModel.findOne({ country: driverData?.data?.user?.country?._id });
+    const driverCash = await driverCashModel.findOne({ driver: user.id });
+
+    if (cashLimit && driverCash && Number(cashLimit?.amount) < Number(driverCash?.amount)) {
+      res.status(401).json({
+        ...messages.BAD_REQUEST,
+        detail: "You cannot accept this order because your cash is limited",
+      });
+
+      return;
+    }
+
     const taxi = await taxiModel.findById(driverData?.data?.user?.taxi);
     const rating = await ratingModel.findOne({ userId: driverData?.data?.user?._id });
 
@@ -1625,6 +1641,7 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
     const totalIncome = await getTotalDriverIncomeService(driverId, filter);
     const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId, filter);
     const totalDriverCash: IDriverCash | null = await getDriverCashByDriverIdService(driverId)
+    const cashLimit = await cashLimitModel.findOne({ country: userData?.country?._id });
 
     res.json({
       ...messages.SUCCESSFULLY,
@@ -1632,7 +1649,7 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
       totalIncomeThatWasNotClaim,
       totalDriverCash: {
         amount: totalDriverCash?.amount ?? 0,
-        limit: totalDriverCash?.limit ?? 0,
+        limit: cashLimit?.amount ?? 0,
       },
       currency: userData?.country?.currency,
     });

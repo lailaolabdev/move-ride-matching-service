@@ -90,78 +90,78 @@ const handleCallStatus = (req, res) => __awaiter(void 0, void 0, void 0, functio
         console.log(`Call Status Update - CallSid: ${CallSid}, Status: ${CallStatus}`);
         const caller = From ? From.toString().replace("client:", "") : "";
         const receiver = To ? To.toString().replace("client:", "") : "";
-        // Handle different call statuses
-        switch (CallStatus) {
-            case "ringing":
-                yield sendCallNotification({
-                    recipient: receiver,
-                    caller: caller,
-                    callSid: CallSid,
-                    status: "ringing",
-                    type: "status_update",
-                });
-                break;
-            case "in-progress":
-                yield sendCallNotification({
-                    recipient: receiver,
-                    caller: caller,
-                    callSid: CallSid,
-                    status: "answered",
-                    type: "status_update",
-                });
-                console.log(`Call ${CallSid} is now in progress`);
-                break;
-            case "completed":
-                const duration = CallDuration ? parseInt(CallDuration) : 0;
-                yield sendCallNotification({
-                    recipient: receiver,
-                    caller: caller,
-                    callSid: CallSid,
-                    status: "completed",
-                    duration: duration,
-                    type: "status_update",
-                });
-                break;
-            case "busy":
-                yield sendCallNotification({
-                    recipient: caller,
-                    caller: receiver,
-                    callSid: CallSid,
-                    status: "busy",
-                    type: "status_update",
-                });
-                break;
-            case "no-answer":
-                yield sendCallNotification({
-                    recipient: caller,
-                    caller: receiver,
-                    callSid: CallSid,
-                    status: "missed",
-                    type: "status_update",
-                });
-                break;
-            case "failed":
-                console.error(`Call ${CallSid} failed`);
-                yield sendCallNotification({
-                    recipient: caller,
-                    caller: receiver,
-                    callSid: CallSid,
-                    status: "failed",
-                    type: "status_update",
-                });
-                break;
-            case "canceled":
-                yield sendCallNotification({
-                    recipient: receiver,
-                    caller: caller,
-                    callSid: CallSid,
-                    status: "canceled",
-                    type: "status_update",
-                });
-                break;
-            default:
-                console.log(`Unhandled call status: ${CallStatus} for CallSid: ${CallSid}`);
-        }
+        // // Handle different call statuses
+        // switch (CallStatus) {
+        //   case "ringing":
+        //     await sendCallNotification({
+        //       recipient: receiver,
+        //       caller: caller,
+        //       callSid: CallSid,
+        //       status: "ringing",
+        //       type: "status_update",
+        //     });
+        //     break;
+        //   case "in-progress":
+        //     await sendCallNotification({
+        //       recipient: receiver,
+        //       caller: caller,
+        //       callSid: CallSid,
+        //       status: "answered",
+        //       type: "status_update",
+        //     });
+        //     console.log(`Call ${CallSid} is now in progress`);
+        //     break;
+        //   case "completed":
+        //     const duration = CallDuration ? parseInt(CallDuration) : 0;
+        //     await sendCallNotification({
+        //       recipient: receiver,
+        //       caller: caller,
+        //       callSid: CallSid,
+        //       status: "completed",
+        //       duration: duration,
+        //       type: "status_update",
+        //     });
+        //     break;
+        //   case "busy":
+        //     await sendCallNotification({
+        //       recipient: caller,
+        //       caller: receiver,
+        //       callSid: CallSid,
+        //       status: "busy",
+        //       type: "status_update",
+        //     });
+        //     break;
+        //   case "no-answer":
+        //     await sendCallNotification({
+        //       recipient: caller,
+        //       caller: receiver,
+        //       callSid: CallSid,
+        //       status: "missed",
+        //       type: "status_update",
+        //     });
+        //     break;
+        //   case "failed":
+        //     console.error(`Call ${CallSid} failed`);
+        //     await sendCallNotification({
+        //       recipient: caller,
+        //       caller: receiver,
+        //       callSid: CallSid,
+        //       status: "failed",
+        //       type: "status_update",
+        //     });
+        //     break;
+        //   case "canceled":
+        //     await sendCallNotification({
+        //       recipient: receiver,
+        //       caller: caller,
+        //       callSid: CallSid,
+        //       status: "canceled",
+        //       type: "status_update",
+        //     });
+        //     break;
+        //   default:
+        //     console.log(`Unhandled call status: ${CallStatus} for CallSid: ${CallSid}`);
+        // }
         res.status(200).send("OK");
     }
     catch (error) {
