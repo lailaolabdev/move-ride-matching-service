@@ -50,6 +50,7 @@ import driverCashModel, { IDriverCash } from "../../models/driverCash";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 import { cashLimitModel } from "../../models/cashLimit";
+import { updateDriverLocationService } from "../../services/driverLocation";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -1129,6 +1130,16 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
       await notifyDriverWhenCancel(token, callTaxi);
       await removeCallTaxiFromRedis(updated._id);
+    }
+
+    if (updated && updated.status === STATUS.PAID) {
+      // check if driver cash is limited remove accepted call taxi from redis
+      const driverCash = await driverCashModel.findOne({ driver: updated?.driverId });
+      const cashLimit = await cashLimitModel.findOne({ countryCode: updated?.countryCode });
+
+      if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+        await updateDriverLocationService({ driverId: updated?.driverId });
+      }
     }
 
     res.status(200).json({
