@@ -8,14 +8,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTaxiTypePricing = exports.updateTaxiTypePricing = exports.getTaxiTypePricingById = exports.getAllTaxiTypePricing = exports.createTaxiTypePricing = void 0;
 const taxiTypePricing_1 = require("../../services/taxiTypePricing");
 const index_1 = require("../../config/index"); // Assuming you have a messages file for status codes
+const taxiTypePricing_2 = __importDefault(require("../../models/taxiTypePricing"));
 // CREATE Taxi Type
 const createTaxiTypePricing = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { taxiTypeId, minDistance, maxDistance, meterPrice, flatFarePrice, country, countryCode } = req.body;
+        // ✅ Validation: minDistance must be less than maxDistance
+        if (minDistance >= maxDistance) {
+            res.status(400).json({
+                code: index_1.messages.BAD_REQUEST.code,
+                message: index_1.messages.BAD_REQUEST.message,
+                detail: "minDistance must be less than maxDistance"
+            });
+            return;
+        }
+        const existingTaxiTypePricing = yield taxiTypePricing_2.default.find({
+            taxiTypeId,
+            countryCode,
+            country
+        });
+        for (let i = 0; i < existingTaxiTypePricing.length; i++) {
+            const taxiTypePricing = existingTaxiTypePricing[i];
+            if (taxiTypePricing.minDistance < maxDistance) {
+                res.status(400).json({
+                    code: index_1.messages.BAD_REQUEST.code,
+                    message: index_1.messages.BAD_REQUEST.message,
+                    detail: "Taxi Type Pricing overlaps with existing entry"
+                });
+                return;
+            }
+        }
         const taxiTypePricing = yield (0, taxiTypePricing_1.createTaxiTypePricingService)({
             taxiTypeId,
             minDistance,

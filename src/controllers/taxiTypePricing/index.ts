@@ -7,6 +7,7 @@ import {
     updateTaxiTypePricingService,
 } from "../../services/taxiTypePricing";
 import { messages } from "../../config/index"; // Assuming you have a messages file for status codes
+import taxiTypePricingModel from "../../models/taxiTypePricing";
 
 // CREATE Taxi Type
 export const createTaxiTypePricing = async (req: Request, res: Response) => {
@@ -20,6 +21,36 @@ export const createTaxiTypePricing = async (req: Request, res: Response) => {
             country,
             countryCode
         } = req.body;
+
+        // ✅ Validation: minDistance must be less than maxDistance
+        if (minDistance >= maxDistance) {
+            res.status(400).json({
+                code: messages.BAD_REQUEST.code,
+                message: messages.BAD_REQUEST.message,
+                detail: "minDistance must be less than maxDistance"
+            });
+
+            return;
+        }
+
+        const existingTaxiTypePricing = await taxiTypePricingModel.find({
+            taxiTypeId,
+            countryCode,
+            country
+        });
+
+        for (let i = 0; i < existingTaxiTypePricing.length; i++) {
+            const taxiTypePricing = existingTaxiTypePricing[i];
+
+            if (taxiTypePricing.minDistance < maxDistance) {
+                res.status(400).json({
+                    code: messages.BAD_REQUEST.code,
+                    message: messages.BAD_REQUEST.message,
+                    detail: "Taxi Type Pricing overlaps with existing entry"
+                });
+                return;
+            }
+        }
 
         const taxiTypePricing = await createTaxiTypePricingService({
             taxiTypeId,
