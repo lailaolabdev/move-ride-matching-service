@@ -29,6 +29,7 @@ const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"
 const driverCash_1 = require("../../services/driverCash");
 const driverCash_2 = __importDefault(require("../../models/driverCash"));
 const cashLimit_1 = require("../../models/cashLimit");
+const driverLocation_1 = require("../../services/driverLocation");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -982,6 +983,14 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             const token = req.headers.authorization;
             yield (0, helper_1.notifyDriverWhenCancel)(token, callTaxi);
             yield (0, helper_1.removeCallTaxiFromRedis)(updated._id);
+        }
+        if (updated && updated.status === callTaxi_2.STATUS.PAID) {
+            // check if driver cash is limited remove accepted call taxi from redis
+            const driverCash = yield driverCash_2.default.findOne({ driver: updated === null || updated === void 0 ? void 0 : updated.driverId });
+            const cashLimit = yield cashLimit_1.cashLimitModel.findOne({ countryCode: updated === null || updated === void 0 ? void 0 : updated.countryCode });
+            if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+                yield (0, driverLocation_1.updateDriverLocationService)({ driverId: updated === null || updated === void 0 ? void 0 : updated.driverId });
+            }
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
