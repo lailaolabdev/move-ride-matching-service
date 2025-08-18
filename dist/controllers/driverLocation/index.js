@@ -60,6 +60,7 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
         const driverCash = yield driverCash_1.default.findOne({ driver: driverId });
         const cashLimit = yield cashLimit_1.cashLimitModel.findOne({ countryCode: (_b = userData === null || userData === void 0 ? void 0 : userData.country) === null || _b === void 0 ? void 0 : _b.code });
         if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+            yield (0, driverLocation_1.updateDriverLocationService)({ driverId });
             res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
                 message: config_1.messages.BAD_REQUEST.message,

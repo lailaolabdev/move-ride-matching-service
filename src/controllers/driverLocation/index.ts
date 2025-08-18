@@ -57,6 +57,8 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
     const cashLimit = await cashLimitModel.findOne({ countryCode: userData?.country?.code });
 
     if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+      await updateDriverLocationService({ driverId });
+
       res.status(400).json({
         code: messages.BAD_REQUEST.code,
         message: messages.BAD_REQUEST.message,
