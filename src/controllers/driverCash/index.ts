@@ -18,6 +18,17 @@ export const createDriverCash = async (req: Request, res: Response) => {
         const driverId = (req as any).user.id;
         const body = validateDriverCashBody(req.body);
 
+        const existingDriverCash = await getDriverCashByDriverIdService(body.driver);
+
+        if (existingDriverCash) {
+            res.status(400).json({
+                code: messages.ALREADY_EXIST.code,
+                message: "Driver cash already exists for this driver",
+            });
+
+            return
+        }
+
         const driverCash = await createDriverCashService(driverId, body);
 
         res.status(201).json({
