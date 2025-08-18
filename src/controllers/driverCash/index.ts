@@ -10,7 +10,7 @@ import {
 } from "../../services/driverCash";
 import { messages } from "../../config";
 import { validateDriverCashBody } from "./helper";
-import driverCashModel, { IDriverCash } from "../../models/driverCash";
+import { IDriverCash } from "../../models/driverCash";
 
 // CREATE Driver Cash
 export const createDriverCash = async (req: Request, res: Response) => {
