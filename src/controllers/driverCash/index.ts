@@ -10,7 +10,7 @@ import {
 } from "../../services/driverCash";
 import { messages } from "../../config";
 import { validateDriverCashBody } from "./helper";
-import driverCashModel, { IDriverCash } from "../../models/driverCash";
+import { IDriverCash } from "../../models/driverCash";
 
 // Create DriverCash
 export const createDriverCash = async (req: Request, res: Response) => {
@@ -27,6 +27,18 @@ export const createDriverCash = async (req: Request, res: Response) => {
             limit
         } = req.body;
 
+        const existingDriverCash = await getDriverCashByDriverIdService(body.driver);
+
+        if (existingDriverCash) {
+            res.status(400).json({
+                code: messages.ALREADY_EXIST.code,
+                message: "Driver cash already exists for this driver",
+            });
+
+            return
+        }
+
+        const driverCash = await createDriverCashService(driverId, body);
         if (
             !firstName || !lastName || !fullName || !phone || !email ||
             !country || !countryCode || amount === undefined || limit === undefined

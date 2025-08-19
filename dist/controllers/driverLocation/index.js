@@ -19,8 +19,10 @@ const axios_1 = __importDefault(require("axios"));
 const rating_1 = require("../../models/rating");
 const callTaxi_1 = require("../../models/callTaxi");
 const claimMoney_1 = require("../../services/claimMoney");
+const driverCash_1 = __importDefault(require("../../models/driverCash"));
+const cashLimit_1 = require("../../models/cashLimit");
 const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     try {
         const driverId = req.user.id;
         const token = req.headers.authorization;
@@ -54,6 +56,18 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             });
             return;
         }
+        // If driver cash is limited, we will not allow to update driver location
+        const driverCash = yield driverCash_1.default.findOne({ driver: driverId });
+        const cashLimit = yield cashLimit_1.cashLimitModel.findOne({ countryCode: (_b = userData === null || userData === void 0 ? void 0 : userData.country) === null || _b === void 0 ? void 0 : _b.code });
+        if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+            yield (0, driverLocation_1.updateDriverLocationService)({ driverId });
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: config_1.messages.BAD_REQUEST.message,
+                detail: "Your cash limit has been reached. Please contact support for more information.",
+            });
+            return;
+        }
         let numberOfRating = 0;
         if (isOnline === "online") {
             // step 2: check is there rating exist
@@ -76,7 +90,7 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                         }
                     }
                 ]);
-                numberOfRating = ((_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating) || 0;
+                numberOfRating = ((_c = sumRating[0]) === null || _c === void 0 ? void 0 : _c.averageRating) || 0;
                 yield rating_1.ratingModel.create({ userId: driverId, rating: numberOfRating });
             }
             else {
@@ -88,8 +102,8 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             token: token,
             driverId,
             driverRegistrationSource: userData.registrationSource,
-            country: (_c = userData === null || userData === void 0 ? void 0 : userData.country) === null || _c === void 0 ? void 0 : _c._id,
-            countryCode: (_d = userData === null || userData === void 0 ? void 0 : userData.country) === null || _d === void 0 ? void 0 : _d.code
+            country: (_d = userData === null || userData === void 0 ? void 0 : userData.country) === null || _d === void 0 ? void 0 : _d._id,
+            countryCode: (_e = userData === null || userData === void 0 ? void 0 : userData.country) === null || _e === void 0 ? void 0 : _e.code
         });
         const match = userData === null || userData === void 0 ? void 0 : userData.taxiType.match(/ObjectId\('(.+?)'\)/);
         const taxiTypeId = match ? match[1] : null;

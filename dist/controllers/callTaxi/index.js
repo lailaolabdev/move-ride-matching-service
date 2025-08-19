@@ -27,6 +27,9 @@ const claimMoney_1 = require("../../services/claimMoney");
 const timezone_1 = require("../../utils/timezone");
 const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
 const driverCash_1 = require("../../services/driverCash");
+const driverCash_2 = __importDefault(require("../../models/driverCash"));
+const cashLimit_1 = require("../../models/cashLimit");
+const driverLocation_1 = require("../../services/driverLocation");
 const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
@@ -981,6 +984,14 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             yield (0, helper_1.notifyDriverWhenCancel)(token, callTaxi);
             yield (0, helper_1.removeCallTaxiFromRedis)(updated._id);
         }
+        if (updated && updated.status === callTaxi_2.STATUS.PAID) {
+            // check if driver cash is limited remove accepted call taxi from redis
+            const driverCash = yield driverCash_2.default.findOne({ driver: updated === null || updated === void 0 ? void 0 : updated.driverId });
+            const cashLimit = yield cashLimit_1.cashLimitModel.findOne({ countryCode: updated === null || updated === void 0 ? void 0 : updated.countryCode });
+            if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+                yield (0, driverLocation_1.updateDriverLocationService)({ driverId: updated === null || updated === void 0 ? void 0 : updated.driverId });
+            }
+        }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,
@@ -1017,7 +1028,7 @@ const updateClaimMoneyStatus = (req, res) => __awaiter(void 0, void 0, void 0, f
 });
 exports.updateClaimMoneyStatus = updateClaimMoneyStatus;
 const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
     try {
         const user = req.user;
         const { id } = req.params;
@@ -1032,14 +1043,21 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
             res.status(400).json(Object.assign(Object.assign({}, config_1.messages.BAD_REQUEST), { detail: "You are not a driver" }));
             return;
         }
-        const taxi = yield taxi_1.default.findById((_d = (_c = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.taxi);
-        const rating = yield rating_1.ratingModel.findOne({ userId: (_f = (_e = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f._id });
+        // Check is driver cash was limited or not
+        const cashLimit = yield cashLimit_1.cashLimitModel.findOne({ country: (_e = (_d = (_c = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.country) === null || _e === void 0 ? void 0 : _e._id });
+        const driverCash = yield driverCash_2.default.findOne({ driver: user.id });
+        if (cashLimit && driverCash && Number(cashLimit === null || cashLimit === void 0 ? void 0 : cashLimit.amount) < Number(driverCash === null || driverCash === void 0 ? void 0 : driverCash.amount)) {
+            res.status(401).json(Object.assign(Object.assign({}, config_1.messages.BAD_REQUEST), { detail: "You cannot accept this order because your cash is limited" }));
+            return;
+        }
+        const taxi = yield taxi_1.default.findById((_g = (_f = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _f === void 0 ? void 0 : _f.user) === null || _g === void 0 ? void 0 : _g.taxi);
+        const rating = yield rating_1.ratingModel.findOne({ userId: (_j = (_h = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _h === void 0 ? void 0 : _h.user) === null || _j === void 0 ? void 0 : _j._id });
         const driver = {
-            id: (_h = (_g = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _g === void 0 ? void 0 : _g.user) === null || _h === void 0 ? void 0 : _h._id,
-            image: (_k = (_j = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _j === void 0 ? void 0 : _j.user) === null || _k === void 0 ? void 0 : _k.profileImage,
-            fullName: (_m = (_l = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _l === void 0 ? void 0 : _l.user) === null || _m === void 0 ? void 0 : _m.fullName,
+            id: (_l = (_k = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _k === void 0 ? void 0 : _k.user) === null || _l === void 0 ? void 0 : _l._id,
+            image: (_o = (_m = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _m === void 0 ? void 0 : _m.user) === null || _o === void 0 ? void 0 : _o.profileImage,
+            fullName: (_q = (_p = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _p === void 0 ? void 0 : _p.user) === null || _q === void 0 ? void 0 : _q.fullName,
             rating: rating === null || rating === void 0 ? void 0 : rating.rating,
-            licensePlate: (_p = (_o = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _o === void 0 ? void 0 : _o.user) === null || _p === void 0 ? void 0 : _p.licensePlate,
+            licensePlate: (_s = (_r = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _r === void 0 ? void 0 : _r.user) === null || _s === void 0 ? void 0 : _s.licensePlate,
             vehicleBrandName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleBrandName,
             vehicleModelName: taxi === null || taxi === void 0 ? void 0 : taxi.vehicleModelName,
         };
@@ -1095,9 +1113,9 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const confirmed = yield (0, callTaxi_1.driverUpdateStatusService)({
             req,
             status,
-            driverRegistrationSource: (_r = (_q = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _q === void 0 ? void 0 : _q.user) === null || _r === void 0 ? void 0 : _r.registrationSource,
-            driverFullName: (_t = (_s = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _s === void 0 ? void 0 : _s.user) === null || _t === void 0 ? void 0 : _t.fullName,
-            driverPhoneNumber: (_v = (_u = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _u === void 0 ? void 0 : _u.user) === null || _v === void 0 ? void 0 : _v.phone,
+            driverRegistrationSource: (_u = (_t = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _t === void 0 ? void 0 : _t.user) === null || _u === void 0 ? void 0 : _u.registrationSource,
+            driverFullName: (_w = (_v = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _v === void 0 ? void 0 : _v.user) === null || _w === void 0 ? void 0 : _w.fullName,
+            driverPhoneNumber: (_y = (_x = driverData === null || driverData === void 0 ? void 0 : driverData.data) === null || _x === void 0 ? void 0 : _x.user) === null || _y === void 0 ? void 0 : _y.phone,
         });
         if (!confirmed) {
             res.status(404).json({
@@ -1389,10 +1407,19 @@ const getCommentAndRating = (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.getCommentAndRating = getCommentAndRating;
 // Report driver part
 const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c, _d, _e;
     try {
         const driverId = req.user.id;
         const { startDate, endDate } = req.query;
+        const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${driverId}`);
+        const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
+        if (!userData || (userData === null || userData === void 0 ? void 0 : userData.role) !== "DRIVER") {
+            return res.status(404).json({
+                code: config_1.messages.NOT_FOUND.code,
+                message: config_1.messages.NOT_FOUND.message,
+                detail: `Driver with id: ${driverId} not found`,
+            });
+        }
         const filter = {};
         if (startDate || endDate) {
             const createdAtFilter = {};
@@ -1409,11 +1436,12 @@ const getTotalDriverIncome = (req, res) => __awaiter(void 0, void 0, void 0, fun
         const totalIncome = yield (0, callTaxi_1.getTotalDriverIncomeService)(driverId, filter);
         const totalIncomeThatWasNotClaim = yield (0, callTaxi_1.getTotalDriverIncomeServiceThatWasNotClaim)(driverId, filter);
         const totalDriverCash = yield (0, driverCash_1.getDriverCashByDriverIdService)(driverId);
+        const cashLimit = yield cashLimit_1.cashLimitModel.findOne({ country: (_b = userData === null || userData === void 0 ? void 0 : userData.country) === null || _b === void 0 ? void 0 : _b._id });
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { totalIncome,
             totalIncomeThatWasNotClaim, totalDriverCash: {
-                amount: (_a = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.amount) !== null && _a !== void 0 ? _a : 0,
-                limit: (_b = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.limit) !== null && _b !== void 0 ? _b : 0,
-            } }));
+                amount: (_c = totalDriverCash === null || totalDriverCash === void 0 ? void 0 : totalDriverCash.amount) !== null && _c !== void 0 ? _c : 0,
+                limit: (_d = cashLimit === null || cashLimit === void 0 ? void 0 : cashLimit.amount) !== null && _d !== void 0 ? _d : 0,
+            }, currency: (_e = userData === null || userData === void 0 ? void 0 : userData.country) === null || _e === void 0 ? void 0 : _e.currency }));
     }
     catch (error) {
         console.error("Error fetching tax info:", error);

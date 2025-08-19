@@ -5,6 +5,8 @@ import axios from "axios";
 import { ratingModel } from "../../models/rating";
 import { CallTaxi } from "../../models/callTaxi";
 import { createClaimMoney } from "../../services/claimMoney";
+import driverCashModel from "../../models/driverCash";
+import { cashLimitModel } from "../../models/cashLimit";
 
 export const updateDriverLocation = async (req: Request, res: Response) => {
   try {
@@ -45,6 +47,22 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
       res.status(400).json({
         code: messages.BAD_REQUEST.code,
         message: "You are not a driver",
+      });
+
+      return;
+    }
+
+    // If driver cash is limited, we will not allow to update driver location
+    const driverCash = await driverCashModel.findOne({ driver: driverId });
+    const cashLimit = await cashLimitModel.findOne({ countryCode: userData?.country?.code });
+
+    if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+      await updateDriverLocationService({ driverId });
+
+      res.status(400).json({
+        code: messages.BAD_REQUEST.code,
+        message: messages.BAD_REQUEST.message,
+        detail: "Your cash limit has been reached. Please contact support for more information.",
       });
 
       return;

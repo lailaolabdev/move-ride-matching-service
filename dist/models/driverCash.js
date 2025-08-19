@@ -44,11 +44,6 @@ const DriverCashSchema = new mongoose_1.Schema({
         required: true,
         default: 0
     },
-    limit: {
-        type: Number,
-        required: true,
-        default: 0
-    },
 }, {
     timestamps: true
 });

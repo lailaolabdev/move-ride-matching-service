@@ -18,6 +18,14 @@ const createDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const driverId = req.user.id;
         const body = (0, helper_1.validateDriverCashBody)(req.body);
+        const existingDriverCash = yield (0, driverCash_1.getDriverCashByDriverIdService)(body.driver);
+        if (existingDriverCash) {
+            res.status(400).json({
+                code: config_1.messages.ALREADY_EXIST.code,
+                message: "Driver cash already exists for this driver",
+            });
+            return;
+        }
         const driverCash = yield (0, driverCash_1.createDriverCashService)(driverId, body);
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,

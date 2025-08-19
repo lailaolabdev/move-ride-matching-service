@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateDriverCashBody = void 0;
 const validateDriverCashBody = (body) => {
-    const { amount, limit } = body;
+    const { amount, driver } = body;
     const returnBody = {};
+    if (driver)
+        returnBody.driver = driver;
     if (amount)
         returnBody.amount = amount;
-    if (limit)
-        returnBody.limit = limit;
     return returnBody;
 };
 exports.validateDriverCashBody = validateDriverCashBody;

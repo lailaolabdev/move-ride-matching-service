@@ -47,7 +47,11 @@ import { getClaimPaymentService } from "../../services/callTaxi";
 import { convertToEndDate, convertToStartDate } from "../../utils/timezone";
 import taxiTypePricingModel from "../../models/taxiTypePricing";
 import { getDriverCashByDriverIdService } from "../../services/driverCash";
-import { IDriverCash } from "../../models/driverCash";
+import driverCashModel, { IDriverCash } from "../../models/driverCash";
+import { ParamsDictionary } from "express-serve-static-core";
+import { ParsedQs } from "qs";
+import { cashLimitModel } from "../../models/cashLimit";
+import { updateDriverLocationService } from "../../services/driverLocation";
 
 export const createCallTaxi = async (req: Request, res: Response) => {
   try {
@@ -1129,6 +1133,16 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       await removeCallTaxiFromRedis(updated._id);
     }
 
+    if (updated && updated.status === STATUS.PAID) {
+      // check if driver cash is limited remove accepted call taxi from redis
+      const driverCash = await driverCashModel.findOne({ driver: updated?.driverId });
+      const cashLimit = await cashLimitModel.findOne({ countryCode: updated?.countryCode });
+
+      if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+        await updateDriverLocationService({ driverId: updated?.driverId });
+      }
+    }
+
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,
       messages: messages.SUCCESSFULLY.message,
@@ -1189,6 +1203,19 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
       res.status(400).json({
         ...messages.BAD_REQUEST,
         detail: "You are not a driver",
+      });
+
+      return;
+    }
+
+    // Check is driver cash was limited or not
+    const cashLimit = await cashLimitModel.findOne({ country: driverData?.data?.user?.country?._id });
+    const driverCash = await driverCashModel.findOne({ driver: user.id });
+
+    if (cashLimit && driverCash && Number(cashLimit?.amount) < Number(driverCash?.amount)) {
+      res.status(401).json({
+        ...messages.BAD_REQUEST,
+        detail: "You cannot accept this order because your cash is limited",
       });
 
       return;
@@ -1594,6 +1621,17 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
     const driverId = (req as any).user.id;
     const { startDate, endDate } = req.query;
 
+    const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${driverId}`);
+    const userData = user?.data?.user
+
+    if (!userData || userData?.role !== "DRIVER") {
+      return res.status(404).json({
+        code: messages.NOT_FOUND.code,
+        message: messages.NOT_FOUND.message,
+        detail: `Driver with id: ${driverId} not found`,
+      });
+    }
+
     const filter: any = {};
 
     if (startDate || endDate) {
@@ -1615,6 +1653,7 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
     const totalIncome = await getTotalDriverIncomeService(driverId, filter);
     const totalIncomeThatWasNotClaim = await getTotalDriverIncomeServiceThatWasNotClaim(driverId, filter);
     const totalDriverCash: IDriverCash | null = await getDriverCashByDriverIdService(driverId)
+    const cashLimit = await cashLimitModel.findOne({ country: userData?.country?._id });
 
     res.json({
       ...messages.SUCCESSFULLY,
@@ -1622,8 +1661,9 @@ export const getTotalDriverIncome = async (req: Request, res: Response) => {
       totalIncomeThatWasNotClaim,
       totalDriverCash: {
         amount: totalDriverCash?.amount ?? 0,
-        limit: totalDriverCash?.limit ?? 0,
-      }
+        limit: cashLimit?.amount ?? 0,
+      },
+      currency: userData?.country?.currency,
     });
   } catch (error) {
     console.error("Error fetching tax info:", error);

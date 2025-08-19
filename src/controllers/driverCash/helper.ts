@@ -1,9 +1,9 @@
 export const validateDriverCashBody = (body: any) => {
-    const { amount, limit } = body;
+    const { amount, driver } = body;
     const returnBody: any = {};
 
+    if (driver) returnBody.driver = driver;
     if (amount) returnBody.amount = amount;
-    if (limit) returnBody.limit = limit;
 
     return returnBody;
 }
