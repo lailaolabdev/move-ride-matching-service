@@ -22,11 +22,11 @@ import {
   getDriverPaymentDetail,
   updateClaimMoneyStatus,
   checkUsingPromotion,
-  socketCheckStatus
+  socketCheckStatus,
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
-import { getTotalDriverIncomeService } from "../services/callTaxi";
+import { getClaimPayment } from "../controllers/callTaxi";
 
 const router = express.Router();
 
@@ -120,6 +120,14 @@ router.put(
   validateParamID,
   checkAuthorizationMiddleware,
   updateClaimMoneyStatus
+);
+
+// Get claim payment history by driver id
+router.get(
+  "/claim-money/:id",
+  validateParamID,
+  checkAuthorizationMiddleware,
+  getClaimPayment
 );
 
 // Driver update order processing status

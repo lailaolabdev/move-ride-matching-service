@@ -1,14 +1,15 @@
 import driverCashModel, { IDriverCash } from '../models/driverCash';
 
 // Create
-export const createDriverCashService = async (driverId: String, body: any): Promise<IDriverCash> => {
+export const createDriverCashService = async (driverId: string, body: any): Promise<IDriverCash> => {
     try {
         const driverCash = await driverCashModel.create({
             driver: driverId,
             ...body
         });
 
-        return driverCash;
+        return await driverCashModel.findById(driverCash._id)
+            .select("firstName lastName fullName phone email country countryCode driver amount limit");
     } catch (error) {
         console.error("Error creating driver cash: ", error);
         throw error;
@@ -38,22 +39,26 @@ export const getAllDriverCashService = async (
 // Get by ID
 export const getDriverCashByIdService = async (id: string): Promise<IDriverCash | null> => {
     try {
-        return await driverCashModel.findById(id);
+        return await driverCashModel
+            .findById(id)
+            .select("firstName lastName fullName phone email country countryCode driver amount limit");
     } catch (error) {
         console.error("Error retrieving driver cash by ID: ", error);
         throw error;
     }
 };
 
-// Get by ID
 export const getDriverCashByDriverIdService = async (id: string): Promise<IDriverCash | null> => {
     try {
-        return await driverCashModel.findOne({ driver: id });
+        return await driverCashModel
+            .findOne({ driver: id })
+            .select("firstName lastName fullName phone email country countryCode driver amount limit");
     } catch (error) {
         console.error("Error retrieving driver cash by driver ID: ", error);
         throw error;
     }
 };
+
 
 // Update
 export const updateDriverCashServiceById = async (id: String, body: any): Promise<IDriverCash | null> => {
