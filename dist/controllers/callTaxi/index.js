@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkUsingPromotion = exports.getDriverPaymentDetail = exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateClaimMoneyStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.socketCheckStatus = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
+exports.getClaimPayment = exports.checkUsingPromotion = exports.getDriverPaymentDetail = exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateClaimMoneyStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.socketCheckStatus = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -24,6 +24,7 @@ const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
 const mongoose_1 = require("mongoose");
 const calculation_1 = require("../calculation");
 const claimMoney_1 = require("../../services/claimMoney");
+const callTaxi_3 = require("../../services/callTaxi");
 const timezone_1 = require("../../utils/timezone");
 const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
 const driverCash_1 = require("../../services/driverCash");
@@ -1496,3 +1497,27 @@ const checkUsingPromotion = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.checkUsingPromotion = checkUsingPromotion;
+const getClaimPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = req.user;
+        const claimMoneyId = req.params.id || req.query.claimMoneyId;
+        const claimPayment = yield (0, callTaxi_3.getClaimPaymentService)(req);
+        console.log(user.id);
+        let claimMoney = yield callTaxi_2.CallTaxi.find({
+            claimMoney: claimMoneyId,
+            driverId: user.id,
+            status: "Paid"
+        })
+            .select("_id origin originName destination destinationName requestType totalPrice billNumber driverIncome createdAt updatedAt");
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { claimMoney }));
+    }
+    catch (error) {
+        console.error("Error fetching claim payment: ", error);
+        return res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getClaimPayment = getClaimPayment;

@@ -13,9 +13,10 @@ import { validateDriverCashBody } from "./helper";
 import { IDriverCash } from "../../models/driverCash";
 
 // Create DriverCash
-export const createDriverCash = async (req: Request, res: Response) => {
+export const createDriverCash = async (req: Request, res: Response): Promise<any> => {
     try {
         const {
+            driver,
             firstName,
             lastName,
             fullName,
@@ -27,7 +28,7 @@ export const createDriverCash = async (req: Request, res: Response) => {
             limit
         } = req.body;
 
-        const existingDriverCash = await getDriverCashByDriverIdService(body.driver);
+        const existingDriverCash = await getDriverCashByDriverIdService(driver);
 
         if (existingDriverCash) {
             res.status(400).json({
@@ -38,18 +39,7 @@ export const createDriverCash = async (req: Request, res: Response) => {
             return
         }
 
-        const driverCash = await createDriverCashService(driverId, body);
-        if (
-            !firstName || !lastName || !fullName || !phone || !email ||
-            !country || !countryCode || amount === undefined || limit === undefined
-        ) {
-            return res.status(400).json({
-                code: messages.BAD_REQUEST.code,
-                message: "Missing required fields",
-            });
-        }
-
-        const driverId = (req as any).user.id; 
+        const driverId = (req as any).user.id;
 
         const driverCash = await createDriverCashService(driverId, {
             firstName,
@@ -80,11 +70,11 @@ export const createDriverCash = async (req: Request, res: Response) => {
 };
 
 // Get All DriverCash
-export const getAllDriverCash = async (req: Request, res: Response) => {
+export const getAllDriverCash = async (req: Request, res: Response): Promise<any> => {
     try {
         const skip = parseInt(req.query.skip as string) || 0;
         const limit = parseInt(req.query.limit as string) || 10;
-        const filter = {}; 
+        const filter = {};
 
         const result = await getAllDriverCashService(skip, limit, filter);
 
@@ -104,7 +94,7 @@ export const getAllDriverCash = async (req: Request, res: Response) => {
 };
 
 // GET Driver Cash by ID
-export const getDriverCashById = async (req: Request, res: Response) => {
+export const getDriverCashById = async (req: Request, res: Response): Promise<any> => {
     try {
         const driverCash = await getDriverCashByIdService(req.params.id);
 
@@ -120,7 +110,7 @@ export const getDriverCashById = async (req: Request, res: Response) => {
             code: messages.SUCCESSFULLY.code,
             message: messages.SUCCESSFULLY.message,
             detail: "Driver cash fetched successfully",
-            driverCash, 
+            driverCash,
         });
     } catch (error) {
         console.error("Error: ", error);
@@ -133,7 +123,7 @@ export const getDriverCashById = async (req: Request, res: Response) => {
 };
 
 
-export const getDriverCashByDriverId = async (req: Request, res: Response) => {
+export const getDriverCashByDriverId = async (req: Request, res: Response): Promise<any> => {
     try {
         const driverId = (req as any).user.id;
         const driverCash = await getDriverCashByDriverIdService(driverId);
@@ -164,7 +154,7 @@ export const getDriverCashByDriverId = async (req: Request, res: Response) => {
 
 
 // UPDATE Driver Cash
-export const updateDriverCash = async (req: Request, res: Response) => {
+export const updateDriverCash = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
         const body = validateDriverCashBody(req.body);
@@ -196,7 +186,7 @@ export const updateDriverCash = async (req: Request, res: Response) => {
 };
 
 // DELETE Driver Cash
-export const deleteDriverCash = async (req: Request, res: Response) => {
+export const deleteDriverCash = async (req: Request, res: Response): Promise<any> => {
     try {
         const deletedDriverCash = await deleteDriverCashService(req.params.id);
 

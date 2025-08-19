@@ -13,12 +13,11 @@ exports.adjustDriverCash = exports.deleteDriverCash = exports.updateDriverCash =
 const driverCash_1 = require("../../services/driverCash");
 const config_1 = require("../../config");
 const helper_1 = require("./helper");
-// CREATE Driver Cash
+// Create DriverCash
 const createDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const driverId = req.user.id;
-        const body = (0, helper_1.validateDriverCashBody)(req.body);
-        const existingDriverCash = yield (0, driverCash_1.getDriverCashByDriverIdService)(body.driver);
+        const { driver, firstName, lastName, fullName, phone, email, country, countryCode, amount, limit } = req.body;
+        const existingDriverCash = yield (0, driverCash_1.getDriverCashByDriverIdService)(driver);
         if (existingDriverCash) {
             res.status(400).json({
                 code: config_1.messages.ALREADY_EXIST.code,
@@ -26,45 +25,53 @@ const createDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
             });
             return;
         }
-        const driverCash = yield (0, driverCash_1.createDriverCashService)(driverId, body);
-        res.status(201).json({
+        const driverId = req.user.id;
+        const driverCash = yield (0, driverCash_1.createDriverCashService)(driverId, {
+            firstName,
+            lastName,
+            fullName,
+            phone,
+            email,
+            country,
+            countryCode,
+            amount,
+            limit
+        });
+        return res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
-            message: "Driver cash created successfully",
-            driverCash,
+            message: config_1.messages.CREATE_SUCCESSFUL.message,
+            data: driverCash
         });
     }
     catch (error) {
-        console.error("Error: ", error);
-        res.status(500).json({
+        console.error("Error in createDriverCash: ", error);
+        return res.status(500).json({
             code: config_1.messages.INTERNAL_SERVER_ERROR.code,
             message: config_1.messages.INTERNAL_SERVER_ERROR.message,
-            detail: error.message,
+            detail: error.message
         });
     }
 });
 exports.createDriverCash = createDriverCash;
-// GET ALL Driver Cash
+// Get All DriverCash
 const getAllDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip = 0, limit = 10, driver } = req.query;
-        const parsedSkip = parseInt(skip, 10);
-        const parsedLimit = parseInt(limit, 10);
+        const skip = parseInt(req.query.skip) || 0;
+        const limit = parseInt(req.query.limit) || 10;
         const filter = {};
-        if (driver)
-            filter.driver = driver;
-        const driverCashList = yield (0, driverCash_1.getAllDriverCashService)(parsedSkip, parsedLimit, filter);
-        res.status(200).json({
-            code: config_1.messages.SUCCESSFULLY.code,
-            message: "Driver cash list fetched successfully",
-            driverCashList,
+        const result = yield (0, driverCash_1.getAllDriverCashService)(skip, limit, filter);
+        return res.status(200).json({
+            success: true,
+            total: result.total,
+            data: result.driverCashList
         });
     }
     catch (error) {
-        console.error("Error: ", error);
-        res.status(500).json({
+        console.error("Error in getAllDriverCash: ", error);
+        return res.status(500).json({
             code: config_1.messages.INTERNAL_SERVER_ERROR.code,
             message: config_1.messages.INTERNAL_SERVER_ERROR.message,
-            detail: error.message,
+            detail: error.message
         });
     }
 });
@@ -76,12 +83,14 @@ const getDriverCashById = (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (!driverCash) {
             return res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
-                message: "Driver cash not found",
+                message: config_1.messages.NOT_FOUND.message,
+                detail: "Driver cash not found",
             });
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
-            message: "Driver cash fetched successfully",
+            message: config_1.messages.SUCCESSFULLY.message,
+            detail: "Driver cash fetched successfully",
             driverCash,
         });
     }
@@ -99,15 +108,23 @@ const getDriverCashByDriverId = (req, res) => __awaiter(void 0, void 0, void 0, 
     try {
         const driverId = req.user.id;
         const driverCash = yield (0, driverCash_1.getDriverCashByDriverIdService)(driverId);
-        res.status(200).json({
+        if (!driverCash) {
+            return res.status(404).json({
+                code: config_1.messages.NOT_FOUND.code,
+                message: config_1.messages.NOT_FOUND.message,
+                detail: "Driver cash not found",
+            });
+        }
+        return res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
-            message: "Driver cash updated successfully",
-            driverCash,
+            message: config_1.messages.SUCCESSFULLY.message,
+            detail: "Driver cash fetched successfully",
+            dr: driverCash,
         });
     }
     catch (error) {
-        console.error("Error: ", error);
-        res.status(500).json({
+        console.error("Error in getDriverCashByDriverIdController: ", error);
+        return res.status(500).json({
             code: config_1.messages.INTERNAL_SERVER_ERROR.code,
             message: config_1.messages.INTERNAL_SERVER_ERROR.message,
             detail: error.message,
@@ -124,12 +141,14 @@ const updateDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
         if (!updatedDriverCash) {
             return res.status(404).json({
                 code: config_1.messages.NOT_FOUND.code,
-                message: "Driver cash not found",
+                message: config_1.messages.NOT_FOUND.message,
+                detail: "Driver cash not found",
             });
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
-            message: "Driver cash updated successfully",
+            message: config_1.messages.SUCCESSFULLY.message,
+            detail: "Driver cash updated successfully",
             updatedDriverCash,
         });
     }
@@ -155,7 +174,8 @@ const deleteDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
-            message: "Driver cash deleted successfully",
+            message: config_1.messages.SUCCESSFULLY.message,
+            detail: "Driver cash deleted successfully",
             deletedDriverCash,
         });
     }
@@ -187,7 +207,8 @@ const adjustDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
-            message: "Driver cash updated successfully",
+            message: config_1.messages.SUCCESSFULLY.message,
+            detail: "Driver cash updated successfully",
             driverCash,
         });
     }

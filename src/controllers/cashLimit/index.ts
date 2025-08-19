@@ -64,7 +64,7 @@ export const getAllCashLimits = async (req: Request, res: Response) => {
 };
 
 // GET Cash Limit by ID
-export const getCashLimitById = async (req: Request, res: Response) => {
+export const getCashLimitById = async (req: Request, res: Response): Promise<any> => {
   try {
     const cashLimit = await getCashLimitByIdService(req.params.id);
 
@@ -91,7 +91,7 @@ export const getCashLimitById = async (req: Request, res: Response) => {
 };
 
 // UPDATE Cash Limit
-export const updateCashLimit = async (req: Request, res: Response) => {
+export const updateCashLimit = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
     const { amount, country, countryCode } = req.body;
@@ -126,7 +126,7 @@ export const updateCashLimit = async (req: Request, res: Response) => {
 };
 
 // DELETE Cash Limit
-export const deleteCashLimit = async (req: Request, res: Response) => {
+export const deleteCashLimit = async (req: Request, res: Response): Promise<any> => {
   try {
     const deleted = await deleteCashLimitService(req.params.id);
 

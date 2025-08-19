@@ -18,7 +18,8 @@ const driverCash_1 = __importDefault(require("../models/driverCash"));
 const createDriverCashService = (driverId, body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const driverCash = yield driverCash_1.default.create(Object.assign({ driver: driverId }, body));
-        return driverCash;
+        return yield driverCash_1.default.findById(driverCash._id)
+            .select("firstName lastName fullName phone email country countryCode driver amount limit");
     }
     catch (error) {
         console.error("Error creating driver cash: ", error);
@@ -45,7 +46,9 @@ exports.getAllDriverCashService = getAllDriverCashService;
 // Get by ID
 const getDriverCashByIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield driverCash_1.default.findById(id);
+        return yield driverCash_1.default
+            .findById(id)
+            .select("firstName lastName fullName phone email country countryCode driver amount limit");
     }
     catch (error) {
         console.error("Error retrieving driver cash by ID: ", error);
@@ -53,10 +56,11 @@ const getDriverCashByIdService = (id) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getDriverCashByIdService = getDriverCashByIdService;
-// Get by ID
 const getDriverCashByDriverIdService = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield driverCash_1.default.findOne({ driver: id });
+        return yield driverCash_1.default
+            .findOne({ driver: id })
+            .select("firstName lastName fullName phone email country countryCode driver amount limit");
     }
     catch (error) {
         console.error("Error retrieving driver cash by driver ID: ", error);

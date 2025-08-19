@@ -1616,7 +1616,7 @@ export const getCommentAndRating = async (req: Request, res: Response) => {
 };
 
 // Report driver part
-export const getTotalDriverIncome = async (req: Request, res: Response) => {
+export const getTotalDriverIncome = async (req: Request, res: Response): Promise<any> => {
   try {
     const driverId = (req as any).user.id;
     const { startDate, endDate } = req.query;
@@ -1726,7 +1726,7 @@ export const checkUsingPromotion = async (req: Request, res: Response) => {
   }
 };
 
-export const getClaimPayment = async (req: Request, res: Response) => {
+export const getClaimPayment = async (req: Request, res: Response): Promise<any> => {
   try {
     const user = (req as any).user;
     const claimMoneyId = req.params.id || req.query.claimMoneyId;
@@ -1736,10 +1736,10 @@ export const getClaimPayment = async (req: Request, res: Response) => {
     console.log(user.id);
 
     let claimMoney = await CallTaxi.find({
-        claimMoney: claimMoneyId,
-        driverId: user.id,
-        status: "Paid"
-      })
+      claimMoney: claimMoneyId,
+      driverId: user.id,
+      status: "Paid"
+    })
       .select(
         "_id origin originName destination destinationName requestType totalPrice billNumber driverIncome createdAt updatedAt"
       )

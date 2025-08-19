@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const callTaxi_1 = require("../controllers/callTaxi");
 const validateParamId_1 = require("../utils/validateParamId");
 const middlewares_1 = require("../middlewares");
+const callTaxi_2 = require("../controllers/callTaxi");
 const router = express_1.default.Router();
 router.post("/", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.createCallTaxi);
 // Admin also use this route for detail
@@ -32,6 +33,8 @@ router.get("/calling-taxi-history", middlewares_1.checkAuthorizationMiddleware, 
 router.put("/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateCallTaxis);
 // Update claim money status by claim money id
 router.put("/claim-money/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateClaimMoneyStatus);
+// Get claim payment history by driver id
+router.get("/claim-money/:id", validateParamId_1.validateParamID, middlewares_1.checkAuthorizationMiddleware, callTaxi_2.getClaimPayment);
 // Driver update order processing status
 router.put("/driver-confirm/:id", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.driverUpdateStatus);
 router.get("/total-price", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.callTaxiTotalPrice);

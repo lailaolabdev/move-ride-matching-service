@@ -9,7 +9,7 @@ import {
 import { messages } from "../../config/index";
 
 // CREATE Round Limit
-export const createRoundLimit = async (req: Request, res: Response) => {
+export const createRoundLimit = async (req: Request, res: Response): Promise<any> => {
   try {
     const { round, country, countryCode } = req.body;
 
@@ -35,7 +35,7 @@ export const createRoundLimit = async (req: Request, res: Response) => {
 };
 
 // GET ALL Round Limits
-export const getAllRoundLimits = async (req: Request, res: Response) => {
+export const getAllRoundLimits = async (req: Request, res: Response): Promise<any> => {
   try {
     const { skip, country, countryCode } = req.query;
 
@@ -64,7 +64,7 @@ export const getAllRoundLimits = async (req: Request, res: Response) => {
 };
 
 // GET Round Limit by ID
-export const getRoundLimitById = async (req: Request, res: Response) => {
+export const getRoundLimitById = async (req: Request, res: Response): Promise<any> => {
   try {
     const roundLimit = await getRoundLimitByIdService(req.params.id);
 
@@ -91,7 +91,7 @@ export const getRoundLimitById = async (req: Request, res: Response) => {
 };
 
 // UPDATE Round Limit
-export const updateRoundLimit = async (req: Request, res: Response) => {
+export const updateRoundLimit = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
     const { round, country, countryCode } = req.body;
@@ -126,7 +126,7 @@ export const updateRoundLimit = async (req: Request, res: Response) => {
 };
 
 // DELETE Round Limit
-export const deleteRoundLimit = async (req: Request, res: Response) => {
+export const deleteRoundLimit = async (req: Request, res: Response): Promise<any> => {
   try {
     const deleted = await deleteRoundLimitService(req.params.id);
 

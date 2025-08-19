@@ -45,7 +45,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDriverPaymentDetailService = exports.getTotalDriverIncomeServiceThatWasNotClaim = exports.getTotalDriverIncomeService = exports.getDriverCommentAndRatingService = exports.getPassengerCommentAndRatingService = exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
+exports.getClaimPaymentService = exports.getDriverPaymentDetailService = exports.getTotalDriverIncomeServiceThatWasNotClaim = exports.getTotalDriverIncomeService = exports.getDriverCommentAndRatingService = exports.getPassengerCommentAndRatingService = exports.travelHistoryService = exports.getTheLastRideService = exports.getTotalDistanceService = exports.getNumberOfCallingTaxiService = exports.callTaxiTotalPriceReportService = exports.getHistoryRideService = exports.getDriverRideHistoryDetailByIdService = exports.getRideHistoryDetailByIdService = exports.getTotalRideService = exports.calculateDriverDistanceAndDurationService = exports.driverUpdateStatusService = exports.updateCallTaxiService = exports.getDriverCallTaxisService = exports.getUserCallTaxisService = exports.getPassengerComplainDriverByIdService = exports.createPassengerComplainDriverService = exports.createDriverComplainPassengerService = exports.getCallTaxisService = exports.sentDataToDriverSocket = exports.createCallTaxiService = void 0;
 const callTaxi_1 = require("../models/callTaxi");
 const axios_1 = __importDefault(require("axios"));
 const helper_1 = require("../controllers/callTaxi/helper");
@@ -892,3 +892,38 @@ const getDriverPaymentDetailService = (callTaxiId) => __awaiter(void 0, void 0, 
     }
 });
 exports.getDriverPaymentDetailService = getDriverPaymentDetailService;
+const getClaimPaymentService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.user.id;
+        const claimPayments = yield callTaxi_1.CallTaxi.aggregate([
+            {
+                $match: {
+                    claimMoney: userId,
+                    status: "Paid"
+                }
+            },
+            {
+                $project: {
+                    billNumber: 1,
+                    requestType: 1,
+                    paymentMethod: 1,
+                    point: 1,
+                    totalPrice: 1,
+                    origin: 1,
+                    originName: 1,
+                    destination: 1,
+                    destinationName: 1,
+                    driverIncome: 1,
+                    createdAt: 1,
+                    updatedAt: 1
+                }
+            }
+        ]);
+        return claimPayments.length ? claimPayments[0] : null;
+    }
+    catch (error) {
+        console.error("Error fetching claim payment: ", error);
+        throw error;
+    }
+});
+exports.getClaimPaymentService = getClaimPaymentService;
