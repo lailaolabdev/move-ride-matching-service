@@ -260,36 +260,9 @@ exports.getCallTaxiById = getCallTaxiById;
 // Get all calling taxi
 const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip = 1, limit = 10, startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, search, claimMoney, country, } = req.query;
-        const match = {};
-        if (claimMoney)
-            match.claimMoney = claimMoney;
-        // find start and date
-        if (startDate && endDate) {
-            match.createdAt = {
-                $gte: new Date(startDate.toString()),
-                $lte: new Date(endDate.toString()),
-            };
-        }
-        // find min and max Price
-        if (minPrice && maxPrice) {
-            match.totalPrice = {
-                $gte: Number(minPrice),
-                $lte: Number(maxPrice),
-            };
-        }
-        // find min and max distance
-        if (minTotalDistance && maxTotalDistance) {
-            match.totalDuration = {
-                $gte: Number(minTotalDistance),
-                $lte: Number(maxTotalDistance),
-            };
-        }
-        if (country) {
-            match.country = country;
-        }
+        const { skip = 1, limit = 10, search, } = req.query;
+        const match = (0, helper_1.getCallTaxiPipeline)(req.query);
         const parseSkip = parseInt(skip, 10);
-        console.log("match: ", match);
         const total = yield callTaxi_2.CallTaxi.countDocuments(match);
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
             { $match: match },

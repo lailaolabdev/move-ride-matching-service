@@ -29,6 +29,7 @@ import {
 import { CallTaxi, REQUEST_TYPE, STATUS } from "../../models/callTaxi";
 import axios from "axios";
 import {
+  getCallTaxiPipeline,
   getCountry,
   getDriver,
   getDriverLatLong,
@@ -320,51 +321,13 @@ export const getCallTaxis = async (req: Request, res: Response) => {
     const {
       skip = 1,
       limit = 10,
-      startDate,
-      endDate,
-      minPrice,
-      maxPrice,
-      minTotalDistance,
-      maxTotalDistance,
       search,
-      claimMoney,
-      country,
     }: any = req.query;
 
-    const match: any = {};
-
-    if (claimMoney) match.claimMoney = claimMoney;
-
-    // find start and date
-    if (startDate && endDate) {
-      match.createdAt = {
-        $gte: new Date(startDate.toString()),
-        $lte: new Date(endDate.toString()),
-      };
-    }
-
-    // find min and max Price
-    if (minPrice && maxPrice) {
-      match.totalPrice = {
-        $gte: Number(minPrice),
-        $lte: Number(maxPrice),
-      };
-    }
-
-    // find min and max distance
-    if (minTotalDistance && maxTotalDistance) {
-      match.totalDuration = {
-        $gte: Number(minTotalDistance),
-        $lte: Number(maxTotalDistance),
-      };
-    }
-    if (country) {
-      match.country = country;
-    }
+    const match = getCallTaxiPipeline(req.query)
 
     const parseSkip = parseInt(skip as string, 10);
 
-    console.log("match: ", match);
     const total = await CallTaxi.countDocuments(match);
     const callTaxi = await CallTaxi.aggregate([
       { $match: match },

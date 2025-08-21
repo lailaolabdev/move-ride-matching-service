@@ -8,6 +8,58 @@ type FilterInput = {
     endDate: Date | undefined,
 }
 
+export const getCallTaxiPipeline = (query: any) => {
+    const {
+        startDate,
+        endDate,
+        minPrice,
+        maxPrice,
+        minTotalDistance,
+        maxTotalDistance,
+        claimMoney,
+        country,
+        status
+    }: any = query;
+
+    const match: any = {};
+
+    if (claimMoney) match.claimMoney = claimMoney;
+
+    // find start and date
+    if (startDate && endDate) {
+        match.createdAt = {
+            $gte: new Date(startDate.toString()),
+            $lte: new Date(endDate.toString()),
+        };
+    }
+
+    // find min and max Price
+    if (minPrice && maxPrice) {
+        match.totalPrice = {
+            $gte: Number(minPrice),
+            $lte: Number(maxPrice),
+        };
+    }
+
+    // find min and max distance
+    if (minTotalDistance && maxTotalDistance) {
+        match.totalDuration = {
+            $gte: Number(minTotalDistance),
+            $lte: Number(maxTotalDistance),
+        };
+    }
+
+    if (country) {
+        match.country = country;
+    }
+
+    if (status) {
+        match.status = status;
+    }
+
+    return match
+}
+
 export const pipeline = ({ startDate, endDate }: FilterInput) => {
     const matchStage: any = {};
     const pipeline: any[] = [];

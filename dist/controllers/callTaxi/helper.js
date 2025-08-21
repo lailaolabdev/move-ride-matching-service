@@ -12,9 +12,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notifyDriverWhenCancel = exports.removeCallTaxiFromRedis = exports.getDriverLatLong = exports.getCountry = exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = void 0;
+exports.notifyDriverWhenCancel = exports.removeCallTaxiFromRedis = exports.getDriverLatLong = exports.getCountry = exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = exports.getCallTaxiPipeline = void 0;
 const axios_1 = __importDefault(require("axios"));
 const config_1 = require("../../config");
+const getCallTaxiPipeline = (query) => {
+    const { startDate, endDate, minPrice, maxPrice, minTotalDistance, maxTotalDistance, claimMoney, country, status } = query;
+    const match = {};
+    if (claimMoney)
+        match.claimMoney = claimMoney;
+    // find start and date
+    if (startDate && endDate) {
+        match.createdAt = {
+            $gte: new Date(startDate.toString()),
+            $lte: new Date(endDate.toString()),
+        };
+    }
+    // find min and max Price
+    if (minPrice && maxPrice) {
+        match.totalPrice = {
+            $gte: Number(minPrice),
+            $lte: Number(maxPrice),
+        };
+    }
+    // find min and max distance
+    if (minTotalDistance && maxTotalDistance) {
+        match.totalDuration = {
+            $gte: Number(minTotalDistance),
+            $lte: Number(maxTotalDistance),
+        };
+    }
+    if (country) {
+        match.country = country;
+    }
+    if (status) {
+        match.status = status;
+    }
+    return match;
+};
+exports.getCallTaxiPipeline = getCallTaxiPipeline;
 const pipeline = ({ startDate, endDate }) => {
     const matchStage = {};
     const pipeline = [];
