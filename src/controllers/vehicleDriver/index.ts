@@ -11,6 +11,8 @@ import {
 } from '../../services/vehicleDriver';
 import { getAllTaxiService } from '../../services/taxi';
 import { Types } from 'mongoose';
+import { getTaxiTypeByIdService } from '../../services/taxiType';
+import { ObjectId } from 'mongodb';
 
 // CREATE Taxi
 export const createVehicleDriver = async (req: Request, res: Response) => {
@@ -162,11 +164,29 @@ export const updateVehicleDriver = async (req: Request, res: Response) => {
                 return;
             }
 
-            taxi = taxis._id;
+            taxi = taxis?.taxies[0]._id;
+        }
+
+        const taxiTypeById = await getTaxiTypeByIdService(taxiType);
+
+        if (!taxiTypeById || !taxiTypeById._id) {
+            res.status(400).json({
+                code: messages.BAD_REQUEST.code,
+                message: messages.BAD_REQUEST.message,
+                detail: 'Taxi type not found or invalid'
+            });
+            return;
         }
 
         const vehicleDriver = await updateVehicleDriverService({
             taxi,
+            taxiType: JSON.stringify({
+                _id: new ObjectId(String(taxiTypeById._id)),
+                name: taxiTypeById.name,
+                icon: taxiTypeById.icon,
+            }),
+            vehicleModel,
+            vehicleBrand,
             driver,
             driverFullName,
             frontVehicleImage,
