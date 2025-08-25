@@ -190,7 +190,10 @@ export const updateVehicleDriverService = async (
         backVehicleImage,
         licensePlate,
         updatedBy,
-        updatedByFullName
+        updatedByFullName,
+        taxiType,
+        vehicleModel,
+        vehicleBrand
     }:
         {
             taxi: string,
@@ -200,7 +203,10 @@ export const updateVehicleDriverService = async (
             backVehicleImage: string,
             licensePlate: string,
             updatedBy: string,
-            updatedByFullName: string
+            updatedByFullName: string,
+            taxiType: string,
+            vehicleModel: string,
+            vehicleBrand: string
         }): Promise<IVehicleDriver | null> => {
     try {
         const vehicleDriver = await vehicleDriverModel.findOneAndUpdate(
@@ -215,7 +221,10 @@ export const updateVehicleDriverService = async (
                     licensePlate,
                     updatedBy,
                     updatedByFullName,
-                    updatedAt: new Date()
+                    updatedAt: new Date(),
+                    taxiType,
+                    vehicleModel,
+                    vehicleBrand
                 },
             },
             { new: true }

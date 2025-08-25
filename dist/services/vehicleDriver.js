@@ -160,7 +160,7 @@ const getVehicleDriverByDriverIdService = (id) => __awaiter(void 0, void 0, void
 });
 exports.getVehicleDriverByDriverIdService = getVehicleDriverByDriverIdService;
 // UPDATE
-const updateVehicleDriverService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxi, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate, updatedBy, updatedByFullName }) {
+const updateVehicleDriverService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ taxi, driver, driverFullName, frontVehicleImage, backVehicleImage, licensePlate, updatedBy, updatedByFullName, taxiType, vehicleModel, vehicleBrand }) {
     try {
         const vehicleDriver = yield vehicleDriver_1.default.findOneAndUpdate({ driver }, {
             $set: {
@@ -172,7 +172,10 @@ const updateVehicleDriverService = (_a) => __awaiter(void 0, [_a], void 0, funct
                 licensePlate,
                 updatedBy,
                 updatedByFullName,
-                updatedAt: new Date()
+                updatedAt: new Date(),
+                taxiType,
+                vehicleModel,
+                vehicleBrand
             },
         }, { new: true });
         return vehicleDriver;

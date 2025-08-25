@@ -15,6 +15,8 @@ const helper_1 = require("./helper");
 const vehicleDriver_1 = require("../../services/vehicleDriver");
 const taxi_1 = require("../../services/taxi");
 const mongoose_1 = require("mongoose");
+const taxiType_1 = require("../../services/taxiType");
+const mongodb_1 = require("mongodb");
 // CREATE Taxi
 const createVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -159,10 +161,26 @@ const updateVehicleDriver = (req, res) => __awaiter(void 0, void 0, void 0, func
                 });
                 return;
             }
-            taxi = taxis._id;
+            taxi = taxis === null || taxis === void 0 ? void 0 : taxis.taxies[0]._id;
+        }
+        const taxiTypeById = yield (0, taxiType_1.getTaxiTypeByIdService)(taxiType);
+        if (!taxiTypeById || !taxiTypeById._id) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: config_1.messages.BAD_REQUEST.message,
+                detail: 'Taxi type not found or invalid'
+            });
+            return;
         }
         const vehicleDriver = yield (0, vehicleDriver_1.updateVehicleDriverService)({
             taxi,
+            taxiType: JSON.stringify({
+                _id: new mongodb_1.ObjectId(String(taxiTypeById._id)),
+                name: taxiTypeById.name,
+                icon: taxiTypeById.icon,
+            }),
+            vehicleModel,
+            vehicleBrand,
             driver,
             driverFullName,
             frontVehicleImage,
