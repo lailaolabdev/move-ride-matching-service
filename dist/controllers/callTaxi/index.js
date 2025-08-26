@@ -926,24 +926,28 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                             updateData.claimMoney = updateClaim._id;
                     }
                     else {
-                        const driver = yield axios_1.default.get(`
-                   ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId}`, {
-                            headers: {
-                                Authorization: `${req.headers["authorization"]}`,
-                            },
-                        });
-                        const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
-                        const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
-                        const createClaim = yield (0, claimMoney_1.createClaimMoney)({
-                            token: token,
-                            driverId,
-                            driverRegistrationSource,
-                            income: calculatedPrice,
-                            country: (_g = (_f = (_e = driver === null || driver === void 0 ? void 0 : driver.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.country) === null || _g === void 0 ? void 0 : _g._id,
-                            countryCode: (_k = (_j = (_h = driver === null || driver === void 0 ? void 0 : driver.data) === null || _h === void 0 ? void 0 : _h.user) === null || _j === void 0 ? void 0 : _j.country) === null || _k === void 0 ? void 0 : _k.code,
-                        });
-                        if (createClaim)
-                            updateData.claimMoney = createClaim._id;
+                        try {
+                            const driver = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId}`, {
+                                headers: {
+                                    Authorization: `${req.headers["authorization"]}`,
+                                },
+                            });
+                            const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
+                            const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
+                            const createClaim = yield (0, claimMoney_1.createClaimMoney)({
+                                token: token,
+                                driverId,
+                                driverRegistrationSource,
+                                income: calculatedPrice,
+                                country: (_g = (_f = (_e = driver === null || driver === void 0 ? void 0 : driver.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.country) === null || _g === void 0 ? void 0 : _g._id,
+                                countryCode: (_k = (_j = (_h = driver === null || driver === void 0 ? void 0 : driver.data) === null || _h === void 0 ? void 0 : _h.user) === null || _j === void 0 ? void 0 : _j.country) === null || _k === void 0 ? void 0 : _k.code,
+                            });
+                            if (createClaim)
+                                updateData.claimMoney = createClaim._id;
+                        }
+                        catch (error) {
+                            console.log({ error });
+                        }
                     }
                     updateData.driverIncome = calculatedPrice;
                     updateData.driverRate = driverRate;

@@ -1053,29 +1053,31 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
             if (updateClaim) updateData.claimMoney = updateClaim._id;
           } else {
-            const driver = await axios.get(
-              `
-                   ${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi?.driverId}`,
-              {
-                headers: {
-                  Authorization: `${req.headers["authorization"]}`,
-                },
-              }
-            );
+            try {
+              const driver = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi?.driverId}`,
+                {
+                  headers: {
+                    Authorization: `${req.headers["authorization"]}`,
+                  },
+                }
+              );
 
-            const driverId = driver?.data?.user?._id;
-            const driverRegistrationSource = driver?.data?.user?.registrationSource;
+              const driverId = driver?.data?.user?._id;
+              const driverRegistrationSource = driver?.data?.user?.registrationSource;
 
-            const createClaim = await createClaimMoney({
-              token: token as string,
-              driverId,
-              driverRegistrationSource,
-              income: calculatedPrice,
-              country: driver?.data?.user?.country?._id,
-              countryCode: driver?.data?.user?.country?.code,
-            });
+              const createClaim = await createClaimMoney({
+                token: token as string,
+                driverId,
+                driverRegistrationSource,
+                income: calculatedPrice,
+                country: driver?.data?.user?.country?._id,
+                countryCode: driver?.data?.user?.country?.code,
+              });
 
-            if (createClaim) updateData.claimMoney = createClaim._id;
+              if (createClaim) updateData.claimMoney = createClaim._id;
+            } catch (error) {
+              console.log({ error });
+            }
           }
 
           updateData.driverIncome = calculatedPrice;
