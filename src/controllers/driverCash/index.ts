@@ -11,6 +11,7 @@ import {
 import { messages } from "../../config";
 import { validateDriverCashBody } from "./helper";
 import { IDriverCash } from "../../models/driverCash";
+import axios from "axios";
 
 // Create DriverCash
 export const createDriverCash = async (req: Request, res: Response): Promise<any> => {
@@ -229,6 +230,28 @@ export const adjustDriverCash = async (req: Request, res: Response) => {
             body.amount = (driverCashExists.amount || 0) + (body.amount || 0);
             driverCash = await updateDriverCashServiceByDriverId(driverId, body);
         } else {
+            const driver = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${driverId}`);
+            const driverData = driver?.data?.user
+
+            if (!driverData) {
+                res.status(400).json({
+                    code: messages.BAD_REQUEST.code,
+                    message: `User with this id: ${driverId} not found`,
+                });
+
+                return;
+            }
+
+            const body = {
+                firstName: driverData?.firstName,
+                lastName: driverData?.lastName,
+                fullName: driverData?.fullName,
+                phone: driverData?.phone,
+                email: driverData?.email,
+                country: driverData?.country?._id,
+                countryCode: driverData?.country?.code,
+            }
+
             driverCash = await createDriverCashService(driverId, body);
         }
 

@@ -8,11 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adjustDriverCash = exports.deleteDriverCash = exports.updateDriverCash = exports.getDriverCashByDriverId = exports.getDriverCashById = exports.getAllDriverCash = exports.createDriverCash = void 0;
 const driverCash_1 = require("../../services/driverCash");
 const config_1 = require("../../config");
 const helper_1 = require("./helper");
+const axios_1 = __importDefault(require("axios"));
 // Create DriverCash
 const createDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -193,6 +197,7 @@ exports.deleteDriverCash = deleteDriverCash;
 // This endpoint adjusts the driver's cash balance based on the provided body
 // If the driver cash does not exist, it creates a new entry
 const adjustDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
     try {
         const driverId = req.user.id;
         const body = (0, helper_1.validateDriverCashBody)(req.body);
@@ -203,6 +208,24 @@ const adjustDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
             driverCash = yield (0, driverCash_1.updateDriverCashServiceByDriverId)(driverId, body);
         }
         else {
+            const driver = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${driverId}`);
+            const driverData = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user;
+            if (!driverData) {
+                res.status(400).json({
+                    code: config_1.messages.BAD_REQUEST.code,
+                    message: `User with this id: ${driverId} not found`,
+                });
+                return;
+            }
+            const body = {
+                firstName: driverData === null || driverData === void 0 ? void 0 : driverData.firstName,
+                lastName: driverData === null || driverData === void 0 ? void 0 : driverData.lastName,
+                fullName: driverData === null || driverData === void 0 ? void 0 : driverData.fullName,
+                phone: driverData === null || driverData === void 0 ? void 0 : driverData.phone,
+                email: driverData === null || driverData === void 0 ? void 0 : driverData.email,
+                country: (_b = driverData === null || driverData === void 0 ? void 0 : driverData.country) === null || _b === void 0 ? void 0 : _b._id,
+                countryCode: (_c = driverData === null || driverData === void 0 ? void 0 : driverData.country) === null || _c === void 0 ? void 0 : _c.code,
+            };
             driverCash = yield (0, driverCash_1.createDriverCashService)(driverId, body);
         }
         res.status(200).json({
