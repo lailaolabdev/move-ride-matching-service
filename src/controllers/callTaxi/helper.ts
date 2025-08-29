@@ -240,6 +240,15 @@ export const notifyPassengerWithNotification = async ({ recipient, token, caseTy
             case "Success":
                 payload = {
                     recipient,
+                    title: "You’ve arrived at your destination 🏁",
+                    detail: "Thank you for riding with us! We hope to see you again soon.",
+                    ...info,
+                };
+                break;
+
+            case "Paid":
+                payload = {
+                    recipient,
                     title: "Payment successful 💳",
                     detail: "Your payment has been processed successfully.",
                     ...info,

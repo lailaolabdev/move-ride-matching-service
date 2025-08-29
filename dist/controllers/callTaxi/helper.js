@@ -186,6 +186,9 @@ const notifyPassengerWithNotification = (_a) => __awaiter(void 0, [_a], void 0, 
                 payload = Object.assign({ recipient, title: "Your driver has arrived 🚖", detail: "Please meet your driver at the pickup point." }, info);
                 break;
             case "Success":
+                payload = Object.assign({ recipient, title: "You’ve arrived at your destination 🏁", detail: "Thank you for riding with us! We hope to see you again soon." }, info);
+                break;
+            case "Paid":
                 payload = Object.assign({ recipient, title: "Payment successful 💳", detail: "Your payment has been processed successfully." }, info);
                 break;
             default:
