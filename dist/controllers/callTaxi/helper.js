@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notifyDriverWhenCancel = exports.removeCallTaxiFromRedis = exports.getDriverLatLong = exports.getCountry = exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = exports.getCallTaxiPipeline = void 0;
+exports.notifyPassengerWithNotification = exports.notifyDriverWhenCancel = exports.removeCallTaxiFromRedis = exports.getDriverLatLong = exports.getCountry = exports.roundCoord = exports.getPassenger = exports.getDriver = exports.pipeline = exports.getCallTaxiPipeline = void 0;
 const axios_1 = __importDefault(require("axios"));
 const config_1 = require("../../config");
 const getCallTaxiPipeline = (query) => {
@@ -170,3 +170,37 @@ const notifyDriverWhenCancel = (token, callTaxi) => __awaiter(void 0, void 0, vo
     }
 });
 exports.notifyDriverWhenCancel = notifyDriverWhenCancel;
+const notifyPassengerWithNotification = (_a) => __awaiter(void 0, [_a], void 0, function* ({ recipient, token, caseType }) {
+    try {
+        let payload;
+        const info = {
+            type: "NOTICE",
+            platform: "TAXI",
+            recipientRole: "CUSTOMER",
+        };
+        switch (caseType) {
+            case "Accepted":
+                payload = Object.assign({ recipient, title: "Your ride request was accepted ✅", detail: "A driver has accepted your request and is on the way." }, info);
+                break;
+            case "Driver_Arrived":
+                payload = Object.assign({ recipient, title: "Your driver has arrived 🚖", detail: "Please meet your driver at the pickup point." }, info);
+                break;
+            case "Success":
+                payload = Object.assign({ recipient, title: "Payment successful 💳", detail: "Your payment has been processed successfully." }, info);
+                break;
+            default:
+                throw new Error(`Unknown caseType: ${caseType}`);
+        }
+        if (payload) {
+            yield axios_1.default.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications`, payload, {
+                headers: {
+                    Authorization: token
+                }
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.notifyPassengerWithNotification = notifyPassengerWithNotification;

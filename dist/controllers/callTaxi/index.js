@@ -1006,7 +1006,7 @@ const updateClaimMoneyStatus = (req, res) => __awaiter(void 0, void 0, void 0, f
 });
 exports.updateClaimMoneyStatus = updateClaimMoneyStatus;
 const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z;
     try {
         const user = req.user;
         const { id } = req.params;
@@ -1128,6 +1128,12 @@ const driverUpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 taxiTypePricing,
             });
         }
+        // Send notification
+        yield (0, helper_1.notifyPassengerWithNotification)({
+            recipient: (_z = confirmed === null || confirmed === void 0 ? void 0 : confirmed.passengerId) !== null && _z !== void 0 ? _z : "",
+            token: req.headers.authorization,
+            caseType: confirmed === null || confirmed === void 0 ? void 0 : confirmed.status
+        });
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,
             messages: config_1.messages.SUCCESSFULLY.message,

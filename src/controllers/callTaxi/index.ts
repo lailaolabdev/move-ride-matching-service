@@ -35,6 +35,7 @@ import {
   getDriverLatLong,
   getPassenger,
   notifyDriverWhenCancel,
+  notifyPassengerWithNotification,
   pipeline,
   removeCallTaxiFromRedis,
 } from "./helper";
@@ -1298,6 +1299,13 @@ export const driverUpdateStatus = async (req: Request, res: Response) => {
         taxiTypePricing,
       });
     }
+
+    // Send notification
+    await notifyPassengerWithNotification({
+      recipient: confirmed?.passengerId ?? "",
+      token: req.headers.authorization as string,
+      caseType: confirmed?.status
+    })
 
     res.status(200).json({
       code: messages.SUCCESSFULLY.code,

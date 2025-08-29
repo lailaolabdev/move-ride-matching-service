@@ -203,3 +203,63 @@ export const notifyDriverWhenCancel = async (token: string, callTaxi: any) => {
         console.log("Error from getMeterPrice: ", error);
     }
 }
+
+export const notifyPassengerWithNotification = async ({ recipient, token, caseType }: {
+    recipient: string,
+    token: string,
+    caseType: string
+}) => {
+    try {
+        let payload;
+
+        const info = {
+            type: "NOTICE",
+            platform: "TAXI",
+            recipientRole: "CUSTOMER",
+        }
+
+        switch (caseType) {
+            case "Accepted":
+                payload = {
+                    recipient,
+                    title: "Your ride request was accepted ✅",
+                    detail: "A driver has accepted your request and is on the way.",
+                    ...info,
+                };
+                break;
+
+            case "Driver_Arrived":
+                payload = {
+                    recipient,
+                    title: "Your driver has arrived 🚖",
+                    detail: "Please meet your driver at the pickup point.",
+                    ...info,
+                };
+                break;
+
+            case "Success":
+                payload = {
+                    recipient,
+                    title: "Payment successful 💳",
+                    detail: "Your payment has been processed successfully.",
+                    ...info,
+                };
+                break;
+
+            default:
+                throw new Error(`Unknown caseType: ${caseType}`);
+        }
+
+        if (payload) {
+            await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/v1/api/notifications`,
+                payload,
+                {
+                    headers: {
+                        Authorization: token
+                    }
+                })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
