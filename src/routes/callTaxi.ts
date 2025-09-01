@@ -23,6 +23,7 @@ import {
   updateClaimMoneyStatus,
   checkUsingPromotion,
   socketCheckStatus,
+  updateClaimMoneyByClaimMoneyId,
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
 import { checkAuthorizationMiddleware } from "../middlewares";
@@ -188,6 +189,13 @@ router.post(
   "/check/promotion",
   checkAuthorizationMiddleware,
   checkUsingPromotion
+);
+
+// update claim money
+router.put(
+  "/update/claim-money",
+  checkAuthorizationMiddleware,
+  updateClaimMoneyByClaimMoneyId
 );
 
 

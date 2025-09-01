@@ -105,6 +105,44 @@
  */
 /**
  * @swagger
+ * /v1/api/call-taxi/update/claim-money/{id}:
+ *   put:
+ *     summary: Update claimMoney for a driver's unclaimed rides
+ *     description: Update the `claimMoney` field for all documents where the driverId matches the given id and isClaim is false.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ids:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   example: "683d1c1f71cc2d05068644e7"
+ *                 description: List of CallTaxi IDs to update
+ *               claimMoney:
+ *                 type: string
+ *                 example: "685a07d4ffb74ef043512cfb"
+ *             required:
+ *               - claimMoney
+ *     responses:
+ *       200:
+ *         description: Claim money updated successfully.
+ *       400:
+ *         description: Invalid input (claimMoney is missing).
+ *       404:
+ *         description: No matching documents found for this driver.
+ *       500:
+ *         description: Internal server error.
+ */
+/**
+ * @swagger
  * /v1/api/call-taxi/{id}:
  *   get:
  *     summary: Get passenger complain

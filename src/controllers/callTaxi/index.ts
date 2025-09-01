@@ -1730,3 +1730,27 @@ export const getClaimPayment = async (req: Request, res: Response): Promise<any>
     });
   }
 };
+
+export const updateClaimMoneyByClaimMoneyId = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { ids, claimMoney } = req.body
+
+    const update: any = {}
+
+    if (claimMoney) update.claimMoney = claimMoney
+
+    const updateClaimMoney = await CallTaxi.updateMany(
+      { _id: { $in: ids }, isClaim: false, status: "Paid" },
+      { $set: update }
+    );
+
+    res.json({ ...messages.SUCCESSFULLY, updateClaimMoney });
+  } catch (error) {
+    console.error("Error update claim money: ", error);
+    return res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+}

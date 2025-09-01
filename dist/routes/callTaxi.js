@@ -50,4 +50,6 @@ router.get("/driver/ride-history", middlewares_1.checkAuthorizationMiddleware, c
 router.get('/driver/total-income', middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getTotalDriverIncome);
 router.get('/driver/payment-detail/:id', middlewares_1.checkAuthorizationMiddleware, callTaxi_1.getDriverPaymentDetail);
 router.post("/check/promotion", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.checkUsingPromotion);
+// update claim money
+router.put("/update/claim-money", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateClaimMoneyByClaimMoneyId);
 exports.default = router;
