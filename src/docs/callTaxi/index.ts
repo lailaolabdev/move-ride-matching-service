@@ -106,7 +106,7 @@
 
 /**
  * @swagger
- * /v1/api/call-taxi/update/claim-money/{id}:
+ * /v1/api/call-taxi/update/claim-money:
  *   put:
  *     summary: Update claimMoney for a driver's unclaimed rides
  *     description: Update the `claimMoney` field for all documents where the driverId matches the given id and isClaim is false.
