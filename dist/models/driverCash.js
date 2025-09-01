@@ -47,14 +47,8 @@ const DriverCashSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    phone: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true
-    },
+    phone: String,
+    email: String,
     country: {
         type: String,
         required: true

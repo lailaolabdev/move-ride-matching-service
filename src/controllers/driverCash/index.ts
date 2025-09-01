@@ -243,13 +243,13 @@ export const adjustDriverCash = async (req: Request, res: Response) => {
             }
 
             const body = {
-                firstName: driverData?.firstName,
-                lastName: driverData?.lastName,
-                fullName: driverData?.fullName,
-                phone: driverData?.phone,
-                email: driverData?.email,
-                country: driverData?.country?._id,
-                countryCode: driverData?.country?.code,
+                firstName: driverData?.firstName || "",
+                lastName: driverData?.lastName || "",
+                fullName: driverData?.fullName || "",
+                phone: driverData?.phone || "",
+                email: driverData?.email || "",
+                country: driverData?.country?._id || "",
+                countryCode: driverData?.country?.code || "",
             }
 
             driverCash = await createDriverCashService(driverId, body);
