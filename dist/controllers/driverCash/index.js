@@ -217,7 +217,7 @@ const adjustDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 });
                 return;
             }
-            const body = {
+            const createData = {
                 firstName: (driverData === null || driverData === void 0 ? void 0 : driverData.firstName) || "",
                 lastName: (driverData === null || driverData === void 0 ? void 0 : driverData.lastName) || "",
                 fullName: (driverData === null || driverData === void 0 ? void 0 : driverData.fullName) || "",
@@ -225,8 +225,9 @@ const adjustDriverCash = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 email: (driverData === null || driverData === void 0 ? void 0 : driverData.email) || "",
                 country: ((_b = driverData === null || driverData === void 0 ? void 0 : driverData.country) === null || _b === void 0 ? void 0 : _b._id) || "",
                 countryCode: ((_c = driverData === null || driverData === void 0 ? void 0 : driverData.country) === null || _c === void 0 ? void 0 : _c.code) || "",
+                amount: body.amount || 0
             };
-            driverCash = yield (0, driverCash_1.createDriverCashService)(driverId, body);
+            driverCash = yield (0, driverCash_1.createDriverCashService)(driverId, createData);
         }
         res.status(200).json({
             code: config_1.messages.SUCCESSFULLY.code,

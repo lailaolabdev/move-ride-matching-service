@@ -242,7 +242,7 @@ export const adjustDriverCash = async (req: Request, res: Response) => {
                 return;
             }
 
-            const body = {
+            const createData = {
                 firstName: driverData?.firstName || "",
                 lastName: driverData?.lastName || "",
                 fullName: driverData?.fullName || "",
@@ -250,9 +250,10 @@ export const adjustDriverCash = async (req: Request, res: Response) => {
                 email: driverData?.email || "",
                 country: driverData?.country?._id || "",
                 countryCode: driverData?.country?.code || "",
+                amount: body.amount || 0
             }
 
-            driverCash = await createDriverCashService(driverId, body);
+            driverCash = await createDriverCashService(driverId, createData);
         }
 
         res.status(200).json({
