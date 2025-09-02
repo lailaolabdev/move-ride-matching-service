@@ -130,6 +130,9 @@
  *               claimMoney:
  *                 type: string
  *                 example: "685a07d4ffb74ef043512cfb"
+ *               isClaim:
+ *                 type: boolean
+ *                 example: true
  *             required:
  *               - claimMoney
  *     responses:

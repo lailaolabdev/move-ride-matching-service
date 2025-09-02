@@ -1733,14 +1733,15 @@ export const getClaimPayment = async (req: Request, res: Response): Promise<any>
 
 export const updateClaimMoneyByClaimMoneyId = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { ids, claimMoney } = req.body
+    const { ids, claimMoney, isClaim } = req.body
 
     const update: any = {}
 
     if (claimMoney) update.claimMoney = claimMoney
+    if (isClaim) update.claimMoney = isClaim
 
     const updateClaimMoney = await CallTaxi.updateMany(
-      { _id: { $in: ids }, isClaim: false, status: "Paid" },
+      { _id: { $in: ids }, status: "Paid" },
       { $set: update }
     );
 

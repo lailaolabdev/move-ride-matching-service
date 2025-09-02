@@ -1506,11 +1506,13 @@ const getClaimPayment = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.getClaimPayment = getClaimPayment;
 const updateClaimMoneyByClaimMoneyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { ids, claimMoney } = req.body;
+        const { ids, claimMoney, isClaim } = req.body;
         const update = {};
         if (claimMoney)
             update.claimMoney = claimMoney;
-        const updateClaimMoney = yield callTaxi_2.CallTaxi.updateMany({ _id: { $in: ids }, isClaim: false, status: "Paid" }, { $set: update });
+        if (isClaim)
+            update.claimMoney = isClaim;
+        const updateClaimMoney = yield callTaxi_2.CallTaxi.updateMany({ _id: { $in: ids }, status: "Paid" }, { $set: update });
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { updateClaimMoney }));
     }
     catch (error) {

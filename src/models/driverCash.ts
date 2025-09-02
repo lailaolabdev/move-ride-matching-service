@@ -13,35 +13,19 @@ export interface IDriverCash extends Document {
 }
 
 const DriverCashSchema: Schema = new Schema({
-    firstName: {
-        type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
-        required: true
-    },
-    fullName: {
-        type: String,
-        required: true
-    },
+    firstName: String,
+    lastName: String,
+    fullName: String,
     phone: String,
     email: String,
-    country: {
-        type: String,
-        required: true
-    },
-    countryCode: {
-        type: String,
-        required: true
-    },
+    country: String,
+    countryCode: String,
     driver: {
         type: String,
         required: true
     },
     amount: {
         type: Number,
-        required: true,
         default: 0
     },
 }, {

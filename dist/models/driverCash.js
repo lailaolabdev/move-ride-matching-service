@@ -35,35 +35,19 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const DriverCashSchema = new mongoose_1.Schema({
-    firstName: {
-        type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
-        required: true
-    },
-    fullName: {
-        type: String,
-        required: true
-    },
+    firstName: String,
+    lastName: String,
+    fullName: String,
     phone: String,
     email: String,
-    country: {
-        type: String,
-        required: true
-    },
-    countryCode: {
-        type: String,
-        required: true
-    },
+    country: String,
+    countryCode: String,
     driver: {
         type: String,
         required: true
     },
     amount: {
         type: Number,
-        required: true,
         default: 0
     },
 }, {
