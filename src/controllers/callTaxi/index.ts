@@ -1749,8 +1749,10 @@ export const updateClaimMoneyByClaimMoneyId = async (req: Request, res: Response
     };
 
     if (isClaim === false) {
-      update.isClaim = isClaim;
       filter.claimMoney = claimMoney;
+      filter._id = [];
+
+      update.isClaim = isClaim;
       update.claimMoney = "";
     };
 

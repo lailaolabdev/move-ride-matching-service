@@ -1522,8 +1522,9 @@ const updateClaimMoneyByClaimMoneyId = (req, res) => __awaiter(void 0, void 0, v
         }
         ;
         if (isClaim === false) {
-            update.isClaim = isClaim;
             filter.claimMoney = claimMoney;
+            filter._id = [];
+            update.isClaim = isClaim;
             update.claimMoney = "";
         }
         ;
