@@ -1506,13 +1506,28 @@ const getClaimPayment = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.getClaimPayment = getClaimPayment;
 const updateClaimMoneyByClaimMoneyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { ids, claimMoney, isClaim } = req.body;
+        const { ids, claimMoney, isClaim, status } = req.body;
+        // Filter data
+        const filter = {};
+        if (ids === null || ids === void 0 ? void 0 : ids.length)
+            filter._id = ids;
+        if (status)
+            filter.status = status;
+        // Update data
         const update = {};
-        if (claimMoney)
-            update.claimMoney = claimMoney;
-        if (isClaim)
-            update.claimMoney = isClaim;
-        const updateClaimMoney = yield callTaxi_2.CallTaxi.updateMany({ _id: { $in: ids }, status: "Paid" }, { $set: update });
+        if (isClaim === true) {
+            update.isClaim = isClaim;
+            if (claimMoney)
+                update.claimMoney = claimMoney;
+        }
+        ;
+        if (isClaim === false) {
+            update.isClaim = isClaim;
+            filter.claimMoney = claimMoney;
+            update.claimMoney = "";
+        }
+        ;
+        const updateClaimMoney = yield callTaxi_2.CallTaxi.updateMany(filter, { $set: update });
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { updateClaimMoney }));
     }
     catch (error) {

@@ -1733,15 +1733,29 @@ export const getClaimPayment = async (req: Request, res: Response): Promise<any>
 
 export const updateClaimMoneyByClaimMoneyId = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { ids, claimMoney, isClaim } = req.body
+    const { ids, claimMoney, isClaim, status } = req.body
+    // Filter data
+    const filter: any = {}
 
+    if (ids?.length) filter._id = ids;
+    if (status) filter.status = status;
+
+    // Update data
     const update: any = {}
 
-    if (claimMoney) update.claimMoney = claimMoney
-    if (isClaim) update.claimMoney = isClaim
+    if (isClaim === true) {
+      update.isClaim = isClaim
+      if (claimMoney) update.claimMoney = claimMoney
+    };
+
+    if (isClaim === false) {
+      update.isClaim = isClaim;
+      filter.claimMoney = claimMoney;
+      update.claimMoney = "";
+    };
 
     const updateClaimMoney = await CallTaxi.updateMany(
-      { _id: { $in: ids }, status: "Paid" },
+      filter,
       { $set: update }
     );
 
