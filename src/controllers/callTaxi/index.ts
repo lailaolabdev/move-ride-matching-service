@@ -1737,7 +1737,7 @@ export const updateClaimMoneyByClaimMoneyId = async (req: Request, res: Response
     // Filter data
     const filter: any = {}
 
-    if (ids?.length) filter._id = ids;
+    if (ids?.length) filter._id = { $in: ids };
     if (status) filter.status = status;
 
     // Update data
@@ -1750,7 +1750,7 @@ export const updateClaimMoneyByClaimMoneyId = async (req: Request, res: Response
 
     if (isClaim === false) {
       filter.claimMoney = claimMoney;
-      filter._id = [];
+      delete filter?._id
 
       update.isClaim = isClaim;
       update.claimMoney = "";

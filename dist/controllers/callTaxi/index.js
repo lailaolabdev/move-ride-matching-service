@@ -1510,7 +1510,7 @@ const updateClaimMoneyByClaimMoneyId = (req, res) => __awaiter(void 0, void 0, v
         // Filter data
         const filter = {};
         if (ids === null || ids === void 0 ? void 0 : ids.length)
-            filter._id = ids;
+            filter._id = { $in: ids };
         if (status)
             filter.status = status;
         // Update data
@@ -1523,7 +1523,7 @@ const updateClaimMoneyByClaimMoneyId = (req, res) => __awaiter(void 0, void 0, v
         ;
         if (isClaim === false) {
             filter.claimMoney = claimMoney;
-            filter._id = [];
+            filter === null || filter === void 0 ? true : delete filter._id;
             update.isClaim = isClaim;
             update.claimMoney = "";
         }
