@@ -1771,3 +1771,21 @@ export const updateClaimMoneyByClaimMoneyId = async (req: Request, res: Response
     });
   }
 }
+
+export const adminUpdateCallTaxiStatus = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const id = req.params.id;
+    const { status } = req.body;
+
+    const updatedStatus = await CallTaxi.findByIdAndUpdate(id, { status })
+
+    res.json({ ...messages.SUCCESSFULLY });
+  } catch (error) {
+    console.error("Error update claim money: ", error);
+    return res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+}

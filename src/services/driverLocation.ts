@@ -19,7 +19,7 @@ export const updateDriverLocationService = async ({
 }) => {
     try {
         if (isOnline === "online" || isOnline === "offline") {
-            await axios.put(
+            const test = await axios.put(
                 `${process.env.SOCKET_SERVICE_URL}/v1/api/driver-location-socket/${driverId}`,
                 {
                     longitude,

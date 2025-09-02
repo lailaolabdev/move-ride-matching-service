@@ -18,11 +18,10 @@ const config_1 = require("../../config");
 const axios_1 = __importDefault(require("axios"));
 const rating_1 = require("../../models/rating");
 const callTaxi_1 = require("../../models/callTaxi");
-const claimMoney_1 = require("../../services/claimMoney");
 const driverCash_1 = __importDefault(require("../../models/driverCash"));
 const cashLimit_1 = require("../../models/cashLimit");
 const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d;
     try {
         const driverId = req.user.id;
         const token = req.headers.authorization;
@@ -97,16 +96,26 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 numberOfRating = (rating === null || rating === void 0 ? void 0 : rating.rating) || 0;
             }
         }
-        // step 4: Create claiming money
-        yield (0, claimMoney_1.createClaimMoney)({
-            token: token,
-            driverId,
-            driverRegistrationSource: userData.registrationSource,
-            country: (_d = userData === null || userData === void 0 ? void 0 : userData.country) === null || _d === void 0 ? void 0 : _d._id,
-            countryCode: (_e = userData === null || userData === void 0 ? void 0 : userData.country) === null || _e === void 0 ? void 0 : _e.code
-        });
-        const match = userData === null || userData === void 0 ? void 0 : userData.taxiType.match(/ObjectId\('(.+?)'\)/);
-        const taxiTypeId = match ? match[1] : null;
+        let taxiTypeId = "";
+        if (typeof (userData === null || userData === void 0 ? void 0 : userData.taxiType) === "string") {
+            const match = userData.taxiType.match(/ObjectId\('(.+?)'\)/);
+            if (match) {
+                taxiTypeId = match[1];
+            }
+            else {
+                try {
+                    // try to parse JSON
+                    const parsed = JSON.parse(userData.taxiType);
+                    taxiTypeId = parsed._id || "";
+                }
+                catch (_e) {
+                    taxiTypeId = userData.taxiType; // fallback
+                }
+            }
+        }
+        else if (typeof (userData === null || userData === void 0 ? void 0 : userData.taxiType) === "object" && ((_d = userData === null || userData === void 0 ? void 0 : userData.taxiType) === null || _d === void 0 ? void 0 : _d._id)) {
+            taxiTypeId = userData.taxiType._id;
+        }
         // step 5: Update driver location from socket
         yield (0, driverLocation_1.updateDriverLocationService)({
             driverId,

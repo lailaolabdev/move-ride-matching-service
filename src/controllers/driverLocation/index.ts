@@ -101,18 +101,24 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
       }
     }
 
-    // step 4: Create claiming money
-    await createClaimMoney({
-      token: token as string,
-      driverId,
-      driverRegistrationSource: userData.registrationSource,
-      country: userData?.country?._id,
-      countryCode: userData?.country?.code
-    })
+    let taxiTypeId: string = "";
 
-    const match = userData?.taxiType.match(/ObjectId\('(.+?)'\)/);
-
-    const taxiTypeId = match ? match[1] : null;
+    if (typeof userData?.taxiType === "string") {
+      const match = userData.taxiType.match(/ObjectId\('(.+?)'\)/);
+      if (match) {
+        taxiTypeId = match[1];
+      } else {
+        try {
+          // try to parse JSON
+          const parsed = JSON.parse(userData.taxiType);
+          taxiTypeId = parsed._id || "";
+        } catch {
+          taxiTypeId = userData.taxiType; // fallback
+        }
+      }
+    } else if (typeof userData?.taxiType === "object" && userData?.taxiType?._id) {
+      taxiTypeId = userData.taxiType._id;
+    }
 
     // step 5: Update driver location from socket
     await updateDriverLocationService({
