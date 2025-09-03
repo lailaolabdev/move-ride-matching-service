@@ -1545,8 +1545,13 @@ const adminUpdateCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0
     try {
         const id = req.params.id;
         const { status } = req.body;
-        const updatedStatus = yield callTaxi_2.CallTaxi.findByIdAndUpdate(id, { status });
-        res.json(Object.assign({}, config_1.messages.SUCCESSFULLY));
+        const updatedCallTaxiStatus = yield callTaxi_2.CallTaxi.findByIdAndUpdate(id, { status });
+        if (updatedCallTaxiStatus) {
+            const token = req.headers.authorization;
+            yield (0, helper_1.notifyDriverWhenCancel)(token, updatedCallTaxiStatus);
+            yield (0, helper_1.removeCallTaxiFromRedis)(updatedCallTaxiStatus._id.toString());
+        }
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { updatedCallTaxiStatus }));
     }
     catch (error) {
         console.error("Error update claim money: ", error);

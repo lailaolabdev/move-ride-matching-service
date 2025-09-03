@@ -1777,9 +1777,16 @@ export const adminUpdateCallTaxiStatus = async (req: Request, res: Response): Pr
     const id = req.params.id;
     const { status } = req.body;
 
-    const updatedStatus = await CallTaxi.findByIdAndUpdate(id, { status })
+    const updatedCallTaxiStatus = await CallTaxi.findByIdAndUpdate(id, { status })
 
-    res.json({ ...messages.SUCCESSFULLY });
+    if (updatedCallTaxiStatus) {
+      const token = req.headers.authorization!;
+
+      await notifyDriverWhenCancel(token, updatedCallTaxiStatus);
+      await removeCallTaxiFromRedis(updatedCallTaxiStatus._id.toString());
+    }
+
+    res.json({ ...messages.SUCCESSFULLY, updatedCallTaxiStatus });
   } catch (error) {
     console.error("Error update claim money: ", error);
     return res.status(500).json({
