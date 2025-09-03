@@ -174,6 +174,8 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     prepaid: 1,
                     promotionPrice: 1,
                     festivalPromotion: 1,
+                    claimMoney: 1,
+                    isClaim: 1
                 },
             },
         ]);

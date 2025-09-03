@@ -74,6 +74,9 @@ export interface ICallTaxi extends Document {
   passengerPhoneNumber: String,
   prepaid: String,
 
+  claimMoney: string,
+  isClaim: boolean,
+
   createdAt: Date;
   updatedAt: Date;
 }
