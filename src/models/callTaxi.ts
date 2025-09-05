@@ -239,6 +239,10 @@ const CallTaxiSchema: Schema = new Schema(
     prepaid: {
       type: Boolean,
       default: false
+    },
+    isInsideBonus: {
+      type: Boolean,
+      default: false
     }
   },
   {

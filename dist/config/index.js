@@ -121,4 +121,8 @@ exports.messages = {
         code: "EV-424",
         message: "already exist"
     },
+    ROUND_LIMIT_NOT_FOUND: {
+        code: "TAXI-421236",
+        message: "Round limit not found for this country code"
+    },
 };

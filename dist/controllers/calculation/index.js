@@ -15,6 +15,8 @@ const calculation_1 = require("../../services/calculation");
 const onPeakTime_1 = require("../../services/onPeakTime");
 const taxiTypePricing_1 = require("../../services/taxiTypePricing");
 const driverRate_1 = require("../../models/driverRate");
+const callTaxi_1 = require("../../models/callTaxi");
+const roundLimit_1 = require("../../models/roundLimit");
 const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     try {
@@ -116,6 +118,48 @@ const calculateDriverDistanceAndDuration = (req, res) => __awaiter(void 0, void 
 exports.calculateDriverDistanceAndDuration = calculateDriverDistanceAndDuration;
 const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // Check if registrationSource is "inside"
+        if (callTaxi.registrationSource === "inside") {
+            // Get round limit from roundLimit model based on country
+            const roundLimitData = yield roundLimit_1.roundLimitModel.findOne({
+                country: callTaxi.country
+            }).sort({ createdAt: -1 });
+            if (!roundLimitData) {
+                return {
+                    calculatedPrice: 0,
+                    driverRate: 0,
+                    code: config_1.messages.ROUND_LIMIT_NOT_FOUND.code,
+                    message: config_1.messages.ROUND_LIMIT_NOT_FOUND.message
+                };
+            }
+            const requiredTransactions = roundLimitData.round;
+            // Get current date for monthly transaction check
+            const currentDate = new Date();
+            const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+            // Count driver's transactions in current month (only Success and Paid status)
+            const driverTransactionCount = yield callTaxi_1.CallTaxi.countDocuments({
+                driverId: callTaxi.driverId,
+                createdAt: {
+                    $gte: startOfMonth,
+                    $lte: endOfMonth
+                },
+                status: { $in: ["Paid"] } // Only count Paid transactions
+            });
+            // If driver has less than required transactions, return zero values
+            if (driverTransactionCount < requiredTransactions) {
+                return {
+                    calculatedPrice: 0,
+                    driverRate: 0,
+                    transactionCount: driverTransactionCount,
+                    requiredTransactions: requiredTransactions
+                };
+            }
+            // If driver has enough transactions, update isInsideBonus to true
+            yield callTaxi_1.CallTaxi.findByIdAndUpdate(callTaxi._id, {
+                isInsideBonus: true
+            });
+        }
         // Fetch the driverRate based on the taxiType
         // if country code find by country code also
         const driverRates = yield driverRate_1.driverRateModel.findOne({
