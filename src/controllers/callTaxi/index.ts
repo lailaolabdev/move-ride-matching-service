@@ -968,6 +968,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       festivalPromotion,
       totalPrice,
       prepaid,
+      waitingPrepaid
     } = req.body;
 
     const token = req.headers.authorization!;
@@ -1030,6 +1031,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (festivalPromotion) updateData.festivalPromotion = festivalPromotion;
     if (totalPrice) updateData.totalPrice = totalPrice;
     if (prepaid) updateData.prepaid = prepaid;
+    if (waitingPrepaid) updateData.waitingPrepaid = waitingPrepaid;
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to
