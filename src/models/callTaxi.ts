@@ -236,7 +236,17 @@ const CallTaxiSchema: Schema = new Schema(
     prepaid: {
       type: Boolean,
       default: false
-    }
+    },
+    adminUpdated: {
+      type: [
+        {
+          admin: { type: String },
+          name: { type: String },
+          updatedReason: { type: String },
+        },
+      ],
+      default: undefined,
+    },
   },
   {
     timestamps: true,

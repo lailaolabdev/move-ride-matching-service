@@ -1545,7 +1545,7 @@ const adminUpdateCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0
     try {
         const id = req.params.id;
         const { status } = req.body;
-        const updatedCallTaxiStatus = yield callTaxi_2.CallTaxi.findByIdAndUpdate(id, { status });
+        const updatedCallTaxiStatus = yield callTaxi_2.CallTaxi.findByIdAndUpdate(id, { status }, { new: true });
         if (updatedCallTaxiStatus) {
             const token = req.headers.authorization;
             yield (0, helper_1.notifyDriverWhenCancel)(token, updatedCallTaxiStatus);

@@ -24,9 +24,10 @@ import {
   checkUsingPromotion,
   socketCheckStatus,
   updateClaimMoneyByClaimMoneyId,
+  adminUpdateCallTaxiStatus,
 } from "../controllers/callTaxi";
 import { validateParamID } from "../utils/validateParamId";
-import { checkAuthorizationMiddleware } from "../middlewares";
+import { checkAuthorizationAdminRole, checkAuthorizationMiddleware } from "../middlewares";
 import { getClaimPayment } from "../controllers/callTaxi";
 
 const router = express.Router();
@@ -198,5 +199,10 @@ router.put(
   updateClaimMoneyByClaimMoneyId
 );
 
-
+router.put(
+  '/admin/update/status/:id',
+  checkAuthorizationMiddleware,
+  checkAuthorizationAdminRole,
+  adminUpdateCallTaxiStatus
+)
 export default router;

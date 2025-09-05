@@ -941,3 +941,44 @@
  *                   type: string
  *                   example: "Error fetching comments and ratings"
  */
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/admin/update/status/{id}:
+ *   put:
+ *     summary: Update claimMoney by admin
+ *     description: Update the `claimMoney` by admin.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "68523e717b4de0edfd0f1ba1"
+ *         description: The unique identifier of the call taxi record to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "Canceled"
+ *             required:
+ *               - status
+ *     responses:
+ *       200:
+ *         description: Claim money updated successfully.
+ *       400:
+ *         description: Invalid input (claimMoney is missing).
+ *       404:
+ *         description: No matching documents found for this driver.
+ *       500:
+ *         description: Internal server error.
+ */

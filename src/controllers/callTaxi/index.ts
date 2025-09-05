@@ -1777,7 +1777,7 @@ export const adminUpdateCallTaxiStatus = async (req: Request, res: Response): Pr
     const id = req.params.id;
     const { status } = req.body;
 
-    const updatedCallTaxiStatus = await CallTaxi.findByIdAndUpdate(id, { status })
+    const updatedCallTaxiStatus = await CallTaxi.findByIdAndUpdate(id, { status }, { new: true })
 
     if (updatedCallTaxiStatus) {
       const token = req.headers.authorization!;

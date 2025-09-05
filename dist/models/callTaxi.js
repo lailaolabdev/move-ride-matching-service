@@ -175,7 +175,17 @@ const CallTaxiSchema = new mongoose_1.Schema({
     prepaid: {
         type: Boolean,
         default: false
-    }
+    },
+    adminUpdated: {
+        type: [
+            {
+                admin: { type: String },
+                name: { type: String },
+                updatedReason: { type: String },
+            },
+        ],
+        default: undefined,
+    },
 }, {
     timestamps: true,
 });
