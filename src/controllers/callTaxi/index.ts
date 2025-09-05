@@ -224,7 +224,8 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
           festivalPromotion: 1,
           claimMoney: 1,
           isClaim: 1,
-          driverIncome: 1
+          driverIncome: 1,
+          waitingPrepaid: 1
         },
       },
     ]);
