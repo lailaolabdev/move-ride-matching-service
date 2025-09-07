@@ -1779,7 +1779,9 @@ export const adminUpdateCallTaxiStatus = async (req: Request, res: Response): Pr
 
     const updatedCallTaxiStatus = await CallTaxi.findByIdAndUpdate(id, { status }, { new: true })
 
-    if (updatedCallTaxiStatus) {
+    const isFinalStatus = ["Canceled", "Paid"].includes(updatedCallTaxiStatus?.status ?? "");
+
+    if (updatedCallTaxiStatus && isFinalStatus) {
       const token = req.headers.authorization!;
 
       await notifyDriverWhenCancel(token, updatedCallTaxiStatus);
