@@ -179,7 +179,8 @@ const CallTaxiSchema = new mongoose_1.Schema({
     waitingPrepaid: {
         type: Boolean,
         default: false
-    }
+    },
+    meterDistance: Number
 }, {
     timestamps: true,
 });

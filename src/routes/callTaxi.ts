@@ -58,7 +58,6 @@ router.get(
   socketCheckStatus
 );
 
-
 router.get(
   "/user-history",
   checkAuthorizationMiddleware,

@@ -225,7 +225,8 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
           claimMoney: 1,
           isClaim: 1,
           driverIncome: 1,
-          waitingPrepaid: 1
+          waitingPrepaid: 1,
+          meterDistance: 1,
         },
       },
     ]);
@@ -969,7 +970,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       festivalPromotion,
       totalPrice,
       prepaid,
-      waitingPrepaid
+      waitingPrepaid,
+      meterDistance
     } = req.body;
 
     const token = req.headers.authorization!;
@@ -1033,6 +1035,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (totalPrice) updateData.totalPrice = totalPrice;
     if (prepaid) updateData.prepaid = prepaid;
     if (waitingPrepaid) updateData.waitingPrepaid = waitingPrepaid;
+    if (meterDistance) updateData.meterDistance = meterDistance;
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to

@@ -177,7 +177,8 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     claimMoney: 1,
                     isClaim: 1,
                     driverIncome: 1,
-                    waitingPrepaid: 1
+                    waitingPrepaid: 1,
+                    meterDistance: 1,
                 },
             },
         ]);
@@ -851,7 +852,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid } = req.body;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance } = req.body;
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
@@ -908,6 +909,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.prepaid = prepaid;
         if (waitingPrepaid)
             updateData.waitingPrepaid = waitingPrepaid;
+        if (meterDistance)
+            updateData.meterDistance = meterDistance;
         if (status) {
             // If status is paid add calculatedPrice and driverRate to
             // calculate driver income
