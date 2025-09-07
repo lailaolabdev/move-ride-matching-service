@@ -50,8 +50,6 @@ import { convertToEndDate, convertToStartDate } from "../../utils/timezone";
 import taxiTypePricingModel from "../../models/taxiTypePricing";
 import { getDriverCashByDriverIdService } from "../../services/driverCash";
 import driverCashModel, { IDriverCash } from "../../models/driverCash";
-import { ParamsDictionary } from "express-serve-static-core";
-import { ParsedQs } from "qs";
 import { cashLimitModel } from "../../models/cashLimit";
 import { updateDriverLocationService } from "../../services/driverLocation";
 
@@ -1035,61 +1033,10 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       // If status is paid add calculatedPrice and driverRate to
       // calculate driver income
       if (status === STATUS.PAID) {
-        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi);
-
-        // Calculate price and driver rate
-        if (calculatedPrice && driverRate) {
-          const claimMoney: any = await getClaimMoney({
-            token,
-            driverId: callTaxi.driverId!,
-            status: "WAITING_TO_CHECK",
-          });
-
-          if (claimMoney) {
-            const income = claimMoney.income + calculatedPrice;
-            const total = claimMoney.total + callTaxi.totalPrice;
-
-            const updateClaim = await updateClaimMoney({
-              token,
-              id: claimMoney._id,
-              income,
-              total,
-            });
-
-            if (updateClaim) updateData.claimMoney = updateClaim._id;
-          } else {
-            try {
-              const driver = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi?.driverId}`,
-                {
-                  headers: {
-                    Authorization: `${req.headers["authorization"]}`,
-                  },
-                }
-              );
-
-              const driverId = driver?.data?.user?._id;
-              const driverRegistrationSource = driver?.data?.user?.registrationSource;
-
-              const createClaim = await createClaimMoney({
-                token: token as string,
-                driverId,
-                driverRegistrationSource,
-                income: calculatedPrice,
-                country: driver?.data?.user?.country?._id,
-                countryCode: driver?.data?.user?.country?.code,
-              });
-
-              if (createClaim) updateData.claimMoney = createClaim._id;
-            } catch (error) {
-              console.log({ error });
-            }
-          }
-
-          updateData.driverIncome = calculatedPrice;
-          updateData.driverRate = driverRate;
-        }
+        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
+        updateData.driverIncome = calculatedPrice;
+        updateData.driverRate = driverRate;
       }
-
       updateData.status = status;
     }
 
