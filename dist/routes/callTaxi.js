@@ -52,4 +52,5 @@ router.get('/driver/payment-detail/:id', middlewares_1.checkAuthorizationMiddlew
 router.post("/check/promotion", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.checkUsingPromotion);
 // update claim money
 router.put("/update/claim-money", middlewares_1.checkAuthorizationMiddleware, callTaxi_1.updateClaimMoneyByClaimMoneyId);
+router.put('/admin/update/status/:id', middlewares_1.checkAuthorizationMiddleware, middlewares_1.checkAuthorizationAdminRole, callTaxi_1.adminUpdateCallTaxiStatus);
 exports.default = router;
