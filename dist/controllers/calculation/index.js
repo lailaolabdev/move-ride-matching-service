@@ -34,10 +34,7 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
         // step 2 : find taxi type pricing base on distance, 
         // example: distance 5km find distance between 1 - 5
         const distance = calculate.totalDistance;
-        const taxiTypePricing = (_a = yield (0, taxiTypePricing_1.getTaxiPricingDistance)({
-            country,
-            distance
-        })) !== null && _a !== void 0 ? _a : [];
+        const taxiTypePricing = (_a = yield (0, taxiTypePricing_1.getTaxiPricingDistance)({ country, distance })) !== null && _a !== void 0 ? _a : [];
         const meter = [];
         const flatFare = [];
         let delayPrice = 10;
@@ -60,18 +57,14 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
             };
             flatFare.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { price: taxiTypePricing[i].flatFarePrice, polygonPrice: (_c = calculate.priceInPolygon) !== null && _c !== void 0 ? _c : 0, onPeakTimePrice,
                 delayPrice }), calculate), { totalPrice: distance > 1
-                    ? Math.ceil((taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance +
-                        calculate.priceInPolygon +
-                        delayPrice * calculate.delayDuration)
-                    : Math.ceil((taxiTypePricing[i].flatFarePrice + onPeakTimePrice) +
-                        calculate.priceInPolygon +
-                        delayPrice * calculate.delayDuration) }));
+                    ? ((taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance) + calculate.priceInPolygon + (delayPrice * calculate.delayDuration)
+                    : taxiTypePricing[i].flatFarePrice + onPeakTimePrice + calculate.priceInPolygon + (delayPrice * calculate.delayDuration) }));
             meter.push(Object.assign(Object.assign(Object.assign(Object.assign({}, taxiPricing), { price: taxiTypePricing[i].meterPrice, polygonPrice: (_d = calculate.priceInPolygon) !== null && _d !== void 0 ? _d : 0, onPeakTimePrice,
                 delayPrice }), calculate), { actualCalculate: distance > 1
-                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance) + Math.ceil(0.05 * taxiTypePricing[i].meterPrice * distance)
-                    : Math.ceil(taxiTypePricing[i].meterPrice), estimatedCalculate: distance > 1
-                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance) + Math.ceil(0.10 * taxiTypePricing[i].meterPrice * distance)
-                    : Math.ceil(taxiTypePricing[i].meterPrice) }));
+                    ? (taxiTypePricing[i].meterPrice * distance) + (0.05 * taxiTypePricing[i].meterPrice * distance)
+                    : (taxiTypePricing[i].meterPrice), estimatedCalculate: distance > 1
+                    ? (taxiTypePricing[i].meterPrice * distance) + (0.10 * taxiTypePricing[i].meterPrice * distance)
+                    : (taxiTypePricing[i].meterPrice) }));
         }
         res.status(200).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,

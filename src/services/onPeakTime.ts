@@ -1,24 +1,18 @@
 import axios from "axios";
 import { formatTime, getDayString, getLocalTime } from "../utils/timezone";
 
-export const getOnPeakTimeService = async (token: string, countryCode?: string) => {
+export const getOnPeakTimeService = async (token: string, country?: string) => {
   try {
     const onPeakTime = await axios.get(
-      `${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&countryCode=${countryCode}`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
+      `${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&country=${country}`,
+      { headers: { Authorization: token } }
     );
 
     if (!onPeakTime?.data?.onPeakTimes) {
       return false;
     }
 
-    const getCurrentPeakTime = await getCurrentPeakSchedule(
-      onPeakTime?.data?.onPeakTimes
-    );
+    const getCurrentPeakTime = await getCurrentPeakSchedule(onPeakTime?.data?.onPeakTimes);
 
     return getCurrentPeakTime;
   } catch (error) {
