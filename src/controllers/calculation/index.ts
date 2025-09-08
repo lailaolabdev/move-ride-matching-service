@@ -156,12 +156,12 @@ export const calculateDriverDistanceAndDuration = async (
 
 export const driverRateCal = async (callTaxi: any) => {
     try {
+        let isInsideBonus = false;
+
         // Check if registrationSource is "inside"
         if (callTaxi.registrationSource === "inside") {
             // Get round limit from roundLimit model based on country
-            const roundLimitData = await roundLimitModel.findOne({
-                country: callTaxi.country
-            }).sort({ createdAt: -1 });
+            const roundLimitData = await roundLimitModel.findOne({ country: callTaxi.country }).sort({ createdAt: -1 });
 
             if (!roundLimitData) {
                 return {
@@ -190,19 +190,9 @@ export const driverRateCal = async (callTaxi: any) => {
             });
 
             // If driver has less than required transactions, return zero values
-            if (driverTransactionCount < requiredTransactions) {
-                return {
-                    calculatedPrice: 0,
-                    driverRate: 0,
-                    transactionCount: driverTransactionCount,
-                    requiredTransactions: requiredTransactions
-                };
+            if (driverTransactionCount > requiredTransactions) {
+                isInsideBonus = true
             }
-
-            // If driver has enough transactions, update isInsideBonus to true
-            await CallTaxi.findByIdAndUpdate(callTaxi._id, {
-                isInsideBonus: true
-            });
         }
 
         // Fetch the driverRate based on the taxiType
@@ -210,14 +200,19 @@ export const driverRateCal = async (callTaxi: any) => {
         const driverRates = await driverRateModel.findOne({
             minDistance: { $lte: callTaxi.totalDistance },
             maxDistance: { $gte: callTaxi.totalDistance },
-            countryCode: callTaxi?.countryCode
+            countryCode: callTaxi?.countryCode,
+            registrationSource: callTaxi?.registrationSource
         });
 
         if (driverRates) {
             const calculatedPrice = (driverRates?.percentage / 100) * callTaxi.totalPrice;
 
             // Return the calculated price and the corresponding driver rate
-            return { calculatedPrice, driverRate: driverRates?.percentage };
+            return {
+                calculatedPrice,
+                driverRate: driverRates?.percentage,
+                isInsideBonus
+            };
         }
 
         return { message: "No driver rates found for this taxi type." };

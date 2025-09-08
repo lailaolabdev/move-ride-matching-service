@@ -1039,10 +1039,13 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       // If status is paid add calculatedPrice and driverRate to
       // calculate driver income
       if (status === STATUS.PAID) {
-        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
+        const { calculatedPrice, driverRate, isInsideBonus }: any = await driverRateCal(callTaxi);
+
         updateData.driverIncome = calculatedPrice;
         updateData.driverRate = driverRate;
+        updateData.isInsideBonus = isInsideBonus;
       }
+
       updateData.status = status;
     }
 

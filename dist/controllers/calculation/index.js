@@ -118,12 +118,11 @@ const calculateDriverDistanceAndDuration = (req, res) => __awaiter(void 0, void 
 exports.calculateDriverDistanceAndDuration = calculateDriverDistanceAndDuration;
 const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        let isInsideBonus = false;
         // Check if registrationSource is "inside"
         if (callTaxi.registrationSource === "inside") {
             // Get round limit from roundLimit model based on country
-            const roundLimitData = yield roundLimit_1.roundLimitModel.findOne({
-                country: callTaxi.country
-            }).sort({ createdAt: -1 });
+            const roundLimitData = yield roundLimit_1.roundLimitModel.findOne({ country: callTaxi.country }).sort({ createdAt: -1 });
             if (!roundLimitData) {
                 return {
                     calculatedPrice: 0,
@@ -147,30 +146,26 @@ const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* 
                 status: { $in: ["Paid"] } // Only count Paid transactions
             });
             // If driver has less than required transactions, return zero values
-            if (driverTransactionCount < requiredTransactions) {
-                return {
-                    calculatedPrice: 0,
-                    driverRate: 0,
-                    transactionCount: driverTransactionCount,
-                    requiredTransactions: requiredTransactions
-                };
+            if (driverTransactionCount > requiredTransactions) {
+                isInsideBonus = true;
             }
-            // If driver has enough transactions, update isInsideBonus to true
-            yield callTaxi_1.CallTaxi.findByIdAndUpdate(callTaxi._id, {
-                isInsideBonus: true
-            });
         }
         // Fetch the driverRate based on the taxiType
         // if country code find by country code also
         const driverRates = yield driverRate_1.driverRateModel.findOne({
             minDistance: { $lte: callTaxi.totalDistance },
             maxDistance: { $gte: callTaxi.totalDistance },
-            countryCode: callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.countryCode
+            countryCode: callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.countryCode,
+            registrationSource: callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.registrationSource
         });
         if (driverRates) {
             const calculatedPrice = ((driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage) / 100) * callTaxi.totalPrice;
             // Return the calculated price and the corresponding driver rate
-            return { calculatedPrice, driverRate: driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage };
+            return {
+                calculatedPrice,
+                driverRate: driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage,
+                isInsideBonus
+            };
         }
         return { message: "No driver rates found for this taxi type." };
     }
