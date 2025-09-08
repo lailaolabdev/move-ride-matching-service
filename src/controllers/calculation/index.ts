@@ -4,6 +4,8 @@ import { calculateDriverDistanceAndDurationService, calculateUserDistanceAndDura
 import { getOnPeakTimeService } from "../../services/onPeakTime";
 import { getTaxiPricingDistance } from "../../services/taxiTypePricing";
 import { driverRateModel } from "../../models/driverRate";
+import { CallTaxi } from "../../models/callTaxi";
+import { roundLimitModel } from "../../models/roundLimit";
 import { Types } from "mongoose";
 
 export const calculateUserDistanceAndDuration = async (
@@ -154,6 +156,55 @@ export const calculateDriverDistanceAndDuration = async (
 
 export const driverRateCal = async (callTaxi: any) => {
     try {
+        // Check if registrationSource is "inside"
+        if (callTaxi.registrationSource === "inside") {
+            // Get round limit from roundLimit model based on country
+            const roundLimitData = await roundLimitModel.findOne({
+                country: callTaxi.country
+            }).sort({ createdAt: -1 });
+
+            if (!roundLimitData) {
+                return {
+                    calculatedPrice: 0,
+                    driverRate: 0,
+                    code: messages.ROUND_LIMIT_NOT_FOUND.code,
+                    message: messages.ROUND_LIMIT_NOT_FOUND.message
+                };
+            }
+
+            const requiredTransactions = roundLimitData.round;
+
+            // Get current date for monthly transaction check
+            const currentDate = new Date();
+            const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+            // Count driver's transactions in current month (only Success and Paid status)
+            const driverTransactionCount = await CallTaxi.countDocuments({
+                driverId: callTaxi.driverId,
+                createdAt: {
+                    $gte: startOfMonth,
+                    $lte: endOfMonth
+                },
+                status: { $in: ["Paid"] } // Only count Paid transactions
+            });
+
+            // If driver has less than required transactions, return zero values
+            if (driverTransactionCount < requiredTransactions) {
+                return {
+                    calculatedPrice: 0,
+                    driverRate: 0,
+                    transactionCount: driverTransactionCount,
+                    requiredTransactions: requiredTransactions
+                };
+            }
+
+            // If driver has enough transactions, update isInsideBonus to true
+            await CallTaxi.findByIdAndUpdate(callTaxi._id, {
+                isInsideBonus: true
+            });
+        }
+
         // Fetch the driverRate based on the taxiType
         // if country code find by country code also
         const driverRates = await driverRateModel.findOne({

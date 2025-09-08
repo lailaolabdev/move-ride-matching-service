@@ -244,7 +244,11 @@ const CallTaxiSchema: Schema = new Schema(
       type: Boolean,
       default: false
     },
-    meterDistance: Number
+    meterDistance: Number,
+    isInsideBonus: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,

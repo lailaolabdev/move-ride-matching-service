@@ -180,7 +180,11 @@ const CallTaxiSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false
     },
-    meterDistance: Number
+    meterDistance: Number,
+    isInsideBonus: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true,
 });

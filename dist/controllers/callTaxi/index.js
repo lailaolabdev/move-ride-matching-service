@@ -23,7 +23,6 @@ const rating_1 = require("../../models/rating");
 const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
 const mongoose_1 = require("mongoose");
 const calculation_1 = require("../calculation");
-const claimMoney_1 = require("../../services/claimMoney");
 const callTaxi_3 = require("../../services/callTaxi");
 const timezone_1 = require("../../utils/timezone");
 const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
@@ -849,7 +848,6 @@ const getDriverCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     try {
         const { id } = req.params;
         const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance } = req.body;
@@ -916,52 +914,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             // calculate driver income
             if (status === callTaxi_2.STATUS.PAID) {
                 const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
-                // Calculate price and driver rate
-                if (calculatedPrice && driverRate) {
-                    const claimMoney = yield (0, claimMoney_1.getClaimMoney)({
-                        token,
-                        driverId: callTaxi.driverId,
-                        status: "WAITING_TO_CHECK",
-                    });
-                    if (claimMoney) {
-                        const income = claimMoney.income + calculatedPrice;
-                        const total = claimMoney.total + callTaxi.totalPrice;
-                        const updateClaim = yield (0, claimMoney_1.updateClaimMoney)({
-                            token,
-                            id: claimMoney._id,
-                            income,
-                            total,
-                        });
-                        if (updateClaim)
-                            updateData.claimMoney = updateClaim._id;
-                    }
-                    else {
-                        try {
-                            const driver = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.driverId}`, {
-                                headers: {
-                                    Authorization: `${req.headers["authorization"]}`,
-                                },
-                            });
-                            const driverId = (_b = (_a = driver === null || driver === void 0 ? void 0 : driver.data) === null || _a === void 0 ? void 0 : _a.user) === null || _b === void 0 ? void 0 : _b._id;
-                            const driverRegistrationSource = (_d = (_c = driver === null || driver === void 0 ? void 0 : driver.data) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.registrationSource;
-                            const createClaim = yield (0, claimMoney_1.createClaimMoney)({
-                                token: token,
-                                driverId,
-                                driverRegistrationSource,
-                                income: calculatedPrice,
-                                country: (_g = (_f = (_e = driver === null || driver === void 0 ? void 0 : driver.data) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.country) === null || _g === void 0 ? void 0 : _g._id,
-                                countryCode: (_k = (_j = (_h = driver === null || driver === void 0 ? void 0 : driver.data) === null || _h === void 0 ? void 0 : _h.user) === null || _j === void 0 ? void 0 : _j.country) === null || _k === void 0 ? void 0 : _k.code,
-                            });
-                            if (createClaim)
-                                updateData.claimMoney = createClaim._id;
-                        }
-                        catch (error) {
-                            console.log({ error });
-                        }
-                    }
-                    updateData.driverIncome = calculatedPrice;
-                    updateData.driverRate = driverRate;
-                }
+                updateData.driverIncome = calculatedPrice;
+                updateData.driverRate = driverRate;
             }
             updateData.status = status;
         }
