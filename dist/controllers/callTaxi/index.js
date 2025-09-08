@@ -178,6 +178,7 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     driverIncome: 1,
                     waitingPrepaid: 1,
                     meterDistance: 1,
+                    billNumber: 1
                 },
             },
         ]);
