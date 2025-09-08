@@ -446,7 +446,7 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     "passenger.profileImage": 1,
                     "driver._id": 1,
                     "driver.fullName": 1,
-                    "driver.driverPhoneNumber": 1,
+                    "driver.phone": 1,
                     "driver.profileImage": 1,
                     "driver.licensePlate": 1,
                     createdAt: 1,
