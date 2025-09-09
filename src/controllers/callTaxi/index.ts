@@ -1042,7 +1042,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       // If status is paid add calculatedPrice and driverRate to
       // calculate driver income
       if (status === STATUS.PAID) {
-        const price = callTaxi.requestType === "meter" ? totalPrice : callTaxi.totalPrice
+        const price = callTaxi.requestType === "meter" ? Number(totalPrice) : Number(callTaxi.totalPrice)
 
         const {
           calculatedPrice,
