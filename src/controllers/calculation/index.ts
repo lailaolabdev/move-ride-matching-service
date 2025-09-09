@@ -189,7 +189,7 @@ export const driverRateCal = async ({ callTaxi }: { callTaxi: any }) => {
         });
 
         if (driverRates) {
-            const price = callTaxi?.requestPrice === REQUEST_TYPE.METERED_FARE ? callTaxi?.meterPrice : callTaxi?.totalPrice
+            const price = callTaxi?.requestType === REQUEST_TYPE.METERED_FARE ? callTaxi?.meterPrice : callTaxi?.totalPrice
 
             const calculatedPrice = (driverRates?.percentage / 100) * price;
             const calculatedPlatformPrice = price - calculatedPrice
