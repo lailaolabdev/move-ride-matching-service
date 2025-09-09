@@ -192,6 +192,10 @@ export const driverRateCal = async (callTaxi: any) => {
             const calculatedPrice = (driverRates?.percentage / 100) * callTaxi.totalPrice;
             const calculatedPlatformPrice = callTaxi.totalPrice - calculatedPrice
 
+            console.log("totalPrice: ", callTaxi.totalPrice)
+            console.log("percentage: ", driverRates?.percentage)
+            console.log("calculatedPrice: ", callTaxi.totalPrice)
+
             // Return the calculated price and the corresponding driver rate
             return {
                 calculatedPrice,
