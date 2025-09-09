@@ -138,7 +138,7 @@ export const calculateDriverDistanceAndDuration = async (
     }
 };
 
-export const driverRateCal = async (callTaxi: any) => {
+export const driverRateCal = async (callTaxi: any, totalPrice: number) => {
     try {
         console.log("callTaxi in driverRateCal: ", callTaxi);
 
@@ -191,8 +191,8 @@ export const driverRateCal = async (callTaxi: any) => {
         });
 
         if (driverRates) {
-            const calculatedPrice = (driverRates?.percentage / 100) * callTaxi.totalPrice;
-            const calculatedPlatformPrice = callTaxi.totalPrice - calculatedPrice
+            const calculatedPrice = (driverRates?.percentage / 100) * totalPrice;
+            const calculatedPlatformPrice = totalPrice - calculatedPrice
 
             // Return the calculated price and the corresponding driver rate
             return {
