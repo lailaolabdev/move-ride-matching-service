@@ -109,7 +109,7 @@ const calculateDriverDistanceAndDuration = (req, res) => __awaiter(void 0, void 
     }
 });
 exports.calculateDriverDistanceAndDuration = calculateDriverDistanceAndDuration;
-const driverRateCal = (callTaxi, totalPrice) => __awaiter(void 0, void 0, void 0, function* () {
+const driverRateCal = (_a) => __awaiter(void 0, [_a], void 0, function* ({ callTaxi, totalPrice }) {
     try {
         let isInsideBonus = false;
         // Check if registrationSource is "inside"

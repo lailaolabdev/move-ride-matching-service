@@ -138,7 +138,7 @@ export const calculateDriverDistanceAndDuration = async (
     }
 };
 
-export const driverRateCal = async (callTaxi: any, totalPrice: number) => {
+export const driverRateCal = async ({ callTaxi, totalPrice }: { callTaxi: any, totalPrice: number }) => {
     try {
         let isInsideBonus = false;
 

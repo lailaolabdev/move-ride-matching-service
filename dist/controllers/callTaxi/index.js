@@ -914,8 +914,9 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
         if (status) {
             // If status is paid add calculatedPrice and driverRate to
             // calculate driver income
-            if (status === callTaxi_2.STATUS.PAID && totalPrice) {
-                const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice } = yield (0, calculation_1.driverRateCal)(callTaxi, Number(totalPrice));
+            if (status === callTaxi_2.STATUS.PAID) {
+                const price = callTaxi.requestType === "meter" ? totalPrice : callTaxi.totalPrice;
+                const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice } = yield (0, calculation_1.driverRateCal)({ callTaxi, totalPrice: price });
                 updateData.driverIncome = calculatedPrice;
                 updateData.driverRate = driverRate;
                 updateData.isInsideBonus = isInsideBonus;
