@@ -152,6 +152,7 @@ const driverRateCal = (_a) => __awaiter(void 0, [_a], void 0, function* ({ callT
             registrationSource: callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.registrationSource
         });
         if (driverRates) {
+            console.log("totalPriceInDriverRateCal: ", totalPrice);
             const calculatedPrice = ((driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage) / 100) * (callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.totalPrice);
             const calculatedPlatformPrice = (callTaxi === null || callTaxi === void 0 ? void 0 : callTaxi.totalPrice) - calculatedPrice;
             // Return the calculated price and the corresponding driver rate
