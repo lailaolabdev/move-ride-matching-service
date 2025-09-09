@@ -138,7 +138,14 @@ export const calculateDriverDistanceAndDuration = async (
     }
 };
 
-export const driverRateCal = async ({ callTaxi, totalPrice }: { callTaxi: any, totalPrice: number }) => {
+export const driverRateCal = async ({
+    callTaxi,
+    totalPrice
+}: {
+    callTaxi: any,
+    totalPrice: number
+}
+) => {
     try {
         let isInsideBonus = false;
 
@@ -189,6 +196,12 @@ export const driverRateCal = async ({ callTaxi, totalPrice }: { callTaxi: any, t
         });
 
         if (driverRates) {
+
+            console.log("callTaxiPrice: ", callTaxi?.totalPrice);
+            console.log("totalPrice: ", totalPrice);
+            console.log("callTaxiPrice: ", typeof callTaxi?.totalPrice);
+            console.log("totalPrice: ", typeof totalPrice);
+
             const calculatedPrice = (driverRates?.percentage / 100) * totalPrice;
             const calculatedPlatformPrice = totalPrice - calculatedPrice
 
