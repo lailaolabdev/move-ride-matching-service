@@ -196,14 +196,8 @@ export const driverRateCal = async ({
         });
 
         if (driverRates) {
-
-            console.log("callTaxiPrice: ", callTaxi?.totalPrice);
-            console.log("totalPrice: ", totalPrice);
-            console.log("callTaxiPrice: ", typeof callTaxi?.totalPrice);
-            console.log("totalPrice: ", typeof totalPrice);
-
-            const calculatedPrice = (driverRates?.percentage / 100) * totalPrice;
-            const calculatedPlatformPrice = totalPrice - calculatedPrice
+            const calculatedPrice = (driverRates?.percentage / 100) * callTaxi?.totalPrice;
+            const calculatedPlatformPrice = callTaxi?.totalPrice - calculatedPrice
 
             // Return the calculated price and the corresponding driver rate
             return {
