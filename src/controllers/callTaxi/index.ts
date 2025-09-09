@@ -1060,6 +1060,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       updateData.status = status;
     }
 
+    console.log("updateData: ", updateData);
+
     const updated: any = await updateCallTaxiService({ id, updateData });
 
     // if status is canceled notify to driver

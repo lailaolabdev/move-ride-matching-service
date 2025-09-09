@@ -924,6 +924,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             }
             updateData.status = status;
         }
+        console.log("updateData: ", updateData);
         const updated = yield (0, callTaxi_1.updateCallTaxiService)({ id, updateData });
         // if status is canceled notify to driver
         if (updated && updated.status === callTaxi_2.STATUS.CANCELED) {
