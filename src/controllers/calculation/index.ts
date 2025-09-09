@@ -13,18 +13,11 @@ export const calculateUserDistanceAndDuration = async (
     res: Response
 ): Promise<any> => {
     try {
-        const {
-            origin,
-            destination,
-            country
-        } = req.body;
+        const { origin, destination, country } = req.body;
 
         // Calculation method:
         // step 1 : Calculate distance and duration from google map
-        const calculate = await calculateUserDistanceAndDurationService(
-            origin,
-            destination
-        );
+        const calculate = await calculateUserDistanceAndDurationService(origin, destination);
 
         if (!calculate) {
             res.status(404).json({
@@ -39,18 +32,15 @@ export const calculateUserDistanceAndDuration = async (
         // example: distance 5km find distance between 1 - 5
         const distance = calculate.totalDistance;
 
-        const taxiTypePricing: any = await getTaxiPricingDistance({
-            country,
-            distance
-        }) ?? []
+        const taxiTypePricing: any = await getTaxiPricingDistance({ country, distance }) ?? []
 
         const meter: any = [];
         const flatFare: any = [];
         let delayPrice = 10;
 
         // step 3 : find peak time base on distance
-        const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string, country)
-        const onPeakTimePrice = onPeakTime.credit ?? 0
+        const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string, country);
+        const onPeakTimePrice = onPeakTime.credit ?? 0;
 
         // step 4 : loop through taxiTypePricing and 
         // calculate price both meter and flat fare
@@ -76,13 +66,8 @@ export const calculateUserDistanceAndDuration = async (
                 delayPrice,
                 ...calculate,
                 totalPrice: distance > 1
-                    ? Math.ceil(
-                        (taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance +
-                        calculate.priceInPolygon +
-                        delayPrice * calculate.delayDuration)
-                    : Math.ceil((taxiTypePricing[i].flatFarePrice + onPeakTimePrice) +
-                        calculate.priceInPolygon +
-                        delayPrice * calculate.delayDuration)
+                    ? ((taxiTypePricing[i].flatFarePrice + onPeakTimePrice) * distance) + calculate.priceInPolygon + (delayPrice * calculate.delayDuration)
+                    : taxiTypePricing[i].flatFarePrice + onPeakTimePrice + calculate.priceInPolygon + (delayPrice * calculate.delayDuration)
             });
 
             meter.push({
@@ -93,11 +78,11 @@ export const calculateUserDistanceAndDuration = async (
                 delayPrice,
                 ...calculate,
                 actualCalculate: distance > 1
-                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance) + Math.ceil(0.05 * taxiTypePricing[i].meterPrice * distance)
-                    : Math.ceil(taxiTypePricing[i].meterPrice),
+                    ? (taxiTypePricing[i].meterPrice * distance) + (0.05 * taxiTypePricing[i].meterPrice * distance)
+                    : (taxiTypePricing[i].meterPrice),
                 estimatedCalculate: distance > 1
-                    ? Math.ceil(taxiTypePricing[i].meterPrice * distance) + Math.ceil(0.10 * taxiTypePricing[i].meterPrice * distance)
-                    : Math.ceil(taxiTypePricing[i].meterPrice)
+                    ? (taxiTypePricing[i].meterPrice * distance) + (0.10 * taxiTypePricing[i].meterPrice * distance)
+                    : (taxiTypePricing[i].meterPrice)
             });
         }
 
@@ -153,15 +138,14 @@ export const calculateDriverDistanceAndDuration = async (
     }
 };
 
-
 export const driverRateCal = async (callTaxi: any) => {
     try {
+        let isInsideBonus = false;
+
         // Check if registrationSource is "inside"
         if (callTaxi.registrationSource === "inside") {
             // Get round limit from roundLimit model based on country
-            const roundLimitData = await roundLimitModel.findOne({
-                country: callTaxi.country
-            }).sort({ createdAt: -1 });
+            const roundLimitData = await roundLimitModel.findOne({ country: callTaxi.country }).sort({ createdAt: -1 });
 
             if (!roundLimitData) {
                 return {
@@ -190,19 +174,9 @@ export const driverRateCal = async (callTaxi: any) => {
             });
 
             // If driver has less than required transactions, return zero values
-            if (driverTransactionCount < requiredTransactions) {
-                return {
-                    calculatedPrice: 0,
-                    driverRate: 0,
-                    transactionCount: driverTransactionCount,
-                    requiredTransactions: requiredTransactions
-                };
+            if (driverTransactionCount > requiredTransactions) {
+                isInsideBonus = true
             }
-
-            // If driver has enough transactions, update isInsideBonus to true
-            await CallTaxi.findByIdAndUpdate(callTaxi._id, {
-                isInsideBonus: true
-            });
         }
 
         // Fetch the driverRate based on the taxiType
@@ -210,14 +184,25 @@ export const driverRateCal = async (callTaxi: any) => {
         const driverRates = await driverRateModel.findOne({
             minDistance: { $lte: callTaxi.totalDistance },
             maxDistance: { $gte: callTaxi.totalDistance },
-            countryCode: callTaxi?.countryCode
+            countryCode: callTaxi?.countryCode,
+            registrationSource: callTaxi?.registrationSource
         });
 
         if (driverRates) {
             const calculatedPrice = (driverRates?.percentage / 100) * callTaxi.totalPrice;
+            const calculatedPlatformPrice = callTaxi.totalPrice - calculatedPrice
+
+            console.log("totalPrice: ", callTaxi.totalPrice)
+            console.log("percentage: ", driverRates?.percentage)
+            console.log("calculatedPrice: ", callTaxi.totalPrice)
 
             // Return the calculated price and the corresponding driver rate
-            return { calculatedPrice, driverRate: driverRates?.percentage };
+            return {
+                calculatedPrice,
+                driverRate: driverRates?.percentage,
+                isInsideBonus,
+                calculatedPlatformPrice
+            };
         }
 
         return { message: "No driver rates found for this taxi type." };

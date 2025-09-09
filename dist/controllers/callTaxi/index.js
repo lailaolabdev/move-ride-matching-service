@@ -175,7 +175,10 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     festivalPromotion: 1,
                     claimMoney: 1,
                     isClaim: 1,
-                    driverIncome: 1
+                    driverIncome: 1,
+                    waitingPrepaid: 1,
+                    meterDistance: 1,
+                    billNumber: 1
                 },
             },
         ]);
@@ -443,7 +446,7 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     "passenger.profileImage": 1,
                     "driver._id": 1,
                     "driver.fullName": 1,
-                    "driver.driverPhoneNumber": 1,
+                    "driver.phone": 1,
                     "driver.profileImage": 1,
                     "driver.licensePlate": 1,
                     createdAt: 1,
@@ -848,7 +851,8 @@ exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, } = req.body;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance } = req.body;
+        console.log("req.body: ", req.body);
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
@@ -903,13 +907,20 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.totalPrice = totalPrice;
         if (prepaid)
             updateData.prepaid = prepaid;
+        if (waitingPrepaid)
+            updateData.waitingPrepaid = waitingPrepaid;
+        if (meterDistance)
+            updateData.meterDistance = meterDistance;
         if (status) {
             // If status is paid add calculatedPrice and driverRate to
             // calculate driver income
             if (status === callTaxi_2.STATUS.PAID) {
-                const { calculatedPrice, driverRate } = yield (0, calculation_1.driverRateCal)(callTaxi);
+                const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice } = yield (0, calculation_1.driverRateCal)(callTaxi);
                 updateData.driverIncome = calculatedPrice;
                 updateData.driverRate = driverRate;
+                updateData.isInsideBonus = isInsideBonus;
+                updateData.calculatedPlatformPrice = calculatedPlatformPrice;
+                console.log("updateData: ", updateData);
             }
             updateData.status = status;
         }
@@ -1500,11 +1511,18 @@ const updateClaimMoneyByClaimMoneyId = (req, res) => __awaiter(void 0, void 0, v
 });
 exports.updateClaimMoneyByClaimMoneyId = updateClaimMoneyByClaimMoneyId;
 const adminUpdateCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const id = req.params.id;
         const { status } = req.body;
-        const updatedStatus = yield callTaxi_2.CallTaxi.findByIdAndUpdate(id, { status });
-        res.json(Object.assign({}, config_1.messages.SUCCESSFULLY));
+        const updatedCallTaxiStatus = yield callTaxi_2.CallTaxi.findByIdAndUpdate(id, { status }, { new: true });
+        const isFinalStatus = ["Canceled", "Paid"].includes((_a = updatedCallTaxiStatus === null || updatedCallTaxiStatus === void 0 ? void 0 : updatedCallTaxiStatus.status) !== null && _a !== void 0 ? _a : "");
+        if (updatedCallTaxiStatus && isFinalStatus) {
+            const token = req.headers.authorization;
+            yield (0, helper_1.notifyDriverWhenCancel)(token, updatedCallTaxiStatus);
+            yield (0, helper_1.removeCallTaxiFromRedis)(updatedCallTaxiStatus._id.toString());
+        }
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { updatedCallTaxiStatus }));
     }
     catch (error) {
         console.error("Error update claim money: ", error);

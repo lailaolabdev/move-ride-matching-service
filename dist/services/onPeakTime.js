@@ -15,14 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOnPeakTimeService = void 0;
 const axios_1 = __importDefault(require("axios"));
 const timezone_1 = require("../utils/timezone");
-const getOnPeakTimeService = (token, countryCode) => __awaiter(void 0, void 0, void 0, function* () {
+const getOnPeakTimeService = (token, country) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
-        const onPeakTime = yield axios_1.default.get(`${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&countryCode=${countryCode}`, {
-            headers: {
-                Authorization: token,
-            },
-        });
+        const onPeakTime = yield axios_1.default.get(`${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&country=${country}`, { headers: { Authorization: token } });
         if (!((_a = onPeakTime === null || onPeakTime === void 0 ? void 0 : onPeakTime.data) === null || _a === void 0 ? void 0 : _a.onPeakTimes)) {
             return false;
         }

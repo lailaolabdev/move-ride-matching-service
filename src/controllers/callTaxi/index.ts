@@ -222,7 +222,10 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
           festivalPromotion: 1,
           claimMoney: 1,
           isClaim: 1,
-          driverIncome: 1
+          driverIncome: 1,
+          waitingPrepaid: 1,
+          meterDistance: 1,
+          billNumber: 1
         },
       },
     ]);
@@ -522,7 +525,7 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           "passenger.profileImage": 1,
           "driver._id": 1,
           "driver.fullName": 1,
-          "driver.driverPhoneNumber": 1,
+          "driver.phone": 1,
           "driver.profileImage": 1,
           "driver.licensePlate": 1,
           createdAt: 1,
@@ -966,7 +969,11 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       festivalPromotion,
       totalPrice,
       prepaid,
+      waitingPrepaid,
+      meterDistance
     } = req.body;
+
+    console.log("req.body: ", req.body);
 
     const token = req.headers.authorization!;
 
@@ -1028,15 +1035,22 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (festivalPromotion) updateData.festivalPromotion = festivalPromotion;
     if (totalPrice) updateData.totalPrice = totalPrice;
     if (prepaid) updateData.prepaid = prepaid;
+    if (waitingPrepaid) updateData.waitingPrepaid = waitingPrepaid;
+    if (meterDistance) updateData.meterDistance = meterDistance;
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to
       // calculate driver income
       if (status === STATUS.PAID) {
-        const { calculatedPrice, driverRate }: any = await driverRateCal(callTaxi)
+        const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice }: any = await driverRateCal(callTaxi);
+
         updateData.driverIncome = calculatedPrice;
         updateData.driverRate = driverRate;
+        updateData.isInsideBonus = isInsideBonus;
+        updateData.calculatedPlatformPrice = calculatedPlatformPrice;
+        console.log("updateData: ", updateData);
       }
+
       updateData.status = status;
     }
 
@@ -1728,9 +1742,18 @@ export const adminUpdateCallTaxiStatus = async (req: Request, res: Response): Pr
     const id = req.params.id;
     const { status } = req.body;
 
-    const updatedStatus = await CallTaxi.findByIdAndUpdate(id, { status })
+    const updatedCallTaxiStatus = await CallTaxi.findByIdAndUpdate(id, { status }, { new: true })
 
-    res.json({ ...messages.SUCCESSFULLY });
+    const isFinalStatus = ["Canceled", "Paid"].includes(updatedCallTaxiStatus?.status ?? "");
+
+    if (updatedCallTaxiStatus && isFinalStatus) {
+      const token = req.headers.authorization!;
+
+      await notifyDriverWhenCancel(token, updatedCallTaxiStatus);
+      await removeCallTaxiFromRedis(updatedCallTaxiStatus._id.toString());
+    }
+
+    res.json({ ...messages.SUCCESSFULLY, updatedCallTaxiStatus });
   } catch (error) {
     console.error("Error update claim money: ", error);
     return res.status(500).json({
