@@ -248,7 +248,8 @@ const CallTaxiSchema: Schema = new Schema(
     isInsideBonus: {
       type: Boolean,
       default: false
-    }
+    },
+    platformIncome: Number
   },
   {
     timestamps: true,

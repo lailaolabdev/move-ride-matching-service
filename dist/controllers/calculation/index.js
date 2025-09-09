@@ -153,11 +153,13 @@ const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* 
         });
         if (driverRates) {
             const calculatedPrice = ((driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage) / 100) * callTaxi.totalPrice;
+            const calculatedPlatformPrice = callTaxi.totalPrice - calculatedPrice;
             // Return the calculated price and the corresponding driver rate
             return {
                 calculatedPrice,
                 driverRate: driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage,
-                isInsideBonus
+                isInsideBonus,
+                calculatedPlatformPrice
             };
         }
         return { message: "No driver rates found for this taxi type." };

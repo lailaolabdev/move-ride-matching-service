@@ -914,10 +914,11 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             // If status is paid add calculatedPrice and driverRate to
             // calculate driver income
             if (status === callTaxi_2.STATUS.PAID) {
-                const { calculatedPrice, driverRate, isInsideBonus } = yield (0, calculation_1.driverRateCal)(callTaxi);
+                const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice } = yield (0, calculation_1.driverRateCal)(callTaxi);
                 updateData.driverIncome = calculatedPrice;
                 updateData.driverRate = driverRate;
                 updateData.isInsideBonus = isInsideBonus;
+                updateData.calculatedPlatformPrice = calculatedPlatformPrice;
             }
             updateData.status = status;
         }

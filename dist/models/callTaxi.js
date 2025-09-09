@@ -184,7 +184,8 @@ const CallTaxiSchema = new mongoose_1.Schema({
     isInsideBonus: {
         type: Boolean,
         default: false
-    }
+    },
+    platformIncome: Number
 }, {
     timestamps: true,
 });
