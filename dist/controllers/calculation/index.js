@@ -111,6 +111,7 @@ const calculateDriverDistanceAndDuration = (req, res) => __awaiter(void 0, void 
 exports.calculateDriverDistanceAndDuration = calculateDriverDistanceAndDuration;
 const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("callTaxi in driverRateCal: ", callTaxi);
         let isInsideBonus = false;
         // Check if registrationSource is "inside"
         if (callTaxi.registrationSource === "inside") {
@@ -154,9 +155,6 @@ const driverRateCal = (callTaxi) => __awaiter(void 0, void 0, void 0, function* 
         if (driverRates) {
             const calculatedPrice = ((driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage) / 100) * callTaxi.totalPrice;
             const calculatedPlatformPrice = callTaxi.totalPrice - calculatedPrice;
-            console.log("totalPrice: ", callTaxi.totalPrice);
-            console.log("percentage: ", driverRates === null || driverRates === void 0 ? void 0 : driverRates.percentage);
-            console.log("calculatedPrice: ", callTaxi.totalPrice);
             // Return the calculated price and the corresponding driver rate
             return {
                 calculatedPrice,

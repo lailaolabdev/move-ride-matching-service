@@ -1047,7 +1047,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
         updateData.driverIncome = calculatedPrice;
         updateData.driverRate = driverRate;
         updateData.isInsideBonus = isInsideBonus;
-        updateData.calculatedPlatformPrice = calculatedPlatformPrice;
+        updateData.platformIncome = calculatedPlatformPrice;
         console.log("updateData: ", updateData);
       }
 

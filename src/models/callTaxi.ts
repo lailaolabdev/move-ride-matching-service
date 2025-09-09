@@ -73,7 +73,7 @@ export interface ICallTaxi extends Document {
   passengerFullName: String,
   passengerPhoneNumber: String,
   prepaid: String,
-
+  platformIncome: number,
   claimMoney: string,
   isClaim: boolean,
   meterDistance: number,

@@ -140,6 +140,8 @@ export const calculateDriverDistanceAndDuration = async (
 
 export const driverRateCal = async (callTaxi: any) => {
     try {
+        console.log("callTaxi in driverRateCal: ", callTaxi);
+
         let isInsideBonus = false;
 
         // Check if registrationSource is "inside"
@@ -191,10 +193,6 @@ export const driverRateCal = async (callTaxi: any) => {
         if (driverRates) {
             const calculatedPrice = (driverRates?.percentage / 100) * callTaxi.totalPrice;
             const calculatedPlatformPrice = callTaxi.totalPrice - calculatedPrice
-
-            console.log("totalPrice: ", callTaxi.totalPrice)
-            console.log("percentage: ", driverRates?.percentage)
-            console.log("calculatedPrice: ", callTaxi.totalPrice)
 
             // Return the calculated price and the corresponding driver rate
             return {
