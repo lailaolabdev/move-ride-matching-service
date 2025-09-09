@@ -140,8 +140,6 @@ export const calculateDriverDistanceAndDuration = async (
 
 export const driverRateCal = async (callTaxi: any, totalPrice: number) => {
     try {
-        console.log("callTaxi in driverRateCal: ", callTaxi);
-
         let isInsideBonus = false;
 
         // Check if registrationSource is "inside"

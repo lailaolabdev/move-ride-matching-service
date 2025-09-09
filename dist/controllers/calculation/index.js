@@ -111,7 +111,6 @@ const calculateDriverDistanceAndDuration = (req, res) => __awaiter(void 0, void 
 exports.calculateDriverDistanceAndDuration = calculateDriverDistanceAndDuration;
 const driverRateCal = (callTaxi, totalPrice) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("callTaxi in driverRateCal: ", callTaxi);
         let isInsideBonus = false;
         // Check if registrationSource is "inside"
         if (callTaxi.registrationSource === "inside") {

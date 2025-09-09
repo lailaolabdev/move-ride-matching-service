@@ -920,7 +920,6 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                 updateData.driverRate = driverRate;
                 updateData.isInsideBonus = isInsideBonus;
                 updateData.platformIncome = calculatedPlatformPrice;
-                console.log("updateData: ", updateData);
             }
             updateData.status = status;
         }
