@@ -77,6 +77,7 @@ export interface ICallTaxi extends Document {
   claimMoney: string,
   isClaim: boolean,
   meterDistance: number,
+  meterPrice: number,
   createdAt: Date;
   updatedAt: Date;
 }
@@ -245,6 +246,7 @@ const CallTaxiSchema: Schema = new Schema(
       default: false
     },
     meterDistance: Number,
+    meterPrice: Number,
     isInsideBonus: {
       type: Boolean,
       default: false

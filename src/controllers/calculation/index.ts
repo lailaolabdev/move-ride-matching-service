@@ -4,7 +4,7 @@ import { calculateDriverDistanceAndDurationService, calculateUserDistanceAndDura
 import { getOnPeakTimeService } from "../../services/onPeakTime";
 import { getTaxiPricingDistance } from "../../services/taxiTypePricing";
 import { driverRateModel } from "../../models/driverRate";
-import { CallTaxi } from "../../models/callTaxi";
+import { CallTaxi, REQUEST_TYPE } from "../../models/callTaxi";
 import { roundLimitModel } from "../../models/roundLimit";
 import { Types } from "mongoose";
 
@@ -138,14 +138,7 @@ export const calculateDriverDistanceAndDuration = async (
     }
 };
 
-export const driverRateCal = async ({
-    callTaxi,
-    totalPrice
-}: {
-    callTaxi: any,
-    totalPrice: any
-}
-) => {
+export const driverRateCal = async ({ callTaxi }: { callTaxi: any }) => {
     try {
         let isInsideBonus = false;
 
@@ -196,10 +189,10 @@ export const driverRateCal = async ({
         });
 
         if (driverRates) {
-            console.log("totalPriceInDriverRateCal: ", totalPrice);
+            const price = callTaxi?.requestPrice === REQUEST_TYPE.METERED_FARE ? callTaxi?.meterPrice : callTaxi?.totalPrice
 
-            const calculatedPrice = (driverRates?.percentage / 100) * callTaxi?.totalPrice;
-            const calculatedPlatformPrice = callTaxi?.totalPrice - calculatedPrice
+            const calculatedPrice = (driverRates?.percentage / 100) * price;
+            const calculatedPlatformPrice = price - calculatedPrice
 
             // Return the calculated price and the corresponding driver rate
             return {

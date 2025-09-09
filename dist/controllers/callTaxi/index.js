@@ -851,7 +851,7 @@ exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance } = req.body;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance, meterPrice } = req.body;
         console.log("req.body: ", req.body);
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
@@ -911,11 +911,13 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.waitingPrepaid = waitingPrepaid;
         if (meterDistance)
             updateData.meterDistance = meterDistance;
+        if (meterPrice)
+            updateData.meterPrice = meterPrice;
         if (status) {
             // If status is paid add calculatedPrice and driverRate to
             // calculate driver income
             if (status === callTaxi_2.STATUS.PAID) {
-                const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice } = yield (0, calculation_1.driverRateCal)({ callTaxi, totalPrice });
+                const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice } = yield (0, calculation_1.driverRateCal)({ callTaxi });
                 updateData.driverIncome = calculatedPrice;
                 updateData.driverRate = driverRate;
                 updateData.isInsideBonus = isInsideBonus;
@@ -923,7 +925,6 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             }
             updateData.status = status;
         }
-        console.log("updateData: ", updateData);
         const updated = yield (0, callTaxi_1.updateCallTaxiService)({ id, updateData });
         // if status is canceled notify to driver
         if (updated && updated.status === callTaxi_2.STATUS.CANCELED) {

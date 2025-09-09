@@ -970,7 +970,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       totalPrice,
       prepaid,
       waitingPrepaid,
-      meterDistance
+      meterDistance,
+      meterPrice
     } = req.body;
 
     console.log("req.body: ", req.body);
@@ -1037,6 +1038,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (prepaid) updateData.prepaid = prepaid;
     if (waitingPrepaid) updateData.waitingPrepaid = waitingPrepaid;
     if (meterDistance) updateData.meterDistance = meterDistance;
+    if (meterPrice) updateData.meterPrice = meterPrice;
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to
@@ -1048,7 +1050,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
           driverRate,
           isInsideBonus,
           calculatedPlatformPrice
-        }: any = await driverRateCal({ callTaxi, totalPrice });
+        }: any = await driverRateCal({ callTaxi });
 
         updateData.driverIncome = calculatedPrice;
         updateData.driverRate = driverRate;
@@ -1058,8 +1060,6 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
 
       updateData.status = status;
     }
-
-    console.log("updateData: ", updateData);
 
     const updated: any = await updateCallTaxiService({ id, updateData });
 

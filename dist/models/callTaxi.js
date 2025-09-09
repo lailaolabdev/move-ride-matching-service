@@ -181,6 +181,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
         default: false
     },
     meterDistance: Number,
+    meterPrice: Number,
     isInsideBonus: {
         type: Boolean,
         default: false
