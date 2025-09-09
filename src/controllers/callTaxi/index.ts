@@ -1047,9 +1047,9 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
         console.log("totalPriceCallTaxi: ", typeof callTaxi.totalPrice);
         console.log("totalPriceCallTaxi: ", typeof callTaxi.totalPrice);
 
-        const price = callTaxi.requestType === "meter" ? Number(totalPrice) : Number(callTaxi.totalPrice)
-
-        console.log("meter: ", price);
+        const price = callTaxi.requestType === "meter"
+          ? Number(totalPrice?.toString())
+          : Number(callTaxi.totalPrice.toString())
 
         const {
           calculatedPrice,
