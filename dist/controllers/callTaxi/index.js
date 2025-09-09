@@ -852,6 +852,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         const { id } = req.params;
         const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance } = req.body;
+        console.log("req.body: ", req.body);
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
         if (!callTaxi) {
@@ -919,6 +920,7 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
                 updateData.driverRate = driverRate;
                 updateData.isInsideBonus = isInsideBonus;
                 updateData.calculatedPlatformPrice = calculatedPlatformPrice;
+                console.log("updateData: ", updateData);
             }
             updateData.status = status;
         }

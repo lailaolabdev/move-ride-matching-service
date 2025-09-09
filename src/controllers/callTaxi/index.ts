@@ -973,6 +973,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       meterDistance
     } = req.body;
 
+    console.log("req.body: ", req.body);
+
     const token = req.headers.authorization!;
 
     const callTaxi = await CallTaxi.findById(id);
@@ -1046,6 +1048,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
         updateData.driverRate = driverRate;
         updateData.isInsideBonus = isInsideBonus;
         updateData.calculatedPlatformPrice = calculatedPlatformPrice;
+        console.log("updateData: ", updateData);
       }
 
       updateData.status = status;
