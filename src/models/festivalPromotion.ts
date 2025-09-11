@@ -6,6 +6,11 @@ export const usingTypeEnum = {
 };
 
 export interface IFestivalPromotion extends Document {
+  name: string;
+  discount: number;
+  usingType: string;
+  periodStartTime: Date;
+  periodEndTime: Date;
   status: boolean;
   country: string;
 }
@@ -23,10 +28,8 @@ const FestivalPromotionSchema: Schema = new Schema({
     type: String,
     enum: Object.values(usingTypeEnum),
   },
-  period: {
-    startDate: String,
-    endDate: String
-  },
+  periodStartTime: Date,
+  periodEndTime: Date,
   status: {
     type: Boolean,
     default: true

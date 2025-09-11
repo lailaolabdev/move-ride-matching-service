@@ -969,3 +969,172 @@
  *       500:
  *         description: Internal server error.
  */
+/**
+ * @swagger
+ * /v1/api/call-taxi/{id}:
+ *   put:
+ *     summary: Update call taxi details
+ *     description: Update various fields of a call taxi record including status, pricing, and trip details.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "67b758886ec0110acaac7d5c"
+ *         description: The unique identifier of the call taxi record to update.
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 description: The request type of the call taxi.
+ *                 example: "flat_fare"
+ *               status:
+ *                 type: string
+ *                 description: The status of the call taxi.
+ *                 enum: ["Requesting", "No_Received", "Accepted", "Driver_Arrived", "Picked_Up", "Departure", "Success", "Paid", "Canceled", "Timeout"]
+ *                 example: "Paid"
+ *               actualUsedTime:
+ *                 type: string
+ *                 description: The actual time used for the trip.
+ *                 example: "00:25:30"
+ *               claimMoney:
+ *                 type: string
+ *                 description: The claim money reference ID.
+ *                 example: "685a07d4ffb74ef043512cfb"
+ *               point:
+ *                 type: number
+ *                 description: Points earned from the trip.
+ *                 example: 50
+ *               paymentMethod:
+ *                 type: string
+ *                 description: The payment method used.
+ *                 example: "cash"
+ *               promotionPrice:
+ *                 type: number
+ *                 description: The promotion price applied.
+ *                 example: 10000
+ *               festivalPromotion:
+ *                 type: array
+ *                 description: Array of festival promotions applied.
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     promotion:
+ *                       type: string
+ *                       example: "67c5587478a1f4ee9d92f75a"
+ *                     promotionName:
+ *                       type: string
+ *                       example: "New Year Special"
+ *                     promotionPercentage:
+ *                       type: number
+ *                       example: 15
+ *                     promotionType:
+ *                       type: string
+ *                       example: "percentage"
+ *                     periodStartTime:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-01-01T00:00:00.000Z"
+ *                     periodEndTime:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-01-31T23:59:59.999Z"
+ *               totalPrice:
+ *                 type: number
+ *                 description: The total price of the trip.
+ *                 example: 85000
+ *               prepaid:
+ *                 type: boolean
+ *                 description: Whether the trip is prepaid.
+ *                 example: false
+ *               waitingPrepaid:
+ *                 type: boolean
+ *                 description: Whether waiting for prepaid confirmation.
+ *                 example: false
+ *               meterDistance:
+ *                 type: number
+ *                 description: The meter distance traveled.
+ *                 example: 7.5
+ *     responses:
+ *       200:
+ *         description: Call taxi updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 messages:
+ *                   type: string
+ *                   example: "Successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "67b758886ec0110acaac7d5c"
+ *                     passengerId:
+ *                       type: string
+ *                       example: "67b758886ec0110acaac7d5c"
+ *                     driverId:
+ *                       type: string
+ *                       example: "67b758886ec0110acaac7d5c"
+ *                     status:
+ *                       type: string
+ *                       example: "Paid"
+ *                     totalPrice:
+ *                       type: number
+ *                       example: 85000
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-20T04:51:50.283Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-20T04:51:50.283Z"
+ *       400:
+ *         description: Bad request - Invalid input or call taxi not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-404"
+ *                 message:
+ *                   type: string
+ *                   example: "Not Found"
+ *                 detail:
+ *                   type: string
+ *                   example: "Ride matching with id:67b758886ec0110acaac7d5c not found"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-500"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error details here"
+ */

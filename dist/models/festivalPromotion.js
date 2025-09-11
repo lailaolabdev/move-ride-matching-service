@@ -52,10 +52,8 @@ const FestivalPromotionSchema = new mongoose_1.Schema({
         type: String,
         enum: Object.values(exports.usingTypeEnum),
     },
-    period: {
-        startDate: String,
-        endDate: String
-    },
+    periodStartTime: Date,
+    periodEndTime: Date,
     status: {
         type: Boolean,
         default: true

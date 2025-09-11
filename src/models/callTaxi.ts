@@ -62,6 +62,7 @@ export interface ICallTaxi extends Document {
   estimatedPrice?: number;
   actualUsedTime?: string;
   calculatePrice?: number;
+  price?: number;
   polygonPrice?: number;
   onPeakTimePrice?: number;
   delayPrice?: number;
@@ -77,6 +78,15 @@ export interface ICallTaxi extends Document {
   claimMoney: string,
   isClaim: boolean,
   meterDistance: number,
+  promotionPrice?: number,
+  festivalPromotion?: {
+    promotion: string;
+    promotionName: string;
+    promotionPercentage: number;
+    promotionType: string;
+    periodStartTime: Date;
+    periodEndTime: Date;
+  }[],
   createdAt: Date;
   updatedAt: Date;
 }
@@ -153,7 +163,7 @@ const CallTaxiSchema: Schema = new Schema(
       type: Number,
       required: true,
     },
-    totalPrice: {
+    totalPrice: { // ຈຳນວນເງິນທັງຫມົດ
       type: Number,
       default: 0
     },
@@ -178,7 +188,7 @@ const CallTaxiSchema: Schema = new Schema(
     estimatedPrice: Number,
     actualUsedTime: String,
     // price from distance per KM
-    price: {
+    price: { // ເງິນທີ່ຖືກຫັກຈາກ promotion ຫຼື ສ່ວນຫລຸດຕ່າງໆ
       type: Number,
       required: true,
     },
@@ -220,7 +230,7 @@ const CallTaxiSchema: Schema = new Schema(
     licensePlate: String,
     vehicleBrandName: String,
     vehicleModelName: String,
-    promotionPrice: Number,
+    promotionPrice: Number, // ສ່ວນຫລຸດຂອງ Promotion ຖືກເປັນເງິນ
     festivalPromotion: {
       type: [
         {
@@ -228,10 +238,8 @@ const CallTaxiSchema: Schema = new Schema(
           promotionName: String,
           promotionPercentage: Number,
           promotionType: String,
-          promotionPeriod: {
-            startDate: String,
-            endDate: String,
-          },
+          periodStartTime: Date,
+          periodEndTime: Date,
         }
       ],
       default: undefined, // or you can use default: []

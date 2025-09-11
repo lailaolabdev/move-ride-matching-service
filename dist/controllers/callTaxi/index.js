@@ -1,4 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -23,6 +56,7 @@ const rating_1 = require("../../models/rating");
 const vehicleDriver_1 = __importDefault(require("../../models/vehicleDriver"));
 const mongoose_1 = require("mongoose");
 const calculation_1 = require("../calculation");
+const festivalPromotion_1 = __importStar(require("../../models/festivalPromotion"));
 const callTaxi_3 = require("../../services/callTaxi");
 const timezone_1 = require("../../utils/timezone");
 const taxiTypePricing_1 = __importDefault(require("../../models/taxiTypePricing"));
@@ -901,10 +935,96 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.paymentMethod = paymentMethod;
         if (promotionPrice)
             updateData.promotionPrice = promotionPrice;
-        if (festivalPromotion)
-            updateData.festivalPromotion = festivalPromotion;
-        if (totalPrice)
+        // Festival promotion validation logic
+        if (festivalPromotion && Array.isArray(festivalPromotion)) {
+            const validatedPromotions = [];
+            const currentTime = new Date();
+            for (const promo of festivalPromotion) {
+                // 1. Find the festivalPromotion that has status true by promotion field
+                const festivalPromotionData = yield festivalPromotion_1.default.findById(promo.promotion);
+                if (!festivalPromotionData || !festivalPromotionData.status) {
+                    console.log(`Festival promotion ${promo.promotion} not found or not active`);
+                    continue; // Skip inactive or non-existent promotions
+                }
+                // 2. Check if the festivalPromotion is ONCE_TIME_TYPE
+                if (festivalPromotionData.usingType === festivalPromotion_1.usingTypeEnum.onceTimeType) {
+                    // Check if it's unexpired by comparing current time with periodEndTime
+                    if (currentTime > festivalPromotionData.periodEndTime) {
+                        console.log(`Festival promotion ${promo.promotion} has expired`);
+                        continue; // Skip expired promotions
+                    }
+                    // Check if user has already used this promotion (only once per user)
+                    const existingUsage = yield callTaxi_2.CallTaxi.findOne({
+                        passengerId: callTaxi.passengerId,
+                        'festivalPromotion.promotion': promo.promotion,
+                        status: { $nin: [callTaxi_2.STATUS.CANCELED, callTaxi_2.STATUS.TIMEOUT] }
+                    });
+                    if (existingUsage) {
+                        console.log(`User ${callTaxi.passengerId} has already used promotion ${promo.promotion}`);
+                        continue; // Skip already used ONCE_TIME_TYPE promotions
+                    }
+                }
+                // 3. Check if the festivalPromotion is PERIOD_TYPE
+                if (festivalPromotionData.usingType === festivalPromotion_1.usingTypeEnum.periodType) {
+                    // Check if it hasn't expired
+                    if (currentTime > festivalPromotionData.periodEndTime) {
+                        console.log(`Festival promotion ${promo.promotion} has expired`);
+                        continue; // Skip expired promotions
+                    }
+                }
+                // Calculate discount for this promotion
+                const currentTotalPrice = totalPrice || callTaxi.totalPrice;
+                const discountAmount = (festivalPromotionData.discount / 100) * currentTotalPrice;
+                // If all validations pass, add to validated promotions with updated structure
+                validatedPromotions.push({
+                    promotion: promo.promotion,
+                    promotionName: festivalPromotionData.name,
+                    promotionPercentage: festivalPromotionData.discount,
+                    promotionType: festivalPromotionData.usingType,
+                    periodStartTime: festivalPromotionData.periodStartTime,
+                    periodEndTime: festivalPromotionData.periodEndTime,
+                    discountAmount: discountAmount, // Store individual discount amount
+                });
+            }
+            // Update festival promotion data
+            updateData.festivalPromotion = validatedPromotions;
+            // Recalculate prices if there are valid promotions
+            if (validatedPromotions.length > 0) {
+                const currentTotalPrice = totalPrice || callTaxi.totalPrice;
+                // Calculate total discount from all valid promotions
+                const totalPromotionDiscount = validatedPromotions.reduce((sum, promo) => {
+                    return sum + promo.discountAmount;
+                }, 0);
+                // Calculate new prices
+                updateData.promotionPrice = totalPromotionDiscount; // The discount amount
+                updateData.price = currentTotalPrice - totalPromotionDiscount; // Final price after discount
+                // Ensure price doesn't go below 0
+                if (updateData.price < 0) {
+                    updateData.price = 0;
+                }
+                console.log("Festival Promotion Price Recalculation:");
+                console.log("Original totalPrice:", currentTotalPrice);
+                console.log("Valid promotions:", validatedPromotions.length);
+                console.log("Total promotion discount:", totalPromotionDiscount);
+                console.log("Final price after discount:", updateData.price);
+                console.log("Promotion price (discount amount):", updateData.promotionPrice);
+            }
+        }
+        else if (totalPrice && (!festivalPromotion || !Array.isArray(festivalPromotion))) {
+            // If totalPrice is updated but no festival promotions, just update totalPrice
             updateData.totalPrice = totalPrice;
+            // Reset promotion-related prices if no promotions
+            updateData.promotionPrice = 0;
+            updateData.price = totalPrice;
+            console.log("Price update without promotions:");
+            console.log("New totalPrice:", totalPrice);
+            console.log("PromotionPrice reset to:", 0);
+            console.log("Final price:", totalPrice);
+        }
+        // Handle regular totalPrice update when no festival promotion logic is triggered
+        if (totalPrice && !updateData.hasOwnProperty('totalPrice')) {
+            updateData.totalPrice = totalPrice;
+        }
         if (prepaid)
             updateData.prepaid = prepaid;
         if (waitingPrepaid)
@@ -1432,8 +1552,8 @@ const checkUsingPromotion = (req, res) => __awaiter(void 0, void 0, void 0, func
             festivalPromotion: {
                 $elemMatch: {
                     promotion: promotion,
-                    "promotionPeriod.startDate": startDate,
-                    "promotionPeriod.endDate": endDate,
+                    periodStartTime: new Date(startDate),
+                    periodEndTime: new Date(endDate),
                 },
             },
         });
