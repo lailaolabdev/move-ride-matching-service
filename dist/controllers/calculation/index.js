@@ -41,6 +41,7 @@ const calculateUserDistanceAndDuration = (req, res) => __awaiter(void 0, void 0,
         // step 3 : find peak time base on distance
         const onPeakTime = yield (0, onPeakTime_1.getOnPeakTimeService)(req.headers.authorization, country);
         const onPeakTimePrice = (onPeakTime === null || onPeakTime === void 0 ? void 0 : onPeakTime.credit) || 0;
+        console.log("onPeakTimePrice: ", onPeakTimePrice);
         // step 4 : loop through taxiTypePricing and 
         // calculate price both meter and flat fare
         // calculation method: 

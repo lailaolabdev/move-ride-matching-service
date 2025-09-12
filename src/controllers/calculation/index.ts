@@ -42,6 +42,7 @@ export const calculateUserDistanceAndDuration = async (
         const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string, country);
         const onPeakTimePrice = onPeakTime?.credit || 0;
 
+        console.log("onPeakTimePrice: ", onPeakTimePrice);
         // step 4 : loop through taxiTypePricing and 
         // calculate price both meter and flat fare
         // calculation method: 
