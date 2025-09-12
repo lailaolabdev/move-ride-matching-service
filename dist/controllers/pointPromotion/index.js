@@ -104,8 +104,7 @@ const updatePointPromotion = (req, res) => __awaiter(void 0, void 0, void 0, fun
             pointReward,
             status,
             startDate: startDate ? new Date(startDate) : undefined,
-            endDate: endDate ? new Date(endDate) : undefined,
-            country
+            endDate: endDate ? new Date(endDate) : undefined
         });
         if (!updatedPointPromotion) {
             res.status(404).json({

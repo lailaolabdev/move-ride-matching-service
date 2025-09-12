@@ -134,8 +134,7 @@ export const updatePointPromotion = async (req: Request, res: Response) => {
             pointReward,
             status,
             startDate: startDate ? new Date(startDate) : undefined,
-            endDate: endDate ? new Date(endDate) : undefined,
-            country
+            endDate: endDate ? new Date(endDate) : undefined 
         });
 
         if (!updatedPointPromotion) {
