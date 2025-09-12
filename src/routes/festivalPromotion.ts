@@ -8,16 +8,17 @@ import {
   updateFestivalPromotionByDate,
 } from "../controllers/festivalPromotion";
 import { checkAuthorizationMiddleware } from "../middlewares";
+import { validateCreatePromotion } from "../validators/promotion";
 
 const router = express.Router();
 
-router.post("/", checkAuthorizationMiddleware, createFestivalPromotion);
+router.post("/", checkAuthorizationMiddleware, validateCreatePromotion, createFestivalPromotion);
 
 router.get("/", checkAuthorizationMiddleware, getAllFestivalPromotions);
 
 router.get("/:id", getFestivalPromotionById);
 
-router.put("/:id", checkAuthorizationMiddleware, updateFestivalPromotion);
+router.put("/:id", checkAuthorizationMiddleware, validateCreatePromotion, updateFestivalPromotion);
 
 router.delete("/:id", checkAuthorizationMiddleware, deleteFestivalPromotion);
 

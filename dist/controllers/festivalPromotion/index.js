@@ -16,12 +16,13 @@ const helper_1 = require("./helper"); // You may rename this to filterFestivalPr
 // CREATE
 const createFestivalPromotion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, discount, usingType, period, country } = req.body;
+        const { name, discount, usingType, periodStartTime, periodEndTime, country } = req.body;
         const festivalPromotion = yield (0, festivalPromotion_1.createFestivalPromotionService)({
             name,
             discount,
             usingType,
-            period,
+            periodStartTime: periodStartTime ? new Date(periodStartTime) : undefined,
+            periodEndTime: periodEndTime ? new Date(periodEndTime) : undefined,
             country,
         });
         res.status(201).json({
@@ -42,10 +43,10 @@ exports.createFestivalPromotion = createFestivalPromotion;
 // READ ALL
 const getAllFestivalPromotions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, name, usingType, startDate, endDate, status, country } = req.query;
+        const { skip, limit, name, usingType, startDate, endDate, status, country, periodStartTime, periodEndTime } = req.query;
         const parsedSkip = parseInt(skip, 10) || 0;
         const parsedLimit = parseInt(limit, 10) || 10;
-        const filter = (0, helper_1.filterPromotion)(name, usingType, startDate, endDate, status, country);
+        const filter = (0, helper_1.filterPromotion)(name, usingType, startDate, endDate, status, country, periodStartTime, periodEndTime);
         const festivalPromotions = yield (0, festivalPromotion_1.getAllFestivalPromotionsService)(parsedSkip, parsedLimit, filter);
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,
@@ -92,13 +93,14 @@ exports.getFestivalPromotionById = getFestivalPromotionById;
 const updateFestivalPromotion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { name, discount, usingType, period, status, country } = req.body;
+        const { name, discount, usingType, periodStartTime, periodEndTime, status, country } = req.body;
         const updatedFestivalPromotion = yield (0, festivalPromotion_1.updateFestivalPromotionService)({
             id,
             name,
             discount,
             usingType,
-            period,
+            periodStartTime: periodStartTime ? new Date(periodStartTime) : undefined,
+            periodEndTime: periodEndTime ? new Date(periodEndTime) : undefined,
             status,
             country,
         });

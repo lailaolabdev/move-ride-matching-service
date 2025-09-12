@@ -170,6 +170,10 @@ const CallTaxiSchema = new mongoose_1.Schema({
         ],
         default: undefined, // or you can use default: []
     },
+    newcomerPromotion: String, // NewComer promotion ID
+    newcomerPromotionPrice: Number, // Discount amount from newcomer promotion
+    pointPromotion: String, // Point promotion ID
+    totalPromotionPrice: Number, // Total discount amount from all promotions
     prepaid: {
         type: Boolean,
         default: false

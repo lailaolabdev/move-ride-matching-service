@@ -87,6 +87,10 @@ export interface ICallTaxi extends Document {
     periodStartTime: Date;
     periodEndTime: Date;
   }[],
+  newcomerPromotion?: string,
+  newcomerPromotionPrice?: number,
+  pointPromotion?: string,
+  totalPromotionPrice?: number,
   createdAt: Date;
   updatedAt: Date;
 }
@@ -244,6 +248,10 @@ const CallTaxiSchema: Schema = new Schema(
       ],
       default: undefined, // or you can use default: []
     },
+    newcomerPromotion: String, // NewComer promotion ID
+    newcomerPromotionPrice: Number, // Discount amount from newcomer promotion
+    pointPromotion: String, // Point promotion ID
+    totalPromotionPrice: Number, // Total discount amount from all promotions
     prepaid: {
       type: Boolean,
       default: false

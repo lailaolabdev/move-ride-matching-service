@@ -34,35 +34,19 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const pointPromotionSchema = new mongoose_1.Schema({
-    name: {
+const newComerPromotionUsageSchema = new mongoose_1.Schema({
+    userId: {
         type: String,
         required: true
     },
-    type: {
-        type: String,
-        enum: ["REGISTER", "PAYMENT"],
-        required: true,
-    },
-    minAmount: {
-        type: Number,
+    newComerPromotionId: {
+        type: mongoose_1.Types.ObjectId,
+        ref: 'newComerPromotion',
         required: true
     },
-    pointReward: {
-        type: Number,
-        required: true
-    },
-    status: {
-        type: Boolean,
-        default: true
-    },
-    startDate: {
+    usedAt: {
         type: Date,
-        required: false
-    },
-    endDate: {
-        type: Date,
-        required: false
+        default: Date.now
     },
     country: {
         type: String,
@@ -71,5 +55,7 @@ const pointPromotionSchema = new mongoose_1.Schema({
 }, {
     timestamps: true
 });
-const pointPromotionModel = mongoose_1.default.model("pointPromotion", pointPromotionSchema);
-exports.default = pointPromotionModel;
+// Create compound index to ensure one usage per user per country
+newComerPromotionUsageSchema.index({ userId: 1, country: 1 }, { unique: true });
+const newComerPromotionUsageModel = mongoose_1.default.model('newComerPromotionUsage', newComerPromotionUsageSchema);
+exports.default = newComerPromotionUsageModel;

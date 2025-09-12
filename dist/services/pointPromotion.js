@@ -17,16 +17,26 @@ const pointPromotion_1 = __importDefault(require("../models/pointPromotion"));
 // CREATE Point Promotion
 const createPointPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, type, minAmount, pointReward, status, startDate, endDate, country }) {
     try {
-        const pointPromotion = new pointPromotion_1.default({
+        const pointPromotionData = {
             name,
             type,
-            minAmount,
             pointReward,
-            status,
-            startDate,
-            endDate,
             country
-        });
+        };
+        // Add optional fields if provided
+        if (minAmount !== undefined) {
+            pointPromotionData.minAmount = minAmount;
+        }
+        if (status !== undefined) {
+            pointPromotionData.status = status;
+        }
+        if (startDate) {
+            pointPromotionData.startDate = startDate;
+        }
+        if (endDate) {
+            pointPromotionData.endDate = endDate;
+        }
+        const pointPromotion = new pointPromotion_1.default(pointPromotionData);
         const savedPointPromotion = yield pointPromotion.save();
         return savedPointPromotion;
     }
@@ -65,18 +75,26 @@ exports.getPointPromotionByIdService = getPointPromotionByIdService;
 // UPDATE Point Promotion
 const updatePointPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, type, minAmount, pointReward, status, startDate, endDate, country }) {
     try {
-        const updatedPointPromotion = yield pointPromotion_1.default.findByIdAndUpdate(id, {
-            $set: {
-                name,
-                type,
-                minAmount,
-                pointReward,
-                status,
-                startDate,
-                endDate,
-                country
-            },
-        }, { new: true });
+        const updateData = {
+            name,
+            type,
+            pointReward,
+            country
+        };
+        // Add optional fields if provided
+        if (minAmount !== undefined) {
+            updateData.minAmount = minAmount;
+        }
+        if (status !== undefined) {
+            updateData.status = status;
+        }
+        if (startDate) {
+            updateData.startDate = startDate;
+        }
+        if (endDate) {
+            updateData.endDate = endDate;
+        }
+        const updatedPointPromotion = yield pointPromotion_1.default.findByIdAndUpdate(id, { $set: updateData }, { new: true });
         return updatedPointPromotion;
     }
     catch (error) {

@@ -4,66 +4,65 @@ exports.validateCreatePromotion = void 0;
 const config_1 = require("../config");
 const festivalPromotion_1 = require("../models/festivalPromotion");
 const validateCreatePromotion = (req, res, next) => {
-    const { name, discount, usingType, period, status, country } = req.body;
+    const { name, discount, usingType, periodStartTime, periodEndTime, country } = req.body;
     if (!name || typeof name !== "string") {
-        return res.status(400).json({
+        res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
             message: "Invalid or missing field: name",
         });
+        return;
     }
     if (discount === undefined ||
         typeof discount !== "number" ||
         discount < 0 ||
         discount > 100) {
-        return res.status(400).json({
+        res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
             message: "Invalid or missing field: discount (must be a number between 0 and 100)",
         });
+        return;
     }
     if (usingType) {
         if (typeof usingType !== "string" ||
             !Object.values(festivalPromotion_1.usingTypeEnum).includes(usingType)) {
-            return res.status(400).json({
+            res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
                 message: `Invalid or missing field: usingType (must be one of ${Object.values(festivalPromotion_1.usingTypeEnum).join(", ")})`,
             });
+            return;
         }
     }
-    if (period) {
-        if (typeof period !== "object" ||
-            typeof period.startDate !== "string" ||
-            typeof period.endDate !== "string") {
-            return res.status(400).json({
+    if (periodStartTime && periodEndTime) {
+        if (typeof periodStartTime !== "string" || typeof periodEndTime !== "string") {
+            res.status(400).json({
                 code: config_1.messages.BAD_REQUEST.code,
-                message: "Invalid or missing field: period (must contain startDate and endDate as strings)",
+                message: "Invalid field: periodStartTime and periodEndTime must be strings",
             });
+            return;
         }
-    }
-    const start = new Date(period.startDate);
-    const end = new Date(period.endDate);
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-        return res.status(400).json({
-            code: config_1.messages.BAD_REQUEST.code,
-            message: "Invalid date format in period.startDate or period.endDate",
-        });
-    }
-    if (end < start) {
-        return res.status(400).json({
-            code: config_1.messages.BAD_REQUEST.code,
-            message: "endDate cannot be earlier than startDate",
-        });
+        const start = new Date(periodStartTime);
+        const end = new Date(periodEndTime);
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: "Invalid date format in periodStartTime or periodEndTime",
+            });
+            return;
+        }
+        if (end < start) {
+            res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: "periodEndTime cannot be earlier than periodStartTime",
+            });
+            return;
+        }
     }
     if (!country || typeof country !== "string") {
-        return res.status(400).json({
+        res.status(400).json({
             code: config_1.messages.BAD_REQUEST.code,
             message: "Invalid or missing field: country",
         });
-    }
-    if (status !== undefined && typeof status !== "boolean") {
-        return res.status(400).json({
-            code: config_1.messages.BAD_REQUEST.code,
-            message: "Invalid field: status (must be boolean)",
-        });
+        return;
     }
     next();
 };

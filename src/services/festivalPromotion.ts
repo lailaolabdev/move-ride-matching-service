@@ -5,26 +5,34 @@ export const createFestivalPromotionService = async ({
     name,
     discount,
     usingType,
-    period,
+    periodStartTime,
+    periodEndTime,
     country
 }: {
     name: string;
     discount: number;
     usingType: 'ONCE_TIME_TYPE' | 'PERIOD_TYPE';
-    period?: {
-        startDate: string;
-        endDate: string;
-    };
+    periodStartTime?: Date;
+    periodEndTime?: Date;
     country: string;
 }): Promise<IFestivalPromotion | null> => {
     try {
-        const festivalPromotion = new festivalPromotionModel({
+        const festivalPromotionData: any = {
             name,
             discount,
             usingType,
-            period,
             country,
-        });
+        };
+
+        // Add period dates if provided
+        if (periodStartTime) {
+            festivalPromotionData.periodStartTime = periodStartTime;
+        }
+        if (periodEndTime) {
+            festivalPromotionData.periodEndTime = periodEndTime;
+        }
+
+        const festivalPromotion = new festivalPromotionModel(festivalPromotionData);
 
         const savedFestivalPromotion = await festivalPromotion.save();
         return savedFestivalPromotion;
@@ -71,7 +79,8 @@ export const updateFestivalPromotionService = async ({
     name,
     discount,
     usingType,
-    period,
+    periodStartTime,
+    periodEndTime,
     status,
     country
 }: {
@@ -79,26 +88,35 @@ export const updateFestivalPromotionService = async ({
     name: string;
     discount: number;
     usingType: 'ONCE_TIME_TYPE' | 'PERIOD_TYPE';
-    period?: {
-        startDate: string;
-        endDate: string;
-    };
-    status: boolean;
+    periodStartTime?: Date;
+    periodEndTime?: Date;
+    status?: boolean;
     country: string;
 }): Promise<IFestivalPromotion | null> => {
     try {
+        const updateData: any = {
+            name,
+            discount,
+            usingType,
+            country,
+        };
+        
+        // Add period dates if provided
+        if (periodStartTime) {
+            updateData.periodStartTime = periodStartTime;
+        }
+        if (periodEndTime) {
+            updateData.periodEndTime = periodEndTime;
+        }
+        
+        // Only include status if it's provided (not undefined)
+        if (status !== undefined) {
+            updateData.status = status;
+        }
+
         const updatedFestivalPromotion = await festivalPromotionModel.findByIdAndUpdate(
             id,
-            {
-                $set: {
-                    name,
-                    discount,
-                    usingType,
-                    period,
-                    status,
-                    country,
-                },
-            },
+            { $set: updateData },
             { new: true }
         );
         return updatedFestivalPromotion;
@@ -133,7 +151,7 @@ export const updateFestivalPromotionByDateService = async ({
     try {
         const festivalPromotion = await festivalPromotionModel.updateMany(
             {
-                "period.endDate": { $lt: date },
+                "periodEndTime": { $lt: new Date(date) },
                 country: country,
                 status: true,
             },

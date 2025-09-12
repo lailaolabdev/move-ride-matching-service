@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filterPromotion = void 0;
-const filterPromotion = (name, usingType, startDate, endDate, status, country) => {
+const filterPromotion = (name, usingType, startDate, endDate, status, country, periodStartTime, periodEndTime) => {
     const filter = {};
     if (name)
         filter.name = { $regex: name, $options: "i" };
@@ -17,6 +17,16 @@ const filterPromotion = (name, usingType, startDate, endDate, status, country) =
         filter.status = status === "true";
     if (country)
         filter.country = country;
+    // Filter promotions where periodEndTime is greater than periodStartTime parameter
+    // (promotions that are still active after the specified start time)
+    if (periodStartTime) {
+        filter.periodEndTime = { $gte: new Date(periodStartTime) };
+    }
+    // Filter promotions where periodEndTime is less than or equal to periodEndTime parameter
+    // (promotions that expire before or on the specified end time)
+    if (periodEndTime) {
+        filter.periodEndTime = Object.assign(Object.assign({}, filter.periodEndTime), { $lte: new Date(periodEndTime) });
+    }
     return filter;
 };
 exports.filterPromotion = filterPromotion;

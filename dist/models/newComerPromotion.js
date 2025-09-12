@@ -34,7 +34,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const NewComerPromotionSchema = new mongoose_1.Schema({
+const newComerPromotionSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true
@@ -54,5 +54,5 @@ const NewComerPromotionSchema = new mongoose_1.Schema({
 }, {
     timestamps: true
 });
-const newComerPromotionModel = mongoose_1.default.model('NewComerPromotion', NewComerPromotionSchema);
+const newComerPromotionModel = mongoose_1.default.model('newComerPromotion', newComerPromotionSchema);
 exports.default = newComerPromotionModel;
