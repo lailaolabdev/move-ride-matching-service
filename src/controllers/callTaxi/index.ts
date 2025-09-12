@@ -972,7 +972,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       prepaid,
       waitingPrepaid,
       meterDistance,
-      meterPrice
+      meterPrice,
       price,
       newcomerPromotion,
       newcomerPromotionPrice,
