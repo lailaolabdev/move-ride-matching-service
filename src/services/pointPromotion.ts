@@ -94,8 +94,7 @@ export const updatePointPromotionService = async ({
     pointReward,
     status,
     startDate,
-    endDate,
-    country
+    endDate
 }: {
     id: string;
     name?: string;
@@ -105,7 +104,6 @@ export const updatePointPromotionService = async ({
     status?: boolean;
     startDate?: Date;
     endDate?: Date;
-    country?: string;
 }): Promise<IPointPromotion | null> => {
     try {
         const updateData: any = {};
@@ -126,6 +124,8 @@ export const updatePointPromotionService = async ({
         }
         if (status) {
             updateData.status = status;
+        }else {
+            updateData.status = false; // default to false if not provided
         }
         if (startDate) {
             updateData.startDate = startDate;

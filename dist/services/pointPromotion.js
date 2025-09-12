@@ -76,7 +76,7 @@ const getPointPromotionByIdService = (id) => __awaiter(void 0, void 0, void 0, f
 });
 exports.getPointPromotionByIdService = getPointPromotionByIdService;
 // UPDATE Point Promotion
-const updatePointPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, type, minAmount, pointReward, status, startDate, endDate, country }) {
+const updatePointPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, type, minAmount, pointReward, status, startDate, endDate }) {
     try {
         const updateData = {};
         if (name) {
@@ -94,6 +94,9 @@ const updatePointPromotionService = (_a) => __awaiter(void 0, [_a], void 0, func
         }
         if (status) {
             updateData.status = status;
+        }
+        else {
+            updateData.status = false; // default to false if not provided
         }
         if (startDate) {
             updateData.startDate = startDate;
