@@ -24,10 +24,10 @@ const createPointPromotionService = (_a) => __awaiter(void 0, [_a], void 0, func
             country
         };
         // Add optional fields if provided
-        if (minAmount !== undefined) {
+        if (minAmount) {
             pointPromotionData.minAmount = minAmount;
         }
-        if (status !== undefined) {
+        if (status) {
             pointPromotionData.status = status;
         }
         if (startDate) {
@@ -75,17 +75,21 @@ exports.getPointPromotionByIdService = getPointPromotionByIdService;
 // UPDATE Point Promotion
 const updatePointPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, type, minAmount, pointReward, status, startDate, endDate, country }) {
     try {
-        const updateData = {
-            name,
-            type,
-            pointReward,
-            country
-        };
+        const updateData = {};
+        if (name) {
+            updateData.name = name;
+        }
+        if (type) {
+            updateData.type = type;
+        }
+        if (pointReward) {
+            updateData.pointReward = pointReward;
+        }
         // Add optional fields if provided
         if (minAmount !== undefined) {
             updateData.minAmount = minAmount;
         }
-        if (status !== undefined) {
+        if (status) {
             updateData.status = status;
         }
         if (startDate) {

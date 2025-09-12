@@ -11,7 +11,7 @@ const router = express_1.default.Router();
 router.post("/", middlewares_1.checkAuthorizationMiddleware, promotion_1.validateCreatePromotion, festivalPromotion_1.createFestivalPromotion);
 router.get("/", middlewares_1.checkAuthorizationMiddleware, festivalPromotion_1.getAllFestivalPromotions);
 router.get("/:id", festivalPromotion_1.getFestivalPromotionById);
-router.put("/:id", middlewares_1.checkAuthorizationMiddleware, promotion_1.validateCreatePromotion, festivalPromotion_1.updateFestivalPromotion);
+router.put("/:id", middlewares_1.checkAuthorizationMiddleware, festivalPromotion_1.updateFestivalPromotion);
 router.delete("/:id", middlewares_1.checkAuthorizationMiddleware, festivalPromotion_1.deleteFestivalPromotion);
 router.put("/update/festival-promotion-status", festivalPromotion_1.updateFestivalPromotionByDate);
 exports.default = router;

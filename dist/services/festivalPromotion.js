@@ -69,12 +69,19 @@ exports.getFestivalPromotionByIdService = getFestivalPromotionByIdService;
 // UPDATE Festival Promotion
 const updateFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, discount, usingType, periodStartTime, periodEndTime, status, country }) {
     try {
-        const updateData = {
-            name,
-            discount,
-            usingType,
-            country,
-        };
+        const updateData = {};
+        if (name) {
+            updateData.name = name;
+        }
+        if (discount) {
+            updateData.discount = discount;
+        }
+        if (usingType) {
+            updateData.usingType = usingType;
+        }
+        if (country) {
+            updateData.country = country;
+        }
         // Add period dates if provided
         if (periodStartTime) {
             updateData.periodStartTime = periodStartTime;
@@ -83,7 +90,7 @@ const updateFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, f
             updateData.periodEndTime = periodEndTime;
         }
         // Only include status if it's provided (not undefined)
-        if (status !== undefined) {
+        if (status) {
             updateData.status = status;
         }
         const updatedFestivalPromotion = yield festivalPromotion_1.default.findByIdAndUpdate(id, { $set: updateData }, { new: true });

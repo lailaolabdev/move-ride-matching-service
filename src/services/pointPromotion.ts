@@ -29,10 +29,10 @@ export const createPointPromotionService = async ({
         };
 
         // Add optional fields if provided
-        if (minAmount !== undefined) {
+        if (minAmount) {
             pointPromotionData.minAmount = minAmount;
         }
-        if (status !== undefined) {
+        if (status) {
             pointPromotionData.status = status;
         }
         if (startDate) {
@@ -96,28 +96,33 @@ export const updatePointPromotionService = async ({
     country
 }: {
     id: string;
-    name: string;
-    type: "REGISTER" | "PAYMENT";
+    name?: string;
+    type?: "REGISTER" | "PAYMENT";
     minAmount?: number;
     pointReward: number;
     status?: boolean;
     startDate?: Date;
     endDate?: Date;
-    country: string;
+    country?: string;
 }): Promise<IPointPromotion | null> => {
     try {
-        const updateData: any = {
-            name,
-            type,
-            pointReward,
-            country
-        };
+        const updateData: any = {};
+
+        if(name) {
+            updateData.name = name;
+        }
+        if(type) {
+            updateData.type = type;
+        }
+        if(pointReward) {
+            updateData.pointReward = pointReward;
+        }
 
         // Add optional fields if provided
         if (minAmount !== undefined) {
             updateData.minAmount = minAmount;
         }
-        if (status !== undefined) {
+        if (status) {
             updateData.status = status;
         }
         if (startDate) {

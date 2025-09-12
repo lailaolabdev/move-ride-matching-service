@@ -85,22 +85,31 @@ export const updateFestivalPromotionService = async ({
     country
 }: {
     id: string;
-    name: string;
-    discount: number;
-    usingType: 'ONCE_TIME_TYPE' | 'PERIOD_TYPE';
+    name?: string;
+    discount?: number;
+    usingType?: 'ONCE_TIME_TYPE' | 'PERIOD_TYPE';
     periodStartTime?: Date;
     periodEndTime?: Date;
     status?: boolean;
-    country: string;
+    country?: string;
 }): Promise<IFestivalPromotion | null> => {
     try {
         const updateData: any = {
-            name,
-            discount,
-            usingType,
-            country,
         };
-        
+
+        if(name) {
+            updateData.name = name;
+        }
+        if(discount) {
+            updateData.discount = discount;
+        }
+        if(usingType) {
+            updateData.usingType = usingType;
+        }
+        if(country) {
+            updateData.country = country;
+        }
+
         // Add period dates if provided
         if (periodStartTime) {
             updateData.periodStartTime = periodStartTime;
@@ -108,9 +117,9 @@ export const updateFestivalPromotionService = async ({
         if (periodEndTime) {
             updateData.periodEndTime = periodEndTime;
         }
-        
+
         // Only include status if it's provided (not undefined)
-        if (status !== undefined) {
+        if (status) {
             updateData.status = status;
         }
 
