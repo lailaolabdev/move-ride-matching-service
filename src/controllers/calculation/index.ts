@@ -4,7 +4,7 @@ import { calculateDriverDistanceAndDurationService, calculateUserDistanceAndDura
 import { getOnPeakTimeService } from "../../services/onPeakTime";
 import { getTaxiPricingDistance } from "../../services/taxiTypePricing";
 import { driverRateModel } from "../../models/driverRate";
-import { CallTaxi } from "../../models/callTaxi";
+import { CallTaxi, REQUEST_TYPE } from "../../models/callTaxi";
 import { roundLimitModel } from "../../models/roundLimit";
 import { Types } from "mongoose";
 
@@ -40,7 +40,7 @@ export const calculateUserDistanceAndDuration = async (
 
         // step 3 : find peak time base on distance
         const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string, country);
-        const onPeakTimePrice = onPeakTime.credit ?? 0;
+        const onPeakTimePrice = onPeakTime?.credit || 0;
 
         // step 4 : loop through taxiTypePricing and 
         // calculate price both meter and flat fare
@@ -138,7 +138,7 @@ export const calculateDriverDistanceAndDuration = async (
     }
 };
 
-export const driverRateCal = async (callTaxi: any) => {
+export const driverRateCal = async ({ callTaxi }: { callTaxi: any }) => {
     try {
         let isInsideBonus = false;
 
@@ -189,12 +189,10 @@ export const driverRateCal = async (callTaxi: any) => {
         });
 
         if (driverRates) {
-            const calculatedPrice = (driverRates?.percentage / 100) * callTaxi.totalPrice;
-            const calculatedPlatformPrice = callTaxi.totalPrice - calculatedPrice
+            const price = callTaxi?.totalPrice
 
-            console.log("totalPrice: ", callTaxi.totalPrice)
-            console.log("percentage: ", driverRates?.percentage)
-            console.log("calculatedPrice: ", callTaxi.totalPrice)
+            const calculatedPrice = (driverRates?.percentage / 100) * price;
+            const calculatedPlatformPrice = price - calculatedPrice
 
             // Return the calculated price and the corresponding driver rate
             return {

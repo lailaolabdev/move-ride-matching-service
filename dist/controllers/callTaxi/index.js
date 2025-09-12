@@ -851,6 +851,7 @@ exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance, meterPrice } = req.body;
         const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance, price, newcomerPromotion, newcomerPromotionPrice, pointPromotion, totalPromotionPrice } = req.body;
         console.log("req.body: ", req.body);
         const token = req.headers.authorization;
@@ -911,6 +912,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.waitingPrepaid = waitingPrepaid;
         if (meterDistance)
             updateData.meterDistance = meterDistance;
+        if (meterPrice)
+            updateData.meterPrice = meterPrice;
         if (price)
             updateData.price = price;
         if (newcomerPromotion)
@@ -925,12 +928,11 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             // If status is paid add calculatedPrice and driverRate to
             // calculate driver income
             if (status === callTaxi_2.STATUS.PAID) {
-                const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice } = yield (0, calculation_1.driverRateCal)(callTaxi);
+                const { calculatedPrice, driverRate, isInsideBonus, calculatedPlatformPrice } = yield (0, calculation_1.driverRateCal)({ callTaxi });
                 updateData.driverIncome = calculatedPrice;
                 updateData.driverRate = driverRate;
                 updateData.isInsideBonus = isInsideBonus;
-                updateData.calculatedPlatformPrice = calculatedPlatformPrice;
-                console.log("updateData: ", updateData);
+                updateData.platformIncome = calculatedPlatformPrice;
             }
             updateData.status = status;
         }
