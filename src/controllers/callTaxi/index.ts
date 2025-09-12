@@ -971,7 +971,12 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       totalPrice,
       prepaid,
       waitingPrepaid,
-      meterDistance
+      meterDistance,
+      price,
+      newcomerPromotion,
+      newcomerPromotionPrice,
+      pointPromotion,
+      totalPromotionPrice
     } = req.body;
 
     console.log("req.body: ", req.body);
@@ -1038,6 +1043,11 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (prepaid) updateData.prepaid = prepaid;
     if (waitingPrepaid) updateData.waitingPrepaid = waitingPrepaid;
     if (meterDistance) updateData.meterDistance = meterDistance;
+    if (price) updateData.price = price;
+    if (newcomerPromotion) updateData.newcomerPromotion = newcomerPromotion;
+    if (newcomerPromotionPrice) updateData.newcomerPromotionPrice = newcomerPromotionPrice;
+    if (pointPromotion) updateData.pointPromotion = pointPromotion;
+    if (totalPromotionPrice) updateData.totalPromotionPrice = totalPromotionPrice;
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to

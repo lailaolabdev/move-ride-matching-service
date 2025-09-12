@@ -1,48 +1,54 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IPointPromotion extends Document {
   name: string;
-  type: "register" | "payment";
+  type: "REGISTER" | "PAYMENT";
   pointReward: number;
   status: boolean;
-  minAmount?: number | null | undefined;
-  startDate?: NativeDate | null | undefined;
-  endDate?: NativeDate | null | undefined;
+  minAmount?: number;
+  startDate?: Date;
+  endDate?: Date;
   country: string;
 }
 
-const pointPromotionSchema = new mongoose.Schema({
+const pointPromotionSchema: Schema = new Schema({
   name: {
     type: String,
     required: true
-  }, // e.g., "Welcome Bonus", "Spend and Earn"
+  }, 
   type: {
     type: String,
-    enum: ["register", "payment"],
+    enum: ["REGISTER", "PAYMENT"],
     required: true,
   },
-  // for 'payment' promotions
-  minAmount: Number, // optional, like "minimum 50 THB"
+  minAmount: {
+    type: Number,
+    required: true
+  }, 
   pointReward: {
     type: Number,
     required: true
-  }, // how many points to give
+  }, 
   status: {
     type: Boolean,
     default: true
   },
   startDate: {
-    type: Date
+    type: Date,
+    required: false
   },
   endDate: {
-    type: Date
+    type: Date,
+    required: false
   },
   country: {
     type: String,
-    require: true
+    required: true
   }
 }, {
   timestamps: true
 });
 
-export default mongoose.model("PointPromotion", pointPromotionSchema);
+const pointPromotionModel = mongoose.model<IPointPromotion>("pointPromotion", pointPromotionSchema);
+
+export default pointPromotionModel;

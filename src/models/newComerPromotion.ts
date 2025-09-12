@@ -2,12 +2,12 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface INewComerPromotion extends Document {
   name: string;
-  discount: string;
+  discount: number;
   status: boolean;
   country: string;
 }
 
-const NewComerPromotionSchema: Schema = new Schema({
+const newComerPromotionSchema: Schema = new Schema({
   name: {
     type: String,
     required: true
@@ -29,8 +29,8 @@ const NewComerPromotionSchema: Schema = new Schema({
 });
 
 const newComerPromotionModel = mongoose.model<INewComerPromotion>(
-  'NewComerPromotion',
-  NewComerPromotionSchema
+  'newComerPromotion',
+  newComerPromotionSchema
 );
 
 export default newComerPromotionModel;

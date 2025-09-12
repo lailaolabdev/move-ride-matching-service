@@ -13,13 +13,14 @@ import { filterPromotion } from "./helper"; // You may rename this to filterFest
 // CREATE
 export const createFestivalPromotion = async (req: Request, res: Response) => {
     try {
-        const { name, discount, usingType, period, country } = req.body;
+        const { name, discount, usingType, periodStartTime, periodEndTime, country } = req.body;
 
         const festivalPromotion = await createFestivalPromotionService({
             name,
             discount,
             usingType,
-            period,
+            periodStartTime: periodStartTime ? new Date(periodStartTime) : undefined,
+            periodEndTime: periodEndTime ? new Date(periodEndTime) : undefined,
             country,
         });
 
@@ -48,7 +49,9 @@ export const getAllFestivalPromotions = async (req: Request, res: Response) => {
             startDate,
             endDate,
             status,
-            country
+            country,
+            periodStartTime,
+            periodEndTime
         } = req.query;
 
         const parsedSkip = parseInt(skip as string, 10) || 0;
@@ -60,7 +63,9 @@ export const getAllFestivalPromotions = async (req: Request, res: Response) => {
             startDate,
             endDate,
             status,
-            country
+            country,
+            periodStartTime,
+            periodEndTime
         );
 
         const festivalPromotions = await getAllFestivalPromotionsService(
@@ -114,14 +119,15 @@ export const getFestivalPromotionById = async (req: Request, res: Response) => {
 export const updateFestivalPromotion = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { name, discount, usingType, period, status, country } = req.body;
+        const { name, discount, usingType, periodStartTime, periodEndTime, status, country } = req.body;
 
         const updatedFestivalPromotion = await updateFestivalPromotionService({
             id,
             name,
             discount,
             usingType,
-            period,
+            periodStartTime: periodStartTime ? new Date(periodStartTime) : undefined,
+            periodEndTime: periodEndTime ? new Date(periodEndTime) : undefined,
             status,
             country,
         });

@@ -12,27 +12,38 @@ export const createPointPromotionService = async ({
     country
 }: {
     name: string;
-    type: "register" | "payment";
+    type: "REGISTER" | "PAYMENT";
     minAmount?: number;
     pointReward: number;
     status?: boolean;
-    startDate?: string;
-    endDate?: string;
+    startDate?: Date;
+    endDate?: Date;
     country: string;
 }): Promise<IPointPromotion | null> => {
     try {
-        const pointPromotion = new pointPromotionModel({
+        const pointPromotionData: any = {
             name,
             type,
-            minAmount,
             pointReward,
-            status,
-            startDate,
-            endDate,
             country
-        });
+        };
 
-        const savedPointPromotion: any = await pointPromotion.save();
+        // Add optional fields if provided
+        if (minAmount !== undefined) {
+            pointPromotionData.minAmount = minAmount;
+        }
+        if (status !== undefined) {
+            pointPromotionData.status = status;
+        }
+        if (startDate) {
+            pointPromotionData.startDate = startDate;
+        }
+        if (endDate) {
+            pointPromotionData.endDate = endDate;
+        }
+
+        const pointPromotion = new pointPromotionModel(pointPromotionData);
+        const savedPointPromotion = await pointPromotion.save();
 
         return savedPointPromotion;
     } catch (error) {
@@ -48,7 +59,7 @@ export const getAllPointPromotionsService = async (
 ): Promise<{ total: number; pointPromotions: IPointPromotion[] }> => {
     try {
         const total = await pointPromotionModel.countDocuments(filter);
-        const pointPromotions: any[] = await pointPromotionModel
+        const pointPromotions = await pointPromotionModel
             .find(filter)
             .skip(skip)
             .limit(limit)
@@ -65,7 +76,7 @@ export const getPointPromotionByIdService = async (
     id: string
 ): Promise<IPointPromotion | null> => {
     try {
-        const pointPromotion: IPointPromotion | null = await pointPromotionModel.findById(id);
+        const pointPromotion = await pointPromotionModel.findById(id);
         return pointPromotion;
     } catch (error) {
         throw error;
@@ -86,29 +97,39 @@ export const updatePointPromotionService = async ({
 }: {
     id: string;
     name: string;
-    type: "register" | "payment";
+    type: "REGISTER" | "PAYMENT";
     minAmount?: number;
     pointReward: number;
-    status: boolean;
-    startDate?: string;
-    endDate?: string;
+    status?: boolean;
+    startDate?: Date;
+    endDate?: Date;
     country: string;
 }): Promise<IPointPromotion | null> => {
     try {
-        const updatedPointPromotion: IPointPromotion | null = await pointPromotionModel.findByIdAndUpdate(
+        const updateData: any = {
+            name,
+            type,
+            pointReward,
+            country
+        };
+
+        // Add optional fields if provided
+        if (minAmount !== undefined) {
+            updateData.minAmount = minAmount;
+        }
+        if (status !== undefined) {
+            updateData.status = status;
+        }
+        if (startDate) {
+            updateData.startDate = startDate;
+        }
+        if (endDate) {
+            updateData.endDate = endDate;
+        }
+
+        const updatedPointPromotion = await pointPromotionModel.findByIdAndUpdate(
             id,
-            {
-                $set: {
-                    name,
-                    type,
-                    minAmount,
-                    pointReward,
-                    status,
-                    startDate,
-                    endDate,
-                    country
-                },
-            },
+            { $set: updateData },
             { new: true }
         );
         return updatedPointPromotion;
@@ -123,7 +144,7 @@ export const deletePointPromotionService = async (
     id: string
 ): Promise<IPointPromotion | null> => {
     try {
-        const deletedPointPromotion: IPointPromotion | null = await pointPromotionModel.findByIdAndDelete(id);
+        const deletedPointPromotion = await pointPromotionModel.findByIdAndDelete(id);
         return deletedPointPromotion;
     } catch (error) {
         console.log("Error deleting point promotion: ", error);

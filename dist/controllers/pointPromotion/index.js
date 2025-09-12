@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletePointPromotion = exports.updatePointPromotion = exports.getPointPromotionById = exports.getAllPointPromotions = exports.createPointPromotion = void 0;
 const pointPromotion_1 = require("../../services/pointPromotion");
 const index_1 = require("../../config/index");
+const helper_1 = require("./helper");
 // CREATE
 const createPointPromotion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -22,8 +23,8 @@ const createPointPromotion = (req, res) => __awaiter(void 0, void 0, void 0, fun
             minAmount,
             pointReward,
             status,
-            startDate,
-            endDate,
+            startDate: startDate ? new Date(startDate) : undefined,
+            endDate: endDate ? new Date(endDate) : undefined,
             country
         });
         res.status(201).json({
@@ -44,18 +45,10 @@ exports.createPointPromotion = createPointPromotion;
 // READ ALL
 const getAllPointPromotions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, name, type, status, country } = req.query;
+        const { skip, limit, name, type, status, country, minAmount, pointReward, startDate, endDate, createdStartDate, createdEndDate } = req.query;
         const parsedSkip = parseInt(skip, 10) || 0;
         const parsedLimit = parseInt(limit, 10) || 10;
-        const filter = {};
-        if (name)
-            filter.name = { $regex: name, $options: "i" };
-        if (type)
-            filter.type = type;
-        if (country)
-            filter.country = country;
-        if (status !== undefined)
-            filter.status = status === "true";
+        const filter = (0, helper_1.filterPointPromotion)(name, type, status, startDate, endDate, country, minAmount, pointReward, createdStartDate, createdEndDate);
         const pointPromotions = yield (0, pointPromotion_1.getAllPointPromotionsService)(parsedSkip, parsedLimit, filter);
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,
@@ -110,8 +103,8 @@ const updatePointPromotion = (req, res) => __awaiter(void 0, void 0, void 0, fun
             minAmount,
             pointReward,
             status,
-            startDate,
-            endDate,
+            startDate: startDate ? new Date(startDate) : undefined,
+            endDate: endDate ? new Date(endDate) : undefined,
             country
         });
         if (!updatedPointPromotion) {

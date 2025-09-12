@@ -5,45 +5,98 @@
  *     PointPromotion:
  *       type: object
  *       properties:
- *         id:
+ *         _id:
  *           type: string
  *           example: "66556b3412ad2c5e13a1e456"
+ *           description: "Auto-generated MongoDB ObjectId"
  *         name:
  *           type: string
  *           example: "Welcome Bonus"
+ *           description: "Name of the point promotion"
  *         type:
  *           type: string
- *           enum: [register, payment]
- *           example: "register"
+ *           enum: [REGISTER, PAYMENT]
+ *           example: "REGISTER"
+ *           description: "Type of promotion - REGISTER for new user registration, PAYMENT for payment-based rewards"
  *         minAmount:
  *           type: number
- *           nullable: true
  *           example: 50
+ *           description: "Minimum amount required (optional, for PAYMENT type promotions)"
  *         pointReward:
  *           type: number
  *           example: 100
+ *           description: "Number of points awarded"
  *         status:
  *           type: boolean
  *           example: true
+ *           description: "Whether the promotion is active or not"
  *         startDate:
  *           type: string
  *           format: date-time
- *           nullable: true
  *           example: "2025-06-01T00:00:00.000Z"
+ *           description: "Start date for the promotion (optional)"
  *         endDate:
  *           type: string
  *           format: date-time
- *           nullable: true
  *           example: "2025-06-30T23:59:59.000Z"
+ *           description: "End date for the promotion (optional)"
  *         country:
  *           type: string
  *           example: "LA"
+ *           description: "Country ID where the promotion is applicable"
  *         createdAt:
  *           type: string
  *           format: date-time
+ *           example: "2025-06-01T00:00:00.000Z"
+ *           description: "Timestamp when the promotion was created"
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *           example: "2025-06-01T00:00:00.000Z"
+ *           description: "Timestamp when the promotion was last updated"
+ *     PointPromotionRequest:
+ *       type: object
+ *       required:
+ *         - name
+ *         - type
+ *         - pointReward
+ *         - country
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "Welcome Bonus"
+ *           description: "Name of the point promotion"
+ *         type:
+ *           type: string
+ *           enum: [REGISTER, PAYMENT]
+ *           example: "REGISTER"
+ *           description: "Type of promotion - REGISTER for new user registration, PAYMENT for payment-based rewards"
+ *         minAmount:
+ *           type: number
+ *           example: 50
+ *           description: "Minimum amount required (optional, for PAYMENT type promotions)"
+ *         pointReward:
+ *           type: number
+ *           example: 100
+ *           description: "Number of points awarded"
+ *         status:
+ *           type: boolean
+ *           example: true
+ *           description: "Whether the promotion is active or not (optional, defaults to true)"
+ *         startDate:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-06-01T00:00:00.000Z"
+ *           description: "Start date for the promotion (optional)"
+ *         endDate:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-06-30T23:59:59.000Z"
+ *           description: "End date for the promotion (optional)"
+ *         country:
+ *           type: string
+ *           example: "LA"
+ *           description: "Country ID where the promotion is applicable"
  */
 
 /**
@@ -60,7 +113,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/PointPromotion'
+ *             $ref: '#/components/schemas/PointPromotionRequest'
  *     responses:
  *       201:
  *         description: Point promotion created successfully
@@ -91,16 +144,69 @@
  *         schema:
  *           type: integer
  *         example: 0
+ *         description: "Number of records to skip for pagination"
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *         example: 10
+ *         description: "Maximum number of records to return"
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: "Filter by promotion name (case-insensitive partial match)"
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [REGISTER, PAYMENT]
+ *         description: "Filter by promotion type"
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: boolean
+ *         description: "Filter by promotion status (active/inactive)"
  *       - in: query
  *         name: country
  *         schema:
  *           type: string
  *         example: "LA"
+ *         description: "Filter by country ID"
+ *       - in: query
+ *         name: minAmount
+ *         schema:
+ *           type: number
+ *         description: "Filter promotions with minimum amount greater than or equal to this value"
+ *       - in: query
+ *         name: pointReward
+ *         schema:
+ *           type: number
+ *         description: "Filter promotions with point reward greater than or equal to this value"
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: "Filter promotions that start after or on this date"
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: "Filter promotions that end before or on this date"
+ *       - in: query
+ *         name: createdStartDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: "Filter by creation date range (start date)"
+ *       - in: query
+ *         name: createdEndDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: "Filter by creation date range (end date)"
  *     responses:
  *       200:
  *         description: List of point promotions

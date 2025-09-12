@@ -5,18 +5,19 @@ import {
   getAllPointPromotions,
   getPointPromotionById,
   updatePointPromotion,
-} from "../controllers/pointPromotion"; // Ensure this file exists and is correctly named
+} from "../controllers/pointPromotion";
 import { checkAuthorizationMiddleware } from "../middlewares";
+import { validateCreatePointPromotion, validateUpdatePointPromotion } from "../validators/pointPromotion";
 
 const router = express.Router();
 
-router.post("/", checkAuthorizationMiddleware, createPointPromotion);
+router.post("/", checkAuthorizationMiddleware, validateCreatePointPromotion, createPointPromotion);
 
 router.get("/", checkAuthorizationMiddleware, getAllPointPromotions);
 
 router.get("/:id", getPointPromotionById);
 
-router.put("/:id", checkAuthorizationMiddleware, updatePointPromotion);
+router.put("/:id", checkAuthorizationMiddleware, validateUpdatePointPromotion, updatePointPromotion);
 
 router.delete("/:id", checkAuthorizationMiddleware, deletePointPromotion);
 

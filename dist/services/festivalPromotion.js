@@ -15,15 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateFestivalPromotionByDateService = exports.deleteFestivalPromotionService = exports.updateFestivalPromotionService = exports.getFestivalPromotionByIdService = exports.getAllFestivalPromotionsService = exports.createFestivalPromotionService = void 0;
 const festivalPromotion_1 = __importDefault(require("../models/festivalPromotion"));
 // CREATE Festival Promotion
-const createFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, discount, usingType, period, country }) {
+const createFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, discount, usingType, periodStartTime, periodEndTime, country }) {
     try {
-        const festivalPromotion = new festivalPromotion_1.default({
+        const festivalPromotionData = {
             name,
             discount,
             usingType,
-            period,
             country,
-        });
+        };
+        // Add period dates if provided
+        if (periodStartTime) {
+            festivalPromotionData.periodStartTime = periodStartTime;
+        }
+        if (periodEndTime) {
+            festivalPromotionData.periodEndTime = periodEndTime;
+        }
+        const festivalPromotion = new festivalPromotion_1.default(festivalPromotionData);
         const savedFestivalPromotion = yield festivalPromotion.save();
         return savedFestivalPromotion;
     }
@@ -60,18 +67,26 @@ const getFestivalPromotionByIdService = (id) => __awaiter(void 0, void 0, void 0
 });
 exports.getFestivalPromotionByIdService = getFestivalPromotionByIdService;
 // UPDATE Festival Promotion
-const updateFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, discount, usingType, period, status, country }) {
+const updateFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, discount, usingType, periodStartTime, periodEndTime, status, country }) {
     try {
-        const updatedFestivalPromotion = yield festivalPromotion_1.default.findByIdAndUpdate(id, {
-            $set: {
-                name,
-                discount,
-                usingType,
-                period,
-                status,
-                country,
-            },
-        }, { new: true });
+        const updateData = {
+            name,
+            discount,
+            usingType,
+            country,
+        };
+        // Add period dates if provided
+        if (periodStartTime) {
+            updateData.periodStartTime = periodStartTime;
+        }
+        if (periodEndTime) {
+            updateData.periodEndTime = periodEndTime;
+        }
+        // Only include status if it's provided (not undefined)
+        if (status !== undefined) {
+            updateData.status = status;
+        }
+        const updatedFestivalPromotion = yield festivalPromotion_1.default.findByIdAndUpdate(id, { $set: updateData }, { new: true });
         return updatedFestivalPromotion;
     }
     catch (error) {
@@ -96,7 +111,7 @@ exports.deleteFestivalPromotionService = deleteFestivalPromotionService;
 const updateFestivalPromotionByDateService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ date, country }) {
     try {
         const festivalPromotion = yield festivalPromotion_1.default.updateMany({
-            "period.endDate": { $lt: date },
+            "periodEndTime": { $lt: new Date(date) },
             country: country,
             status: true,
         }, { $set: { status: false } });

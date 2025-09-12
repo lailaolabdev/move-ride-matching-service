@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteNewComerPromotionService = exports.updateNewComerPromotionService = exports.getNewComerPromotionByIdService = exports.getAllNewComerPromotionsService = exports.createNewComerPromotionService = void 0;
+exports.getAllNewComerPromotionUsageService = exports.recordNewComerPromotionUsageService = exports.checkNewComerPromotionUsageService = exports.deleteNewComerPromotionService = exports.updateNewComerPromotionService = exports.getNewComerPromotionByIdService = exports.getAllNewComerPromotionsService = exports.createNewComerPromotionService = void 0;
 const newComerPromotion_1 = __importDefault(require("../models/newComerPromotion"));
+const newComerPromotionUsage_1 = __importDefault(require("../models/newComerPromotionUsage"));
 // CREATE NewComer Promotion
 const createNewComerPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ name, discount, country }) {
     try {
@@ -60,14 +61,16 @@ exports.getNewComerPromotionByIdService = getNewComerPromotionByIdService;
 // UPDATE NewComer Promotion
 const updateNewComerPromotionService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ id, name, discount, status, country }) {
     try {
-        const updatedNewComerPromotion = yield newComerPromotion_1.default.findByIdAndUpdate(id, {
-            $set: {
-                name,
-                discount,
-                status,
-                country,
-            },
-        }, { new: true });
+        const updateData = {
+            name,
+            discount,
+            country,
+        };
+        // Only include status if it's provided (not undefined)
+        if (status !== undefined) {
+            updateData.status = status;
+        }
+        const updatedNewComerPromotion = yield newComerPromotion_1.default.findByIdAndUpdate(id, { $set: updateData }, { new: true });
         return updatedNewComerPromotion;
     }
     catch (error) {
@@ -88,3 +91,56 @@ const deleteNewComerPromotionService = (id) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.deleteNewComerPromotionService = deleteNewComerPromotionService;
+// CHECK if user has already used newcomer promotion
+const checkNewComerPromotionUsageService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ userId, country }) {
+    try {
+        const usageRecord = yield newComerPromotionUsage_1.default
+            .findOne({ userId, country })
+            .populate('newComerPromotionId');
+        return {
+            hasUsed: !!usageRecord,
+            usageDetails: usageRecord
+        };
+    }
+    catch (error) {
+        console.log("Error checking newcomer promotion usage: ", error);
+        throw error;
+    }
+});
+exports.checkNewComerPromotionUsageService = checkNewComerPromotionUsageService;
+// RECORD newcomer promotion usage
+const recordNewComerPromotionUsageService = (_a) => __awaiter(void 0, [_a], void 0, function* ({ userId, newComerPromotionId, country }) {
+    try {
+        const usageRecord = new newComerPromotionUsage_1.default({
+            userId,
+            newComerPromotionId,
+            country
+        });
+        const savedUsageRecord = yield usageRecord.save();
+        return savedUsageRecord;
+    }
+    catch (error) {
+        console.log("Error recording newcomer promotion usage: ", error);
+        throw error;
+    }
+});
+exports.recordNewComerPromotionUsageService = recordNewComerPromotionUsageService;
+// GET all newcomer promotion usage records (for admin purposes)
+const getAllNewComerPromotionUsageService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const total = yield newComerPromotionUsage_1.default.countDocuments(filter);
+        const usageRecords = yield newComerPromotionUsage_1.default
+            .find(filter)
+            .populate('userId', 'name email') // Adjust fields as needed
+            .populate('newComerPromotionId')
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+        return { total, usageRecords };
+    }
+    catch (error) {
+        console.log("Error fetching newcomer promotion usage records: ", error);
+        throw error;
+    }
+});
+exports.getAllNewComerPromotionUsageService = getAllNewComerPromotionUsageService;

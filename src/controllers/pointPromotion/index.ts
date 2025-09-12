@@ -7,6 +7,7 @@ import {
     deletePointPromotionService,
 } from "../../services/pointPromotion";
 import { messages } from "../../config/index";
+import { filterPointPromotion } from "./helper";
 
 // CREATE
 export const createPointPromotion = async (req: Request, res: Response) => {
@@ -19,8 +20,8 @@ export const createPointPromotion = async (req: Request, res: Response) => {
             minAmount,
             pointReward,
             status,
-            startDate,
-            endDate,
+            startDate: startDate ? new Date(startDate) : undefined,
+            endDate: endDate ? new Date(endDate) : undefined,
             country
         });
 
@@ -47,17 +48,30 @@ export const getAllPointPromotions = async (req: Request, res: Response) => {
             name,
             type,
             status,
-            country
+            country,
+            minAmount,
+            pointReward,
+            startDate,
+            endDate,
+            createdStartDate,
+            createdEndDate
         } = req.query;
 
         const parsedSkip = parseInt(skip as string, 10) || 0;
         const parsedLimit = parseInt(limit as string, 10) || 10;
 
-        const filter: any = {};
-        if (name) filter.name = { $regex: name, $options: "i" };
-        if (type) filter.type = type;
-        if (country) filter.country = country;
-        if (status !== undefined) filter.status = status === "true";
+        const filter = filterPointPromotion(
+            name,
+            type,
+            status,
+            startDate,
+            endDate,
+            country,
+            minAmount,
+            pointReward,
+            createdStartDate,
+            createdEndDate
+        );
 
         const pointPromotions = await getAllPointPromotionsService(
             parsedSkip,
@@ -119,8 +133,8 @@ export const updatePointPromotion = async (req: Request, res: Response) => {
             minAmount,
             pointReward,
             status,
-            startDate,
-            endDate,
+            startDate: startDate ? new Date(startDate) : undefined,
+            endDate: endDate ? new Date(endDate) : undefined,
             country
         });
 

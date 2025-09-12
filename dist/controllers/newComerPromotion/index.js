@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteNewComerPromotion = exports.updateNewComerPromotion = exports.getNewComerPromotionById = exports.getAllNewComerPromotions = exports.createNewComerPromotion = void 0;
+exports.getAllNewComerPromotionUsage = exports.recordNewComerPromotionUsage = exports.checkNewComerPromotionUsage = exports.deleteNewComerPromotion = exports.updateNewComerPromotion = exports.getNewComerPromotionById = exports.getAllNewComerPromotions = exports.createNewComerPromotion = void 0;
 const newComerPromotion_1 = require("../../services/newComerPromotion");
 const index_1 = require("../../config/index");
-const helper_1 = require("../festivalPromotion/helper"); // Rename if specific to newcomer
+const helper_1 = require("./helper");
 // CREATE
 const createNewComerPromotion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -40,10 +40,10 @@ exports.createNewComerPromotion = createNewComerPromotion;
 // READ ALL
 const getAllNewComerPromotions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, name, usingType, startDate, endDate, status } = req.query;
+        const { skip, limit, name, startDate, endDate, status, country } = req.query;
         const parsedSkip = parseInt(skip, 10) || 0;
         const parsedLimit = parseInt(limit, 10) || 10;
-        const filter = (0, helper_1.filterPromotion)(name, status);
+        const filter = (0, helper_1.filterNewComerPromotion)(name, status, startDate, endDate, country);
         const newComerPromotions = yield (0, newComerPromotion_1.getAllNewComerPromotionsService)(parsedSkip, parsedLimit, filter);
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,
@@ -133,8 +133,6 @@ const deleteNewComerPromotion = (req, res) => __awaiter(void 0, void 0, void 0, 
         }
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,
-            message: "Newcomer promotion deleted successfully",
-            deletedNewComerPromotion,
         });
     }
     catch (error) {
@@ -146,3 +144,122 @@ const deleteNewComerPromotion = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.deleteNewComerPromotion = deleteNewComerPromotion;
+// CHECK if user has already used newcomer promotion
+const checkNewComerPromotionUsage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId } = req.params;
+        const { country } = req.query;
+        if (!country) {
+            res.status(400).json({
+                code: index_1.messages.BAD_REQUEST.code,
+                message: "Country parameter is required",
+            });
+            return;
+        }
+        const usageCheck = yield (0, newComerPromotion_1.checkNewComerPromotionUsageService)({
+            userId,
+            country: country,
+        });
+        res.status(200).json({
+            code: index_1.messages.SUCCESSFULLY.code,
+            message: "Usage check completed successfully",
+            hasUsed: usageCheck.hasUsed,
+            usageDetails: usageCheck.usageDetails,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            code: index_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: index_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.checkNewComerPromotionUsage = checkNewComerPromotionUsage;
+// RECORD newcomer promotion usage
+const recordNewComerPromotionUsage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId, newComerPromotionId, country } = req.body;
+        if (!userId || !newComerPromotionId || !country) {
+            res.status(400).json({
+                code: index_1.messages.BAD_REQUEST.code,
+                message: "userId, newComerPromotionId, and country are required",
+            });
+            return;
+        }
+        // First check if user has already used newcomer promotion in this country
+        const usageCheck = yield (0, newComerPromotion_1.checkNewComerPromotionUsageService)({
+            userId,
+            country,
+        });
+        if (usageCheck.hasUsed) {
+            res.status(409).json({
+                code: "ALREADY_USED",
+                message: "User has already used newcomer promotion in this country",
+                usageDetails: usageCheck.usageDetails,
+            });
+            return;
+        }
+        const usageRecord = yield (0, newComerPromotion_1.recordNewComerPromotionUsageService)({
+            userId,
+            newComerPromotionId,
+            country,
+        });
+        res.status(201).json({
+            code: index_1.messages.CREATE_SUCCESSFUL.code,
+            message: "Newcomer promotion usage recorded successfully",
+            usageRecord,
+        });
+    }
+    catch (error) {
+        // Handle unique constraint violation
+        if (error.code === 11000) {
+            res.status(409).json({
+                code: "ALREADY_USED",
+                message: "User has already used newcomer promotion in this country",
+            });
+            return;
+        }
+        res.status(500).json({
+            code: index_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: index_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.recordNewComerPromotionUsage = recordNewComerPromotionUsage;
+// GET all newcomer promotion usage records (for admin)
+const getAllNewComerPromotionUsage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { skip, limit, userId, country, newComerPromotionId, startDate, endDate, } = req.query;
+        const parsedSkip = parseInt(skip, 10) || 0;
+        const parsedLimit = parseInt(limit, 10) || 10;
+        const filter = {};
+        if (userId)
+            filter.userId = userId;
+        if (country)
+            filter.country = country;
+        if (newComerPromotionId)
+            filter.newComerPromotionId = newComerPromotionId;
+        if (startDate && endDate) {
+            filter.createdAt = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
+            };
+        }
+        const usageRecords = yield (0, newComerPromotion_1.getAllNewComerPromotionUsageService)(parsedSkip, parsedLimit, filter);
+        res.status(200).json({
+            code: index_1.messages.SUCCESSFULLY.code,
+            message: "Usage records fetched successfully",
+            usageRecords,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            code: index_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: index_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.getAllNewComerPromotionUsage = getAllNewComerPromotionUsage;
