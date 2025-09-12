@@ -18,7 +18,7 @@ router.get("/", checkAuthorizationMiddleware, getAllFestivalPromotions);
 
 router.get("/:id", getFestivalPromotionById);
 
-router.put("/:id", checkAuthorizationMiddleware, validateCreatePromotion, updateFestivalPromotion);
+router.put("/:id", checkAuthorizationMiddleware, updateFestivalPromotion);
 
 router.delete("/:id", checkAuthorizationMiddleware, deleteFestivalPromotion);
 

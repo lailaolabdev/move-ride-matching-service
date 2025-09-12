@@ -17,7 +17,7 @@ router.get("/", checkAuthorizationMiddleware, getAllPointPromotions);
 
 router.get("/:id", getPointPromotionById);
 
-router.put("/:id", checkAuthorizationMiddleware, validateUpdatePointPromotion, updatePointPromotion);
+router.put("/:id", checkAuthorizationMiddleware, updatePointPromotion);
 
 router.delete("/:id", checkAuthorizationMiddleware, deletePointPromotion);
 

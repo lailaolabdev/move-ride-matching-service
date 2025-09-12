@@ -77,10 +77,12 @@ export const updateNewComerPromotionService = async ({
             discount,
             country,
         };
-        
+
         // Only include status if it's provided (not undefined)
-        if (status !== undefined) {
+        if (status) {
             updateData.status = status;
+        } else {
+            updateData.status = false; // default to false if not provided
         }
 
         const updatedNewComerPromotion = await newComerPromotionModel.findByIdAndUpdate(
@@ -120,7 +122,7 @@ export const checkNewComerPromotionUsageService = async ({
         const usageRecord = await newComerPromotionUsageModel
             .findOne({ userId, country })
             .populate('newComerPromotionId');
-        
+
         return {
             hasUsed: !!usageRecord,
             usageDetails: usageRecord
