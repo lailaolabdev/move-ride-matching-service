@@ -8,7 +8,7 @@ export const getOnPeakTimeService = async (token: string, country?: string) => {
       { headers: { Authorization: token } }
     );
 
-    if (!onPeakTime?.data?.onPeakTimes) {
+    if (!onPeakTime?.data?.onPeakTimes?.length) {
       return false;
     }
 

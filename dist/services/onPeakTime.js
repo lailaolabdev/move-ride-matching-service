@@ -16,13 +16,13 @@ exports.getOnPeakTimeService = void 0;
 const axios_1 = __importDefault(require("axios"));
 const timezone_1 = require("../utils/timezone");
 const getOnPeakTimeService = (token, country) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c;
     try {
         const onPeakTime = yield axios_1.default.get(`${process.env.CHARGING_SERVICE_URL}/v1/api/on-peak-times?platform=TAXI&country=${country}`, { headers: { Authorization: token } });
-        if (!((_a = onPeakTime === null || onPeakTime === void 0 ? void 0 : onPeakTime.data) === null || _a === void 0 ? void 0 : _a.onPeakTimes)) {
+        if (!((_b = (_a = onPeakTime === null || onPeakTime === void 0 ? void 0 : onPeakTime.data) === null || _a === void 0 ? void 0 : _a.onPeakTimes) === null || _b === void 0 ? void 0 : _b.length)) {
             return false;
         }
-        const getCurrentPeakTime = yield getCurrentPeakSchedule((_b = onPeakTime === null || onPeakTime === void 0 ? void 0 : onPeakTime.data) === null || _b === void 0 ? void 0 : _b.onPeakTimes);
+        const getCurrentPeakTime = yield getCurrentPeakSchedule((_c = onPeakTime === null || onPeakTime === void 0 ? void 0 : onPeakTime.data) === null || _c === void 0 ? void 0 : _c.onPeakTimes);
         return getCurrentPeakTime;
     }
     catch (error) {
