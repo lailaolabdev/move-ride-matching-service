@@ -93,6 +93,9 @@ const updateFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, f
         if (status) {
             updateData.status = status;
         }
+        else {
+            updateData.status = false;
+        }
         const updatedFestivalPromotion = yield festivalPromotion_1.default.findByIdAndUpdate(id, { $set: updateData }, { new: true });
         return updatedFestivalPromotion;
     }

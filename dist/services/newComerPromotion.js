@@ -67,8 +67,11 @@ const updateNewComerPromotionService = (_a) => __awaiter(void 0, [_a], void 0, f
             country,
         };
         // Only include status if it's provided (not undefined)
-        if (status !== undefined) {
+        if (status) {
             updateData.status = status;
+        }
+        else {
+            updateData.status = false; // default to false if not provided
         }
         const updatedNewComerPromotion = yield newComerPromotion_1.default.findByIdAndUpdate(id, { $set: updateData }, { new: true });
         return updatedNewComerPromotion;

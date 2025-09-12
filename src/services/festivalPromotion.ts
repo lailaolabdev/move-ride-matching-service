@@ -97,16 +97,16 @@ export const updateFestivalPromotionService = async ({
         const updateData: any = {
         };
 
-        if(name) {
+        if (name) {
             updateData.name = name;
         }
-        if(discount) {
+        if (discount) {
             updateData.discount = discount;
         }
-        if(usingType) {
+        if (usingType) {
             updateData.usingType = usingType;
         }
-        if(country) {
+        if (country) {
             updateData.country = country;
         }
 
@@ -121,6 +121,8 @@ export const updateFestivalPromotionService = async ({
         // Only include status if it's provided (not undefined)
         if (status) {
             updateData.status = status;
+        } else {
+            updateData.status = false;
         }
 
         const updatedFestivalPromotion = await festivalPromotionModel.findByIdAndUpdate(

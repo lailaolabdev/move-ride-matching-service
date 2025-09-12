@@ -34,6 +34,8 @@ export const createPointPromotionService = async ({
         }
         if (status) {
             pointPromotionData.status = status;
+        } else {
+            pointPromotionData.status = false; // default to false if not provided
         }
         if (startDate) {
             pointPromotionData.startDate = startDate;

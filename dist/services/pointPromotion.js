@@ -30,6 +30,9 @@ const createPointPromotionService = (_a) => __awaiter(void 0, [_a], void 0, func
         if (status) {
             pointPromotionData.status = status;
         }
+        else {
+            pointPromotionData.status = false; // default to false if not provided
+        }
         if (startDate) {
             pointPromotionData.startDate = startDate;
         }
