@@ -191,6 +191,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
     platformIncome: Number,
     driverActions: [
         {
+            _id: false,
             action: {
                 type: String,
                 enum: Object.values(exports.STATUS),

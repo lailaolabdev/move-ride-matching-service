@@ -270,6 +270,7 @@ const CallTaxiSchema: Schema = new Schema(
     platformIncome: Number,
     driverActions: [
       {
+        _id: false,
         action: {
           type: String,
           enum: Object.values(STATUS),
