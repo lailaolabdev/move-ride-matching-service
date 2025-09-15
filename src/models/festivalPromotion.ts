@@ -28,8 +28,14 @@ const FestivalPromotionSchema: Schema = new Schema({
     type: String,
     enum: Object.values(usingTypeEnum),
   },
-  periodStartTime: Date,
-  periodEndTime: Date,
+  periodStartTime: {
+    type: Date,
+    required: true
+  },
+  periodEndTime: {
+    type: Date,
+    required: true
+  },
   status: {
     type: Boolean,
     default: true
