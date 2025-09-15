@@ -172,7 +172,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
     },
     newcomerPromotion: String, // NewComer promotion ID
     newcomerPromotionPrice: Number, // Discount amount from newcomer promotion
-    pointPromotion: String, // Point promotion ID
+    pointPromotion: [String], // Point promotion IDs array
     totalPromotionPrice: Number, // Total discount amount from all promotions
     prepaid: {
         type: Boolean,
