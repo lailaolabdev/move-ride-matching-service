@@ -278,11 +278,18 @@ const driverUpdateStatusService = (data) => __awaiter(void 0, void 0, void 0, fu
         const { id } = data.req.params;
         const driverId = data.req.user.id;
         const confirmed = yield callTaxi_1.CallTaxi.findByIdAndUpdate(id, {
-            driverId,
-            status: data.status,
-            registrationSource: data.driverRegistrationSource,
-            driverFullName: data.driverFullName,
-            driverPhoneNumber: data.driverPhoneNumber
+            $set: {
+                driverId,
+                status: data.status,
+                registrationSource: data.driverRegistrationSource,
+                driverFullName: data.driverFullName,
+                driverPhoneNumber: data.driverPhoneNumber
+            },
+            $push: {
+                driverActions: {
+                    action: data.status
+                }
+            },
         }, { new: true }).lean();
         return confirmed;
     }

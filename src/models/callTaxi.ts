@@ -267,7 +267,20 @@ const CallTaxiSchema: Schema = new Schema(
       type: Boolean,
       default: false
     },
-    platformIncome: Number
+    platformIncome: Number,
+    driverActions: [
+      {
+        action: {
+          type: String,
+          enum: Object.values(STATUS),
+          required: true,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
