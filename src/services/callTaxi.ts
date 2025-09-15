@@ -5,7 +5,6 @@ import { roundCoord } from "../controllers/callTaxi/helper";
 import mongoose, { Types } from "mongoose"
 import vehicleDriverModel from "../models/vehicleDriver";
 import { generateBillNumber } from "../utils/generateBillNumber";
-import { callTaxiTotalPrice } from "../controllers/callTaxi";
 
 export const createCallTaxiService = async ({
     req,
@@ -310,11 +309,18 @@ export const driverUpdateStatusService = async (data:
         const confirmed = await CallTaxi.findByIdAndUpdate(
             id,
             {
-                driverId,
-                status: data.status,
-                registrationSource: data.driverRegistrationSource,
-                driverFullName: data.driverFullName,
-                driverPhoneNumber: data.driverPhoneNumber
+                $set: {
+                    driverId,
+                    status: data.status,
+                    registrationSource: data.driverRegistrationSource,
+                    driverFullName: data.driverFullName,
+                    driverPhoneNumber: data.driverPhoneNumber
+                },
+                $push: {
+                    driverActions: {
+                        action: data.status
+                    }
+                },
             },
             { new: true }
         ).lean();

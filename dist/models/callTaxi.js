@@ -188,7 +188,20 @@ const CallTaxiSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false
     },
-    platformIncome: Number
+    platformIncome: Number,
+    driverActions: [
+        {
+            action: {
+                type: String,
+                enum: Object.values(exports.STATUS),
+                required: true,
+            },
+            timestamp: {
+                type: Date,
+                default: Date.now,
+            },
+        },
+    ],
 }, {
     timestamps: true,
 });
