@@ -17,15 +17,20 @@ const filterPromotion = (name, usingType, startDate, endDate, status, country, p
         filter.status = status === "true";
     if (country)
         filter.country = country;
-    // Filter promotions where periodEndTime is greater than periodStartTime parameter
-    // (promotions that are still active after the specified start time)
-    if (periodStartTime) {
-        filter.periodEndTime = { $gte: new Date(periodStartTime) };
-    }
-    // Filter promotions where periodEndTime is less than or equal to periodEndTime parameter
-    // (promotions that expire before or on the specified end time)
-    if (periodEndTime) {
-        filter.periodEndTime = Object.assign(Object.assign({}, filter.periodEndTime), { $lte: new Date(periodEndTime) });
+    // Filter promotions by periodStartTime and periodEndTime range
+    if (periodStartTime && periodEndTime) {
+        const startDate = new Date(periodStartTime);
+        const endDate = new Date(periodEndTime);
+        // Check if they are the same date (year, month, day)
+        if (startDate.toDateString() === endDate.toDateString()) {
+            // Set to start of day (00:00:00.000) and end of day (23:59:59.999)
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(23, 59, 59, 999);
+        }
+        filter.periodEndTime = {
+            $gte: startDate,
+            $lte: endDate
+        };
     }
     return filter;
 };
