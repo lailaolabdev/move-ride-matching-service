@@ -12,25 +12,19 @@ export const createFestivalPromotionService = async ({
     name: string;
     discount: number;
     usingType: 'ONCE_TIME_TYPE' | 'PERIOD_TYPE';
-    periodStartTime?: Date;
-    periodEndTime?: Date;
+    periodStartTime: Date;
+    periodEndTime: Date;
     country: string;
 }): Promise<IFestivalPromotion | null> => {
     try {
-        const festivalPromotionData: any = {
+        const festivalPromotionData = {
             name,
             discount,
             usingType,
+            periodStartTime,
+            periodEndTime,
             country,
         };
-
-        // Add period dates if provided
-        if (periodStartTime) {
-            festivalPromotionData.periodStartTime = periodStartTime;
-        }
-        if (periodEndTime) {
-            festivalPromotionData.periodEndTime = periodEndTime;
-        }
 
         const festivalPromotion = new festivalPromotionModel(festivalPromotionData);
 
@@ -119,10 +113,8 @@ export const updateFestivalPromotionService = async ({
         }
 
         // Only include status if it's provided (not undefined)
-        if (status) {
+        if (status !== undefined) {
             updateData.status = status;
-        } else {
-            updateData.status = false;
         }
 
         const updatedFestivalPromotion = await festivalPromotionModel.findByIdAndUpdate(

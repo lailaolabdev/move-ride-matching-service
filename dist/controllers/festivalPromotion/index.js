@@ -21,8 +21,8 @@ const createFestivalPromotion = (req, res) => __awaiter(void 0, void 0, void 0, 
             name,
             discount,
             usingType,
-            periodStartTime: periodStartTime ? new Date(periodStartTime) : undefined,
-            periodEndTime: periodEndTime ? new Date(periodEndTime) : undefined,
+            periodStartTime: new Date(periodStartTime),
+            periodEndTime: new Date(periodEndTime),
             country,
         });
         res.status(201).json({

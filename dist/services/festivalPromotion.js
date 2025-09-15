@@ -21,15 +21,10 @@ const createFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, f
             name,
             discount,
             usingType,
+            periodStartTime,
+            periodEndTime,
             country,
         };
-        // Add period dates if provided
-        if (periodStartTime) {
-            festivalPromotionData.periodStartTime = periodStartTime;
-        }
-        if (periodEndTime) {
-            festivalPromotionData.periodEndTime = periodEndTime;
-        }
         const festivalPromotion = new festivalPromotion_1.default(festivalPromotionData);
         const savedFestivalPromotion = yield festivalPromotion.save();
         return savedFestivalPromotion;
@@ -90,11 +85,8 @@ const updateFestivalPromotionService = (_a) => __awaiter(void 0, [_a], void 0, f
             updateData.periodEndTime = periodEndTime;
         }
         // Only include status if it's provided (not undefined)
-        if (status) {
+        if (status !== undefined) {
             updateData.status = status;
-        }
-        else {
-            updateData.status = false;
         }
         const updatedFestivalPromotion = yield festivalPromotion_1.default.findByIdAndUpdate(id, { $set: updateData }, { new: true });
         return updatedFestivalPromotion;

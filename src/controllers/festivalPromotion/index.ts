@@ -19,8 +19,8 @@ export const createFestivalPromotion = async (req: Request, res: Response) => {
             name,
             discount,
             usingType,
-            periodStartTime: periodStartTime ? new Date(periodStartTime) : undefined,
-            periodEndTime: periodEndTime ? new Date(periodEndTime) : undefined,
+            periodStartTime: new Date(periodStartTime),
+            periodEndTime: new Date(periodEndTime),
             country,
         });
 
