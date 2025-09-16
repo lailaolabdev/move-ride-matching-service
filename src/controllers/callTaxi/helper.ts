@@ -184,7 +184,7 @@ export const removeCallTaxiFromRedis = async (id: string) => {
     try {
         await axios.delete(`${process.env.SOCKET_SERVICE_URL}/v1/api/payment-socket/meter-price/${id}`);
     } catch (error) {
-        console.log("Error from getMeterPrice: ", error);
+        console.log("Error from removeCallTaxiFromRedis: ", error);
     }
 }
 
