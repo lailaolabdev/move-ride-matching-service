@@ -27,7 +27,10 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
       const userData = user?.data?.user
 
       if (!userData) {
-        throw new Error("User does not exist");
+        throw {
+          code: messages.NOT_FOUND.code,
+          message: messages.NOT_FOUND.message
+        }
       }
       console.log("userData: ", userData);
 
@@ -36,7 +39,10 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
       console.log("loyalty: ", loyalty);
 
       if (!loyalty) {
-        throw new Error("Loyalty does not exist");
+        throw {
+          code: messages.LOYALTY_NOT_FOUND.code,
+          message: messages.LOYALTY_NOT_FOUND.message
+        }
       }
 
       // Check is user point enough or not 

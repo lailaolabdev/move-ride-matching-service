@@ -31,14 +31,20 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
             const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
             const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
             if (!userData) {
-                throw new Error("User does not exist");
+                throw {
+                    code: config_1.messages.NOT_FOUND.code,
+                    message: config_1.messages.NOT_FOUND.message
+                };
             }
             console.log("userData: ", userData);
             // Check is loyalty exist
             const loyalty = yield loyalty_1.loyaltyModel.findById(loyaltyId).session(session);
             console.log("loyalty: ", loyalty);
             if (!loyalty) {
-                throw new Error("Loyalty does not exist");
+                throw {
+                    code: config_1.messages.LOYALTY_NOT_FOUND.code,
+                    message: config_1.messages.LOYALTY_NOT_FOUND.message
+                };
             }
             // Check is user point enough or not 
             const userPoint = Number((_b = userData === null || userData === void 0 ? void 0 : userData.point) !== null && _b !== void 0 ? _b : 0);

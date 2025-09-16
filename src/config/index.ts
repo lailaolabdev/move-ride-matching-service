@@ -120,6 +120,10 @@ export const messages = {
         code: "TAXI-421236",
         message: "Round limit not found for this country code"
     },
+    LOYALTY_NOT_FOUND: {
+        code: "TAXI-201404",
+        message: "Loyalty not found"
+    }
 };
 
 export interface IErrorResponse {

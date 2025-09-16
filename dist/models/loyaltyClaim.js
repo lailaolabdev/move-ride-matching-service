@@ -36,14 +36,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loyaltyClaimModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const ACCEPTED_TYPE = {
-    PICK_UP: "pick_up",
-    DELIVERY: "delivery",
+    PICK_UP: "PICK_UP",
+    DELIVERY: "DELIVERY",
 };
 const STATUS = {
-    PENDING: "pending",
-    ACCEPTED: "accepted",
-    CANCELED: "canceled",
-    DELIVERED: "delivered",
+    PENDING: "PENDING",
+    ACCEPTED: "ACCEPTED",
+    CANCELED: "CANCELED",
+    DELIVERED: "DELIVERED",
 };
 const LoyaltyClaimSchema = new mongoose_1.Schema({
     userId: {
@@ -79,4 +79,4 @@ const LoyaltyClaimSchema = new mongoose_1.Schema({
     updatedBy: String,
     updatedByFullName: String,
 }, { timestamps: true });
-exports.loyaltyClaimModel = mongoose_1.default.model("LoyaltyClaim", LoyaltyClaimSchema);
+exports.loyaltyClaimModel = mongoose_1.default.model("loyaltyClaim", LoyaltyClaimSchema);

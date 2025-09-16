@@ -1,15 +1,15 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 
 const ACCEPTED_TYPE = {
-    PICK_UP: "pick_up",
-    DELIVERY: "delivery",
+    PICK_UP: "PICK_UP",
+    DELIVERY: "DELIVERY",
 };
 
 const STATUS = {
-    PENDING: "pending",
-    ACCEPTED: "accepted",
-    CANCELED: "canceled",
-    DELIVERED: "delivered",
+    PENDING: "PENDING",
+    ACCEPTED: "ACCEPTED",
+    CANCELED: "CANCELED",
+    DELIVERED: "DELIVERED",
 }
 
 export interface ILoyaltyClaim extends Document {
@@ -64,6 +64,6 @@ const LoyaltyClaimSchema = new Schema({
 );
 
 export const loyaltyClaimModel = mongoose.model<ILoyaltyClaim>(
-    "LoyaltyClaim",
+    "loyaltyClaim",
     LoyaltyClaimSchema
 );
