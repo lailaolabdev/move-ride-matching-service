@@ -12,6 +12,5 @@ const options = {
 
 const redis = new Redis(options)
 
-
 // Export the redis instance
 export { redis };

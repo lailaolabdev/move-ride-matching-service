@@ -1465,7 +1465,7 @@ const checkUsingPromotion = (req, res) => __awaiter(void 0, void 0, void 0, func
                 },
             },
         });
-        console.log("isPromotionUsed: ", isPromotionUsed);
+        console.log("isPromotionUsed:", isPromotionUsed);
         res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { isPromotionUsed: !!isPromotionUsed }));
     }
     catch (error) {

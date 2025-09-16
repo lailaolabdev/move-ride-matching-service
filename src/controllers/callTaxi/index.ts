@@ -1685,7 +1685,7 @@ export const checkUsingPromotion = async (req: Request, res: Response) => {
         },
       },
     });
-    console.log("isPromotionUsed: ", isPromotionUsed);
+    console.log("isPromotionUsed:", isPromotionUsed);
 
     res.json({
       ...messages.SUCCESSFULLY,
