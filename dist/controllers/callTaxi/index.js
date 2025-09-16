@@ -98,7 +98,7 @@ const createCallTaxi = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.createCallTaxi = createCallTaxi;
 const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c, _d, _e;
     try {
         const { id } = req.params;
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
@@ -244,10 +244,22 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     },
                 },
             ]);
-            callTaxi[0].driverDetails.licensePlate = vehicleDriver[0].licensePlate;
-            callTaxi[0].driverDetails.vehicleModelName = vehicleDriver[0].vehicleModelName;
-            callTaxi[0].driverDetails.vehicleBrandName = vehicleDriver[0].vehicleBrandName;
+            // Check if vehicleDriver data exists before accessing properties
+            if (vehicleDriver && vehicleDriver.length > 0) {
+                callTaxi[0].driverDetails.licensePlate = (_c = vehicleDriver[0]) === null || _c === void 0 ? void 0 : _c.licensePlate;
+                callTaxi[0].driverDetails.vehicleModelName = (_d = vehicleDriver[0]) === null || _d === void 0 ? void 0 : _d.vehicleModelName;
+                callTaxi[0].driverDetails.vehicleBrandName = (_e = vehicleDriver[0]) === null || _e === void 0 ? void 0 : _e.vehicleBrandName;
+            }
             res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), callTaxi[0]));
+            return;
+        }
+        // Check if callTaxi was found
+        if (!callTaxi[0]) {
+            res.status(404).json({
+                code: config_1.messages.NOT_FOUND.code,
+                message: config_1.messages.NOT_FOUND.message,
+                detail: `Call taxi with id: ${id} not found`,
+            });
             return;
         }
         res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), callTaxi[0]));
@@ -358,7 +370,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getCallTaxis = getCallTaxis;
 const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     try {
         const id = req.user.id;
         const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${id}`);
@@ -516,11 +528,14 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     },
                 },
             ]);
-            callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
-            callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
+            // Check if aggregateVehicleDriver data exists before accessing properties
+            if (aggregateVehicleDriver && aggregateVehicleDriver.length > 0) {
+                callTaxi[0].driver.vehicleModelName = (_d = aggregateVehicleDriver[0]) === null || _d === void 0 ? void 0 : _d.vehicleModelName;
+                callTaxi[0].driver.vehicleBrandName = (_e = aggregateVehicleDriver[0]) === null || _e === void 0 ? void 0 : _e.vehicleBrandName;
+            }
         }
         if (callTaxi.length) {
-            const driverLatLong = yield (0, helper_1.getDriverLatLong)((_d = callTaxi[0]) === null || _d === void 0 ? void 0 : _d._id);
+            const driverLatLong = yield (0, helper_1.getDriverLatLong)((_f = callTaxi[0]) === null || _f === void 0 ? void 0 : _f._id);
             callTaxi[0].driver.latitude = driverLatLong === null || driverLatLong === void 0 ? void 0 : driverLatLong.latitude;
             callTaxi[0].driver.longitude = driverLatLong === null || driverLatLong === void 0 ? void 0 : driverLatLong.longitude;
         }
@@ -537,7 +552,7 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
 });
 exports.checkCallTaxiStatus = checkCallTaxiStatus;
 const socketCheckStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e;
     try {
         const { id } = req.params;
         const callTaxi = yield callTaxi_2.CallTaxi.aggregate([
@@ -675,9 +690,12 @@ const socketCheckStatus = (req, res) => __awaiter(void 0, void 0, void 0, functi
                     },
                 },
             ]);
-            callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
-            callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
-            const driverLatLong = yield (0, helper_1.getDriverLatLong)((_c = callTaxi[0]) === null || _c === void 0 ? void 0 : _c._id);
+            // Check if aggregateVehicleDriver data exists before accessing properties
+            if (aggregateVehicleDriver && aggregateVehicleDriver.length > 0) {
+                callTaxi[0].driver.vehicleModelName = (_c = aggregateVehicleDriver[0]) === null || _c === void 0 ? void 0 : _c.vehicleModelName;
+                callTaxi[0].driver.vehicleBrandName = (_d = aggregateVehicleDriver[0]) === null || _d === void 0 ? void 0 : _d.vehicleBrandName;
+            }
+            const driverLatLong = yield (0, helper_1.getDriverLatLong)((_e = callTaxi[0]) === null || _e === void 0 ? void 0 : _e._id);
             callTaxi[0].driver.latitude = driverLatLong === null || driverLatLong === void 0 ? void 0 : driverLatLong.latitude;
             callTaxi[0].driver.longitude = driverLatLong === null || driverLatLong === void 0 ? void 0 : driverLatLong.longitude;
         }

@@ -89,7 +89,7 @@ export interface ICallTaxi extends Document {
   }[],
   newcomerPromotion?: string,
   newcomerPromotionPrice?: number,
-  pointPromotion?: string,
+  pointPromotion?: string[],
   totalPromotionPrice?: number,
   meterPrice: number,
   createdAt: Date;
@@ -251,7 +251,7 @@ const CallTaxiSchema: Schema = new Schema(
     },
     newcomerPromotion: String, // NewComer promotion ID
     newcomerPromotionPrice: Number, // Discount amount from newcomer promotion
-    pointPromotion: String, // Point promotion ID
+    pointPromotion: [String], // Point promotion IDs array
     totalPromotionPrice: Number, // Total discount amount from all promotions
     prepaid: {
       type: Boolean,

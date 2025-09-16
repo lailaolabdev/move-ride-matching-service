@@ -294,15 +294,28 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
         },
       ]);
 
-      callTaxi[0].driverDetails.licensePlate = vehicleDriver[0].licensePlate;
-      callTaxi[0].driverDetails.vehicleModelName = vehicleDriver[0].vehicleModelName;
-      callTaxi[0].driverDetails.vehicleBrandName = vehicleDriver[0].vehicleBrandName;
+      // Check if vehicleDriver data exists before accessing properties
+      if (vehicleDriver && vehicleDriver.length > 0) {
+        callTaxi[0].driverDetails.licensePlate = vehicleDriver[0]?.licensePlate;
+        callTaxi[0].driverDetails.vehicleModelName = vehicleDriver[0]?.vehicleModelName;
+        callTaxi[0].driverDetails.vehicleBrandName = vehicleDriver[0]?.vehicleBrandName;
+      }
 
       res.status(200).json({
         ...messages.SUCCESSFULLY,
         ...callTaxi[0],
       });
 
+      return;
+    }
+
+    // Check if callTaxi was found
+    if (!callTaxi[0]) {
+      res.status(404).json({
+        code: messages.NOT_FOUND.code,
+        message: messages.NOT_FOUND.message,
+        detail: `Call taxi with id: ${id} not found`,
+      });
       return;
     }
 
@@ -598,8 +611,11 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
         },
       ]);
 
-      callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
-      callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
+      // Check if aggregateVehicleDriver data exists before accessing properties
+      if (aggregateVehicleDriver && aggregateVehicleDriver.length > 0) {
+        callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0]?.vehicleModelName;
+        callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0]?.vehicleBrandName;
+      }
     }
 
     if (callTaxi.length) {
@@ -765,8 +781,11 @@ export const socketCheckStatus = async (req: Request, res: Response) => {
         },
       ]);
 
-      callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0].vehicleModelName;
-      callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0].vehicleBrandName;
+      // Check if aggregateVehicleDriver data exists before accessing properties
+      if (aggregateVehicleDriver && aggregateVehicleDriver.length > 0) {
+        callTaxi[0].driver.vehicleModelName = aggregateVehicleDriver[0]?.vehicleModelName;
+        callTaxi[0].driver.vehicleBrandName = aggregateVehicleDriver[0]?.vehicleBrandName;
+      }
 
       const driverLatLong = await getDriverLatLong(callTaxi[0]?._id);
       callTaxi[0].driver.latitude = driverLatLong?.latitude;

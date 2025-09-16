@@ -26,6 +26,7 @@ export const filterPromotion = (
   if (country) filter.country = country;
 
   // Filter promotions by periodStartTime and periodEndTime range
+  // Get promotions that are active during the specified date range (overlapping promotions)
   if (periodStartTime && periodEndTime) {
     const startDate = new Date(periodStartTime as string);
     const endDate = new Date(periodEndTime as string);
@@ -37,10 +38,11 @@ export const filterPromotion = (
       endDate.setHours(23, 59, 59, 999);
     }
     
-    filter.periodEndTime = {
-      $gte: startDate,
-      $lte: endDate
-    };
+    // Find promotions that overlap with the query range:
+    // Promotion's periodStartTime should be <= query's periodEndTime
+    // Promotion's periodEndTime should be >= query's periodStartTime
+    filter.periodStartTime = { $lte: endDate };
+    filter.periodEndTime = { $gte: startDate };
   }
 
   return filter
