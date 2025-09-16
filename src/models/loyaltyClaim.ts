@@ -17,15 +17,21 @@ export interface ILoyaltyClaim extends Document {
     loyaltyId: string | Types.ObjectId,
     acceptedType: string,
     address: string,
-    status: string
+    status: string,
+    country: string | Types.ObjectId,
+    countryCode: string,
+    createdBy?: string,
+    createdByFullName?: string,
+    updatedBy?: string,
+    updatedByFullName?: string,
 }
 
 const LoyaltyClaimSchema = new Schema({
     userId: {
-        type: Types.ObjectId,
-        ref: 'User',
+        type: String,
         required: true
     },
+    userFullName: String,
     loyaltyId: {
         type: Types.ObjectId,
         required: true
@@ -44,14 +50,15 @@ const LoyaltyClaimSchema = new Schema({
         enum: Object.values(STATUS),
         default: STATUS.PENDING
     },
-    countryId: {
-        type: Types.ObjectId,
-        required: true
-    },
-    countryCode: {
+    country: {
         type: String,
         required: true
-    }
+    },
+    countryCode: String,
+    createdBy: String,
+    createdByFullName: String,
+    updatedBy: String,
+    updatedByFullName: String,
 },
     { timestamps: true }
 );

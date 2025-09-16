@@ -51,7 +51,7 @@ export const getAllLoyalty = async (req: Request, res: Response) => {
 
     const filter: any = {}
 
-    if (country) filter.countryId = country
+    if (country) filter.country = country
     if (countryCode) filter.countryCode = countryCode
     if (name) filter.name = { $regex: name, $options: 'i' }
     if (startDate || endDate) {

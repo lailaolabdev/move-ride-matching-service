@@ -56,9 +56,11 @@ const LoyaltySchema = new mongoose_1.Schema({
         type: Boolean,
         default: false
     },
-    countryId: String,
+    country: String,
     countryCode: String,
     createdBy: String,
+    createdByFullName: String,
     updatedBy: String,
+    updatedByFullName: String,
 }, { timestamps: true });
 exports.loyaltyModel = mongoose_1.default.model("Loyalty", LoyaltySchema);

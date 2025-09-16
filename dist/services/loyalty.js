@@ -13,16 +13,18 @@ exports.deleteLoyaltyService = exports.updateLoyaltyService = exports.getLoyalty
 const loyalty_1 = require("../models/loyalty");
 const createLoyaltyService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = req.user.id;
-        const { image, name, quantity, price, countryId, countryCode } = req.body;
+        const userId = req.user.id;
+        const userFullName = req.user.fullName;
+        const { image, name, quantity, price, country, countryCode } = req.body;
         const loyalty = yield loyalty_1.loyaltyModel.create({
             image,
             name,
             quantity,
             price,
-            countryId,
+            country,
             countryCode,
-            createdBy: user
+            createdBy: userId,
+            createdByFullName: userFullName
         });
         return loyalty;
     }
@@ -61,14 +63,16 @@ exports.getLoyaltyByIdService = getLoyaltyByIdService;
 const updateLoyaltyService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        const user = req.user.id;
+        const userId = req.user.id;
+        const userFullName = req.user.fullName;
         const { image, name, quantity, price, status } = req.body;
         const updatedLoyalty = yield loyalty_1.loyaltyModel.findByIdAndUpdate(id, {
             image,
             name,
             quantity,
             price,
-            updatedBy: user,
+            updatedBy: userId,
+            updatedByFullName: userFullName,
             status
         }, { new: true });
         return updatedLoyalty;

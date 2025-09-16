@@ -11,19 +11,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteLoyaltyClaimService = exports.updateLoyaltyClaimService = exports.getLoyaltyClaimByIdService = exports.getAllLoyaltyClaimService = exports.createLoyaltyClaimService = void 0;
 const loyaltyClaim_1 = require("../models/loyaltyClaim");
-const createLoyaltyClaimService = (req) => __awaiter(void 0, void 0, void 0, function* () {
+const createLoyaltyClaimService = (req, session) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.user.id;
-        const { loyaltyId, acceptedType, address, countryId, countryCode } = req.body;
-        const loyaltyClaim = yield loyaltyClaim_1.loyaltyClaimModel.create({
-            userId,
-            loyaltyId,
-            acceptedType,
-            address,
-            countryId,
-            countryCode
-        });
-        return loyaltyClaim;
+        const userFullName = req.user.fullName;
+        const { loyaltyId, acceptedType, address, country } = req.body;
+        console.log("req.body: ", req.body);
+        const loyaltyClaim = yield loyaltyClaim_1.loyaltyClaimModel.create([{
+                userId,
+                loyaltyId,
+                acceptedType,
+                address,
+                country,
+                createdBy: userId,
+                createdByFullName: userFullName
+            }], { session });
+        return loyaltyClaim[0];
     }
     catch (error) {
         console.log("Error creating loyalty claim: ", error);
@@ -34,56 +37,11 @@ exports.createLoyaltyClaimService = createLoyaltyClaimService;
 const getAllLoyaltyClaimService = (skip, limit, filter) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const total = yield loyaltyClaim_1.loyaltyClaimModel.countDocuments(filter);
-        const loyalties = yield loyaltyClaim_1.loyaltyClaimModel.aggregate([
-            { $match: filter },
-            { $skip: skip },
-            { $limit: limit },
-            {
-                $addFields: {
-                    userId: { $toObjectId: '$userId' },
-                },
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'userId',
-                    foreignField: '_id',
-                    as: 'user',
-                },
-            },
-            {
-                $unwind: '$user'
-            },
-            {
-                $lookup: {
-                    from: 'loyalties',
-                    localField: 'loyaltyId',
-                    foreignField: '_id',
-                    as: 'loyalty',
-                },
-            },
-            {
-                $unwind: '$loyalty'
-            },
-            {
-                $project: {
-                    _id: 1,
-                    loyaltyId: 1,
-                    acceptedType: 1,
-                    address: 1,
-                    status: 1,
-                    countryCode: 1,
-                    'user.firstName': 1,
-                    'user.lastName': 1,
-                    'user.email': 1,
-                    'user.phone': 1,
-                    'loyalty.name': 1,
-                    'loyalty.price': 1,
-                    'loyalty.image': 1,
-                    createdAt: 1,
-                }
-            }
-        ]);
+        const loyalties = yield loyaltyClaim_1.loyaltyClaimModel
+            .find(filter)
+            .skip(skip)
+            .limit(limit)
+            .lean();
         return { total, loyalties };
     }
     catch (error) {
@@ -106,8 +64,14 @@ exports.getLoyaltyClaimByIdService = getLoyaltyClaimByIdService;
 const updateLoyaltyClaimService = (req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
+        const userId = req.user.id;
+        const userFullName = req.user.fullName;
         const { status } = req.body;
-        const updatedLoyaltyClaim = yield loyaltyClaim_1.loyaltyClaimModel.findByIdAndUpdate(id, { status }, { new: true });
+        const updatedLoyaltyClaim = yield loyaltyClaim_1.loyaltyClaimModel.findByIdAndUpdate(id, {
+            status,
+            updatedBy: userId,
+            updatedByFullName: userFullName
+        }, { new: true });
         return updatedLoyaltyClaim;
     }
     catch (error) {

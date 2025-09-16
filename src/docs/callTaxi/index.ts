@@ -1152,3 +1152,226 @@
  *                   type: string
  *                   example: "Error details here"
  */
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/check/promotion:
+ *   post:
+ *     summary: Check if a ONE_TIME_TYPE promotion has been used by the passenger
+ *     description: Verify whether a specific ONE_TIME_TYPE promotion has already been used by the current passenger. This endpoint only checks for promotions that can only be used once per user.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - promotion
+ *               - passengerId
+ *             properties:
+ *               promotion:
+ *                 type: string
+ *                 description: The promotion ID to check (must be ONE_TIME_TYPE)
+ *                 example: "60d5ecb8b3f1a20015c45678"
+ *               passengerId:
+ *                 type: string
+ *                 description: The passenger ID to check promotion usage for
+ *                 example: "60d5ecb8b3f1a20015c45679"
+ *     responses:
+ *       200:
+ *         description: Successfully checked promotion usage
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 message:
+ *                   type: string
+ *                   example: "Success"
+ *                 isPromotionUsed:
+ *                   type: boolean
+ *                   description: Returns true if the ONCE_TIME_TYPE promotion has been used by the user, false otherwise
+ *                   example: false
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-401"
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-500"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/check/newcomer-promotion:
+ *   post:
+ *     summary: Check if a newcomer promotion has been used by the passenger
+ *     description: Verify whether a specific newcomer promotion has already been used by the passenger. This endpoint checks the callTaxi collection to see if the user has previously used the newcomer promotion.
+ *     tags:
+ *       - Call Taxi
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newcomerPromotionId
+ *               - passengerId
+ *             properties:
+ *               newcomerPromotionId:
+ *                 type: string
+ *                 description: The newcomer promotion ID to check
+ *                 example: "60d5ecb8b3f1a20015c45680"
+ *               passengerId:
+ *                 type: string
+ *                 description: The passenger ID to check newcomer promotion usage for
+ *                 example: "60d5ecb8b3f1a20015c45679"
+ *     responses:
+ *       200:
+ *         description: Successfully checked newcomer promotion usage
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-200"
+ *                 message:
+ *                   type: string
+ *                   example: "Success"
+ *                 isNewcomerPromotionUsed:
+ *                   type: boolean
+ *                   description: Returns true if the newcomer promotion has been used by the user, false otherwise
+ *                   example: false
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-401"
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "EV-500"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+
+/**
+ * @swagger
+ * /v1/api/call-taxi/usage/check/new-comer-promotions/{userId}:
+ *   get:
+ *     summary: Check if a user has already used newcomer promotion
+ *     tags:
+ *       - Call Taxi
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the user to check promotion usage for
+ *         example: "66556b3412ad2c5e13a1e888"
+ *     responses:
+ *       200:
+ *         description: Usage check completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "SUCCESSFUL"
+ *                 message:
+ *                   type: string
+ *                   example: "Request successful"
+ *                 hasUsed:
+ *                   type: boolean
+ *                   example: false
+ *                   description: Whether the user has already used a newcomer promotion
+ *                 usageDetails:
+ *                   type: object
+ *                   nullable: true
+ *                   description: Details of the call taxi record where newcomer promotion was used, or null if not used
+ *                   example: null
+ *       400:
+ *         description: Bad request - Missing required parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "MISSING_USER_ID"
+ *                 message:
+ *                   type: string
+ *                   example: "User ID is required"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ *                 detail:
+ *                   type: string
+ *                   example: "Error details here"
+ */

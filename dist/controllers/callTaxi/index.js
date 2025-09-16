@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminUpdateCallTaxiStatus = exports.updateClaimMoneyByClaimMoneyId = exports.getClaimPayment = exports.checkUsingPromotion = exports.getDriverPaymentDetail = exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateClaimMoneyStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.socketCheckStatus = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
+exports.adminUpdateCallTaxiStatus = exports.updateClaimMoneyByClaimMoneyId = exports.getClaimPayment = exports.checkNewcomerPromotionUsageByUserId = exports.checkNewcomerPromotionUsage = exports.checkUsingPromotion = exports.getDriverPaymentDetail = exports.getTotalDriverIncome = exports.getCommentAndRating = exports.travelHistory = exports.reportPassenger = exports.callTaxiTotalPrice = exports.getRideHistory = exports.getDriverRideHistoryDetailById = exports.getRideHistoryDetailById = exports.gettotalRide = exports.driverUpdateStatus = exports.updateClaimMoneyStatus = exports.updateCallTaxis = exports.getDriverCallTaxis = exports.getPassengerComplainById = exports.createPassengerComplain = exports.createDriverComplain = exports.getUserCallTaxis = exports.socketCheckStatus = exports.checkCallTaxiStatus = exports.getCallTaxis = exports.getCallTaxiById = exports.createCallTaxi = void 0;
 const config_1 = require("../../config");
 const callTaxi_1 = require("../../services/callTaxi");
 const callTaxi_2 = require("../../models/callTaxi");
@@ -1454,22 +1454,22 @@ const getDriverPaymentDetail = (req, res) => __awaiter(void 0, void 0, void 0, f
 exports.getDriverPaymentDetail = getDriverPaymentDetail;
 const checkUsingPromotion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const passengerId = req.user.id;
-        const { promotion, startDate, endDate } = req.body;
+        const { promotion, passengerId } = req.body;
+        // Check if promotion has been used by this user (for ONE_TIME_TYPE promotions)
         const isPromotionUsed = yield callTaxi_2.CallTaxi.exists({
             passengerId,
             festivalPromotion: {
                 $elemMatch: {
                     promotion: promotion,
-                    periodStartTime: new Date(startDate),
-                    periodEndTime: new Date(endDate),
+                    promotionType: "ONE_TIME_TYPE"
                 },
             },
         });
-        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { isPromotionUsed }));
+        console.log("isPromotionUsed: ", isPromotionUsed);
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { isPromotionUsed: !!isPromotionUsed }));
     }
     catch (error) {
-        console.error("Error fetching tax info:", error);
+        console.error("Error checking promotion usage:", error);
         res.status(500).json({
             code: config_1.messages.INTERNAL_SERVER_ERROR.code,
             message: config_1.messages.INTERNAL_SERVER_ERROR.message,
@@ -1478,6 +1478,53 @@ const checkUsingPromotion = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.checkUsingPromotion = checkUsingPromotion;
+const checkNewcomerPromotionUsage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { newcomerPromotionId, passengerId } = req.body;
+        // Check if newcomer promotion has been used by this user
+        const isNewcomerPromotionUsed = yield callTaxi_2.CallTaxi.exists({
+            passengerId,
+            newcomerPromotion: newcomerPromotionId
+        });
+        res.json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { isNewcomerPromotionUsed: !!isNewcomerPromotionUsed }));
+    }
+    catch (error) {
+        console.error("Error checking newcomer promotion usage:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.checkNewcomerPromotionUsage = checkNewcomerPromotionUsage;
+const checkNewcomerPromotionUsageByUserId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId } = req.params;
+        console.log("params: ", req.params);
+        if (!userId) {
+            return res.status(400).json({
+                code: config_1.messages.BAD_REQUEST.code,
+                message: "User ID is required"
+            });
+        }
+        // Check if newcomer promotion has been used by this user in this country
+        const usageRecord = yield callTaxi_2.CallTaxi.findOne({
+            passengerId: userId,
+            newcomerPromotion: { $exists: true, $nin: [null, ""] }
+        }).populate('newcomerPromotion');
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { hasUsed: !!usageRecord, usageDetails: usageRecord || null }));
+    }
+    catch (error) {
+        console.error("Error checking newcomer promotion usage by user ID:", error);
+        res.status(500).json({
+            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+            detail: error.message,
+        });
+    }
+});
+exports.checkNewcomerPromotionUsageByUserId = checkNewcomerPromotionUsageByUserId;
 const getClaimPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.user;

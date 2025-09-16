@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export const usingTypeEnum = {
-  onceTimeType: "ONCE_TIME_TYPE",
+  onceTimeType: "ONE_TIME_TYPE",
   periodType: "PERIOD_TYPE",
 };
 

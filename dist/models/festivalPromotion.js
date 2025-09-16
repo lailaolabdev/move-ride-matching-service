@@ -36,7 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.usingTypeEnum = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 exports.usingTypeEnum = {
-    onceTimeType: "ONCE_TIME_TYPE",
+    onceTimeType: "ONE_TIME_TYPE",
     periodType: "PERIOD_TYPE",
 };
 const FestivalPromotionSchema = new mongoose_1.Schema({

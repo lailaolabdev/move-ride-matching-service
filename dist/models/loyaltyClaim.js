@@ -47,10 +47,10 @@ const STATUS = {
 };
 const LoyaltyClaimSchema = new mongoose_1.Schema({
     userId: {
-        type: mongoose_1.Types.ObjectId,
-        ref: 'User',
+        type: String,
         required: true
     },
+    userFullName: String,
     loyaltyId: {
         type: mongoose_1.Types.ObjectId,
         required: true
@@ -69,13 +69,14 @@ const LoyaltyClaimSchema = new mongoose_1.Schema({
         enum: Object.values(STATUS),
         default: STATUS.PENDING
     },
-    countryId: {
-        type: mongoose_1.Types.ObjectId,
-        required: true
-    },
-    countryCode: {
+    country: {
         type: String,
         required: true
-    }
+    },
+    countryCode: String,
+    createdBy: String,
+    createdByFullName: String,
+    updatedBy: String,
+    updatedByFullName: String,
 }, { timestamps: true });
 exports.loyaltyClaimModel = mongoose_1.default.model("LoyaltyClaim", LoyaltyClaimSchema);

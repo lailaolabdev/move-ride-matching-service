@@ -18,54 +18,53 @@ const config_1 = require("../../config");
 const loyalty_1 = require("../../models/loyalty");
 const axios_1 = __importDefault(require("axios"));
 const mongoose_1 = require("mongoose");
+const mongoose_2 = __importDefault(require("mongoose"));
 const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    const session = yield mongoose_2.default.startSession();
     try {
-        const userId = req.user.id;
-        const { loyaltyId } = req.body;
-        // Check user
-        const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
-        const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
-        if (!userData) {
-            res.status(404).json({
-                code: config_1.messages.NOT_FOUND.code,
-                message: "User does not exist",
-            });
-            return;
-        }
-        // Check is loyalty exist
-        const loyalty = yield loyalty_1.loyaltyModel.findById(loyaltyId);
-        if (!loyalty) {
-            res.status(404).json({
-                code: config_1.messages.NOT_FOUND.code,
-                message: "Loyalty does not exist",
-            });
-            return;
-        }
-        // Check is user point enough or not 
-        const userPoint = Number((_b = userData === null || userData === void 0 ? void 0 : userData.point) !== null && _b !== void 0 ? _b : 0);
-        const loyaltyPrice = Number((_c = loyalty === null || loyalty === void 0 ? void 0 : loyalty.price) !== null && _c !== void 0 ? _c : 0);
-        if (userPoint < loyaltyPrice) {
-            res.status(400).json({
-                code: config_1.messages.BAD_REQUEST.code,
-                message: "User does not have enough points",
-            });
-            return;
-        }
-        // Reduce loyalty quantity
-        yield loyalty_1.loyaltyModel.findByIdAndUpdate(loyaltyId, {
-            quantity: loyalty.quantity - 1
-        });
-        // Reduce user point
-        yield axios_1.default.put(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`, {
-            point: userData.point - loyalty.price
-        }, {
-            headers: {
-                Authorization: `${req.headers["authorization"]}`,
+        yield session.withTransaction(() => __awaiter(void 0, void 0, void 0, function* () {
+            var _a, _b, _c;
+            const userId = req.user.id;
+            const { loyaltyId } = req.body;
+            console.log("loyaltyId: ", loyaltyId);
+            // Check user
+            const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
+            const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
+            if (!userData) {
+                throw new Error("User does not exist");
             }
-        });
-        // Create loyalty
-        yield (0, loyaltyClaim_1.createLoyaltyClaimService)(req);
+            console.log("userData: ", userData);
+            // Check is loyalty exist
+            const loyalty = yield loyalty_1.loyaltyModel.findById(loyaltyId).session(session);
+            console.log("loyalty: ", loyalty);
+            if (!loyalty) {
+                throw new Error("Loyalty does not exist");
+            }
+            // Check is user point enough or not 
+            const userPoint = Number((_b = userData === null || userData === void 0 ? void 0 : userData.point) !== null && _b !== void 0 ? _b : 0);
+            const loyaltyPrice = Number((_c = loyalty === null || loyalty === void 0 ? void 0 : loyalty.price) !== null && _c !== void 0 ? _c : 0);
+            if (userPoint < loyaltyPrice) {
+                throw new Error("User does not have enough points");
+            }
+            // Check if loyalty has enough quantity
+            if (loyalty.quantity <= 0) {
+                throw new Error("Loyalty item is out of stock");
+            }
+            // Reduce loyalty quantity
+            yield loyalty_1.loyaltyModel.findByIdAndUpdate(loyaltyId, {
+                quantity: loyalty.quantity - 1
+            }, { session });
+            // Reduce user point
+            yield axios_1.default.patch(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}/point/add`, {
+                point: userData.point - loyalty.price
+            }, {
+                headers: {
+                    Authorization: `${req.headers["authorization"]}`,
+                }
+            });
+            // Create loyalty claim within the transaction
+            yield (0, loyaltyClaim_1.createLoyaltyClaimService)(req, session);
+        }));
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
             message: "Loyalty claim created successfully"
@@ -73,11 +72,33 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
     catch (error) {
         console.log("Error: ", error);
-        res.status(500).json({
-            code: config_1.messages.INTERNAL_SERVER_ERROR.code,
-            message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+        let statusCode = 500;
+        let message = config_1.messages.INTERNAL_SERVER_ERROR.message;
+        // Handle specific error cases
+        if (error.message === "User does not exist") {
+            statusCode = 404;
+            message = "User does not exist";
+        }
+        else if (error.message === "Loyalty does not exist") {
+            statusCode = 404;
+            message = "Loyalty does not exist";
+        }
+        else if (error.message === "User does not have enough points") {
+            statusCode = 400;
+            message = "User does not have enough points";
+        }
+        else if (error.message === "Loyalty item is out of stock") {
+            statusCode = 400;
+            message = "Loyalty item is out of stock";
+        }
+        res.status(statusCode).json({
+            code: statusCode === 500 ? config_1.messages.INTERNAL_SERVER_ERROR.code : config_1.messages.BAD_REQUEST.code,
+            message: message,
             detail: error.message,
         });
+    }
+    finally {
+        yield session.endSession();
     }
 });
 exports.createLoyaltyClaim = createLoyaltyClaim;
@@ -96,7 +117,7 @@ const getAllLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (status)
             filter.status = status;
         if (country)
-            filter.countryId = country;
+            filter.country = country;
         if (countryCode)
             filter.countryCode = countryCode;
         if (startDate || endDate) {

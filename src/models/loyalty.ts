@@ -5,7 +5,13 @@ export interface ILoyalty extends Document {
     name: string,
     quantity: number,
     price: number,
-    status: boolean
+    status: boolean,
+    country?: string,
+    countryCode?: string,
+    createdBy?: string,
+    createdByFullName?: string,
+    updatedBy?: string,
+    updatedByFullName?: string,
 }
 
 const LoyaltySchema = new Schema({
@@ -29,10 +35,12 @@ const LoyaltySchema = new Schema({
         type: Boolean,
         default: false
     },
-    countryId: String,
+    country: String,
     countryCode: String,
     createdBy: String,
+    createdByFullName: String,
     updatedBy: String,
+    updatedByFullName: String,
 },
     { timestamps: true }
 );

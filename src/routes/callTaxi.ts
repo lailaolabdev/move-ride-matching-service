@@ -22,6 +22,8 @@ import {
   getDriverPaymentDetail,
   updateClaimMoneyStatus,
   checkUsingPromotion,
+  checkNewcomerPromotionUsage,
+  checkNewcomerPromotionUsageByUserId,
   socketCheckStatus,
   updateClaimMoneyByClaimMoneyId,
   adminUpdateCallTaxiStatus,
@@ -191,6 +193,12 @@ router.post(
   checkUsingPromotion
 );
 
+router.post(
+  "/check/newcomer-promotion",
+  checkAuthorizationMiddleware,
+  checkNewcomerPromotionUsage
+);
+
 // update claim money
 router.put(
   "/update/claim-money",
@@ -204,4 +212,8 @@ router.put(
   checkAuthorizationAdminRole,
   adminUpdateCallTaxiStatus
 )
+
+// Check newcomer promotion usage by user ID
+router.get("/usage/check/new-comer-promotions/:userId", checkNewcomerPromotionUsageByUserId);
+
 export default router;
