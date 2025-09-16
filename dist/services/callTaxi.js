@@ -543,6 +543,7 @@ const getDriverRideHistoryDetailByIdService = (req) => __awaiter(void 0, void 0,
                     "passenger._id": 1,
                     "passenger.fullName": 1,
                     "passenger.profileImage": 1,
+                    price: 1
                 }
             }
         ]);
