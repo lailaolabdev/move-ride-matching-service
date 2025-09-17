@@ -26,10 +26,10 @@
  *           example: "Admin User"
  *         country:
  *           type: string
- *           example: "LA"
+ *           example: "67c6c05bd9ba8fe6164eac3f"
  *         countryCode:
  *           type: string
- *           example: "67c6c05bd9ba8fe6164eac3f"
+ *           example: "LA"
  *         createdAt:
  *           type: string
  *           format: date-time

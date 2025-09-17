@@ -588,7 +588,7 @@ export const getDriverRideHistoryDetailByIdService = async (req: Request): Promi
                     "passenger._id": 1,
                     "passenger.fullName": 1,
                     "passenger.profileImage": 1,
-                    price: 1
+                    price: 1,
                 }
             }
         ]);
