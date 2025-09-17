@@ -37,14 +37,10 @@
  *                 type: string
  *                 description: address
  *                 example: Nonkhortai village, Saysetta district, Vientiane
- *               countryId:
+ *               country:
  *                 type: string
  *                 description: country id
  *                 example: 67c6c05bd9ba8fe6164eac3f
- *               countryCode:
- *                 type: string
- *                 description: country code
- *                 example: LA
  *     responses:
  *       201:
  *         description: Vehicle created successfully.
@@ -87,8 +83,8 @@
  *           type: string
  *           example: 67c6c05bd9ba8fe6164eac3f
  *         description: The country id of records to return for pagination.
- *       - in: countryCode
- *         name: skip
+ *       - in: query
+ *         name: countryCode
  *         schema:
  *           type: string
  *           example: LA

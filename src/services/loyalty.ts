@@ -3,14 +3,15 @@ import { ILoyalty, loyaltyModel } from '../models/loyalty';
 
 export const createLoyaltyService = async (req: Request) => {
     try {
-        const user = (req as any).user.id;
+        const userId = (req as any).user.id;
+        const userFullName = (req as any).user.fullName;
 
         const {
             image,
             name,
             quantity,
             price,
-            countryId,
+            country,
             countryCode
         } = req.body
 
@@ -19,9 +20,10 @@ export const createLoyaltyService = async (req: Request) => {
             name,
             quantity,
             price,
-            countryId,
+            country,
             countryCode,
-            createdBy: user
+            createdBy: userId,
+            createdByFullName: userFullName
         })
 
         return loyalty
@@ -65,7 +67,8 @@ export const updateLoyaltyService = async (req: Request): Promise<ILoyalty | nul
     try {
         const id = req.params.id
 
-        const user = (req as any).user.id;
+        const userId = (req as any).user.id;
+        const userFullName = (req as any).user.fullName;
 
         const {
             image,
@@ -82,7 +85,8 @@ export const updateLoyaltyService = async (req: Request): Promise<ILoyalty | nul
                 name,
                 quantity,
                 price,
-                updatedBy: user,
+                updatedBy: userId,
+                updatedByFullName: userFullName,
                 status
             },
             { new: true }

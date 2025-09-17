@@ -113,8 +113,10 @@ export const updateFestivalPromotionService = async ({
         }
 
         // Only include status if it's provided (not undefined)
-        if (status !== undefined) {
+        if (status) {
             updateData.status = status;
+        } else {
+            updateData.status = false;
         }
 
         const updatedFestivalPromotion = await festivalPromotionModel.findByIdAndUpdate(

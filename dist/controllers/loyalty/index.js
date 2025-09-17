@@ -48,7 +48,7 @@ const getAllLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const parsedLimit = parseInt(limit, 10);
         const filter = {};
         if (country)
-            filter.countryId = country;
+            filter.country = country;
         if (countryCode)
             filter.countryCode = countryCode;
         if (name)

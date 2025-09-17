@@ -5,12 +5,10 @@ import {
     getNewComerPromotionByIdService,
     updateNewComerPromotionService,
     deleteNewComerPromotionService,
-    checkNewComerPromotionUsageService,
-    recordNewComerPromotionUsageService,
-    getAllNewComerPromotionUsageService,
 } from "../../services/newComerPromotion";
 import { messages } from "../../config/index";
 import { filterNewComerPromotion } from "./helper";
+import { CallTaxi } from "../../models/callTaxi";
 
 // CREATE
 export const createNewComerPromotion = async (req: Request, res: Response) => {
@@ -163,135 +161,29 @@ export const deleteNewComerPromotion = async (req: Request, res: Response) => {
     }
 };
 
-// CHECK if user has already used newcomer promotion
+// CHECK NEWCOMER PROMOTION USAGE (using callTaxi collection)
 export const checkNewComerPromotionUsage = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params;
-        const { country } = req.query;
 
-        if (!country) {
-            res.status(400).json({
+        if (!userId) {
+            return res.status(400).json({
                 code: messages.BAD_REQUEST.code,
-                message: "Country parameter is required",
+                message: "User ID is required"
             });
-            return;
         }
 
-        const usageCheck = await checkNewComerPromotionUsageService({
-            userId,
-            country: country as string,
+        // Check if user has used newcomer promotion in this country
+        const existingUsage = await CallTaxi.exists({
+            passengerId: userId,
+            newcomerPromotion: { $exists: true, $ne: null }
         });
 
         res.status(200).json({
             code: messages.SUCCESSFULLY.code,
             message: "Usage check completed successfully",
-            hasUsed: usageCheck.hasUsed,
-            usageDetails: usageCheck.usageDetails,
-        });
-    } catch (error) {
-        res.status(500).json({
-            code: messages.INTERNAL_SERVER_ERROR.code,
-            message: messages.INTERNAL_SERVER_ERROR.message,
-            detail: (error as Error).message,
-        });
-    }
-};
-
-// RECORD newcomer promotion usage
-export const recordNewComerPromotionUsage = async (req: Request, res: Response) => {
-    try {
-        const { userId, newComerPromotionId, country } = req.body;
-
-        if (!userId || !newComerPromotionId || !country) {
-            res.status(400).json({
-                code: messages.BAD_REQUEST.code,
-                message: "userId, newComerPromotionId, and country are required",
-            });
-            return;
-        }
-
-        // First check if user has already used newcomer promotion in this country
-        const usageCheck = await checkNewComerPromotionUsageService({
-            userId,
-            country,
-        });
-
-        if (usageCheck.hasUsed) {
-            res.status(409).json({
-                code: "ALREADY_USED",
-                message: "User has already used newcomer promotion in this country",
-                usageDetails: usageCheck.usageDetails,
-            });
-            return;
-        }
-
-        const usageRecord = await recordNewComerPromotionUsageService({
-            userId,
-            newComerPromotionId,
-            country,
-        });
-
-        res.status(201).json({
-            code: messages.CREATE_SUCCESSFUL.code,
-            message: "Newcomer promotion usage recorded successfully",
-            usageRecord,
-        });
-    } catch (error) {
-        // Handle unique constraint violation
-        if ((error as any).code === 11000) {
-            res.status(409).json({
-                code: "ALREADY_USED",
-                message: "User has already used newcomer promotion in this country",
-            });
-            return;
-        }
-
-        res.status(500).json({
-            code: messages.INTERNAL_SERVER_ERROR.code,
-            message: messages.INTERNAL_SERVER_ERROR.message,
-            detail: (error as Error).message,
-        });
-    }
-};
-
-// GET all newcomer promotion usage records (for admin)
-export const getAllNewComerPromotionUsage = async (req: Request, res: Response) => {
-    try {
-        const {
-            skip,
-            limit,
-            userId,
-            country,
-            newComerPromotionId,
-            startDate,
-            endDate,
-        } = req.query;
-
-        const parsedSkip = parseInt(skip as string, 10) || 0;
-        const parsedLimit = parseInt(limit as string, 10) || 10;
-
-        const filter: any = {};
-        if (userId) filter.userId = userId;
-        if (country) filter.country = country;
-        if (newComerPromotionId) filter.newComerPromotionId = newComerPromotionId;
-        
-        if (startDate && endDate) {
-            filter.createdAt = {
-                $gte: new Date(startDate as string),
-                $lte: new Date(endDate as string),
-            };
-        }
-
-        const usageRecords = await getAllNewComerPromotionUsageService(
-            parsedSkip,
-            parsedLimit,
-            filter
-        );
-
-        res.status(200).json({
-            code: messages.SUCCESSFULLY.code,
-            message: "Usage records fetched successfully",
-            usageRecords,
+            hasUsed: !!existingUsage,
+            usageDetails: existingUsage ? { hasUsedNewcomerPromotion: true } : null
         });
     } catch (error) {
         res.status(500).json({

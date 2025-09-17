@@ -12,8 +12,4 @@ router.get("/", middlewares_1.checkAuthorizationMiddleware, newComerPromotion_1.
 router.get("/:id", newComerPromotion_1.getNewComerPromotionById);
 router.put("/:id", middlewares_1.checkAuthorizationMiddleware, newComerPromotion_1.updateNewComerPromotion);
 router.delete("/:id", middlewares_1.checkAuthorizationMiddleware, newComerPromotion_1.deleteNewComerPromotion);
-// New routes for usage tracking
-router.get("/usage/check/:userId", newComerPromotion_1.checkNewComerPromotionUsage);
-router.post("/usage/record", middlewares_1.checkAuthorizationMiddleware, newComerPromotion_1.recordNewComerPromotionUsage);
-router.get("/usage/all", middlewares_1.checkAuthorizationMiddleware, newComerPromotion_1.getAllNewComerPromotionUsage);
 exports.default = router;

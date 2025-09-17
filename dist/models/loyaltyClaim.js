@@ -36,21 +36,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loyaltyClaimModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const ACCEPTED_TYPE = {
-    PICK_UP: "pick_up",
-    DELIVERY: "delivery",
+    PICK_UP: "PICK_UP",
+    DELIVERY: "DELIVERY",
 };
 const STATUS = {
-    PENDING: "pending",
-    ACCEPTED: "accepted",
-    CANCELED: "canceled",
-    DELIVERED: "delivered",
+    PENDING: "PENDING",
+    ACCEPTED: "ACCEPTED",
+    CANCELED: "CANCELED",
+    DELIVERED: "DELIVERED",
 };
 const LoyaltyClaimSchema = new mongoose_1.Schema({
     userId: {
-        type: mongoose_1.Types.ObjectId,
-        ref: 'User',
+        type: String,
         required: true
     },
+    userFullName: String,
     loyaltyId: {
         type: mongoose_1.Types.ObjectId,
         required: true
@@ -69,13 +69,14 @@ const LoyaltyClaimSchema = new mongoose_1.Schema({
         enum: Object.values(STATUS),
         default: STATUS.PENDING
     },
-    countryId: {
-        type: mongoose_1.Types.ObjectId,
-        required: true
-    },
-    countryCode: {
+    country: {
         type: String,
         required: true
-    }
+    },
+    countryCode: String,
+    createdBy: String,
+    createdByFullName: String,
+    updatedBy: String,
+    updatedByFullName: String,
 }, { timestamps: true });
-exports.loyaltyClaimModel = mongoose_1.default.model("LoyaltyClaim", LoyaltyClaimSchema);
+exports.loyaltyClaimModel = mongoose_1.default.model("loyaltyClaim", LoyaltyClaimSchema);

@@ -1,22 +1,26 @@
 import { Request } from 'express'
 import { ILoyaltyClaim, loyaltyClaimModel } from '../models/loyaltyClaim';
+import { ClientSession } from 'mongoose';
 
-export const createLoyaltyClaimService = async (req: Request) => {
+export const createLoyaltyClaimService = async (req: Request, session?: ClientSession) => {
     try {
         const userId = (req as any).user.id;
+        const userFullName = (req as any).user.fullName;
 
-        const { loyaltyId, acceptedType, address, countryId, countryCode } = req.body
+        const { loyaltyId, acceptedType, address, country } = req.body
+        console.log("req.body: ", req.body);
 
-        const loyaltyClaim = await loyaltyClaimModel.create({
+        const loyaltyClaim = await loyaltyClaimModel.create([{
             userId,
             loyaltyId,
             acceptedType,
             address,
-            countryId,
-            countryCode
-        })
+            country,
+            createdBy: userId,
+            createdByFullName: userFullName
+        }], { session });
 
-        return loyaltyClaim
+        return loyaltyClaim[0];
     } catch (error) {
         console.log("Error creating loyalty claim: ", error);
         throw error;
@@ -31,57 +35,12 @@ export const getAllLoyaltyClaimService = async (
     try {
         const total = await loyaltyClaimModel.countDocuments(filter);
 
-        const loyalties = await loyaltyClaimModel.aggregate([
-            { $match: filter },
-            { $skip: skip },
-            { $limit: limit },
-            {
-                $addFields: {
-                    userId: { $toObjectId: '$userId' },
-                },
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'userId',
-                    foreignField: '_id',
-                    as: 'user',
-                },
-            },
-            {
-                $unwind: '$user'
-            },
-            {
-                $lookup: {
-                    from: 'loyalties',
-                    localField: 'loyaltyId',
-                    foreignField: '_id',
-                    as: 'loyalty',
-                },
-            },
-            {
-                $unwind: '$loyalty'
-            },
-            {
-                $project: {
-                    _id: 1,
-                    loyaltyId: 1,
-                    acceptedType: 1,
-                    address: 1,
-                    status: 1,
-                    countryCode: 1,
-                    'user.firstName': 1,
-                    'user.lastName': 1,
-                    'user.email': 1,
-                    'user.phone': 1,
-                    'loyalty.name': 1,
-                    'loyalty.price': 1,
-                    'loyalty.image': 1,
-                    createdAt: 1,
-                }
-            }
+        const loyalties = await loyaltyClaimModel
+            .find(filter)
+            .skip(skip)
+            .limit(limit)
+            .lean();
 
-        ]);
         return { total, loyalties };
     } catch (error) {
         console.log("Error retrieving loyalty claim: ", error);
@@ -103,12 +62,18 @@ export const getLoyaltyClaimByIdService = async (id: string): Promise<ILoyaltyCl
 export const updateLoyaltyClaimService = async (req: Request): Promise<ILoyaltyClaim | null> => {
     try {
         const id = req.params.id
+        const userId = (req as any).user.id;
+        const userFullName = (req as any).user.fullName;
 
         const { status } = req.body
 
         const updatedLoyaltyClaim = await loyaltyClaimModel.findByIdAndUpdate(
             id,
-            { status },
+            { 
+                status,
+                updatedBy: userId,
+                updatedByFullName: userFullName
+            },
             { new: true }
         );
 

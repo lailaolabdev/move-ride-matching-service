@@ -1673,26 +1673,82 @@ export const getDriverPaymentDetail = async (req: Request, res: Response) => {
 
 export const checkUsingPromotion = async (req: Request, res: Response) => {
   try {
-    const passengerId = (req as any).user.id;
-    const { promotion, startDate, endDate } = req.body;
+    const { promotion, passengerId } = req.body;
 
+    // Check if promotion has been used by this user (for ONE_TIME_TYPE promotions)
     const isPromotionUsed = await CallTaxi.exists({
       passengerId,
       festivalPromotion: {
         $elemMatch: {
           promotion: promotion,
-          periodStartTime: new Date(startDate),
-          periodEndTime: new Date(endDate),
+          promotionType: "ONE_TIME_TYPE"
         },
       },
+    });
+    console.log("isPromotionUsed:", isPromotionUsed);
+
+    res.json({
+      ...messages.SUCCESSFULLY,
+      isPromotionUsed: !!isPromotionUsed, // Convert to boolean
+    });
+  } catch (error) {
+    console.error("Error checking promotion usage:", error);
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+};
+
+export const checkNewcomerPromotionUsage = async (req: Request, res: Response) => {
+  try {
+    const { newcomerPromotionId, passengerId } = req.body;
+
+    // Check if newcomer promotion has been used by this user
+    const isNewcomerPromotionUsed = await CallTaxi.exists({
+      passengerId,
+      newcomerPromotion: newcomerPromotionId
     });
 
     res.json({
       ...messages.SUCCESSFULLY,
-      isPromotionUsed,
+      isNewcomerPromotionUsed: !!isNewcomerPromotionUsed, // Convert to boolean
     });
   } catch (error) {
-    console.error("Error fetching tax info:", error);
+    console.error("Error checking newcomer promotion usage:", error);
+    res.status(500).json({
+      code: messages.INTERNAL_SERVER_ERROR.code,
+      message: messages.INTERNAL_SERVER_ERROR.message,
+      detail: (error as Error).message,
+    });
+  }
+};
+
+export const checkNewcomerPromotionUsageByUserId = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { userId } = req.params;
+    console.log("params: ", req.params);
+
+    if (!userId) {
+      return res.status(400).json({
+        code: messages.BAD_REQUEST.code,
+        message: "User ID is required"
+      });
+    }
+    // Check if newcomer promotion has been used by this user in this country
+    const usageRecord = await CallTaxi.findOne({
+      passengerId: userId,
+      newcomerPromotion: { $exists: true, $nin: [null, ""] }
+    }).populate('newcomerPromotion');
+
+    res.status(200).json({
+      ...messages.SUCCESSFULLY,
+      hasUsed: !!usageRecord,
+      usageDetails: usageRecord || null
+    });
+  } catch (error) {
+    console.error("Error checking newcomer promotion usage by user ID:", error);
     res.status(500).json({
       code: messages.INTERNAL_SERVER_ERROR.code,
       message: messages.INTERNAL_SERVER_ERROR.message,

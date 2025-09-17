@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllNewComerPromotionUsage = exports.recordNewComerPromotionUsage = exports.checkNewComerPromotionUsage = exports.deleteNewComerPromotion = exports.updateNewComerPromotion = exports.getNewComerPromotionById = exports.getAllNewComerPromotions = exports.createNewComerPromotion = void 0;
+exports.checkNewComerPromotionUsage = exports.deleteNewComerPromotion = exports.updateNewComerPromotion = exports.getNewComerPromotionById = exports.getAllNewComerPromotions = exports.createNewComerPromotion = void 0;
 const newComerPromotion_1 = require("../../services/newComerPromotion");
 const index_1 = require("../../config/index");
 const helper_1 = require("./helper");
+const callTaxi_1 = require("../../models/callTaxi");
 // CREATE
 const createNewComerPromotion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -144,27 +145,26 @@ const deleteNewComerPromotion = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.deleteNewComerPromotion = deleteNewComerPromotion;
-// CHECK if user has already used newcomer promotion
+// CHECK NEWCOMER PROMOTION USAGE (using callTaxi collection)
 const checkNewComerPromotionUsage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
-        const { country } = req.query;
-        if (!country) {
-            res.status(400).json({
+        if (!userId) {
+            return res.status(400).json({
                 code: index_1.messages.BAD_REQUEST.code,
-                message: "Country parameter is required",
+                message: "User ID is required"
             });
-            return;
         }
-        const usageCheck = yield (0, newComerPromotion_1.checkNewComerPromotionUsageService)({
-            userId,
-            country: country,
+        // Check if user has used newcomer promotion in this country
+        const existingUsage = yield callTaxi_1.CallTaxi.exists({
+            passengerId: userId,
+            newcomerPromotion: { $exists: true, $ne: null }
         });
         res.status(200).json({
             code: index_1.messages.SUCCESSFULLY.code,
             message: "Usage check completed successfully",
-            hasUsed: usageCheck.hasUsed,
-            usageDetails: usageCheck.usageDetails,
+            hasUsed: !!existingUsage,
+            usageDetails: existingUsage ? { hasUsedNewcomerPromotion: true } : null
         });
     }
     catch (error) {
@@ -176,90 +176,3 @@ const checkNewComerPromotionUsage = (req, res) => __awaiter(void 0, void 0, void
     }
 });
 exports.checkNewComerPromotionUsage = checkNewComerPromotionUsage;
-// RECORD newcomer promotion usage
-const recordNewComerPromotionUsage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { userId, newComerPromotionId, country } = req.body;
-        if (!userId || !newComerPromotionId || !country) {
-            res.status(400).json({
-                code: index_1.messages.BAD_REQUEST.code,
-                message: "userId, newComerPromotionId, and country are required",
-            });
-            return;
-        }
-        // First check if user has already used newcomer promotion in this country
-        const usageCheck = yield (0, newComerPromotion_1.checkNewComerPromotionUsageService)({
-            userId,
-            country,
-        });
-        if (usageCheck.hasUsed) {
-            res.status(409).json({
-                code: "ALREADY_USED",
-                message: "User has already used newcomer promotion in this country",
-                usageDetails: usageCheck.usageDetails,
-            });
-            return;
-        }
-        const usageRecord = yield (0, newComerPromotion_1.recordNewComerPromotionUsageService)({
-            userId,
-            newComerPromotionId,
-            country,
-        });
-        res.status(201).json({
-            code: index_1.messages.CREATE_SUCCESSFUL.code,
-            message: "Newcomer promotion usage recorded successfully",
-            usageRecord,
-        });
-    }
-    catch (error) {
-        // Handle unique constraint violation
-        if (error.code === 11000) {
-            res.status(409).json({
-                code: "ALREADY_USED",
-                message: "User has already used newcomer promotion in this country",
-            });
-            return;
-        }
-        res.status(500).json({
-            code: index_1.messages.INTERNAL_SERVER_ERROR.code,
-            message: index_1.messages.INTERNAL_SERVER_ERROR.message,
-            detail: error.message,
-        });
-    }
-});
-exports.recordNewComerPromotionUsage = recordNewComerPromotionUsage;
-// GET all newcomer promotion usage records (for admin)
-const getAllNewComerPromotionUsage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { skip, limit, userId, country, newComerPromotionId, startDate, endDate, } = req.query;
-        const parsedSkip = parseInt(skip, 10) || 0;
-        const parsedLimit = parseInt(limit, 10) || 10;
-        const filter = {};
-        if (userId)
-            filter.userId = userId;
-        if (country)
-            filter.country = country;
-        if (newComerPromotionId)
-            filter.newComerPromotionId = newComerPromotionId;
-        if (startDate && endDate) {
-            filter.createdAt = {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate),
-            };
-        }
-        const usageRecords = yield (0, newComerPromotion_1.getAllNewComerPromotionUsageService)(parsedSkip, parsedLimit, filter);
-        res.status(200).json({
-            code: index_1.messages.SUCCESSFULLY.code,
-            message: "Usage records fetched successfully",
-            usageRecords,
-        });
-    }
-    catch (error) {
-        res.status(500).json({
-            code: index_1.messages.INTERNAL_SERVER_ERROR.code,
-            message: index_1.messages.INTERNAL_SERVER_ERROR.message,
-            detail: error.message,
-        });
-    }
-});
-exports.getAllNewComerPromotionUsage = getAllNewComerPromotionUsage;
