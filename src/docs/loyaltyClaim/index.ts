@@ -75,7 +75,7 @@
  *         name: status
  *         schema:
  *           type: string
- *           enum: [pending, accepted, canceled, delivered]
+ *           enum: [PENDING, APPROVED, REJECTED, DELIVERED]
  *         description: The status of records to skip for pagination.
  *       - in: query
  *         name: country
@@ -83,12 +83,6 @@
  *           type: string
  *           example: 67c6c05bd9ba8fe6164eac3f
  *         description: The country id of records to return for pagination.
- *       - in: query
- *         name: countryCode
- *         schema:
- *           type: string
- *           example: LA
- *         description: The country code of records to skip for pagination.
  *     responses:
  *       200:
  *         description: Successfully fetched all vehicles.
@@ -149,7 +143,7 @@
  *               status:
  *                 type: string
  *                 description: image
- *                 example: accepted
+ *                 example: approved
  *     responses:
  *       200:
  *         description: Vehicle updated successfully.

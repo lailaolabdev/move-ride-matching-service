@@ -54,10 +54,9 @@ const LoyaltySchema = new mongoose_1.Schema({
     },
     status: {
         type: Boolean,
-        default: false
+        default: true
     },
     country: String,
-    countryCode: String,
     createdBy: String,
     createdByFullName: String,
     updatedBy: String,

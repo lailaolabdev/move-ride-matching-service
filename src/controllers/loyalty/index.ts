@@ -44,7 +44,7 @@ export const createLoyalty = async (req: Request, res: Response) => {
 
 export const getAllLoyalty = async (req: Request, res: Response) => {
   try {
-    const { skip, limit, country, countryCode, name, startDate, endDate } = req.query;
+    const { skip, limit, country, name, startDate, endDate } = req.query;
 
     const parseSkip = parseInt(skip as string, 10);
     const parsedLimit = parseInt(limit as string, 10);
@@ -52,7 +52,6 @@ export const getAllLoyalty = async (req: Request, res: Response) => {
     const filter: any = {}
 
     if (country) filter.country = country
-    if (countryCode) filter.countryCode = countryCode
     if (name) filter.name = { $regex: name, $options: 'i' }
     if (startDate || endDate) {
         const createdAtFilter: any = {};

@@ -23,7 +23,7 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
       console.log("loyaltyId: ", loyaltyId);
 
       // Check user
-      const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
+      const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/staffs/${userId}`);
       const userData = user?.data?.user
 
       if (!userData) {
@@ -124,7 +124,6 @@ export const getAllLoyaltyClaim = async (req: Request, res: Response) => {
       limit = 10,
       status,
       country,
-      countryCode,
       startDate,
       endDate
     } = req.query;
@@ -140,7 +139,6 @@ export const getAllLoyaltyClaim = async (req: Request, res: Response) => {
 
     if (status) filter.status = status
     if (country) filter.country = country
-    if (countryCode) filter.countryCode = countryCode
     if (startDate || endDate) {
       const createdAtFilter: any = {};
 

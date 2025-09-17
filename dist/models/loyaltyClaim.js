@@ -41,8 +41,8 @@ const ACCEPTED_TYPE = {
 };
 const STATUS = {
     PENDING: "PENDING",
-    ACCEPTED: "ACCEPTED",
-    CANCELED: "CANCELED",
+    APPROVED: "APPROVED",
+    REJECTED: "REJECTED",
     DELIVERED: "DELIVERED",
 };
 const LoyaltyClaimSchema = new mongoose_1.Schema({
@@ -73,7 +73,6 @@ const LoyaltyClaimSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    countryCode: String,
     createdBy: String,
     createdByFullName: String,
     updatedBy: String,
