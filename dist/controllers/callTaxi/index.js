@@ -1509,11 +1509,12 @@ const checkNewcomerPromotionUsageByUserId = (req, res) => __awaiter(void 0, void
             });
         }
         // Check if newcomer promotion has been used by this user in this country
-        const usageRecord = yield callTaxi_2.CallTaxi.findOne({
-            passengerId: userId,
-            newcomerPromotion: { $exists: true, $nin: [null, ""] }
-        }).populate('newcomerPromotion');
-        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { hasUsed: !!usageRecord, usageDetails: usageRecord || null }));
+        const callTaxi = yield callTaxi_2.CallTaxi.find({ passengerId: userId }).limit(2);
+        let hasUsed = true;
+        if (callTaxi && callTaxi.length <= 1) {
+            hasUsed = false;
+        }
+        res.status(200).json(Object.assign(Object.assign({}, config_1.messages.SUCCESSFULLY), { hasUsed: hasUsed, usageDetails: callTaxi || null }));
     }
     catch (error) {
         console.error("Error checking newcomer promotion usage by user ID:", error);

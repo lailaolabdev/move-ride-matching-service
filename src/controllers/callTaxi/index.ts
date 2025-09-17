@@ -1737,15 +1737,17 @@ export const checkNewcomerPromotionUsageByUserId = async (req: Request, res: Res
       });
     }
     // Check if newcomer promotion has been used by this user in this country
-    const usageRecord = await CallTaxi.findOne({
-      passengerId: userId,
-      newcomerPromotion: { $exists: true, $nin: [null, ""] }
-    }).populate('newcomerPromotion');
+    const callTaxi = await CallTaxi.find({ passengerId: userId }).limit(2);
+
+    let hasUsed = true;
+    if(callTaxi && callTaxi.length <= 1) {
+      hasUsed = false;
+    }
 
     res.status(200).json({
       ...messages.SUCCESSFULLY,
-      hasUsed: !!usageRecord,
-      usageDetails: usageRecord || null
+      hasUsed: hasUsed,
+      usageDetails: callTaxi || null
     });
   } catch (error) {
     console.error("Error checking newcomer promotion usage by user ID:", error);
