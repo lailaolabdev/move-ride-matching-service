@@ -11,15 +11,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteLoyaltyClaimService = exports.updateLoyaltyClaimService = exports.getLoyaltyClaimByIdService = exports.getAllLoyaltyClaimService = exports.createLoyaltyClaimService = void 0;
 const loyaltyClaim_1 = require("../models/loyaltyClaim");
-const createLoyaltyClaimService = (req, session) => __awaiter(void 0, void 0, void 0, function* () {
+const createLoyaltyClaimService = (req, userPhone, loyaltyName, loyaltyPrice, session) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.user.id;
         const userFullName = req.user.fullName;
-        const { loyaltyId, acceptedType, address, country } = req.body;
+        const { loyaltyId, acceptedType, address, country, userPhone: reqUserPhone, loyaltyName: reqLoyaltyName, loyaltyPrice: reqLoyaltyPrice, userFullName: reqUserFullName } = req.body;
         console.log("req.body: ", req.body);
         const loyaltyClaim = yield loyaltyClaim_1.loyaltyClaimModel.create([{
                 userId,
                 loyaltyId,
+                userFullName: reqUserFullName || userFullName,
+                userPhone: reqUserPhone || userPhone,
+                loyaltyName: reqLoyaltyName || loyaltyName,
+                loyaltyPrice: reqLoyaltyPrice || loyaltyPrice,
                 acceptedType,
                 address,
                 country,

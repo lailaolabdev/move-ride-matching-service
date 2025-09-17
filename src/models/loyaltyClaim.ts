@@ -15,6 +15,10 @@ const STATUS = {
 export interface ILoyaltyClaim extends Document {
     userId: string | Types.ObjectId,
     loyaltyId: string | Types.ObjectId,
+    userFullName: string,
+    userPhone: string,
+    loyaltyPrice: number,
+    loyaltyName: string,
     acceptedType: string,
     address: string,
     status: string,
@@ -31,8 +35,20 @@ const LoyaltyClaimSchema = new Schema({
         required: true
     },
     userFullName: String,
+    userPhone: {
+        type: String,
+        required: true
+    }, 
+    loyaltyPrice: {
+        type: Number,
+        required: true
+    },
     loyaltyId: {
         type: Types.ObjectId,
+        required: true
+    },
+    loyaltyName: {
+        type: String,
         required: true
     },
     acceptedType: {

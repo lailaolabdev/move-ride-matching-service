@@ -28,12 +28,12 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
             const { loyaltyId } = req.body;
             console.log("loyaltyId: ", loyaltyId);
             // Check user
-            const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/staffs/${userId}`);
+            const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
             const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
             if (!userData) {
                 throw {
-                    code: config_1.messages.NOT_FOUND.code,
-                    message: config_1.messages.NOT_FOUND.message
+                    code: config_1.messages.USER_NOT_FOUND.code,
+                    message: config_1.messages.USER_NOT_FOUND.message
                 };
             }
             console.log("userData: ", userData);
@@ -69,7 +69,7 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 }
             });
             // Create loyalty claim within the transaction
-            yield (0, loyaltyClaim_1.createLoyaltyClaimService)(req, session);
+            yield (0, loyaltyClaim_1.createLoyaltyClaimService)(req, userData.phone, loyalty.name, loyalty.price, session);
         }));
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
@@ -81,21 +81,13 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
         let statusCode = 500;
         let message = config_1.messages.INTERNAL_SERVER_ERROR.message;
         // Handle specific error cases
-        if (error.message === "User does not exist") {
-            statusCode = 404;
-            message = "User does not exist";
+        if (error.code === config_1.messages.USER_NOT_FOUND.code) {
+            statusCode = parseInt(config_1.messages.USER_NOT_FOUND.code);
+            message = config_1.messages.USER_NOT_FOUND.message;
         }
-        else if (error.message === "Loyalty does not exist") {
-            statusCode = 404;
-            message = "Loyalty does not exist";
-        }
-        else if (error.message === "User does not have enough points") {
-            statusCode = 400;
-            message = "User does not have enough points";
-        }
-        else if (error.message === "Loyalty item is out of stock") {
-            statusCode = 400;
-            message = "Loyalty item is out of stock";
+        else if (error.code === config_1.messages.LOYALTY_NOT_FOUND.code) {
+            statusCode = parseInt(config_1.messages.LOYALTY_NOT_FOUND.code);
+            message = config_1.messages.LOYALTY_NOT_FOUND.message;
         }
         res.status(statusCode).json({
             code: statusCode === 500 ? config_1.messages.INTERNAL_SERVER_ERROR.code : config_1.messages.BAD_REQUEST.code,

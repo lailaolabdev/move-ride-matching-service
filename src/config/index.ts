@@ -127,6 +127,10 @@ export const messages = {
     DELAY_PRICE_ALREADY_EXIST: {
         code: "TAXI-201405",
         message: "Delay price already exist"
+    },
+    USER_NOT_FOUND: {
+        code: "TAXI-201406",
+        message: "User not found"
     }
 };
 

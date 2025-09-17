@@ -51,8 +51,20 @@ const LoyaltyClaimSchema = new mongoose_1.Schema({
         required: true
     },
     userFullName: String,
+    userPhone: {
+        type: String,
+        required: true
+    },
+    loyaltyPrice: {
+        type: Number,
+        required: true
+    },
     loyaltyId: {
         type: mongoose_1.Types.ObjectId,
+        required: true
+    },
+    loyaltyName: {
+        type: String,
         required: true
     },
     acceptedType: {

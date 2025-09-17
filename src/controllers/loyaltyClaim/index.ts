@@ -6,7 +6,7 @@ import {
   getLoyaltyClaimByIdService,
   updateLoyaltyClaimService,
 } from "../../services/loyaltyClaim";
-import { messages } from "../../config";
+import { IErrorResponse, messages } from "../../config";
 import { ILoyalty, loyaltyModel } from "../../models/loyalty";
 import axios from "axios";
 import { Types } from "mongoose";
@@ -23,13 +23,13 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
       console.log("loyaltyId: ", loyaltyId);
 
       // Check user
-      const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/staffs/${userId}`);
+      const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
       const userData = user?.data?.user
 
       if (!userData) {
         throw {
-          code: messages.NOT_FOUND.code,
-          message: messages.NOT_FOUND.message
+          code: messages.USER_NOT_FOUND.code,
+          message: messages.USER_NOT_FOUND.message
         }
       }
       console.log("userData: ", userData);
@@ -76,7 +76,7 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
       );
 
       // Create loyalty claim within the transaction
-      await createLoyaltyClaimService(req, session);
+      await createLoyaltyClaimService(req, userData.phone, loyalty.name, loyalty.price, session);
     });
 
     res.status(201).json({
@@ -90,19 +90,13 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
     let message = messages.INTERNAL_SERVER_ERROR.message;
 
     // Handle specific error cases
-    if ((error as Error).message === "User does not exist") {
-      statusCode = 404;
-      message = "User does not exist";
-    } else if ((error as Error).message === "Loyalty does not exist") {
-      statusCode = 404;
-      message = "Loyalty does not exist";
-    } else if ((error as Error).message === "User does not have enough points") {
-      statusCode = 400;
-      message = "User does not have enough points";
-    } else if ((error as Error).message === "Loyalty item is out of stock") {
-      statusCode = 400;
-      message = "Loyalty item is out of stock";
-    }
+    if ((error as IErrorResponse).code === messages.USER_NOT_FOUND.code) {
+      statusCode = parseInt(messages.USER_NOT_FOUND.code);
+      message = messages.USER_NOT_FOUND.message;
+    } else if ((error as IErrorResponse).code === messages.LOYALTY_NOT_FOUND.code) {
+      statusCode = parseInt(messages.LOYALTY_NOT_FOUND.code);
+      message = messages.LOYALTY_NOT_FOUND.message;
+    } 
 
     res.status(statusCode).json({
       code: statusCode === 500 ? messages.INTERNAL_SERVER_ERROR.code : messages.BAD_REQUEST.code,

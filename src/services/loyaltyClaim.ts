@@ -2,17 +2,21 @@ import { Request } from 'express'
 import { ILoyaltyClaim, loyaltyClaimModel } from '../models/loyaltyClaim';
 import { ClientSession } from 'mongoose';
 
-export const createLoyaltyClaimService = async (req: Request, session?: ClientSession) => {
+export const createLoyaltyClaimService = async (req: Request, userPhone: string, loyaltyName: string, loyaltyPrice: number, session?: ClientSession) => {
     try {
         const userId = (req as any).user.id;
         const userFullName = (req as any).user.fullName;
 
-        const { loyaltyId, acceptedType, address, country } = req.body
+        const { loyaltyId, acceptedType, address, country, userPhone: reqUserPhone, loyaltyName: reqLoyaltyName, loyaltyPrice: reqLoyaltyPrice, userFullName: reqUserFullName } = req.body
         console.log("req.body: ", req.body);
 
         const loyaltyClaim = await loyaltyClaimModel.create([{
             userId,
             loyaltyId,
+            userFullName: reqUserFullName || userFullName,
+            userPhone: reqUserPhone || userPhone,
+            loyaltyName: reqLoyaltyName || loyaltyName, 
+            loyaltyPrice: reqLoyaltyPrice || loyaltyPrice,
             acceptedType,
             address,
             country,
