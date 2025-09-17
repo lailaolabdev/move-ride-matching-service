@@ -76,7 +76,8 @@ const checkAuthorizationAdminRole = (req, res, next) => {
     const user = req.user;
     if (user.role !== "TAXI_ADMIN" &&
         user.role !== "TAXI_STAFF" &&
-        user.role !== "TAXI_MANAGER") {
+        user.role !== "TAXI_MANAGER" &&
+        user.role !== "SUPER_ADMIN") {
         res.status(403).json({
             code: config_1.messages.FORBIDDEN.code,
             message: config_1.messages.FORBIDDEN.message,

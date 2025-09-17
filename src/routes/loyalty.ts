@@ -7,9 +7,9 @@ const router = express.Router();
 
 router.post('/', checkAuthorizationMiddleware, validateCreateLoyalty, createLoyalty);
 
-router.get('/', checkAuthorizationMiddleware, getAllLoyalty);
+router.get('/', getAllLoyalty);
 
-router.get('/:id', checkAuthorizationMiddleware, getLoyaltyById);
+router.get('/:id', getLoyaltyById);
 
 router.put('/:id', checkAuthorizationMiddleware, updateLoyalty);
 

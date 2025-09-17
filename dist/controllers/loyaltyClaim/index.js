@@ -20,80 +20,103 @@ const axios_1 = __importDefault(require("axios"));
 const mongoose_1 = require("mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const session = yield mongoose_2.default.startSession();
     try {
+        const userId = req.user.id;
+        const { loyaltyId } = req.body;
+        // Fetch user data
+        const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
+        const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
+        if (!userData) {
+            throw {
+                code: config_1.messages.USER_NOT_FOUND.code,
+                message: config_1.messages.USER_NOT_FOUND.message
+            };
+        }
+        let loyaltyData;
+        let loyaltyPrice = 0;
         yield session.withTransaction(() => __awaiter(void 0, void 0, void 0, function* () {
-            var _a, _b, _c;
-            const userId = req.user.id;
-            const { loyaltyId } = req.body;
-            console.log("loyaltyId: ", loyaltyId);
-            // Check user
-            const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
-            const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
-            if (!userData) {
-                throw {
-                    code: config_1.messages.USER_NOT_FOUND.code,
-                    message: config_1.messages.USER_NOT_FOUND.message
-                };
-            }
-            console.log("userData: ", userData);
-            // Check is loyalty exist
+            var _a, _b;
+            // Check if loyalty exists
             const loyalty = yield loyalty_1.loyaltyModel.findById(loyaltyId).session(session);
-            console.log("loyalty: ", loyalty);
             if (!loyalty) {
                 throw {
                     code: config_1.messages.LOYALTY_NOT_FOUND.code,
                     message: config_1.messages.LOYALTY_NOT_FOUND.message
                 };
             }
-            // Check is user point enough or not 
-            const userPoint = Number((_b = userData === null || userData === void 0 ? void 0 : userData.point) !== null && _b !== void 0 ? _b : 0);
-            const loyaltyPrice = Number((_c = loyalty === null || loyalty === void 0 ? void 0 : loyalty.price) !== null && _c !== void 0 ? _c : 0);
+            // Check if user has enough points
+            const userPoint = Number((_a = userData.point) !== null && _a !== void 0 ? _a : 0);
+            loyaltyPrice = Number((_b = loyalty.price) !== null && _b !== void 0 ? _b : 0);
             if (userPoint < loyaltyPrice) {
-                throw new Error("User does not have enough points");
+                throw {
+                    code: config_1.messages.USER_NOT_ENOUGH_POINT.code,
+                    message: config_1.messages.USER_NOT_ENOUGH_POINT.message
+                };
             }
             // Check if loyalty has enough quantity
             if (loyalty.quantity <= 0) {
-                throw new Error("Loyalty item is out of stock");
+                throw {
+                    code: config_1.messages.LOYALTY_NOT_ENOUGH_QUANTITY.code,
+                    message: config_1.messages.LOYALTY_NOT_ENOUGH_QUANTITY.message
+                };
             }
             // Reduce loyalty quantity
             yield loyalty_1.loyaltyModel.findByIdAndUpdate(loyaltyId, {
                 quantity: loyalty.quantity - 1
             }, { session });
-            // Reduce user point
-            yield axios_1.default.patch(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}/point/add`, {
-                point: userData.point - loyalty.price
-            }, {
-                headers: {
-                    Authorization: `${req.headers["authorization"]}`,
-                }
-            });
             // Create loyalty claim within the transaction
-            yield (0, loyaltyClaim_1.createLoyaltyClaimService)(req, userData.phone, loyalty.name, loyalty.price, session);
+            loyaltyData = yield (0, loyaltyClaim_1.createLoyaltyClaimService)(req, userData.phone, loyalty.name, loyalty.price, session);
         }));
+        // Reduce user points after successful transaction
+        yield axios_1.default.patch(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}/point/add`, {
+            point: userData.point - loyaltyPrice
+        }, {
+            headers: {
+                Authorization: `${req.headers["authorization"]}`,
+            }
+        });
         res.status(201).json({
             code: config_1.messages.CREATE_SUCCESSFUL.code,
-            message: "Loyalty claim created successfully"
+            message: "Loyalty claim created successfully",
+            loyalty: loyaltyData
         });
     }
     catch (error) {
-        console.log("Error: ", error);
-        let statusCode = 500;
-        let message = config_1.messages.INTERNAL_SERVER_ERROR.message;
+        console.log("createLoyaltyClaim Error: ", error);
         // Handle specific error cases
         if (error.code === config_1.messages.USER_NOT_FOUND.code) {
-            statusCode = parseInt(config_1.messages.USER_NOT_FOUND.code);
-            message = config_1.messages.USER_NOT_FOUND.message;
+            res.status(404).json({
+                code: config_1.messages.USER_NOT_FOUND.code,
+                message: config_1.messages.USER_NOT_FOUND.message
+            });
         }
         else if (error.code === config_1.messages.LOYALTY_NOT_FOUND.code) {
-            statusCode = parseInt(config_1.messages.LOYALTY_NOT_FOUND.code);
-            message = config_1.messages.LOYALTY_NOT_FOUND.message;
+            res.status(404).json({
+                code: config_1.messages.LOYALTY_NOT_FOUND.code,
+                message: config_1.messages.LOYALTY_NOT_FOUND.message
+            });
         }
-        res.status(statusCode).json({
-            code: statusCode === 500 ? config_1.messages.INTERNAL_SERVER_ERROR.code : config_1.messages.BAD_REQUEST.code,
-            message: message,
-            detail: error.message,
-        });
+        else if (error.code === config_1.messages.USER_NOT_ENOUGH_POINT.code) {
+            res.status(409).json({
+                code: config_1.messages.USER_NOT_ENOUGH_POINT.code,
+                message: config_1.messages.USER_NOT_ENOUGH_POINT.message
+            });
+        }
+        else if (error.code === config_1.messages.LOYALTY_NOT_ENOUGH_QUANTITY.code) {
+            res.status(409).json({
+                code: config_1.messages.LOYALTY_NOT_ENOUGH_QUANTITY.code,
+                message: config_1.messages.LOYALTY_NOT_ENOUGH_QUANTITY.message
+            });
+        }
+        else {
+            res.status(500).json({
+                code: config_1.messages.INTERNAL_SERVER_ERROR.code,
+                message: config_1.messages.INTERNAL_SERVER_ERROR.message,
+                detail: error.message,
+            });
+        }
     }
     finally {
         yield session.endSession();

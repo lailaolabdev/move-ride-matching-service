@@ -27,6 +27,12 @@ export interface ILoyaltyClaim extends Document {
     createdByFullName?: string,
     updatedBy?: string,
     updatedByFullName?: string,
+    approvedAt?: Date,
+    approvedBy?: string,
+    rejectedAt?: Date,
+    rejectedBy?: string,
+    deliveredAt?: Date,
+    deliveredBy?: string,
 }
 
 const LoyaltyClaimSchema = new Schema({
@@ -35,10 +41,7 @@ const LoyaltyClaimSchema = new Schema({
         required: true
     },
     userFullName: String,
-    userPhone: {
-        type: String,
-        required: true
-    }, 
+    userPhone: String, 
     loyaltyPrice: {
         type: Number,
         required: true
@@ -73,6 +76,12 @@ const LoyaltyClaimSchema = new Schema({
     createdByFullName: String,
     updatedBy: String,
     updatedByFullName: String,
+    approvedAt: Date,
+    approvedBy: String,
+    rejectedAt: Date,
+    rejectedBy: String,
+    deliveredAt: Date,
+    deliveredBy: String,
 },
     { timestamps: true }
 );

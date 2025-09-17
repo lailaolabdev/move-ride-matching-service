@@ -32,7 +32,7 @@
  *               acceptedType:
  *                 type: string
  *                 description: accepted type
- *                 example: pick_up
+ *                 example: PICK_UP
  *               address:
  *                 type: string
  *                 description: address

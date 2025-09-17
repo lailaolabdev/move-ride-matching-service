@@ -7,55 +7,60 @@ import {
   updateLoyaltyClaimService,
 } from "../../services/loyaltyClaim";
 import { IErrorResponse, messages } from "../../config";
-import { ILoyalty, loyaltyModel } from "../../models/loyalty";
+import {loyaltyModel } from "../../models/loyalty";
 import axios from "axios";
 import { Types } from "mongoose";
 import mongoose from "mongoose";
 
 export const createLoyaltyClaim = async (req: Request, res: Response): Promise<any> => {
   const session = await mongoose.startSession();
-  
+
   try {
+    const userId = (req as any).user.id;
+    const { loyaltyId } = req.body;
+
+    // Fetch user data
+    const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
+    const userData = user?.data?.user;
+
+    if (!userData) {
+      throw {
+        code: messages.USER_NOT_FOUND.code,
+        message: messages.USER_NOT_FOUND.message
+      };
+    }
+
+    let loyaltyData;
+    let loyaltyPrice = 0;
+
     await session.withTransaction(async () => {
-      const userId = (req as any).user.id;
-
-      const { loyaltyId } = req.body
-      console.log("loyaltyId: ", loyaltyId);
-
-      // Check user
-      const user = await axios.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
-      const userData = user?.data?.user
-
-      if (!userData) {
-        throw {
-          code: messages.USER_NOT_FOUND.code,
-          message: messages.USER_NOT_FOUND.message
-        }
-      }
-      console.log("userData: ", userData);
-
-      // Check is loyalty exist
+      // Check if loyalty exists
       const loyalty = await loyaltyModel.findById(loyaltyId).session(session);
-      console.log("loyalty: ", loyalty);
 
       if (!loyalty) {
         throw {
           code: messages.LOYALTY_NOT_FOUND.code,
           message: messages.LOYALTY_NOT_FOUND.message
-        }
+        };
       }
 
-      // Check is user point enough or not 
-      const userPoint = Number(userData?.point ?? 0);
-      const loyaltyPrice = Number(loyalty?.price ?? 0);
+      // Check if user has enough points
+      const userPoint = Number(userData.point ?? 0);
+      loyaltyPrice = Number(loyalty.price ?? 0);
 
       if (userPoint < loyaltyPrice) {
-        throw new Error("User does not have enough points");
+        throw {
+          code: messages.USER_NOT_ENOUGH_POINT.code,
+          message: messages.USER_NOT_ENOUGH_POINT.message
+        };
       }
 
       // Check if loyalty has enough quantity
       if (loyalty.quantity <= 0) {
-        throw new Error("Loyalty item is out of stock");
+        throw {
+          code: messages.LOYALTY_NOT_ENOUGH_QUANTITY.code,
+          message: messages.LOYALTY_NOT_ENOUGH_QUANTITY.message
+        };
       }
 
       // Reduce loyalty quantity
@@ -63,46 +68,58 @@ export const createLoyaltyClaim = async (req: Request, res: Response): Promise<a
         quantity: loyalty.quantity - 1
       }, { session });
 
-      // Reduce user point
-      await axios.patch(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}/point/add`,
-        {
-          point: userData.point - loyalty.price
-        },
-        {
-          headers: {
-            Authorization: `${req.headers["authorization"]}`,
-          }
-        }
-      );
-
       // Create loyalty claim within the transaction
-      await createLoyaltyClaimService(req, userData.phone, loyalty.name, loyalty.price, session);
+      loyaltyData = await createLoyaltyClaimService(req, userData.phone, loyalty.name, loyalty.price, session);
     });
+
+    // Reduce user points after successful transaction
+    await axios.patch(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}/point/add`,
+      {
+        point: userData.point - loyaltyPrice
+      },
+      {
+        headers: {
+          Authorization: `${req.headers["authorization"]}`,
+        }
+      }
+    );
 
     res.status(201).json({
       code: messages.CREATE_SUCCESSFUL.code,
-      message: "Loyalty claim created successfully"
+      message: "Loyalty claim created successfully",
+      loyalty: loyaltyData
     });
   } catch (error) {
-    console.log("Error: ", error);
-
-    let statusCode = 500;
-    let message = messages.INTERNAL_SERVER_ERROR.message;
+    console.log("createLoyaltyClaim Error: ", error);
 
     // Handle specific error cases
     if ((error as IErrorResponse).code === messages.USER_NOT_FOUND.code) {
-      statusCode = parseInt(messages.USER_NOT_FOUND.code);
-      message = messages.USER_NOT_FOUND.message;
+      res.status(404).json({
+        code: messages.USER_NOT_FOUND.code,
+        message: messages.USER_NOT_FOUND.message
+      });
     } else if ((error as IErrorResponse).code === messages.LOYALTY_NOT_FOUND.code) {
-      statusCode = parseInt(messages.LOYALTY_NOT_FOUND.code);
-      message = messages.LOYALTY_NOT_FOUND.message;
-    } 
-
-    res.status(statusCode).json({
-      code: statusCode === 500 ? messages.INTERNAL_SERVER_ERROR.code : messages.BAD_REQUEST.code,
-      message: message,
-      detail: (error as Error).message,
-    });
+      res.status(404).json({
+        code: messages.LOYALTY_NOT_FOUND.code,
+        message: messages.LOYALTY_NOT_FOUND.message
+      });
+    } else if ((error as IErrorResponse).code === messages.USER_NOT_ENOUGH_POINT.code) {
+      res.status(409).json({
+        code: messages.USER_NOT_ENOUGH_POINT.code,
+        message: messages.USER_NOT_ENOUGH_POINT.message
+      });
+    } else if ((error as IErrorResponse).code === messages.LOYALTY_NOT_ENOUGH_QUANTITY.code) {
+      res.status(409).json({
+        code: messages.LOYALTY_NOT_ENOUGH_QUANTITY.code,
+        message: messages.LOYALTY_NOT_ENOUGH_QUANTITY.message
+      });
+    } else {
+      res.status(500).json({
+        code: messages.INTERNAL_SERVER_ERROR.code,
+        message: messages.INTERNAL_SERVER_ERROR.message,
+        detail: (error as Error).message,
+      });
+    }
   } finally {
     await session.endSession();
   }

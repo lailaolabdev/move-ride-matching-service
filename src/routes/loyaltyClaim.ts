@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkAuthorizationMiddleware } from '../middlewares';
+import { checkAuthorizationAdminRole, checkAuthorizationMiddleware } from '../middlewares';
 import {
     createLoyaltyClaim,
     deleteLoyaltyClaim,
@@ -16,7 +16,7 @@ router.get('/', checkAuthorizationMiddleware, getAllLoyaltyClaim);
 
 router.get('/:id', checkAuthorizationMiddleware, getLoyaltyClaimById);
 
-router.put('/:id', checkAuthorizationMiddleware, updateLoyaltyClaim);
+router.put('/:id', checkAuthorizationMiddleware, checkAuthorizationAdminRole, updateLoyaltyClaim);
 
 router.delete('/:id', checkAuthorizationMiddleware, deleteLoyaltyClaim);
 

@@ -71,11 +71,27 @@ const updateLoyaltyClaimService = (req) => __awaiter(void 0, void 0, void 0, fun
         const userId = req.user.id;
         const userFullName = req.user.fullName;
         const { status } = req.body;
-        const updatedLoyaltyClaim = yield loyaltyClaim_1.loyaltyClaimModel.findByIdAndUpdate(id, {
+        // Prepare the update object
+        const updateData = {
             status,
             updatedBy: userId,
             updatedByFullName: userFullName
-        }, { new: true });
+        };
+        // Set timestamp and user fields based on status
+        const currentDate = new Date();
+        if (status === "APPROVED") {
+            updateData.approvedAt = currentDate;
+            updateData.approvedBy = userId;
+        }
+        else if (status === "REJECTED") {
+            updateData.rejectedAt = currentDate;
+            updateData.rejectedBy = userId;
+        }
+        else if (status === "DELIVERED") {
+            updateData.deliveredAt = currentDate;
+            updateData.deliveredBy = userId;
+        }
+        const updatedLoyaltyClaim = yield loyaltyClaim_1.loyaltyClaimModel.findByIdAndUpdate(id, updateData, { new: true });
         return updatedLoyaltyClaim;
     }
     catch (error) {

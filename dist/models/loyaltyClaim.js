@@ -51,10 +51,7 @@ const LoyaltyClaimSchema = new mongoose_1.Schema({
         required: true
     },
     userFullName: String,
-    userPhone: {
-        type: String,
-        required: true
-    },
+    userPhone: String,
     loyaltyPrice: {
         type: Number,
         required: true
@@ -89,5 +86,11 @@ const LoyaltyClaimSchema = new mongoose_1.Schema({
     createdByFullName: String,
     updatedBy: String,
     updatedByFullName: String,
+    approvedAt: Date,
+    approvedBy: String,
+    rejectedAt: Date,
+    rejectedBy: String,
+    deliveredAt: Date,
+    deliveredBy: String,
 }, { timestamps: true });
 exports.loyaltyClaimModel = mongoose_1.default.model("loyaltyClaim", LoyaltyClaimSchema);

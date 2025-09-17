@@ -71,13 +71,30 @@ export const updateLoyaltyClaimService = async (req: Request): Promise<ILoyaltyC
 
         const { status } = req.body
 
+        // Prepare the update object
+        const updateData: any = {
+            status,
+            updatedBy: userId,
+            updatedByFullName: userFullName
+        };
+
+        // Set timestamp and user fields based on status
+        const currentDate = new Date();
+        
+        if (status === "APPROVED") {
+            updateData.approvedAt = currentDate;
+            updateData.approvedBy = userId;
+        } else if (status === "REJECTED") {
+            updateData.rejectedAt = currentDate;
+            updateData.rejectedBy = userId;
+        } else if (status === "DELIVERED") {
+            updateData.deliveredAt = currentDate;
+            updateData.deliveredBy = userId;
+        }
+
         const updatedLoyaltyClaim = await loyaltyClaimModel.findByIdAndUpdate(
             id,
-            { 
-                status,
-                updatedBy: userId,
-                updatedByFullName: userFullName
-            },
+            updateData,
             { new: true }
         );
 

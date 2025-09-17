@@ -136,5 +136,13 @@ exports.messages = {
     USER_NOT_FOUND: {
         code: "TAXI-201406",
         message: "User not found"
+    },
+    USER_NOT_ENOUGH_POINT: {
+        code: "TAXI-201407",
+        message: "User does not have enough points"
+    },
+    LOYALTY_NOT_ENOUGH_QUANTITY: {
+        code: "TAXI-201408",
+        message: "Loyalty item is out of stock"
     }
 };

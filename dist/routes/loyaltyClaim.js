@@ -10,6 +10,6 @@ const router = express_1.default.Router();
 router.post('/', middlewares_1.checkAuthorizationMiddleware, loyaltyClaim_1.createLoyaltyClaim);
 router.get('/', middlewares_1.checkAuthorizationMiddleware, loyaltyClaim_1.getAllLoyaltyClaim);
 router.get('/:id', middlewares_1.checkAuthorizationMiddleware, loyaltyClaim_1.getLoyaltyClaimById);
-router.put('/:id', middlewares_1.checkAuthorizationMiddleware, loyaltyClaim_1.updateLoyaltyClaim);
+router.put('/:id', middlewares_1.checkAuthorizationMiddleware, middlewares_1.checkAuthorizationAdminRole, loyaltyClaim_1.updateLoyaltyClaim);
 router.delete('/:id', middlewares_1.checkAuthorizationMiddleware, loyaltyClaim_1.deleteLoyaltyClaim);
 exports.default = router;

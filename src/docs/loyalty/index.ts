@@ -60,8 +60,6 @@
  *     description: Retrieve a list of all available loyalty with optional pagination.
  *     tags:
  *       - Loyalty
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *       - in: query
  *         name: skip
@@ -116,8 +114,6 @@
  *     description: Retrieve a specific loyalty by its ID.
  *     tags:
  *       - Loyalty
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
