@@ -14,11 +14,12 @@ const delayPrice_1 = require("../../services/delayPrice");
 const index_1 = require("../../config/index");
 // CREATE Delay Price
 const createDelayPrice = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const user = req.user;
         const { price, country, countryCode } = req.body;
         const delayPriceExists = yield (0, delayPrice_1.getAllDelayPricesService)(0, 0, { country, countryCode });
-        if (delayPriceExists.length > 0) {
+        if (((_a = delayPriceExists === null || delayPriceExists === void 0 ? void 0 : delayPriceExists.prices) === null || _a === void 0 ? void 0 : _a.length) > 0) {
             res.status(400).json({
                 code: index_1.messages.DELAY_PRICE_ALREADY_EXIST.code,
                 message: index_1.messages.DELAY_PRICE_ALREADY_EXIST.message,
@@ -105,12 +106,13 @@ const getDelayPriceById = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.getDelayPriceById = getDelayPriceById;
 // UPDATE Delay Price
 const updateDelayPrice = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { id } = req.params;
         const user = req.user;
         const { price, country, countryCode } = req.body;
         const delayPriceExists = yield (0, delayPrice_1.getAllDelayPricesService)(0, 0, { country, countryCode });
-        if (delayPriceExists.length > 0) {
+        if (((_a = delayPriceExists === null || delayPriceExists === void 0 ? void 0 : delayPriceExists.prices) === null || _a === void 0 ? void 0 : _a.length) > 0) {
             res.status(400).json({
                 code: index_1.messages.DELAY_PRICE_ALREADY_EXIST.code,
                 message: index_1.messages.DELAY_PRICE_ALREADY_EXIST.message,
