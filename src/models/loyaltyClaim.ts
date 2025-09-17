@@ -7,8 +7,8 @@ const ACCEPTED_TYPE = {
 
 const STATUS = {
     PENDING: "PENDING",
-    ACCEPTED: "ACCEPTED",
-    CANCELED: "CANCELED",
+    APPROVED: "APPROVED", 
+    REJECTED: "REJECTED",
     DELIVERED: "DELIVERED",
 }
 
@@ -19,7 +19,6 @@ export interface ILoyaltyClaim extends Document {
     address: string,
     status: string,
     country: string | Types.ObjectId,
-    countryCode: string,
     createdBy?: string,
     createdByFullName?: string,
     updatedBy?: string,
@@ -54,7 +53,6 @@ const LoyaltyClaimSchema = new Schema({
         type: String,
         required: true
     },
-    countryCode: String,
     createdBy: String,
     createdByFullName: String,
     updatedBy: String,

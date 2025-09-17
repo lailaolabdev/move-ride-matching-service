@@ -15,14 +15,13 @@ const createLoyaltyService = (req) => __awaiter(void 0, void 0, void 0, function
     try {
         const userId = req.user.id;
         const userFullName = req.user.fullName;
-        const { image, name, quantity, price, country, countryCode } = req.body;
+        const { image, name, quantity, price, country } = req.body;
         const loyalty = yield loyalty_1.loyaltyModel.create({
             image,
             name,
             quantity,
             price,
             country,
-            countryCode,
             createdBy: userId,
             createdByFullName: userFullName
         });
@@ -71,9 +70,9 @@ const updateLoyaltyService = (req) => __awaiter(void 0, void 0, void 0, function
             name,
             quantity,
             price,
+            status,
             updatedBy: userId,
-            updatedByFullName: userFullName,
-            status
+            updatedByFullName: userFullName
         }, { new: true });
         return updatedLoyalty;
     }

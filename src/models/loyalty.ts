@@ -7,7 +7,6 @@ export interface ILoyalty extends Document {
     price: number,
     status: boolean,
     country?: string,
-    countryCode?: string,
     createdBy?: string,
     createdByFullName?: string,
     updatedBy?: string,
@@ -33,10 +32,9 @@ const LoyaltySchema = new Schema({
     },
     status: {
         type: Boolean,
-        default: false
+        default: true
     },
     country: String,
-    countryCode: String,
     createdBy: String,
     createdByFullName: String,
     updatedBy: String,

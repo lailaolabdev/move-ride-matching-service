@@ -39,8 +39,12 @@
  *                 example: 1
  *               price:
  *                 type: number
- *                 description: quantity
+ *                 description: price
  *                 example: 1000
+ *               country:
+ *                 type: string
+ *                 description: country ID
+ *                 example: 67c6c05bd9ba8fe6164eac3f
  *     responses:
  *       201:
  *         description: Vehicle created successfully.
@@ -76,13 +80,27 @@
  *         schema:
  *           type: string
  *           example: 67c6c05bd9ba8fe6164eac3f
- *         description: The country id of records to return for pagination.
- *       - in: countryCode
- *         name: skip
+ *         description: Filter by country ID.
+ *       - in: query
+ *         name: name
  *         schema:
  *           type: string
- *           example: LA
- *         description: The country code of records to skip for pagination.
+ *           example: VIP Membership
+ *         description: Filter by loyalty name (case-insensitive search).
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *           example: 2025-09-01
+ *         description: Filter records created after this date (ISO format).
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *           example: 2025-09-30
+ *         description: Filter records created before this date (ISO format).
  *     responses:
  *       200:
  *         description: Successfully fetched all vehicles.
@@ -154,7 +172,7 @@
  *                 example: 1
  *               price:
  *                 type: number
- *                 description: quantity
+ *                 description: price
  *                 example: 1000
  *     responses:
  *       200:

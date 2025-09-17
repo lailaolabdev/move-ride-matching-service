@@ -28,7 +28,7 @@ const createLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
             const { loyaltyId } = req.body;
             console.log("loyaltyId: ", loyaltyId);
             // Check user
-            const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/users/${userId}`);
+            const user = yield axios_1.default.get(`${process.env.USER_SERVICE_URL}/v1/api/staffs/${userId}`);
             const userData = (_a = user === null || user === void 0 ? void 0 : user.data) === null || _a === void 0 ? void 0 : _a.user;
             if (!userData) {
                 throw {
@@ -112,7 +112,7 @@ const getAllLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const userId = req.user.id;
         const role = req.user.role;
-        const { skip = 0, limit = 10, status, country, countryCode, startDate, endDate } = req.query;
+        const { skip = 0, limit = 10, status, country, startDate, endDate } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
         const filter = {};
@@ -124,8 +124,6 @@ const getAllLoyaltyClaim = (req, res) => __awaiter(void 0, void 0, void 0, funct
             filter.status = status;
         if (country)
             filter.country = country;
-        if (countryCode)
-            filter.countryCode = countryCode;
         if (startDate || endDate) {
             const createdAtFilter = {};
             if (startDate) {

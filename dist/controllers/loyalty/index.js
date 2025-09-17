@@ -43,14 +43,12 @@ const createLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.createLoyalty = createLoyalty;
 const getAllLoyalty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { skip, limit, country, countryCode, name, startDate, endDate } = req.query;
+        const { skip, limit, country, name, startDate, endDate } = req.query;
         const parseSkip = parseInt(skip, 10);
         const parsedLimit = parseInt(limit, 10);
         const filter = {};
         if (country)
             filter.country = country;
-        if (countryCode)
-            filter.countryCode = countryCode;
         if (name)
             filter.name = { $regex: name, $options: 'i' };
         if (startDate || endDate) {

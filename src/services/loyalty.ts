@@ -11,8 +11,7 @@ export const createLoyaltyService = async (req: Request) => {
             name,
             quantity,
             price,
-            country,
-            countryCode
+            country
         } = req.body
 
         const loyalty = await loyaltyModel.create({
@@ -21,7 +20,6 @@ export const createLoyaltyService = async (req: Request) => {
             quantity,
             price,
             country,
-            countryCode,
             createdBy: userId,
             createdByFullName: userFullName
         })
@@ -85,9 +83,9 @@ export const updateLoyaltyService = async (req: Request): Promise<ILoyalty | nul
                 name,
                 quantity,
                 price,
+                status,
                 updatedBy: userId,
-                updatedByFullName: userFullName,
-                status
+                updatedByFullName: userFullName
             },
             { new: true }
         );
