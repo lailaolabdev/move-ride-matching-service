@@ -128,5 +128,9 @@ exports.messages = {
     LOYALTY_NOT_FOUND: {
         code: "TAXI-201404",
         message: "Loyalty not found"
+    },
+    DELAY_PRICE_ALREADY_EXIST: {
+        code: "TAXI-201405",
+        message: "Delay price already exist"
     }
 };

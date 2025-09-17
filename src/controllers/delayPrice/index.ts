@@ -14,6 +14,17 @@ export const createDelayPrice = async (req: Request, res: Response) => {
     const user = (req as any).user;
     const { price, country, countryCode } = req.body;
 
+    const delayPriceExists = await getAllDelayPricesService(0, 0, { country, countryCode });
+
+    if (delayPriceExists.length > 0) {
+      res.status(400).json({
+        code: messages.DELAY_PRICE_ALREADY_EXIST.code,
+        message: messages.DELAY_PRICE_ALREADY_EXIST.message,
+      });
+
+      return
+    }
+
     const delayPrice = await createDelayPriceService({
       price,
       country,
@@ -99,6 +110,17 @@ export const updateDelayPrice = async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = (req as any).user;
     const { price, country, countryCode } = req.body;
+
+    const delayPriceExists = await getAllDelayPricesService(0, 0, { country, countryCode });
+
+    if (delayPriceExists.length > 0) {
+      res.status(400).json({
+        code: messages.DELAY_PRICE_ALREADY_EXIST.code,
+        message: messages.DELAY_PRICE_ALREADY_EXIST.message,
+      });
+
+      return;
+    }
 
     const updatedDelayPrice = await updateDelayPriceService({
       id,

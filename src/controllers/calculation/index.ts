@@ -7,6 +7,7 @@ import { driverRateModel } from "../../models/driverRate";
 import { CallTaxi, REQUEST_TYPE } from "../../models/callTaxi";
 import { roundLimitModel } from "../../models/roundLimit";
 import { Types } from "mongoose";
+import { getAllDelayPricesService } from "../../services/delayPrice";
 
 export const calculateUserDistanceAndDuration = async (
     req: Request,
@@ -36,13 +37,13 @@ export const calculateUserDistanceAndDuration = async (
 
         const meter: any = [];
         const flatFare: any = [];
-        let delayPrice = 10;
 
         // step 3 : find peak time base on distance
         const onPeakTime = await getOnPeakTimeService(req.headers.authorization as string, country);
         const onPeakTimePrice = onPeakTime?.credit || 0;
+        const delayPrices = await getAllDelayPricesService(0, 0, { country: country });
+        const delayPrice = delayPrices?.prices?.length ? delayPrices.prices[0].price : 0
 
-        console.log("onPeakTimePrice: ", onPeakTimePrice);
         // step 4 : loop through taxiTypePricing and 
         // calculate price both meter and flat fare
         // calculation method: 

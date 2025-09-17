@@ -17,6 +17,14 @@ const createDelayPrice = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const user = req.user;
         const { price, country, countryCode } = req.body;
+        const delayPriceExists = yield (0, delayPrice_1.getAllDelayPricesService)(0, 0, { country, countryCode });
+        if (delayPriceExists.length > 0) {
+            res.status(400).json({
+                code: index_1.messages.DELAY_PRICE_ALREADY_EXIST.code,
+                message: index_1.messages.DELAY_PRICE_ALREADY_EXIST.message,
+            });
+            return;
+        }
         const delayPrice = yield (0, delayPrice_1.createDelayPriceService)({
             price,
             country,
@@ -101,6 +109,14 @@ const updateDelayPrice = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const { id } = req.params;
         const user = req.user;
         const { price, country, countryCode } = req.body;
+        const delayPriceExists = yield (0, delayPrice_1.getAllDelayPricesService)(0, 0, { country, countryCode });
+        if (delayPriceExists.length > 0) {
+            res.status(400).json({
+                code: index_1.messages.DELAY_PRICE_ALREADY_EXIST.code,
+                message: index_1.messages.DELAY_PRICE_ALREADY_EXIST.message,
+            });
+            return;
+        }
         const updatedDelayPrice = yield (0, delayPrice_1.updateDelayPriceService)({
             id,
             price,
