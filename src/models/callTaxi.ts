@@ -66,19 +66,19 @@ export interface ICallTaxi extends Document {
   polygonPrice?: number;
   onPeakTimePrice?: number;
   delayPrice?: number;
-  billNumber: string,
-  country: string,
-  countryCode: string,
-  platform: string,
+  billNumber: string;
+  country: string;
+  countryCode: string;
+  platform: string;
   currency: string
-  passengerFullName: String,
-  passengerPhoneNumber: String,
-  prepaid: String,
-  platformIncome: number,
-  claimMoney: string,
-  isClaim: boolean,
-  meterDistance: number,
-  promotionPrice?: number,
+  passengerFullName: String;
+  passengerPhoneNumber: String;
+  prepaid: String;
+  platformIncome: number;
+  claimMoney: string;
+  isClaim: boolean;
+  meterDistance: number;
+  promotionPrice?: number;
   festivalPromotion?: {
     promotion: string;
     promotionName: string;
@@ -86,14 +86,15 @@ export interface ICallTaxi extends Document {
     promotionType: string;
     periodStartTime: Date;
     periodEndTime: Date;
-  }[],
-  newcomerPromotion?: string,
-  newcomerPromotionPrice?: number,
-  pointPromotion?: string[],
-  totalPromotionPrice?: number,
-  meterPrice: number,
+  }[];
+  newcomerPromotion?: string;
+  newcomerPromotionPrice?: number;
+  pointPromotion?: string[];
+  totalPromotionPrice?: number;
+  meterPrice: number;
   createdAt: Date;
   updatedAt: Date;
+  totalPromotionPercentage: number;
 }
 
 const CallTaxiSchema: Schema = new Schema(
@@ -282,6 +283,7 @@ const CallTaxiSchema: Schema = new Schema(
         },
       },
     ],
+    totalPromotionPercentage: Number
   },
   {
     timestamps: true,

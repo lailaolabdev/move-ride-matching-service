@@ -203,6 +203,7 @@ const CallTaxiSchema = new mongoose_1.Schema({
             },
         },
     ],
+    totalPromotionPercentage: Number
 }, {
     timestamps: true,
 });

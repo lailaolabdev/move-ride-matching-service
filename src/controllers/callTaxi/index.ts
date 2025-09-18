@@ -226,7 +226,8 @@ export const getCallTaxiById = async (req: Request, res: Response) => {
           driverIncome: 1,
           waitingPrepaid: 1,
           meterDistance: 1,
-          billNumber: 1
+          billNumber: 1,
+          totalPromotionPercentage: 1
         },
       },
     ]);
@@ -424,7 +425,7 @@ export const getCallTaxis = async (req: Request, res: Response) => {
           createdAt: 1,
           registrationSource: 1,
           driverIncome: 1,
-          currency: 1,
+          currency: 1
         },
       },
     ]);
@@ -544,6 +545,11 @@ export const checkCallTaxiStatus = async (req: Request, res: Response) => {
           "driver.licensePlate": 1,
           createdAt: 1,
           updatedAt: 1,
+          totalPromotionPercentage: 1,
+          promotionPercentage: 1,
+          promotionPrice: 1,
+          price: 1,
+          promotionCredit: 1
         },
       },
     ]);
@@ -996,7 +1002,8 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
       newcomerPromotion,
       newcomerPromotionPrice,
       pointPromotion,
-      totalPromotionPrice
+      totalPromotionPrice,
+      totalPromotionPercentage
     } = req.body;
 
     console.log("req.body: ", req.body);
@@ -1069,6 +1076,7 @@ export const updateCallTaxis = async (req: Request, res: Response) => {
     if (pointPromotion) updateData.pointPromotion = pointPromotion;
     if (totalPromotionPrice) updateData.totalPromotionPrice = totalPromotionPrice;
     if (meterPrice) updateData.meterPrice = meterPrice;
+    if (totalPromotionPercentage) updateData.totalPromotionPercentage = totalPromotionPercentage;
 
     if (status) {
       // If status is paid add calculatedPrice and driverRate to

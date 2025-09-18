@@ -178,7 +178,8 @@ const getCallTaxiById = (req, res) => __awaiter(void 0, void 0, void 0, function
                     driverIncome: 1,
                     waitingPrepaid: 1,
                     meterDistance: 1,
-                    billNumber: 1
+                    billNumber: 1,
+                    totalPromotionPercentage: 1
                 },
             },
         ]);
@@ -352,7 +353,7 @@ const getCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                     createdAt: 1,
                     registrationSource: 1,
                     driverIncome: 1,
-                    currency: 1,
+                    currency: 1
                 },
             },
         ]);
@@ -463,6 +464,11 @@ const checkCallTaxiStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
                     "driver.licensePlate": 1,
                     createdAt: 1,
                     updatedAt: 1,
+                    totalPromotionPercentage: 1,
+                    promotionPercentage: 1,
+                    promotionPrice: 1,
+                    price: 1,
+                    promotionCredit: 1
                 },
             },
         ]);
@@ -869,7 +875,7 @@ exports.getDriverCallTaxis = getDriverCallTaxis;
 const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance, meterPrice, price, newcomerPromotion, newcomerPromotionPrice, pointPromotion, totalPromotionPrice } = req.body;
+        const { type, status, actualUsedTime, claimMoney, point, paymentMethod, promotionPrice, festivalPromotion, totalPrice, prepaid, waitingPrepaid, meterDistance, meterPrice, price, newcomerPromotion, newcomerPromotionPrice, pointPromotion, totalPromotionPrice, totalPromotionPercentage } = req.body;
         console.log("req.body: ", req.body);
         const token = req.headers.authorization;
         const callTaxi = yield callTaxi_2.CallTaxi.findById(id);
@@ -941,6 +947,8 @@ const updateCallTaxis = (req, res) => __awaiter(void 0, void 0, void 0, function
             updateData.totalPromotionPrice = totalPromotionPrice;
         if (meterPrice)
             updateData.meterPrice = meterPrice;
+        if (totalPromotionPercentage)
+            updateData.totalPromotionPercentage = totalPromotionPercentage;
         if (status) {
             // If status is paid add calculatedPrice and driverRate to
             // calculate driver income
