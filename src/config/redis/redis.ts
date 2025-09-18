@@ -1,5 +1,9 @@
 import Redis, { RedisOptions } from "ioredis";
 
+console.log('Redis Environment Variables:');
+console.log('REDIS_HOST:', process.env.REDIS_HOST);
+console.log('REDIS_PORT:', process.env.REDIS_PORT);
+
 // Initialize Redis client with options
 const options: RedisOptions = {
   host: process.env.REDIS_HOST || "valkey-move-uat-o50uly.serverless.apse1.cache.amazonaws.com", // no :6379 here
@@ -13,17 +17,7 @@ const options: RedisOptions = {
 
 // const options = {};
 
-const redis = new Redis(options)
-
-// Handle connection events
-redis.on('connect', () => {
-  console.log('Connected to Redis');
-});
-
-redis.on('error', (error) => {
-  console.error('Redis connection error:', error);
-});
-
+const redis = new Redis(options);
 
 // Export the redis instance
 export { redis };
