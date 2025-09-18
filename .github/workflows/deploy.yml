@@ -46,6 +46,5 @@ jobs:
                 -e MONGO_URL="${{ secrets.MONGO_URL }}" \
                 -e REDIS_HOST="${{ secrets.REDIS_HOST }}" \
                 -e REDIS_PORT="${{ secrets.REDIS_PORT }}" \
-                --add-host redis:${{ secrets.REDIS_HOST }} \
                 --name move-ride-matching \
                 ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest
