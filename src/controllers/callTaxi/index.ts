@@ -1688,8 +1688,7 @@ export const checkUsingPromotion = async (req: Request, res: Response) => {
       passengerId,
       festivalPromotion: {
         $elemMatch: {
-          promotion: promotion,
-          promotionType: "ONE_TIME_TYPE"
+          promotion: promotion
         },
       },
     });
