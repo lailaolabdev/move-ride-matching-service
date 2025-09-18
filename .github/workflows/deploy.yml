@@ -1,0 +1,45 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI/CD Pipeline to EC2
+
+# Trigger: ເຮັດວຽກທຸກຄັ້ງທີ່ມີການ push ໄປທີ່ branch 'main'
+on:
+  push:
+    branches:
+      - development
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Workflow ຈະ run ເທິງ runner ຂອງ GitHub
+    steps:
+      # 1. Checkout code ຈາກ repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      # 2. Login ເຂົ້າ Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # 3. Build ແລະ Push Docker image ໄປຍັງ Docker Hub
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest # ປ່ຽນ your-repo-name ເປັນຊື່ repo ຂອງທ່ານ
+      # 4. Deploy ໄປຍັງ EC2 instance
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            # Pull image ໃໝ່ລ່າສຸດຈາກ Docker Hub
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest
+            # ຢຸດ ແລະ ລຶບ container ເກົ່າ (ຖ້າມີ)
+            sudo docker stop move-ride-matching || true
+            sudo docker rm move-ride-matching || true
+            # Run container ໃໝ່
+            sudo docker run -d -p 80:8001 --name move-ride-matching ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest
