@@ -42,4 +42,7 @@ jobs:
             sudo docker stop move-ride-matching || true
             sudo docker rm move-ride-matching || true
             # Run container ໃໝ່
-            sudo docker run -d -p 8001:8001 --name move-ride-matching ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest
+            sudo docker run -d -p 8001:8001 \
+                -e MONGODB_URI="${{ secrets.MONGODB_URI }}" \
+                --name move-ride-matching \
+                ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest
