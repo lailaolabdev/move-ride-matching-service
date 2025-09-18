@@ -43,7 +43,7 @@ jobs:
             sudo docker rm move-ride-matching || true
             # Run container ໃໝ່
             sudo docker run -d -p 8001:8001 \
-                -e MONGODB_URI="${{ secrets.MONGO_URL }}" \
+                -e MONGO_URL="${{ secrets.MONGO_URL }}" \
                 -e REDIS_HOST="${{ secrets.REDIS_HOST }}" \
                 -e REDIS_PORT="${{ secrets.REDIS_PORT }}" \
                 --name move-ride-matching \
