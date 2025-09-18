@@ -2,8 +2,8 @@ import Redis, { RedisOptions } from "ioredis";
 
 // Initialize Redis client with options
 const options: RedisOptions = {
-  host: "valkey-move-uat-o50uly.serverless.apse1.cache.amazonaws.com", // no :6379 here
-  port: 6379,
+  host: process.env.REDIS_HOST || "valkey-move-uat-o50uly.serverless.apse1.cache.amazonaws.com", // no :6379 here
+  port: parseInt(process.env.REDIS_PORT || "6379"),
   family: 4, // IPv4
   db: 0,
   tls: {}, 
