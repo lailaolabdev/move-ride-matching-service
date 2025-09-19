@@ -27,5 +27,5 @@ RUN npm install nodemon -g
 EXPOSE 8001
 
 # Command to run the application
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start:prod"]
 # CMD ["npm", "run", "start:prod"]
