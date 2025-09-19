@@ -53,20 +53,20 @@ export const updateDriverLocation = async (req: Request, res: Response) => {
     }
 
     // If driver cash is limited, we will not allow to update driver location
-    const driverCash = await driverCashModel.findOne({ driver: driverId });
-    const cashLimit = await cashLimitModel.findOne({ countryCode: userData?.country?.code });
+    // const driverCash = await driverCashModel.findOne({ driver: driverId });
+    // const cashLimit = await cashLimitModel.findOne({ countryCode: userData?.country?.code });
 
-    if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
-      await updateDriverLocationService({ driverId });
+    // if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+    //   await updateDriverLocationService({ driverId });
 
-      res.status(400).json({
-        code: messages.BAD_REQUEST.code,
-        message: messages.BAD_REQUEST.message,
-        detail: "Your cash limit has been reached. Please contact support for more information.",
-      });
+    //   res.status(400).json({
+    //     code: messages.BAD_REQUEST.code,
+    //     message: messages.BAD_REQUEST.message,
+    //     detail: "Your cash limit has been reached. Please contact support for more information.",
+    //   });
 
-      return;
-    }
+    //   return;
+    // }
 
     let numberOfRating = 0
 

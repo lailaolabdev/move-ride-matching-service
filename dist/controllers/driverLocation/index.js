@@ -18,10 +18,8 @@ const config_1 = require("../../config");
 const axios_1 = __importDefault(require("axios"));
 const rating_1 = require("../../models/rating");
 const callTaxi_1 = require("../../models/callTaxi");
-const driverCash_1 = __importDefault(require("../../models/driverCash"));
-const cashLimit_1 = require("../../models/cashLimit");
 const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b, _c;
     try {
         const driverId = req.user.id;
         const token = req.headers.authorization;
@@ -56,17 +54,17 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
             return;
         }
         // If driver cash is limited, we will not allow to update driver location
-        const driverCash = yield driverCash_1.default.findOne({ driver: driverId });
-        const cashLimit = yield cashLimit_1.cashLimitModel.findOne({ countryCode: (_b = userData === null || userData === void 0 ? void 0 : userData.country) === null || _b === void 0 ? void 0 : _b.code });
-        if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
-            yield (0, driverLocation_1.updateDriverLocationService)({ driverId });
-            res.status(400).json({
-                code: config_1.messages.BAD_REQUEST.code,
-                message: config_1.messages.BAD_REQUEST.message,
-                detail: "Your cash limit has been reached. Please contact support for more information.",
-            });
-            return;
-        }
+        // const driverCash = await driverCashModel.findOne({ driver: driverId });
+        // const cashLimit = await cashLimitModel.findOne({ countryCode: userData?.country?.code });
+        // if (driverCash && cashLimit && driverCash.amount > cashLimit.amount) {
+        //   await updateDriverLocationService({ driverId });
+        //   res.status(400).json({
+        //     code: messages.BAD_REQUEST.code,
+        //     message: messages.BAD_REQUEST.message,
+        //     detail: "Your cash limit has been reached. Please contact support for more information.",
+        //   });
+        //   return;
+        // }
         let numberOfRating = 0;
         if (isOnline === "online") {
             // step 2: check is there rating exist
@@ -89,7 +87,7 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                         }
                     }
                 ]);
-                numberOfRating = ((_c = sumRating[0]) === null || _c === void 0 ? void 0 : _c.averageRating) || 0;
+                numberOfRating = ((_b = sumRating[0]) === null || _b === void 0 ? void 0 : _b.averageRating) || 0;
                 yield rating_1.ratingModel.create({ userId: driverId, rating: numberOfRating });
             }
             else {
@@ -108,12 +106,12 @@ const updateDriverLocation = (req, res) => __awaiter(void 0, void 0, void 0, fun
                     const parsed = JSON.parse(userData.taxiType);
                     taxiTypeId = parsed._id || "";
                 }
-                catch (_e) {
+                catch (_d) {
                     taxiTypeId = userData.taxiType; // fallback
                 }
             }
         }
-        else if (typeof (userData === null || userData === void 0 ? void 0 : userData.taxiType) === "object" && ((_d = userData === null || userData === void 0 ? void 0 : userData.taxiType) === null || _d === void 0 ? void 0 : _d._id)) {
+        else if (typeof (userData === null || userData === void 0 ? void 0 : userData.taxiType) === "object" && ((_c = userData === null || userData === void 0 ? void 0 : userData.taxiType) === null || _c === void 0 ? void 0 : _c._id)) {
             taxiTypeId = userData.taxiType._id;
         }
         // step 5: Update driver location from socket
