@@ -3,13 +3,13 @@ FROM node:20-alpine AS build
 
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package files
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code, excluding node_modules
+# Copy source code
 COPY . .
 
 # Build TypeScript
@@ -20,15 +20,15 @@ FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
-# Copy only the necessary files from the build stage
-COPY --from=build /usr/src/app /usr/src/app
+# Copy package files
+COPY package*.json ./
 
-# Install nodemon globally
-RUN npm install nodemon -g
+# Install production dependencies (now with package-lock.json)
+RUN npm ci --omit=dev
 
-# Expose the port your app runs on
+# Copy built JavaScript
+COPY --from=build /usr/src/app/dist ./dist
+
 EXPOSE 8001
 
-# Command to run the application
-CMD ["npm", "run", "start:prod"]
-# CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/index.js"]
