@@ -1,3 +1,4 @@
+console.log('🚨🚨🚨 REDIS CONFIG FILE IS BEING LOADED 🚨🚨🚨');
 import Redis, { RedisOptions } from "ioredis";
 
 console.log('Redis Environment Variables:');
@@ -10,9 +11,7 @@ const options: RedisOptions = {
   port: parseInt(process.env.REDIS_PORT || "6379"),
   family: 4, // IPv4
   db: 0,
-  tls: {}, 
-  maxRetriesPerRequest: 3,
-  lazyConnect: true,
+  tls: {}
 };
 
 // const options = {};
