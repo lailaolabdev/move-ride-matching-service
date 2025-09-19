@@ -31,12 +31,6 @@ import driverCash from "./routes/driverCash";
 import cashLimit from "./routes/cashLimit";
 import roundLimit from "./routes/roundLimit";
 
-// At the very top of your main file
-console.log('🚨 APP STARTING - Environment check:');
-console.log('🚨 REDIS_HOST:', process.env.REDIS_HOST);
-console.log('🚨 REDIS_PORT:', process.env.REDIS_PORT);
-console.log('🚨 MONGO_URL:', process.env.MONGO_URL ? 'SET' : 'NOT SET');
-
 dotenv.config();
 
 const app = express();
@@ -90,6 +84,11 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 
 // Start server
 app.listen(port, () => {
+  // At the very top of your main file
+  console.log('🚨 APP STARTING - Environment check:');
+  console.log('🚨 REDIS_HOST:', process.env.REDIS_HOST);
+  console.log('🚨 REDIS_PORT:', process.env.REDIS_PORT);
+  console.log('🚨 MONGO_URL:', process.env.MONGO_URL ? 'SET' : 'NOT SET');
   console.log(`Server is running on port ${port}`);
 });
 
