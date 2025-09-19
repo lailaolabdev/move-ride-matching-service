@@ -1,34 +1,36 @@
-# This is a basic workflow to help you get started with Actions
+name: CI/CD Pipeline to ECR and EC2
 
-name: CI/CD Pipeline to EC2
-
-# Trigger: ເຮັດວຽກທຸກຄັ້ງທີ່ມີການ push ໄປທີ່ branch 'main'
 on:
   push:
     branches:
       - development
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest # Workflow ຈະ run ເທິງ runner ຂອງ GitHub
+    runs-on: ubuntu-latest
     steps:
-      # 1. Checkout code ຈາກ repository
       - name: Checkout Code
         uses: actions/checkout@v3
-      # 2. Login ເຂົ້າ Docker Hub
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # 3. Build ແລະ Push Docker image ໄປຍັງ Docker Hub
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest # ປ່ຽນ your-repo-name ເປັນຊື່ repo ຂອງທ່ານ
-      # 4. Deploy ໄປຍັງ EC2 instance
+          tags: ${{ steps.login-ecr.outputs.registry }}/move-ride-matching:latest
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -36,15 +38,29 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            # Pull image ໃໝ່ລ່າສຸດຈາກ Docker Hub
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest
-            # ຢຸດ ແລະ ລຶບ container ເກົ່າ (ຖ້າມີ)
+            # Install AWS CLI if not present
+            if ! command -v aws &> /dev/null; then
+              echo "Installing AWS CLI..."
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip awscliv2.zip
+              sudo ./aws/install
+              rm -rf awscliv2.zip aws/
+            fi
+            
+            # Configure AWS credentials
+            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws configure set default.region ${{ secrets.AWS_REGION }}
+            
+            # Login to ECR and deploy
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+            sudo docker pull ${{ steps.login-ecr.outputs.registry }}/move-ride-matching:latest
             sudo docker stop move-ride-matching || true
             sudo docker rm move-ride-matching || true
-            # Run container ໃໝ່
             sudo docker run -d -p 8001:8001 \
-                -e MONGO_URL="${{ secrets.MONGO_URL }}" \
-                -e REDIS_HOST="${{ secrets.REDIS_HOST }}" \
-                -e REDIS_PORT="${{ secrets.REDIS_PORT }}" \
-                --name move-ride-matching \
-                ${{ secrets.DOCKERHUB_USERNAME }}/move-ride-matching:latest
+              -e NODE_ENV=production \
+              -e MONGO_URL="${{ secrets.MONGO_URL }}" \
+              -e REDIS_HOST="${{ secrets.REDIS_HOST }}" \
+              -e REDIS_PORT="${{ secrets.REDIS_PORT }}" \
+              --name move-ride-matching \
+              ${{ steps.login-ecr.outputs.registry }}/move-ride-matching:latest
