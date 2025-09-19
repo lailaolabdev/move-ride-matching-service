@@ -3,13 +3,13 @@ FROM node:20-alpine AS build
 
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
+# Install ALL dependencies (including devDependencies for building)
 RUN npm install
 
-# Copy the rest of the application code, excluding node_modules
+# Copy source code
 COPY . .
 
 # BUILD TypeScript to JavaScript - THIS IS CRITICAL!
@@ -23,17 +23,14 @@ WORKDIR /usr/src/app
 # Copy package.json for production install
 COPY package*.json ./
 
-# Install ONLY production dependencies
-RUN npm ci --only=production
+# Use npm install instead of npm ci (since you don't have package-lock.json)
+RUN npm install --only=production
 
 # Copy built JavaScript from build stage (not source TypeScript)
 COPY --from=build /usr/src/app/dist ./dist
 
-# Copy any other necessary files (like .env templates if needed)
-COPY --from=build /usr/src/app/package*.json ./
-
-# Expose the port your app runs on
+# Expose the port
 EXPOSE 8001
 
-# Command to run the application
+# Run in production mode
 CMD ["node", "dist/index.js"]
