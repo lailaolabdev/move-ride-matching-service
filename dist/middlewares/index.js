@@ -13,6 +13,7 @@ const checkAuthorizationMiddleware = (req, res, next) => {
         const token = req.headers["authorization"];
         if (token) {
             const accessToken = token.replace("Bearer ", "");
+            console.log("accessToken: ", accessToken);
             const payloadData = jwt.verify(accessToken, process.env.JWT_SECRET_KEY);
             req.user = payloadData;
         }

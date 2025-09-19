@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const PORT = process.env.PORT || 8001;
+const HOST_IP = process.env.IP || process.env.EC2_HOST || 'localhost';
 
 const swaggerOptions: Options = {
   definition: {
@@ -15,16 +16,16 @@ const swaggerOptions: Options = {
     },
     servers: [
       {
-        url: `http://${process.env.IP}:${PORT}`, // Production server
-        description: 'Dev Development server',
+        url: `http://${HOST_IP}:${PORT}`,
+        description: 'Production server',
       },
       {
-        url: `http://localhost:${PORT}`, // Update with your server's URL
+        url: `http://localhost:${PORT}`,
         description: 'Local Development server',
       },
     ]
   },
-  apis: ['./src/docs/**/*.ts'],  // Adjust the path to match your route files
+  apis: ['./src/docs/**/*.ts'],
 };
 
 export default swaggerOptions;

@@ -16,6 +16,7 @@ export const checkAuthorizationMiddleware = (
 		const token = req.headers["authorization"];
 		if (token) {
 			const accessToken: string = token.replace("Bearer ", "");
+			console.log("accessToken: ", accessToken);
 			const payloadData = jwt.verify(accessToken, process.env.JWT_SECRET_KEY);
 			(req as any).user = payloadData;
 		} else {
