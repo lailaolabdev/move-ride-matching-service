@@ -1468,8 +1468,7 @@ const checkUsingPromotion = (req, res) => __awaiter(void 0, void 0, void 0, func
             passengerId,
             festivalPromotion: {
                 $elemMatch: {
-                    promotion: promotion,
-                    promotionType: "ONE_TIME_TYPE"
+                    promotion: promotion
                 },
             },
         });
