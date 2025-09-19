@@ -1,9 +1,4 @@
-console.log('🚨🚨🚨 REDIS CONFIG FILE IS BEING LOADED 🚨🚨🚨');
 import Redis, { RedisOptions } from "ioredis";
-
-console.log('Redis Environment Variables:');
-console.log('REDIS_HOST:', process.env.REDIS_HOST);
-console.log('REDIS_PORT:', process.env.REDIS_PORT);
 
 // Initialize Redis client with options
 const options: RedisOptions = {
