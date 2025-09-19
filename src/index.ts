@@ -79,7 +79,7 @@ app.use("/api/v1/dashboards", dashboardRoute);
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
-  res.status(500).send("There is Internal Server Error!");
+  res.status(500).send("There is Internal Server Error!!");
 });
 
 // Start server
