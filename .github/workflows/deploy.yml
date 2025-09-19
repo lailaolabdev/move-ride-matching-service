@@ -43,7 +43,12 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            # Login to ECR from EC2 (AWS CLI already configured)
+            # Create environment file from single secret
+            cat > .env.development << 'EOF'
+            ${{ secrets.ENV }}
+            EOF
+            
+            # Login to ECR from EC2
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
             
             # Pull latest image from ECR
@@ -53,9 +58,8 @@ jobs:
             sudo docker stop move-ride-matching || true
             sudo docker rm move-ride-matching || true
             
-            # Run new container
+            # Run new container with environment file
             sudo docker run -d -p 8001:8001 \
-              -e NODE_ENV=production \
-              -e PORT="${{ secrets.ENV }}" \
+              --env-file .env.development \
               --name move-ride-matching \
               ${{ steps.login-ecr.outputs.registry }}/move-ride-matching:latest
