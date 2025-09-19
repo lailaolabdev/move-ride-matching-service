@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:prod": "node dist/index.js",
+    "start:prod": "nodemon dist/index.js",
     "build": "tsc",
-    "start": " ts-node-dev -r dotenv/config src/index.ts dotenv_config_path=.env.development"
+    "start": "ts-node-dev -r dotenv/config src/index.ts dotenv_config_path=.env.development"
   },
   "keywords": [],
   "author": "",
